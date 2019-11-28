@@ -2,10 +2,10 @@
 
 A 2D role-playing game written in LÖVE.
 
-WIP currently.
+Currently in development.
 
-# Instructions
+# Development instructions
 
-Download LÖVE, and create the alias 'love' on the command line.
+Download and install LÖVE (https://love2d.org/), and create the alias 'love' on the command line.
 
-Clone the repo, and then run ```love Abelon```
+Clone the repo into a directory called ```Abelon```, and run ```love Abelon```.
