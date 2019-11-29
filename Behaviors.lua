@@ -10,6 +10,7 @@ function playerIdle(dt, char)
     local r = love.keyboard.isDown('right')
     local u = love.keyboard.isDown('up')
     local d = love.keyboard.isDown('down')
+    local space = love.keyboard.wasPressed('space')
 
     -- If any direction is tapped, start walking, otherwise set velocity to zero
     if not (l == r) or not (u == d) then
@@ -17,6 +18,11 @@ function playerIdle(dt, char)
     else
         char.dx = 0
         char.dy = 0
+    end
+
+    -- If space is pressed, character tries to interact with a nearby object
+    if space then
+        char:interact()
     end
 end
 
@@ -28,6 +34,7 @@ function playerWalking(dt, char)
     local r = love.keyboard.isDown('right')
     local u = love.keyboard.isDown('up')
     local d = love.keyboard.isDown('down')
+    local space = love.keyboard.wasPressed('space')
 
     -- If a left/right direction is held, set x velocity and direction
     local continue = false
@@ -61,14 +68,44 @@ function playerWalking(dt, char)
 
     -- Handle any collisions
     char:checkCollisions()
+
+    -- If space is pressed, character tries to interact with a nearby object
+    if space then
+        char:interact()
+    end
+end
+
+function playerTalking(dt, char)
+
+    -- Character is still while talking
+    char.dx = 0
+    char.dy = 0
+
+    -- Get keypresses
+    local u = love.keyboard.wasPressed('up')
+    local d = love.keyboard.wasPressed('down')
+    local space = love.keyboard.wasPressed('space')
+
+    -- TODO: add hovering through response functionality
+    if space then
+        local done = char.currentDialogue:continue()
+        if done then
+            char.currentDialogue = nil
+            char:changeBehavior('idle')
+        end
+    else
+        char.currentDialogue:update(dt)
+    end
 end
 
 -- Default idle behavior
 function defaultIdle(dt, char)
 
-    -- Set walking and walk velocity on very low chance, otherwise set still
+    -- Character is still
     char.dx = 0
     char.dy = 0
+
+    -- Low chance to start walking in random direction
     if math.random() <= 0.01 then
         dir = math.random()
         if dir >= 0.75 then
@@ -89,7 +126,7 @@ end
 -- Default walking behavior
 function defaultWalking(dt, char)
 
-    -- Chance to stop walking
+    -- Character can't walk too far from leash
     x_dist = char.x - char.leash_x
     y_dist = char.y - char.leash_y
     if x_dist > 100 then
@@ -108,6 +145,7 @@ function defaultWalking(dt, char)
         char.dy = WALKING_SPEED/2
     end
 
+    -- Chance to stop walking
     if math.random() <= 0.05 then
         char:changeBehavior('idle')
     end

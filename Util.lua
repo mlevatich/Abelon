@@ -29,3 +29,13 @@ function abs(val)
         return val
     end
 end
+
+-- Get the quads listed in indices from the sprite's texture
+function getSpriteQuads(indices, tex, width, height)
+    frames = {}
+    for x = 1, #indices do
+        idx = indices[x]
+        frames[x] = love.graphics.newQuad((width + 1) * idx, 0, width, height, tex:getDimensions())
+    end
+    return frames
+end

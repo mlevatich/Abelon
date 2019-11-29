@@ -1,8 +1,11 @@
 require 'Util'
 require 'Animation'
 require 'Behaviors'
+require 'Dialogue'
 
 Character = Class{}
+
+NUM_SCENES = 1
 
 -- Class constants
 local ANIMATION_SPEED = 6.5
@@ -33,23 +36,21 @@ function Character:init(name, is_player)
 
     -- sprite and animations
     self.name = name
-    self.texture = love.graphics.newImage('graphics/Abelon.png') -- TODO: insert self.name
+    self.texture = love.graphics.newImage('graphics/' .. self.name .. '.png')
     self.animations = {
         ['idle'] = Animation({
             texture = self.texture,
-            frames = {
-                love.graphics.newQuad(WIDTH * 0, 0, WIDTH, HEIGHT, self.texture:getDimensions())
-            },
+            frames = getSpriteQuads({0}, self.texture, self.width, self.height),
             interval = 1 / ANIMATION_SPEED
         }),
         ['walking'] = Animation({
             texture = self.texture,
-            frames = {
-                love.graphics.newQuad(WIDTH * 1, 0, WIDTH, HEIGHT, self.texture:getDimensions()),
-                love.graphics.newQuad(WIDTH * 2, 0, WIDTH, HEIGHT, self.texture:getDimensions()),
-                love.graphics.newQuad(WIDTH * 3, 0, WIDTH, HEIGHT, self.texture:getDimensions()),
-                love.graphics.newQuad(WIDTH * 2, 0, WIDTH, HEIGHT, self.texture:getDimensions()),
-            },
+            frames = getSpriteQuads({1, 2, 3, 2}, self.texture, self.width, self.height),
+            interval = 1 / ANIMATION_SPEED
+        }),
+        ['talking'] = Animation({
+            texture = self.texture,
+            frames = getSpriteQuads({0}, self.texture, self.width, self.height),
             interval = 1 / ANIMATION_SPEED
         })
     }
@@ -67,6 +68,9 @@ function Character:init(name, is_player)
             end,
             ['walking'] = function(dt)
                 playerWalking(dt, self)
+            end,
+            ['talking'] = function(dt)
+                playerTalking(dt, self)
             end
         }
     else
@@ -76,16 +80,21 @@ function Character:init(name, is_player)
             end,
             ['walking'] = function(dt)
                 defaultWalking(dt, self)
-            end
+            end,
+            ['talking'] = function(dt) end
         }
     end
 
     -- sound effects
     self.sounds = nil -- love.audio.newSource('sounds/jump.wav', 'static')
 
-    -- dialogue and actions by scene
-    self.scene_id = 0
-    self.scenes = nil
+    -- scene control
+    self.scene = 0
+    self.sceneFiles = {}
+    for x = 1, NUM_SCENES do
+        self.sceneFiles[x] = "Abelon/scenes/" .. x .. "/" .. self.name .. ".txt"
+    end
+    self.currentDialogue = nil
 end
 
 -- Modify a character's position
@@ -113,10 +122,28 @@ function Character:changeBehavior(behavior)
     self.animation = self.animations[behavior]
 end
 
+function Character:interact()
+
+    -- TODO: don't hardcode!
+    -- check for nearby characters. If nearby and facing,
+        -- create dialogue object and set as self.current dialogue, based on character
+        -- set behavior
+        -- make the other dialogue partner face self
+    -- else do nothing
+    char = self.map.active_characters['Kath']
+
+    -- Start dialogue with character based on current scene
+    sceneFile = char.sceneFiles[self.scene]
+    self.currentDialogue = Dialogue(sceneFile)
+    self:changeBehavior('talking')
+end
+
+-- Get the coordinates of the closest tile to the character
 function Character:tileOn()
     return self.map:tileAt(self.x + self.width / 2, self.y + self.height / 2)
 end
 
+-- Handle all collisions in current frame
 function Character:checkCollisions()
     self:checkMapCollisions()
     self:checkSpriteCollisions()

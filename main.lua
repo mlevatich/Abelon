@@ -2,10 +2,6 @@ Class = require 'class'
 push = require 'push'
 require 'Game'
 
--- Apparent game resolution
-VIRTUAL_WIDTH = 864
-VIRTUAL_HEIGHT = 486
-
 -- Actual window resolution
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -27,7 +23,7 @@ function love.load()
     love.window.setTitle('Abelon')
 
     -- Font used by LOVE's text engine
-    love.graphics.setFont(love.graphics.newFont('fonts/font.ttf', 8))
+    love.graphics.setFont(love.graphics.newFont('fonts/font.ttf', FONT_SIZE))
 
     -- Storing
     love.keyboard.keysPressed = {}

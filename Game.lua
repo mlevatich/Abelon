@@ -105,4 +105,9 @@ function Game:render()
 
     -- Render map and characters around camera position
     self.current_map:render()
+
+    -- Render current dialogue if the player is talking to someone
+    if self.player.currentDialogue then
+        self.player.currentDialogue:render(self.cameraX, self.cameraY)
+    end
 end
