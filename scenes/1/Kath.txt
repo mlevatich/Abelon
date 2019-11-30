@@ -1,27 +1,36 @@
-A: ~Kath
+A: ~Kath 1
 Ho, Abelon! What brings you to the dungeons, my friend? I don't suppose it's anything pleasant, at any rate.
-A: ~Abelon
+
+A: ~Abelon 1
 ...Nothing to concern yourself with, Kath. Routine business on the orders of His Majesty.
-A: ~Kath
+
+A: ~Kath 2
 Keeping the cold iron between us, yet again. Truly, Abelon, is something troubling you?
-A: ~CHOICE
+
+A: ~CHOICE 0
 A: I'm fine
 B: I'm uneasy
-A: ~Kath
+
+A: ~Kath 2
 Hm...*sigh*. Yes, well, at least let me know if you're going to be terrorizing those poor young inmates, so I can excuse myself for some air.
 I don't care to hear those screams again...
-A: ~Abelon
+
+A: ~Abelon 1
 Your delicate ears have nothing to fear from me, or the prisoners. Good day, Kath.
-A: ~Kath
+
+A: ~Kath 2
 ...Good day, Abelon.
 
 
-B: ~Kath
-Ah, the game is up! And what manner of menace dogs your dreams, my fellow knight? It's been a few days of the cold shoulder,
-and I'll have you know I've been worried!
-B: ~Abelon
-You, a worrier? Don't make me laugh. Anyways, it's only King Sinclair that's been on my mind lately.
-B: ~Kath
-The king's premier knight looking after his liege? Sounds...ordinary. Surely there's more to it than that.
-B: ~Abelon
-You preempt me, as usual. His Majesty has not been himself lately. His demands have been...strange...
+
+B: ~Kath 1
+Ah, the game is up! And what manner of menace dogs your dreams, my fellow knight? It's been a few days of the cold shoulder, and I'll have you know I've been worried!
+
+B: ~Abelon 1
+You, a worrier? Don't make me laugh. But it's only King Sinclair that's been on my mind lately.
+
+B: ~Kath 3
+The king's premier knight looking after his liege? Sounds... ordinary. Surely there's more to it than that.
+
+B: ~Abelon 1
+You preempt me, as usual. His Majesty has not been himself lately. His demands have been... strange...

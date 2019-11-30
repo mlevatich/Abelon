@@ -33,7 +33,7 @@ function Map:init(name)
 
     -- Map texture and tile array
     self.name = name
-    self.spritesheet = love.graphics.newImage('graphics/' .. name .. '.png')
+    self.spritesheet = love.graphics.newImage('graphics/maps/' .. name .. '.png')
     self.sprites = generateQuads(self.spritesheet, self.tileWidth, self.tileHeight)
     self.tiles = {}
 

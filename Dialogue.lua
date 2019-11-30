@@ -8,14 +8,15 @@ Dialogue = Class{}
 
 -- Text variables
 FONT_SIZE = 20
+PORTRAIT_SIZE = 120
 local LINES_PER_PAGE = 4
 local TEXT_INTERVAL = 0.03
 local BOX_MARGIN = 20
-local BOX_WIDTH = VIRTUAL_WIDTH - BOX_MARGIN*2
 local TEXT_MARGIN_X = -5
 local TEXT_MARGIN_Y = 10
-local CHARS_PER_LINE = math.floor((BOX_WIDTH - BOX_MARGIN*2)/(TEXT_MARGIN_X + FONT_SIZE))
-local BOX_HEIGHT = TEXT_MARGIN_Y*(LINES_PER_PAGE+2) + FONT_SIZE*LINES_PER_PAGE
+local BOX_WIDTH = VIRTUAL_WIDTH - BOX_MARGIN*2
+local CHARS_PER_LINE = math.floor((BOX_WIDTH - BOX_MARGIN*2 - PORTRAIT_SIZE)/(TEXT_MARGIN_X + FONT_SIZE))
+local BOX_HEIGHT = TEXT_MARGIN_Y*(LINES_PER_PAGE+2) + FONT_SIZE*LINES_PER_PAGE + BOX_MARGIN
 
 -- Initialize a new set of frames
 function Dialogue:init(scriptfile, char1, char2)
@@ -26,6 +27,7 @@ function Dialogue:init(scriptfile, char1, char2)
     local speaker = nil
     local track = nil
     local lines = {}
+    local portrait_id = nil
     for line in io.lines(scriptfile) do
         lines[#lines+1] = line
     end
@@ -33,7 +35,8 @@ function Dialogue:init(scriptfile, char1, char2)
     local i = 1
     while i <= #lines do
         if lines[i]:sub(4,4) == '~' then
-            speaker = lines[i]:sub(5, #lines[i])
+            speaker = lines[i]:sub(5, #lines[i] - 2)
+            portrait_id = tonumber(lines[i]:sub(#lines[i], #lines[i]))
             track = lines[i]:sub(1,1)
             if speaker == 'CHOICE' then
                 self.script[pages] = {
@@ -45,18 +48,20 @@ function Dialogue:init(scriptfile, char1, char2)
                     if lines[i]:sub(4,4) == '~' then
                         i = i - 1
                         break
+                    elseif lines[i] ~= '' then
+                        cs = self.script[pages]['choices']
+                        cs[#cs+1] = {
+                            ['text'] = lines[i]:sub(4, #lines[i]),
+                            ['track'] = lines[i]:sub(1,1)
+                        }
                     end
-                    cs = self.script[pages]['choices']
-                    cs[#cs+1] = {
-                        ['text'] = lines[i]:sub(4, #lines[i]),
-                        ['track'] = lines[i]:sub(1,1)
-                    }
                 end
                 pages = pages + 1
             end
         elseif lines[i] ~= '' then
             self.script[pages] = {
                 ['speaker'] = speaker,
+                ['portrait'] = portrait_id,
                 ['text'] = splitByCharLimit(lines[i]),
                 ['length'] = #lines[i],
                 ['track'] = track
@@ -109,7 +114,7 @@ function Dialogue:continue()
         end
         self.character_num = 0
         if not has_next then
-            return true
+            return self.track
         end
     else
         self.character_num = self.script[self.page_num]['length']
@@ -119,7 +124,7 @@ function Dialogue:continue()
             self.selection = 1
         end
     end
-    return false
+    return nil
 end
 
 -- Called when player presses up or down while talking to hover a selection
@@ -172,6 +177,12 @@ function Dialogue:render(baseX, baseY)
     -- Current page
     local page = self.script[self.page_num]
 
+    -- Speaker's character object
+    local char = self.char1
+    if self.char2.name == page['speaker'] then
+        char = self.char2
+    end
+
     -- Render black text box
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.rectangle('fill', baseX + BOX_MARGIN, baseY + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT)
@@ -180,17 +191,18 @@ function Dialogue:render(baseX, baseY)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(page['speaker'], baseX + BOX_MARGIN*2, baseY + BOX_MARGIN + TEXT_MARGIN_Y)
 
-    -- TODO: render portrait of current speaker
+    -- Render portrait of current speaker
+    love.graphics.draw(char.ptexture, char.portraits[page['portrait']], baseX + BOX_MARGIN, baseY + BOX_MARGIN*3, 0, 1, 1, 0, 0)
 
     -- Render text up to current character position
-    local x_beginning = baseX + BOX_MARGIN * 2
-    local y_beginning = baseY + BOX_MARGIN + TEXT_MARGIN_Y
+    local x_beginning = baseX + BOX_MARGIN*2 + PORTRAIT_SIZE
+    local y_beginning = baseY + BOX_MARGIN + TEXT_MARGIN_Y + 20
     local line_num = 1
     local j = 1
     for i = 1, self.character_num do
 
         local x = x_beginning + (TEXT_MARGIN_X + FONT_SIZE) * (j - 1)
-        local y = y_beginning + (TEXT_MARGIN_Y + FONT_SIZE) * line_num
+        local y = y_beginning + (TEXT_MARGIN_Y + FONT_SIZE) * (line_num-1)
         love.graphics.print(page['text'][line_num]:sub(j, j), x, y)
         j = j + 1
         if j > #page['text'][line_num] then
@@ -216,7 +228,7 @@ function Dialogue:render(baseX, baseY)
         local rect_x = baseX + BOX_MARGIN + BOX_WIDTH - w
         local rect_y = baseY + BOX_MARGIN*2 + BOX_HEIGHT
         if bottom then
-            rect_y = baseY - TEXT_MARGIN_Y*3 - (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
+            rect_y = baseY - TEXT_MARGIN_Y - (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
         end
         love.graphics.setColor(0, 0, 0, 1)
         love.graphics.rectangle('fill', rect_x, rect_y, w, h)

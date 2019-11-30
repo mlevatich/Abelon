@@ -36,7 +36,7 @@ function Character:init(name, is_player)
 
     -- sprite and animations
     self.name = name
-    self.texture = love.graphics.newImage('graphics/' .. self.name .. '.png')
+    self.texture = love.graphics.newImage('graphics/sprites/' .. self.name .. '.png')
     self.animations = {
         ['idle'] = Animation({
             texture = self.texture,
@@ -54,6 +54,8 @@ function Character:init(name, is_player)
             interval = 1 / ANIMATION_SPEED
         })
     }
+    self.ptexture = love.graphics.newImage('graphics/portraits/' .. self.name .. '.png')
+    self.portraits = getSpriteQuads({0, 1, 2}, self.ptexture, PORTRAIT_SIZE, PORTRAIT_SIZE)
     self.direction = 'left'
     self.state = 'idle'
     self.animation = self.animations[self.state]
