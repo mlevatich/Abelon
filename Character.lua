@@ -81,7 +81,9 @@ function Character:init(name, is_player)
             ['walking'] = function(dt)
                 defaultWalking(dt, self)
             end,
-            ['talking'] = function(dt) end
+            ['talking'] = function(dt)
+                defaultTalking(dt, self)
+            end
         }
     end
 
@@ -122,20 +124,26 @@ function Character:changeBehavior(behavior)
     self.animation = self.animations[behavior]
 end
 
-function Character:interact()
+-- Handler for when player presses space to interact with an object
+function Character:interact(other)
 
-    -- TODO: don't hardcode!
-    -- check for nearby characters. If nearby and facing,
-        -- create dialogue object and set as self.current dialogue, based on character
-        -- set behavior
-        -- make the other dialogue partner face self
-    -- else do nothing
-    char = self.map.active_characters['Kath']
+    -- If a character was collided with and space was pressed
+    if other then
 
-    -- Start dialogue with character based on current scene
-    sceneFile = char.sceneFiles[self.scene]
-    self.currentDialogue = Dialogue(sceneFile)
-    self:changeBehavior('talking')
+        -- Make character face player
+        if other.x <= self.x then
+            other.direction = 'right'
+        else
+            other.direction = 'left'
+        end
+
+        -- Start dialogue with character based on current scene
+        sceneFile = other.sceneFiles[self.scene]
+        self.currentDialogue = Dialogue(sceneFile, self, other)
+        other.currentDialogue = self.currentDialogue
+        self:changeBehavior('talking')
+        other:changeBehavior('talking')
+    end
 end
 
 -- Get the coordinates of the closest tile to the character
@@ -146,13 +154,14 @@ end
 -- Handle all collisions in current frame
 function Character:checkCollisions()
     self:checkMapCollisions()
-    self:checkSpriteCollisions()
+    return self:checkSpriteCollisions()
 end
 
 -- Handle collisions with other sprites for this character
 function Character:checkSpriteCollisions()
 
     -- Iterate over all active characters
+    target = nil
     my_tile = self:tileOn()
     for name, char in pairs(self.map:getCharacters()) do
         tile = char:tileOn()
@@ -165,9 +174,11 @@ function Character:checkSpriteCollisions()
             if y_inside and right_dist <= 0 and right_dist > -char.width/2 and self.dx < 0 then
                 self.dx = 0
                 self.x = char.x + char.width
+                target = char
             elseif y_inside and left_dist <= 0 and left_dist > -char.width/2 and self.dx > 0 then
                 self.dx = 0
                 self.x = char.x - self.width
+                target = char
             end
 
             -- Collision from below target or above target
@@ -177,12 +188,15 @@ function Character:checkSpriteCollisions()
             if x_inside and down_dist <= 0 and down_dist > -char.height/2 and self.dy < 0 then
                 self.dy = 0
                 self.y = char.y + char.height
+                target = char
             elseif x_inside and up_dist <= 0 and up_dist > -char.height/2 and self.dy > 0 then
                 self.dy = 0
                 self.y = char.y - self.height
+                target = char
             end
         end
     end
+    return target
 end
 
 -- Handle map collisions for this character

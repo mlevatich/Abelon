@@ -67,14 +67,15 @@ function playerWalking(dt, char)
     end
 
     -- Handle any collisions
-    char:checkCollisions()
+    collided_with = char:checkCollisions()
 
     -- If space is pressed, character tries to interact with a nearby object
     if space then
-        char:interact()
+        char:interact(collided_with)
     end
 end
 
+-- Player in-dialogue behavior
 function playerTalking(dt, char)
 
     -- Character is still while talking
@@ -86,7 +87,6 @@ function playerTalking(dt, char)
     local d = love.keyboard.wasPressed('down')
     local space = love.keyboard.wasPressed('space')
 
-    -- TODO: add hovering through response functionality
     if space then
         local done = char.currentDialogue:continue()
         if done then
@@ -96,9 +96,13 @@ function playerTalking(dt, char)
     else
         char.currentDialogue:update(dt)
     end
+
+    if u ~= d then
+        char.currentDialogue:hover(u)
+    end
 end
 
--- Default idle behavior
+-- NPC idle behavior
 function defaultIdle(dt, char)
 
     -- Character is still
@@ -123,7 +127,7 @@ function defaultIdle(dt, char)
     end
 end
 
--- Default walking behavior
+-- NPC walking behavior
 function defaultWalking(dt, char)
 
     -- Character can't walk too far from leash
@@ -152,4 +156,18 @@ function defaultWalking(dt, char)
 
     -- Handle any collisions
     char:checkCollisions()
+end
+
+-- NPC talking behavior
+function defaultTalking(dt, char)
+
+    -- Character is still while talking
+    char.dx = 0
+    char.dy = 0
+
+    -- Player is responsible for finishing the conversation
+    if char.currentDialogue:getOther(char).currentDialogue == nil then
+        char.currentDialogue = nil
+        char:changeBehavior('idle')
+    end
 end
