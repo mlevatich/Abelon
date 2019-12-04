@@ -5,8 +5,6 @@ require 'Dialogue'
 
 Character = Class{}
 
-NUM_SCENES = 1
-
 -- Class constants
 local ANIMATION_SPEED = 6.5
 local WIDTH = 32
@@ -15,28 +13,29 @@ local HEIGHT = 40
 -- Initialize a new character
 function Character:init(name, is_player)
 
-    -- position
+    -- Position
     self.x = 0
     self.y = 0
     self.leash_x = 0
     self.leash_y = 0
 
-    -- velocity
+    -- Velocity
     self.dx = 0
     self.dy = 0
 
-    -- size
+    -- Size
     self.width = WIDTH
     self.height = HEIGHT
     self.xoff = WIDTH / 2
     self.yoff = HEIGHT / 2
 
-    -- current map
-    self.map = nil
-
-    -- sprite and animations
+    -- Sprite textures
     self.name = name
     self.texture = love.graphics.newImage('graphics/sprites/' .. self.name .. '.png')
+    self.ptexture = love.graphics.newImage('graphics/portraits/' .. self.name .. '.png')
+    self.portraits = getSpriteQuads({0, 1, 2}, self.ptexture, PORTRAIT_SIZE, PORTRAIT_SIZE)
+
+    -- Sprite animations
     self.animations = {
         ['idle'] = Animation({
             texture = self.texture,
@@ -44,7 +43,7 @@ function Character:init(name, is_player)
             interval = 1 / ANIMATION_SPEED
         }),
         ['walking'] = Animation({
-            texture = self.texture,
+            texture = self.textures,
             frames = getSpriteQuads({1, 2, 3, 2}, self.texture, self.width, self.height),
             interval = 1 / ANIMATION_SPEED
         }),
@@ -54,14 +53,12 @@ function Character:init(name, is_player)
             interval = 1 / ANIMATION_SPEED
         })
     }
-    self.ptexture = love.graphics.newImage('graphics/portraits/' .. self.name .. '.png')
-    self.portraits = getSpriteQuads({0, 1, 2}, self.ptexture, PORTRAIT_SIZE, PORTRAIT_SIZE)
     self.direction = 'left'
     self.state = 'idle'
     self.animation = self.animations[self.state]
     self.currentFrame = self.animation:getCurrentFrame()
 
-    -- behavior
+    -- Sprite behaviors
     self.behaviors = nil
     if is_player then
         self.behaviors = {
@@ -89,34 +86,34 @@ function Character:init(name, is_player)
         }
     end
 
-    -- sound effects
-    self.sounds = nil -- love.audio.newSource('sounds/jump.wav', 'static')
+    -- Sprite sound effects
+    self.sounds = nil
 
-    -- scene control
-    self.scene = 0
-    self.sceneFiles = {}
-    for x = 1, NUM_SCENES do
-        self.sceneFiles[x] = "Abelon/scenes/" .. x .. "/" .. self.name .. ".txt"
-    end
+    -- Current game context for this sprite
+    self.scene = nil
     self.currentDialogue = nil
+    self.dialogueResult = nil
 end
 
 -- Modify a character's position
 function Character:resetPosition(new_x, new_y)
+
+    -- Move character to position
     self.x = new_x
     self.y = new_y
+
+    -- Chain character to position so they can't wander too far
     self.leash_x = new_x
     self.leash_y = new_y
-end
 
--- Put a character on a certain map
-function Character:setMap(new_map)
-    self.map = new_map
+    -- Stop character
+    self.dx = 0
+    self.dy = 0
 end
 
 -- Select a character's dialogue and interactions
-function Character:setScene(scene_id)
-    self.scene = scene_id
+function Character:setScene(scene_obj)
+    self.scene = scene_obj
 end
 
 -- Change a character's behavior, and reset their corresponding animation
@@ -140,8 +137,7 @@ function Character:interact(other)
         end
 
         -- Start dialogue with character based on current scene
-        sceneFile = other.sceneFiles[self.scene]
-        self.currentDialogue = Dialogue(sceneFile, self, other)
+        self.currentDialogue = self.scene:getDialogueWith(other)
         other.currentDialogue = self.currentDialogue
         self:changeBehavior('talking')
         other:changeBehavior('talking')
@@ -150,7 +146,7 @@ end
 
 -- Get the coordinates of the closest tile to the character
 function Character:tileOn()
-    return self.map:tileAt(self.x + self.width / 2, self.y + self.height / 2)
+    return self.scene:getMap():tileAt(self.x + self.width / 2, self.y + self.height / 2)
 end
 
 -- Handle all collisions in current frame
@@ -163,16 +159,14 @@ end
 function Character:checkSpriteCollisions()
 
     -- Iterate over all active characters
-    target = nil
-    my_tile = self:tileOn()
-    for name, char in pairs(self.map:getCharacters()) do
-        tile = char:tileOn()
+    local target = nil
+    for name, char in pairs(self.scene:getCharacters()) do
         if char.name ~= self.name then
 
             -- Collision from right or left of target
-            y_inside = (self.y < char.y + char.height) and (self.y + self.height > char.y)
-            right_dist = self.x - (char.x + char.width)
-            left_dist = char.x - (self.x + self.width)
+            local y_inside = (self.y < char.y + char.height) and (self.y + self.height > char.y)
+            local right_dist = self.x - (char.x + char.width)
+            local left_dist = char.x - (self.x + self.width)
             if y_inside and right_dist <= 0 and right_dist > -char.width/2 and self.dx < 0 then
                 self.dx = 0
                 self.x = char.x + char.width
@@ -184,9 +178,9 @@ function Character:checkSpriteCollisions()
             end
 
             -- Collision from below target or above target
-            x_inside = (self.x < char.x + char.width) and (self.x + self.width > char.x)
-            down_dist = self.y - (char.y + char.height)
-            up_dist = char.y - (self.y + self.height)
+            local x_inside = (self.x < char.x + char.width) and (self.x + self.width > char.x)
+            local down_dist = self.y - (char.y + char.height)
+            local up_dist = char.y - (self.y + self.height)
             if x_inside and down_dist <= 0 and down_dist > -char.height/2 and self.dy < 0 then
                 self.dy = 0
                 self.y = char.y + char.height
@@ -207,26 +201,29 @@ function Character:checkMapCollisions()
     -- Final destination to move to
     local x_dest = self.x
     local y_dest = self.y
+    local map = self.scene:getMap()
+    local h = self.height
+    local w = self.width
 
     -- Check for collision from left or right
     if self.dx < 0 then
 
         -- left
-        if self.map:collides(self.map:tileAt(self.x - 1, self.y))
-        or self.map:collides(self.map:tileAt(self.x - 1, self.y + self.height / 2))
-        or self.map:collides(self.map:tileAt(self.x - 1, self.y + self.height - 1)) then
+        if map:collides(map:tileAt(self.x - 1, self.y))
+        or map:collides(map:tileAt(self.x - 1, self.y + h / 2))
+        or map:collides(map:tileAt(self.x - 1, self.y + h - 1)) then
             self.dx = 0
-            x_dest = self.map:tileAt(self.x - 1, self.y).x * self.map.tileWidth
+            x_dest = map:tileAt(self.x - 1, self.y).x * map.tileWidth
         end
 
     elseif self.dx > 0 then
 
         -- right
-        if self.map:collides(self.map:tileAt(self.x + self.width, self.y))
-        or self.map:collides(self.map:tileAt(self.x + self.width, self.y + self.height / 2))
-        or self.map:collides(self.map:tileAt(self.x + self.width, self.y + self.height - 1)) then
+        if map:collides(map:tileAt(self.x + w, self.y))
+        or map:collides(map:tileAt(self.x + w, self.y + h / 2))
+        or map:collides(map:tileAt(self.x + w, self.y + h - 1)) then
             self.dx = 0
-            x_dest = (self.map:tileAt(self.x + self.width, self.y).x - 1) * self.map.tileWidth - self.width
+            x_dest = (map:tileAt(self.x + w, self.y).x - 1) * map.tileWidth - w
         end
     end
 
@@ -234,19 +231,19 @@ function Character:checkMapCollisions()
     if self.dy < 0 then
 
         -- above
-        if self.map:collides(self.map:tileAt(self.x, self.y - 1))
-        or self.map:collides(self.map:tileAt(self.x + self.width - 1, self.y - 1)) then
+        if map:collides(map:tileAt(self.x, self.y - 1))
+        or map:collides(map:tileAt(self.x + w - 1, self.y - 1)) then
             self.dy = 0
-            y_dest = self.map:tileAt(self.x, self.y - 1).y * self.map.tileHeight
+            y_dest = map:tileAt(self.x, self.y - 1).y * map.tileHeight
         end
 
     elseif self.dy > 0 then
 
         -- below
-        if self.map:collides(self.map:tileAt(self.x, self.y + self.height))
-        or self.map:collides(self.map:tileAt(self.x + self.width - 1, self.y + self.height)) then
+        if map:collides(map:tileAt(self.x, self.y + h))
+        or map:collides(map:tileAt(self.x + w - 1, self.y + h)) then
             self.dy = 0
-            y_dest = (self.map:tileAt(self.x, self.y + self.height).y - 1) * self.map.tileHeight - self.height
+            y_dest = (map:tileAt(self.x, self.y + h).y - 1) * map.tileHeight - h
         end
     end
 

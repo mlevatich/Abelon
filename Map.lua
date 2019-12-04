@@ -37,6 +37,9 @@ function Map:init(name)
     self.sprites = generateQuads(self.spritesheet, self.tileWidth, self.tileHeight)
     self.tiles = {}
 
+    -- Transition tiles, with map to transition to and entrance index in new map
+    self.transitions = nil
+
     -- Generate terrain
     for y = 1, self.mapHeight do
         local line = io.read()
@@ -46,12 +49,6 @@ function Map:init(name)
         end
     end
     io.close(mapfile)
-
-    -- Music for this map
-    self.music = love.audio.newSource('music/' .. name .. '.wav', 'static')
-
-    -- List of characters on map
-    self.active_characters = {}
 end
 
 -- Return whether a given tile is collidable
@@ -88,54 +85,21 @@ function Map:setTile(x, y, id)
     self.tiles[(y - 1) * self.mapWidth + x] = id
 end
 
--- Start the map's music
-function Map:startMusic()
-    self.music:setLooping(true)
-    self.music:play()
+-- Update the map
+function Map:update()
+    -- No-op
 end
 
--- Stop the map's music
-function Map:stopMusic()
-    self.music:stop()
-end
-
--- Set a new character to be active on this map
-function Map:addCharacter(char)
-    self.active_characters[char.name] = char
-end
-
--- Remove a character from this map
-function Map:removeCharacter(name)
-    self.active_characters.remove(name)
-end
-
--- Get all characters currently active on the map
-function Map:getCharacters()
-    return self.active_characters
-end
-
--- Update all of the characters active in the current map
-function Map:update(dt)
-    for _, char in pairs(self.active_characters) do
-        char:update(dt)
-    end
-end
-
--- Renders the map to the screen, and all of its active objects
+-- Renders the map to the screen
 function Map:render()
 
-    -- Render tiles
-    for y = 1, self.mapHeight do
-        for x = 1, self.mapWidth do
+    -- Render all non-empty tiles
+    for y=1, self.mapHeight do
+        for x=1, self.mapWidth do
             local tile = self:getTile(x, y)
             if tile ~= TILE_EMPTY then
-                love.graphics.draw(self.spritesheet, self.sprites[tile], (x-1)*self.tileWidth, (y-1)*self.tileHeight)
+                love.graphics.draw(self.spritesheet, self.sprites[tile], (x-1) * self.tileWidth, (y-1) * self.tileHeight)
             end
         end
-    end
-
-    -- Render active characters
-    for _, char in pairs(self.active_characters) do
-        char:render()
     end
 end

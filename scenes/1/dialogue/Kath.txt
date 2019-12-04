@@ -1,36 +1,64 @@
-A: ~Kath 1
+a1: ~Kath 1
 Ho, Abelon! What brings you to the dungeons, my friend? I don't suppose it's anything pleasant, at any rate.
 
-A: ~Abelon 1
+a1: ~Abelon 1
 ...Nothing to concern yourself with, Kath. Routine business on the orders of His Majesty.
 
-A: ~Kath 2
+a1: ~Kath 2
 Keeping the cold iron between us, yet again. Truly, Abelon, is something troubling you?
 
-A: ~CHOICE 0
-A: I'm fine
-B: I'm uneasy
+a1: ~CHOICE 0
+a1: I'm fine
+b1: I'm uneasy
 
-A: ~Kath 2
+a1: ~Kath 2
 Hm...*sigh*. Yes, well, at least let me know if you're going to be terrorizing those poor young inmates, so I can excuse myself for some air.
 I don't care to hear those screams again...
 
-A: ~Abelon 1
+a1: ~Abelon 1
 Your delicate ears have nothing to fear from me, or the prisoners. Good day, Kath.
 
-A: ~Kath 2
+a1: ~Kath 2
 ...Good day, Abelon.
 
+a2: ~Kath 2
+You've changed...
 
-
-B: ~Kath 1
+b1: ~Kath 1
 Ah, the game is up! And what manner of menace dogs your dreams, my fellow knight? It's been a few days of the cold shoulder, and I'll have you know I've been worried!
 
-B: ~Abelon 1
+b1: ~Abelon 1
 You, a worrier? Don't make me laugh. But it's only King Sinclair that's been on my mind lately.
 
-B: ~Kath 3
+b1: ~Kath 3
 The king's premier knight looking after his liege? Sounds... ordinary. Surely there's more to it than that.
 
-B: ~Abelon 1
+b1: ~Abelon 1
 You preempt me, as usual. His Majesty has not been himself lately. His demands have been... strange...
+
+b2: ~Kath 1
+You can't keep secrets from me, Abelon!
+
+
+
+c1: ~Kath 1
+Trying intimidation tactics with the old bastard, hm? Trust me, you'd have better luck trying to scare a rock. He just never backs down!
+
+c1: ~CHOICE 0
+c1: Indeed
+d1: I'll show him
+
+c1: ~Kath 2
+Sheesh...you have to wonder what lit such a fire under him...
+
+d1: ~Kath 2
+Believe me, Abelon, that's what I told myself...
+
+e1: ~Kath 2
+Don't bother trying to figure out what his deal is. Honestly, pulling that kind of stunt in broad daylight..
+
+f1: ~Kath 2
+Crazy old codger... Don't let me catch you heading over there again so soon! He won this round, I'm telling you!
+
+f2: ~Kath 2
+Crazy old codger... Don't let me catch you heading over there again so soon! He won this round, I'm telling you!

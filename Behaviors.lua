@@ -67,7 +67,7 @@ function playerWalking(dt, char)
     end
 
     -- Handle any collisions
-    collided_with = char:checkCollisions()
+    local collided_with = char:checkCollisions()
 
     -- If space is pressed, character tries to interact with a nearby object
     if space then
@@ -88,9 +88,9 @@ function playerTalking(dt, char)
     local space = love.keyboard.wasPressed('space')
 
     if space then
-        local done = char.currentDialogue:continue()
-        if done then
-            char.currentDialogue = nil
+        local result = char.currentDialogue:continue()
+        if result then
+            char.dialogueResult = result
             char:changeBehavior('idle')
         end
     else

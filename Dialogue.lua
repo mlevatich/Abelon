@@ -19,7 +19,7 @@ local CHARS_PER_LINE = math.floor((BOX_WIDTH - BOX_MARGIN*2 - PORTRAIT_SIZE)/(TE
 local BOX_HEIGHT = TEXT_MARGIN_Y*(LINES_PER_PAGE+2) + FONT_SIZE*LINES_PER_PAGE + BOX_MARGIN
 
 -- Initialize a new set of frames
-function Dialogue:init(scriptfile, char1, char2)
+function Dialogue:init(scriptfile, char1, char2, starting_track)
 
     -- Read script file into script data structure
     self.script = {}
@@ -34,10 +34,10 @@ function Dialogue:init(scriptfile, char1, char2)
 
     local i = 1
     while i <= #lines do
-        if lines[i]:sub(4,4) == '~' then
-            speaker = lines[i]:sub(5, #lines[i] - 2)
+        if lines[i]:sub(5,5) == '~' then
+            speaker = lines[i]:sub(6, #lines[i] - 2)
             portrait_id = tonumber(lines[i]:sub(#lines[i], #lines[i]))
-            track = lines[i]:sub(1,1)
+            track = lines[i]:sub(1,2)
             if speaker == 'CHOICE' then
                 self.script[pages] = {
                     ['speaker'] = speaker,
@@ -45,14 +45,14 @@ function Dialogue:init(scriptfile, char1, char2)
                 }
                 while true do
                     i = i + 1
-                    if lines[i]:sub(4,4) == '~' then
+                    if lines[i]:sub(5,5) == '~' then
                         i = i - 1
                         break
                     elseif lines[i] ~= '' then
                         cs = self.script[pages]['choices']
                         cs[#cs+1] = {
-                            ['text'] = lines[i]:sub(4, #lines[i]),
-                            ['track'] = lines[i]:sub(1,1)
+                            ['text'] = lines[i]:sub(5, #lines[i]),
+                            ['track'] = lines[i]:sub(1,2)
                         }
                     end
                 end
@@ -71,18 +71,29 @@ function Dialogue:init(scriptfile, char1, char2)
         i = i + 1
     end
 
-    -- participants
+    -- Participants
     self.char1 = char1
     self.char2 = char2
 
-    -- Keeping track of current position in the dialogue
+    -- Recording current position in the dialogue
     self.page_num = 1
     self.character_num = 0
-    self.timer = 0
     self.waiting = false
+
+    -- Dialogue renders on a timer, one character at a time
+    self.timer = 0
+    self.interval = TEXT_INTERVAL
+
+    -- Handling choices and branching
     self.responding = false
     self.selection = 0
-    self.track = 'A'
+    self.starting_track = starting_track
+    self.track = starting_track
+
+    -- Gobble pages until starting track is found
+    while self.script[self.page_num]['track'] ~= self.track do
+        self.page_num = self.page_num + 1
+    end
 end
 
 -- Get other participant in the dialogue (the one not passed as an argument)
@@ -145,8 +156,8 @@ function Dialogue:update(dt)
     self.timer = self.timer + dt
 
     -- Iteratively subtract interval from timer
-    while self.timer > TEXT_INTERVAL do
-        self.timer = self.timer - TEXT_INTERVAL
+    while self.timer > self.interval do
+        self.timer = self.timer - self.interval
 
         -- If not waiting, go to next character
         if not self.waiting then

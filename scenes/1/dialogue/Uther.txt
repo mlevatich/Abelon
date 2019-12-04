@@ -1,0 +1,37 @@
+a1: ~Abelon 1
+...
+
+a1: ~Uther 3
+...
+
+a1: ~Abelon 1
+...
+
+a1: ~Uther 3
+...Well? Is there something his holy knightliness needs from a lowly prisoner such as myself?
+
+a1: ~CHOICE 0
+a1: Know your place
+b1: Why rebel?
+
+a1: ~Uther 3
+My place, knight, is with my people. I don't suppose you would understand.
+
+a2: ~Uther 3
+I have nothing to say to you.
+
+
+
+b1: ~Uther 3
+A question so foolish does not deserve an answer.
+
+b2: ~Uther 3
+...
+
+
+
+c1: ~Uther 3
+That knight with whom you talk so freely is not all he seems.
+
+c2: ~Uther 3
+........

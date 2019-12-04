@@ -39,3 +39,11 @@ function getSpriteQuads(indices, tex, width, height)
     end
     return frames
 end
+
+-- Print the contents of a table (for debugging)
+function dumpTable(tbl)
+    print("dumping table...")
+    for k, v in pairs(tbl) do
+        print(k .. " | " .. v)
+    end
+end

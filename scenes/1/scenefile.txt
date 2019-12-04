@@ -1,0 +1,10 @@
+Dungeon
+music/Dim_Light.wav
+~
+Abelon 300 300
+Kath 200 400
+Uther 600 600
+~
+Kath B-c1 C-e1 d1-D c1-D e1-D D-f1
+Uther a1-B b1-C D-c1
+~

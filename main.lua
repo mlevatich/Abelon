@@ -43,19 +43,9 @@ function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
 
--- Collect a key release on this frame
-function love.keyboard.wasReleased(key)
-    return love.keyboard.keysReleased[key]
-end
-
 -- Record a keypress on this frame
 function love.keypressed(key)
     love.keyboard.keysPressed[key] = true
-end
-
--- Record a keyrelease on this frame
-function love.keyreleased(key)
-    love.keyboard.keysReleased[key] = true
 end
 
 -- Update each frame, dt is seconds since last frame
