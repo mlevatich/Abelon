@@ -86,6 +86,9 @@ function Character:init(name, is_player)
         }
     end
 
+    -- Sprite's opinion of the player
+    self.impression = 20
+
     -- Sprite sound effects
     self.sounds = nil
 
@@ -121,6 +124,11 @@ function Character:changeBehavior(behavior)
     self.state = behavior
     self.animations[behavior]:restart()
     self.animation = self.animations[behavior]
+end
+
+-- Change a character's impression of the player (cannot drop below zero)
+function Character:changeImpression(value)
+    self.impression = math.max(self.impression + value, 0)
 end
 
 -- Handler for when player presses space to interact with an object

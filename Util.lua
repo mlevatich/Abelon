@@ -47,3 +47,22 @@ function dumpTable(tbl)
         print(k .. " | " .. v)
     end
 end
+
+-- Check if the given table contains the given value
+function contains(t, val)
+    for _, v in pairs(t) do
+        if v == val then
+            return true
+        end
+    end
+    return false
+end
+
+-- Split a spring by whitespace
+function split(str)
+    local list = {}
+    for elem in string.gmatch(str, "%S+") do
+        list[#list+1] = elem
+    end
+    return list
+end

@@ -19,61 +19,69 @@ local CHARS_PER_LINE = math.floor((BOX_WIDTH - BOX_MARGIN*2 - PORTRAIT_SIZE)/(TE
 local BOX_HEIGHT = TEXT_MARGIN_Y*(LINES_PER_PAGE+2) + FONT_SIZE*LINES_PER_PAGE + BOX_MARGIN
 
 -- Initialize a new set of frames
-function Dialogue:init(scriptfile, char1, char2, starting_track)
+function Dialogue:init(scriptfile, char1, char2, characters, starting_track)
 
     -- Read script file into script data structure
+    local page = 1
     self.script = {}
-    local pages = 1
-    local speaker = nil
-    local track = nil
     local lines = {}
-    local portrait_id = nil
     for line in io.lines(scriptfile) do
         lines[#lines+1] = line
     end
 
-    local i = 1
-    while i <= #lines do
-        if lines[i]:sub(5,5) == '~' then
-            speaker = lines[i]:sub(6, #lines[i] - 2)
-            portrait_id = tonumber(lines[i]:sub(#lines[i], #lines[i]))
-            track = lines[i]:sub(1,2)
+    for i=1, #lines do
+        if lines[i]:sub(1,1) == ':' then
+
+            local params = {}
+            for p in string.gmatch(lines[i]:sub(3), "%S+") do
+                if p ~= ':' then
+                    params[#params+1] = p
+                end
+            end
+
+            local portrait_id = tonumber(params[#params])
+            local speaker = params[#params - 1]
+            local tracks = {}
+            for j=1, #params - 2 do
+                tracks[j] = params[j]
+            end
+
             if speaker == 'CHOICE' then
-                self.script[pages] = {
+                self.script[page] = {
                     ['speaker'] = speaker,
+                    ['tracks'] = tracks,
                     ['choices'] = {}
                 }
-                while true do
-                    i = i + 1
-                    if lines[i]:sub(5,5) == '~' then
-                        i = i - 1
-                        break
-                    elseif lines[i] ~= '' then
-                        cs = self.script[pages]['choices']
-                        cs[#cs+1] = {
-                            ['text'] = lines[i]:sub(5, #lines[i]),
-                            ['track'] = lines[i]:sub(1,2)
-                        }
+                for j=1, 2 do
+                    local rest = lines[i+j]:sub(6)
+                    local idx, _ = rest:find(':')
+                    local impressions = {}
+                    for imp in string.gmatch(rest:sub(1, idx-2), "%S+") do
+                        impressions[imp:sub(5)] = tonumber(imp:sub(2,3))
                     end
+                    self.script[page]['choices'][j] = {
+                        ['text'] = rest:sub(idx+2),
+                        ['track'] = lines[i+j]:sub(1,2),
+                        ['impressions'] = impressions
+                    }
                 end
-                pages = pages + 1
+            else
+                self.script[page] = {
+                    ['speaker'] = speaker,
+                    ['portrait'] = portrait_id,
+                    ['text'] = splitByCharLimit(lines[i+1]),
+                    ['length'] = #lines[i+1],
+                    ['tracks'] = tracks
+                }
             end
-        elseif lines[i] ~= '' then
-            self.script[pages] = {
-                ['speaker'] = speaker,
-                ['portrait'] = portrait_id,
-                ['text'] = splitByCharLimit(lines[i]),
-                ['length'] = #lines[i],
-                ['track'] = track
-            }
-            pages = pages + 1
+            page = page + 1
         end
-        i = i + 1
     end
 
     -- Participants
     self.char1 = char1
     self.char2 = char2
+    self.characters = characters
 
     -- Recording current position in the dialogue
     self.page_num = 1
@@ -91,7 +99,7 @@ function Dialogue:init(scriptfile, char1, char2, starting_track)
     self.track = starting_track
 
     -- Gobble pages until starting track is found
-    while self.script[self.page_num]['track'] ~= self.track do
+    while not contains(self.script[self.page_num]['tracks'], self.track) do
         self.page_num = self.page_num + 1
     end
 end
@@ -105,6 +113,19 @@ function Dialogue:getOther(char)
     end
 end
 
+function Dialogue:getNext()
+    -- Gobble pages until starting track is found
+    local next_page = self.page_num + 1
+    while next_page <= #self.script and (not contains(self.script[next_page]['tracks'], self.track)) do
+        next_page = next_page + 1
+    end
+    return next_page
+end
+
+function Dialogue:gotoNext()
+    self.page_num = self:getNext()
+end
+
 -- Called when player hits space while talking, returns true if dialogue over
 function Dialogue:continue()
 
@@ -112,12 +133,16 @@ function Dialogue:continue()
         self.waiting = false
         if self.responding then
             self.responding = false
-            self.track = self.script[self.page_num + 1]['choices'][self.selection]['track']
+            local choice = self.script[self:getNext()]['choices'][self.selection]
+            self.track = choice['track']
+            for k, v in pairs(choice['impressions']) do
+                self.characters[k]:changeImpression(v)
+            end
             self.page_num = self.page_num + 1
         end
         local has_next = false
         for x=self.page_num+1, #self.script do
-            if self.script[x]['speaker'] ~= 'CHOICE' and self.script[x]['track'] == self.track then
+            if self.script[x]['speaker'] ~= 'CHOICE' and contains(self.script[x]['tracks'], self.track) then
                 has_next = true
                 self.page_num = x
                 break
@@ -130,7 +155,7 @@ function Dialogue:continue()
     else
         self.character_num = self.script[self.page_num]['length']
         self.waiting = true
-        if self.page_num ~= #self.script and self.script[self.page_num + 1]['speaker'] == 'CHOICE' then
+        if self:getNext() <= #self.script and self.script[self:getNext()]['speaker'] == 'CHOICE' then
             self.responding = true
             self.selection = 1
         end
@@ -143,7 +168,7 @@ function Dialogue:hover(up)
     if self.responding then
         if up and self.selection ~= 1 then
             self.selection = self.selection - 1
-        elseif not up and self.selection ~= #self.script[self.page_num+1]['choices'] then
+        elseif not up and self.selection ~= #self.script[self:getNext()]['choices'] then
             self.selection = self.selection + 1
         end
     end
@@ -166,7 +191,7 @@ function Dialogue:update(dt)
             -- If reached the end, wait for a continue input
             if self.character_num == self.script[self.page_num]['length'] then
                 self.waiting = true
-                if self.page_num ~= #self.script and self.script[self.page_num + 1]['speaker'] == 'CHOICE' then
+                if self:getNext() <= #self.script and self.script[self:getNext()]['speaker'] == 'CHOICE' then
                     self.responding = true
                     self.selection = 1
                 end
@@ -224,7 +249,7 @@ function Dialogue:render(baseX, baseY)
 
     -- Render dialogue box with choices, and arrow hovering over selection
     if self.responding then
-        local choices = self.script[self.page_num+1]['choices']
+        local choices = self.script[self:getNext()]['choices']
 
         local longest = 0
         for i=1, #choices do

@@ -13,9 +13,7 @@ function Scene:init(id)
 
     -- Read lines of scene file
     local lines = {}
-    local scenefile = 'Abelon/scenes/' .. self.id .. '/scenefile.txt'
-    local portrait_id = nil
-    for line in io.lines(scenefile) do
+    for line in io.lines('Abelon/scenes/' .. self.id .. '/scenefile.txt') do
         lines[#lines+1] = line
     end
 
@@ -25,57 +23,24 @@ function Scene:init(id)
     self.lighting = nil
 
     -- Music track associated with this scene
-    self.music = love.audio.newSource(lines[2], 'static')
+    self.music = love.audio.newSource('music/' .. lines[2] .. '.wav', 'static')
 
     -- Sprite info
-    self.character_data = {}
     self.player = nil
     self.characters = {}
     self.objects = nil
-    local i = 4
-    while lines[i] ~= '~' do
-        local fields = {}
-        local j = 1
-        for elem in string.gmatch(lines[i], "%S+") do
-            fields[j] = elem
-            j = j + 1
-        end
-        
-        self.character_data[i-3] = { ['name'] = fields[1], ['x'] = fields[2], ['y'] = fields[3] }
-        i = i + 1
-    end
-    i = i + 1
 
     -- State of a scene is a capital letter, determines dialogue and cinematic triggers
     self.state = 'A'
 
     -- Dialogue map is indexed by character name, giving a mapping from scene state to starting dialogue track,
     -- and from ending dialogue track to new scene state
+    self.character_data = {}
     self.dialogue_maps = {}
     self.previousDialogue = {}
-    for i=1, #self.character_data do
-        self.previousDialogue[self.character_data[i]['name']] = {}
-        self.dialogue_maps[self.character_data[i]['name']] = {}
-    end
-    while lines[i] ~= '~' do
 
-        local pairs = {}
-        local j = 1
-        for elem in string.gmatch(lines[i], "%S+") do
-            pairs[j] = elem
-            j = j + 1
-        end
-
-        local name = pairs[1]
-        for k=2, #pairs do
-            if pairs[k]:sub(2,2) == '-' then
-                self.dialogue_maps[name][pairs[k]:sub(1,1)] = pairs[k]:sub(3,4)
-            else
-                self.dialogue_maps[name][pairs[k]:sub(1,2)] = pairs[k]:sub(4,4)
-            end
-        end
-        i = i + 1
-    end
+    -- Read into the above three fields from scene file
+    self:readCharacterData(lines)
 
      -- Table of state and position triggers, and associated cinematic object (created via cinematic file)
     self.cinematic_maps = nil
@@ -87,6 +52,37 @@ function Scene:init(id)
     -- Camera that follows coordinates of player character around the scene
     self.cameraX = 0
     self.cameraY = 0
+end
+
+-- Read information about characters and dialogues into scene
+function Scene:readCharacterData(lines)
+
+    -- Iterate over lines of scene file
+    local name = ''
+    for i=4, #lines do
+
+        -- Lines starting with ~ denote a new character
+        if lines[i]:sub(1,1) == '~' then
+
+            -- Initialize data for new character
+            local fields = split(lines[i]:sub(2))
+            name = fields[1]
+            local nchar = #self.character_data + 1
+            self.character_data[nchar] = { ['name'] = name, ['x'] = fields[2], ['y'] = fields[3] }
+            self.previousDialogue[name] = {}
+            self.dialogue_maps[name] = {}
+
+        elseif lines[i] ~= '' then
+
+            -- Read a dialogue mapping for the current character
+            local map = self.dialogue_maps[name]
+            if lines[i]:sub(2,2) == ' ' then
+                map[lines[i]:sub(1,1)] = lines[i]:sub(3,4)
+            else
+                map[lines[i]:sub(1,2)] = lines[i]:sub(4,4)
+            end
+        end
+    end
 end
 
 -- Set characters based on names from scene file
@@ -123,10 +119,11 @@ function Scene:getDialogueWith(other)
     -- Construct filename
     local dialogue_file = 'Abelon/scenes/' .. self.id .. '/dialogue/' .. other.name .. '.txt'
 
-    -- Get starting track from the current state and return dialogue object
-    local starting_track = self.dialogue_maps[other.name][self.state]
-    if not starting_track then
-        starting_track = 'a1'
+    -- Get starting track from the current state
+    local mapping = self.dialogue_maps[other.name][self.state]
+    local starting_track = 'a1'
+    if mapping then
+        starting_track = mapping
     end
 
     -- Change to secondary track of the previous ending track,
@@ -137,7 +134,7 @@ function Scene:getDialogueWith(other)
     end
 
     -- Return dialogue object with starting track
-    return Dialogue(dialogue_file, self.player, other, starting_track)
+    return Dialogue(dialogue_file, self.player, other, self.characters, starting_track)
 end
 
 -- Resume a scene with all characters in their starting positions
