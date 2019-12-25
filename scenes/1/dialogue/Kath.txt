@@ -19,7 +19,7 @@ a1 : (+1)Kath : The Archives
 b1 : (-1)Kath : My secret
 
 : a1 : : Kath 1
-You jest! No one makes it through the Ash without a battalion, supplies, and a week's journey. I would have caught wind of this expedition, surely!
+You jest! No one makes it through the Ash without a battalion and supplies, not to mention it's a week's journey. I would have caught wind of this expedition, surely!
 
 : b1 : : Kath 2
 Abelon, that's... quite a thing to keep secret. Ah well. I know how you are when you've made up your mind.
@@ -27,8 +27,8 @@ Abelon, that's... quite a thing to keep secret. Ah well. I know how you are when
 : a2 : : Kath 1
 I'll have to hear more about this trip of yours to the Ash, but perhaps it's best left for another time.
 
-: b2 : : Kath 1
+: b2 : : Kath 3
 You will tell me eventually, won't you? Or at least His Majesty? If we equipped our mages with those spells of yours, why,
 
-: b2 : : Kath 1
+: b2 : : Kath 3
 this city might survive the winter after all...

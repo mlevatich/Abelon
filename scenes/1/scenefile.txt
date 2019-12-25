@@ -3,7 +3,7 @@ Dim_Light
 
 ~Abelon 300 300
 
-~Kath 200 400
+~Kath 200 250
 
 a1 B
 b1 B

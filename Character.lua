@@ -126,6 +126,11 @@ function Character:changeBehavior(behavior)
     self.animation = self.animations[behavior]
 end
 
+-- Get the character's impression of the player
+function Character:getImpression()
+    return self.impression
+end
+
 -- Change a character's impression of the player (cannot drop below zero)
 function Character:changeImpression(value)
     self.impression = math.max(self.impression + value, 0)

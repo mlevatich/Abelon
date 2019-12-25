@@ -1,16 +1,16 @@
 // Uther isn't supposed to be in castle town at this point in the game, I'm just playing around with another character
 
-: a1 : : Abelon 1
-...
-
 : a1 : : Uther 3
 ...
 
-: a1 : : Abelon 1
-...
-
 : a1 : : Uther 3
+..........
+
+: a1 : Uther<10 : Uther 3
 ...Well? Is there something his holy knightliness needs from a lowly prisoner such as myself?
+
+: a1 : Uther>10 Kath<30 : Uther 3
+What do you want, knight?
 
 : a1 : : CHOICE 0
 a1 : : Know your place

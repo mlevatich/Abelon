@@ -65,19 +65,25 @@ function Dialogue:parseScriptFile(scriptfile)
         if lines[i]:sub(1,1) == ':' then
 
             -- Read parameters from this line
-            local params = {}
-            for p in string.gmatch(lines[i]:sub(3), "%S+") do
-                if p ~= ':' then
-                    params[#params+1] = p
-                end
+            local params = split(lines[i]:sub(3))
+
+            -- Grab speaker and portrait id from end of params
+            local speaker = params[#params-1]
+            local portrait_id = tonumber(params[#params])
+
+            -- Read valid tracks for this line
+            local tracks = {}
+            local j = 1
+            while params[j] ~= ':' do
+                tracks[j] = params[j]
+                j = j + 1
             end
 
-            -- Assign parameters to variables
-            local portrait_id = tonumber(params[#params])
-            local speaker = params[#params - 1]
-            local tracks = {}
-            for j=1, #params - 2 do
-                tracks[j] = params[j]
+            -- Read all impression thresholds required for this line to appear
+            local thresholds = {}
+            while params[j+1] ~= ':' do
+                thresholds[#thresholds+1] = parseThreshold(params[j+1])
+                j = j + 1
             end
 
             -- A line in the script is either a choice or a line of dialogue
@@ -85,6 +91,7 @@ function Dialogue:parseScriptFile(scriptfile)
 
                 -- A choice has a set of tracks and list of choices
                 self.script[page] = {
+                    ['thresholds'] = thresholds,
                     ['tracks'] = tracks,
                     ['choices'] = {}
                 }
@@ -116,6 +123,7 @@ function Dialogue:parseScriptFile(scriptfile)
                     ['portrait'] = portrait_id,
                     ['text'] = splitByCharLimit(lines[i+1], CHARS_PER_LINE),
                     ['length'] = #lines[i+1],
+                    ['thresholds'] = thresholds,
                     ['tracks'] = tracks
                 }
             end
@@ -126,9 +134,50 @@ function Dialogue:parseScriptFile(scriptfile)
     end
 end
 
--- Return true if the dialogue has ended
-function Dialogue:isOver()
-    return (self.page_num > #self.script)
+-- Read a string containing an impression threshold
+function parseThreshold(str)
+
+    -- A threshold is either > some number or < some number
+    if str:find('>') then
+
+        -- Format is 'name>val'
+        local idx, _ = str:find('>')
+        local name = str:sub(1, idx-1)
+        local val = tonumber(str:sub(idx+1))
+
+        -- Return the name of the character and the function to check their impression against
+        return { ['name'] = name, ['test'] = function(n) return n > val end }
+    else
+
+        -- Format is 'name<val'
+        local idx, _ = str:find('<')
+        local name = str:sub(1, idx-1)
+        local val = tonumber(str:sub(idx+1))
+
+        -- Return the name of the character and the function to check their impression against
+        return { ['name'] = name, ['test'] = function(n) return n < val end }
+    end
+end
+
+-- Check if all required thresholds for the given page to be valid are met
+function Dialogue:meetsThresholds(page)
+
+    -- Check if any character's impression doesn't meet the threshold
+    for i=1, #page['thresholds'] do
+
+        -- Get character's impression to test
+        local name = page['thresholds'][i]['name']
+        local impr = self.chars_in_scene[name]:getImpression()
+
+        -- Test impression
+        local test = page['thresholds'][i]['test']
+        if not test(impr) then
+            return false
+        end
+    end
+
+    -- If no threshold failed, they all passed and this page is valid
+    return true
 end
 
 -- Retrieve the number of the next page for this track
@@ -141,8 +190,8 @@ function Dialogue:nextValidPage(skip_choices)
     while page_id <= #self.script do
 
         -- If the page is for the current track (and isn't a choice if we're skipping those), return it
-        local page = self.script[page_id]
-        if contains(page['tracks'], self.track) and not (skip_choices and page['choices']) then
+        local p = self.script[page_id]
+        if contains(p['tracks'], self.track) and self:meetsThresholds(p) and not (skip_choices and p['choices']) then
             return page_id
         end
 
@@ -210,7 +259,7 @@ function Dialogue:advance()
 
         -- Advance to the next page, end dialogue if no more pages
         self:gotoNext()
-        if self:isOver() then
+        if self.page_num > #self.script then
             return self.track
         end
     else
