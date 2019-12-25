@@ -114,13 +114,13 @@ function Scene:getMap()
 end
 
 -- Construct an instance of dialogue with the given character based on the current state
-function Scene:getDialogueWith(other)
+function Scene:getDialogueWith(partner)
 
     -- Construct filename
-    local dialogue_file = 'Abelon/scenes/' .. self.id .. '/dialogue/' .. other.name .. '.txt'
+    local dialogue_file = 'Abelon/scenes/' .. self.id .. '/dialogue/' .. partner.name .. '.txt'
 
     -- Get starting track from the current state
-    local mapping = self.dialogue_maps[other.name][self.state]
+    local mapping = self.dialogue_maps[partner.name][self.state]
     local starting_track = 'a1'
     if mapping then
         starting_track = mapping
@@ -128,13 +128,13 @@ function Scene:getDialogueWith(other)
 
     -- Change to secondary track of the previous ending track,
     -- if already talked on this starting track
-    local previous = self.previousDialogue[other.name][starting_track]
+    local previous = self.previousDialogue[partner.name][starting_track]
     if previous then
         starting_track = previous:sub(1,1) .. '2'
     end
 
     -- Return dialogue object with starting track
-    return Dialogue(dialogue_file, self.player, other, self.characters, starting_track)
+    return Dialogue(dialogue_file, self.player, partner, self.characters, starting_track)
 end
 
 -- Resume a scene with all characters in their starting positions
@@ -190,21 +190,15 @@ function Scene:update(dt)
         char:update(dt)
     end
 
-    -- Collect dialogue result
-    local end_track = self.player.dialogueResult
+    -- Collect dialogue result for the player if there is one
+    local end_track, start_track, talking_to = self.player:getDialogueResults()
     if end_track then
 
-        -- Get mapping
-        local other = self.player.currentDialogue:getOther(self.player)
-        local mapping = self.dialogue_maps[other.name]
-        local start_track = self.player.currentDialogue.starting_track
-
-        -- End the dialogue
-        self.player.currentDialogue = nil
-        self.player.dialogueResult = nil
-        self.previousDialogue[other.name][start_track] = end_track
+        -- Store that this conversation has already happened once
+        self.previousDialogue[talking_to.name][start_track] = end_track
 
         -- Execute state change if there is one
+        local mapping = self.dialogue_maps[talking_to.name]
         if mapping[end_track] then
             self.state = mapping[end_track]
         end

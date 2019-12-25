@@ -22,7 +22,7 @@ function playerIdle(dt, char)
 
     -- If space is pressed, character tries to interact with a nearby object
     if space then
-        char:interact()
+        char:startDialogue()
     end
 end
 
@@ -71,7 +71,7 @@ function playerWalking(dt, char)
 
     -- If space is pressed, character tries to interact with a nearby object
     if space then
-        char:interact(collided_with)
+        char:startDialogue(collided_with)
     end
 end
 
@@ -88,9 +88,9 @@ function playerTalking(dt, char)
     local space = love.keyboard.wasPressed('space')
 
     if space then
-        local result = char.currentDialogue:continue()
+        local result = char.currentDialogue:advance()
         if result then
-            char.dialogueResult = result
+            char.dialogueEndTrack = result
             char:changeBehavior('idle')
         end
     else
@@ -164,10 +164,4 @@ function defaultTalking(dt, char)
     -- Character is still while talking
     char.dx = 0
     char.dy = 0
-
-    -- Player is responsible for finishing the conversation
-    if char.currentDialogue:getOther(char).currentDialogue == nil then
-        char.currentDialogue = nil
-        char:changeBehavior('idle')
-    end
 end

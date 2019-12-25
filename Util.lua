@@ -66,3 +66,36 @@ function split(str)
     end
     return list
 end
+
+-- Split a string into several lines of text based on a maximum
+-- number of characters per line, without breaking up words
+function splitByCharLimit(text, char_limit)
+
+    local lines = {}
+    local i = 1
+    local line_num = 1
+    local holdover_word = ''
+    while i <= #text do
+        lines[line_num] = ''
+        local word = holdover_word
+        for x = 1, char_limit - #holdover_word do
+            if i == #text then
+                lines[line_num] = lines[line_num] .. word .. text:sub(i,i)
+                i = i + 1
+                break
+            else
+                local c = text:sub(i,i)
+                if c == ' ' then
+                    lines[line_num] = lines[line_num] .. word .. ' '
+                    word = ''
+                else
+                    word = word .. c
+                end
+                i = i + 1
+            end
+        end
+        holdover_word = word
+        line_num = line_num + 1
+    end
+    return lines
+end

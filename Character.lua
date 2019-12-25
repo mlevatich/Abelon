@@ -95,7 +95,7 @@ function Character:init(name, is_player)
     -- Current game context for this sprite
     self.scene = nil
     self.currentDialogue = nil
-    self.dialogueResult = nil
+    self.dialogueEndTrack = nil
 end
 
 -- Modify a character's position
@@ -131,25 +131,51 @@ function Character:changeImpression(value)
     self.impression = math.max(self.impression + value, 0)
 end
 
--- Handler for when player presses space to interact with an object
-function Character:interact(other)
+-- When player presses space to interact, a dialogue is started
+function Character:startDialogue(partner)
 
     -- If a character was collided with and space was pressed
-    if other then
+    if partner then
 
         -- Make character face player
-        if other.x <= self.x then
-            other.direction = 'right'
+        if partner.x <= self.x then
+            partner.direction = 'right'
         else
-            other.direction = 'left'
+            partner.direction = 'left'
         end
 
-        -- Start dialogue with character based on current scene
-        self.currentDialogue = self.scene:getDialogueWith(other)
-        other.currentDialogue = self.currentDialogue
+        -- Change behavior to talking for both participants
         self:changeBehavior('talking')
-        other:changeBehavior('talking')
+        partner:changeBehavior('talking')
+
+        -- Start dialogue with character based on current scene
+        self.currentDialogue = self.scene:getDialogueWith(partner)
     end
+end
+
+-- Collect results from a finished dialogue
+function Character:getDialogueResults()
+
+    -- If there is no dialogue result, return nil
+    if not self.dialogueEndTrack then
+        return nil, nil, nil
+    end
+
+    -- Otherwise, collect end track, start track, and conversation partner
+    local end_track = self.dialogueEndTrack
+    local start_track = self.currentDialogue.starting_track
+    local partner = self.currentDialogue.partner
+
+    -- Delete conversation
+    self.currentDialogue = nil
+    self.dialogueEndTrack = nil
+
+    -- Change behaviors to idle
+    self:changeBehavior('idle')
+    partner:changeBehavior('idle')
+
+    -- Return values from dialogue
+    return end_track, start_track, partner
 end
 
 -- Get the coordinates of the closest tile to the character
