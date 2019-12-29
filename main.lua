@@ -23,7 +23,7 @@ function love.load()
     love.window.setTitle('Abelon')
 
     -- Font used by LOVE's text engine
-    love.graphics.setFont(love.graphics.newFont('fonts/font.ttf', FONT_SIZE))
+    love.graphics.setFont(love.graphics.newFont('graphics/fonts/font.ttf', FONT_SIZE))
 
     -- Storing
     love.keyboard.keysPressed = {}

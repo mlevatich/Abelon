@@ -88,17 +88,17 @@ function playerTalking(dt, char)
     local space = love.keyboard.wasPressed('space')
 
     if space then
-        local result = char.currentDialogue:advance()
+        local result = char.current_dialogue:advance()
         if result then
-            char.dialogueEndTrack = result
+            char.dialogue_end_track = result
             char:changeBehavior('idle')
         end
     else
-        char.currentDialogue:update(dt)
+        char.current_dialogue:update(dt)
     end
 
     if u ~= d then
-        char.currentDialogue:hover(u)
+        char.current_dialogue:hover(u)
     end
 end
 

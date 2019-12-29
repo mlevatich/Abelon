@@ -17,17 +17,11 @@ function Game:init()
         ['Uther'] = Character('Uther', false),
     }
 
-    -- All maps in the game
-    self.maps = {
-        ['Dungeon'] = Map('Dungeon')
-    }
-
     -- All scenes in the game
     self.scenes = {}
     for i=1, NUM_SCENES do
         self.scenes[i] = Scene(i)
-        self.scenes[i]:setMap(self.maps)
-        self.scenes[i]:setCharacters(self.cast, self.cast['Abelon'])
+        self.scenes[i]:loadCharacters(self.cast, self.cast['Abelon'])
     end
 
     -- Current scene

@@ -3,103 +3,168 @@ require 'Character'
 
 Map = Class{}
 
--- Dimensions of a tile
-local TILE_WIDTH = 32
-local TILE_HEIGHT = 32
-
--- Tile ids
-TILE_EMPTY = 0
-TILE_BRICK = 1
-TILE_COBBLE = 2
-
 -- constructor for our map object
-function Map:init(name)
+function Map:init(name, tileset, lighting)
 
-    -- Get mapfile and grab first line
-    local mapfile = io.open("Abelon/maps/" .. name .. ".txt", "r")
-    io.input(mapfile)
-    local tokens = {}
-    for s in io.read():gmatch("[^ ]+") do
-        table.insert(tokens, s)
-    end
+    -- Read lines of map file
+    local lines = readLines('Abelon/maps/' .. name .. '.txt')
 
     -- Set map and tile parameters
-    self.tileWidth = TILE_WIDTH
-    self.tileHeight = TILE_HEIGHT
-    self.mapWidth = tonumber(tokens[1])
-    self.mapHeight = tonumber(tokens[2])
-    self.mapWidthPixels = self.tileWidth * self.mapWidth
-    self.mapHeightPixels = self.tileHeight * self.mapHeight
+    local meta = split(lines[1])
+    self.map_width = tonumber(meta[1])
+    self.map_height = tonumber(meta[2])
+
+    -- Read collideable tile ids
+    self.collide_tiles = mapf(tonumber, split(lines[2]))
 
     -- Map texture and tile array
     self.name = name
-    self.spritesheet = love.graphics.newImage('graphics/maps/' .. name .. '.png')
-    self.sprites = generateQuads(self.spritesheet, self.tileWidth, self.tileHeight)
+    self.tilesheet = love.graphics.newImage('graphics/tilesets/' .. name .. '/' .. tileset .. '.png')
+    self.quads = generateQuads(self.tilesheet, TILE_WIDTH, TILE_HEIGHT)
+    self.lighting = lighting
+
+    -- Read tiles from file
     self.tiles = {}
-
-    -- Transition tiles, with map to transition to and entrance index in new map
-    self.transitions = nil
-
-    -- Generate terrain
-    for y = 1, self.mapHeight do
-        local line = io.read()
-        for x = 1, self.mapWidth do
-            tile_id = tonumber(line:sub(x, x))
-            self:setTile(x, y, tile_id)
+    for y = 3, self.map_height + 2 do
+        local l = lines[y]
+        for x = 1, self.map_width do
+            local tile_id = tonumber(l:sub(x, x))
+            self:setTile(x, y - 2, tile_id)
         end
     end
-    io.close(mapfile)
+
+    -- Transition tiles gives the tiles on this map that move to a new map
+    -- Transitions gives the map to move to and the location on that map to start at
+    self.transition_tiles = {}
+    self.transitions = {}
+    for i = self.map_height + 3, #lines do
+        local data = split(lines[i])
+        table.insert(self.transition_tiles, { ['x'] = tonumber(data[1]), ['y'] = tonumber(data[2]) })
+        table.insert(self.transitions, { ['name'] = data[3], ['x'] = tonumber(data[4]), ['y'] = tonumber(data[5]) })
+    end
+
+    -- Characters on the map
+    self.characters = {}
+    self.player = nil
 end
 
--- Return whether a given tile is collidable
+-- Retrieve characters tied to this map
+function Map:getCharacters()
+    return self.characters
+end
+
+-- Populate the map with a character object
+function Map:addCharacter(char, is_player)
+
+    -- Set player object
+    if is_player then
+        self.player = char
+    end
+
+    -- Add to character list
+    self.characters[char:getName()] = char
+end
+
+-- Remove a character object from this map
+function Map:dropCharacter(char)
+    self.characters[char:getName()] = nil
+end
+
+-- Return name of map
+function Map:getName()
+    return self.name
+end
+
+-- Get pixel dimensions of this maps
+function Map:getPixelDimensions()
+    return self.map_width * TILE_WIDTH, self.map_height * TILE_HEIGHT
+end
+
+-- Return whether a given tile is collidable (wall, obstacle)
 function Map:collides(tile)
 
-    -- Define collidable tiles
-    local collidables = { TILE_BRICK }
-
     -- Return true if tile type matches
-    for _, id in pairs(collidables) do
+    for _, id in pairs(self.collide_tiles) do
         if tile.id == id then
             return true
         end
     end
+
+    -- If tile not in collide_tiles, it's walkable
     return false
+end
+
+-- Return whether a pixel coordinate is on the given tile coordinates
+function Map:pixelOnTile(pixel_x, pixel_y, tile_x, tile_y)
+    local tile = self:tileAt(pixel_x, pixel_y)
+    return (tile['x'] == tile_x and tile['y'] == tile_y)
 end
 
 -- Get the tile type at a given pixel coordinate
 function Map:tileAt(x, y)
-    return {
-        x = math.floor(x / self.tileWidth) + 1,
-        y = math.floor(y / self.tileHeight) + 1,
-        id = self:getTile(math.floor(x / self.tileWidth) + 1, math.floor(y / self.tileHeight) + 1)
-    }
+
+    -- Get tile coordinates from pixel coordinates
+    local tile_x = math.floor(x / TILE_WIDTH) + 1
+    local tile_y = math.floor(y / TILE_HEIGHT) + 1
+
+    -- return tile object
+    return { ['x'] = tile_x, ['y'] = tile_y, ['id'] = self:getTile(tile_x, tile_y) }
 end
 
 -- Return the id of the tile at the given coordinate
 function Map:getTile(x, y)
-    return self.tiles[(y - 1) * self.mapWidth + x]
+    return self.tiles[(y - 1) * self.map_width + x]
 end
 
--- Set the tile id at the given coordinate
+-- Set the tile id at the given tile coordinate
 function Map:setTile(x, y, id)
-    self.tiles[(y - 1) * self.mapWidth + x] = id
+    self.tiles[(y - 1) * self.map_width + x] = id
+end
+
+-- Figure out whether a map needs to be switched to, and what map
+function Map:checkTransitionTiles()
+
+    -- Iterate over all transition tiles
+    for i=1, #self.transition_tiles do
+
+        -- If player is on a transition tile, we need to transition to the new map
+        local t = self.transition_tiles[i]
+        if self.player:onTile(t['x'], t['y']) then
+            return self.transitions[i]
+        end
+    end
+
+    -- If no transition, return nil
+    return nil
 end
 
 -- Update the map
-function Map:update()
-    -- No-op
+function Map:update(dt)
+
+    -- Update each character on the map
+    for _, char in pairs(self.characters) do
+        char:update(dt)
+    end
+
+    -- Check if the map needs to be switched
+    return self:checkTransitionTiles()
 end
 
 -- Renders the map to the screen
 function Map:render()
 
     -- Render all non-empty tiles
-    for y=1, self.mapHeight do
-        for x=1, self.mapWidth do
+    for y=1, self.map_height do
+        for x=1, self.map_width do
             local tile = self:getTile(x, y)
-            if tile ~= TILE_EMPTY then
-                love.graphics.draw(self.spritesheet, self.sprites[tile], (x-1) * self.tileWidth, (y-1) * self.tileHeight)
+            if tile then
+                love.graphics.draw(self.tilesheet, self.quads[tile], (x-1) * TILE_WIDTH, (y-1) * TILE_HEIGHT)
             end
         end
+    end
+
+    -- Render all of the characters on the map
+    for _, char in pairs(self.characters) do
+        char:render()
     end
 end

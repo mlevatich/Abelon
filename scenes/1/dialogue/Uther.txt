@@ -6,10 +6,10 @@
 : a1 : : Uther 3
 ..........
 
-: a1 : Uther<10 : Uther 3
+: a1 : Uther<25 : Uther 3
 ...Well? Is there something his holy knightliness needs from a lowly prisoner such as myself?
 
-: a1 : Uther>10 Kath<30 : Uther 3
+: a1 : Uther>25 Kath<30 : Uther 3
 What do you want, knight?
 
 : a1 : : CHOICE 0

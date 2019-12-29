@@ -11,24 +11,16 @@ function Scene:init(id)
     -- Store id
     self.id = id
 
-    -- Read lines of scene file
-    local lines = {}
-    for line in io.lines('Abelon/scenes/' .. self.id .. '/scenefile.txt') do
-        lines[#lines+1] = line
-    end
-
     -- Map info
-    self.map_name = lines[1]
-    self.map = nil
-    self.lighting = nil
+    self.maps = {}
+    self.current_map = nil
 
-    -- Music track associated with this scene
-    self.music = love.audio.newSource('music/' .. lines[2] .. '.wav', 'static')
+    -- Dict from map names to audio sources
+    self.map_to_music = {}
 
     -- Sprite info
-    self.player = nil
     self.characters = {}
-    self.objects = nil
+    self.player = nil
 
     -- State of a scene is a capital letter, determines dialogue and cinematic triggers
     self.state = 'A'
@@ -37,45 +29,70 @@ function Scene:init(id)
     -- and from ending dialogue track to new scene state
     self.character_data = {}
     self.dialogue_maps = {}
-    self.previousDialogue = {}
-
-    -- Read into the above three fields from scene file
-    self:readCharacterData(lines)
+    self.previous_dialogue = {}
 
      -- Table of state and position triggers, and associated cinematic object (created via cinematic file)
-    self.cinematic_maps = nil
-
-    -- Array with indices corresponding to the indices of the map exits. Value is the
-    -- scenario to swtich to upon changing the map, and the map entrance index for the new map
-    self.map_transitions = nil
+    self.cinematic_maps = {}
 
     -- Camera that follows coordinates of player character around the scene
-    self.cameraX = 0
-    self.cameraY = 0
+    self.camera_x = 0
+    self.camera_y = 0
+
+    -- Read into the above fields from scene file
+    self:parseSceneFile()
 end
 
 -- Read information about characters and dialogues into scene
-function Scene:readCharacterData(lines)
+function Scene:parseSceneFile()
+
+    -- Read lines into list
+    local lines = readLines('Abelon/scenes/' .. self.id .. '/scenefile.txt')
 
     -- Iterate over lines of scene file
-    local name = ''
-    for i=4, #lines do
+    local audio_sources = {}
+    local current_map_name = nil
+    local current_char_name = nil
+    for i=1, #lines do
+
+        -- Lines starting with ~~ denote a new map
+        if lines[i]:sub(1,2) == '~~' then
+
+            -- Read data from line
+            local fields = split(lines[i]:sub(3))
+            local map_name, tileset, music_name = fields[1], fields[2], fields[3]
+            current_map_name = map_name
+
+            -- Initialize map and tie it to scene
+            self.maps[map_name] = Map(map_name, tileset, nil)
+
+            -- Maps sharing a music track share a pointer to the audio
+            if not audio_sources[music_name] then
+                audio_sources[music_name] = love.audio.newSource('audio/music/' .. music_name .. '.wav', 'static')
+            end
+            self.map_to_music[map_name] = audio_sources[music_name]
 
         -- Lines starting with ~ denote a new character
-        if lines[i]:sub(1,1) == '~' then
+        elseif lines[i]:sub(1,1) == '~' then
 
             -- Initialize data for new character
             local fields = split(lines[i]:sub(2))
-            name = fields[1]
-            local nchar = #self.character_data + 1
-            self.character_data[nchar] = { ['name'] = name, ['x'] = fields[2], ['y'] = fields[3] }
-            self.previousDialogue[name] = {}
-            self.dialogue_maps[name] = {}
+            current_char_name = fields[1]
 
-        elseif lines[i] ~= '' then
+            -- Initialize character data
+            table.insert(self.character_data, {
+                ['char_name'] = current_char_name,
+                ['map_name'] = current_map_name,
+                ['x'] = fields[2],
+                ['y'] = fields[3]
+            })
+            self.previous_dialogue[current_char_name] = {}
+            self.dialogue_maps[current_char_name] = {}
+
+        -- Other lines are state change mappings
+        elseif lines[i] ~= '' and lines[i]:sub(1,2) ~= '//' then
 
             -- Read a dialogue mapping for the current character
-            local map = self.dialogue_maps[name]
+            local map = self.dialogue_maps[current_char_name]
             if lines[i]:sub(2,2) == ' ' then
                 map[lines[i]:sub(1,1)] = lines[i]:sub(3,4)
             else
@@ -86,31 +103,26 @@ function Scene:readCharacterData(lines)
 end
 
 -- Set characters based on names from scene file
-function Scene:setCharacters(all_characters, player)
+function Scene:loadCharacters(all_characters, player)
 
     -- Denote player character
     self.player = player
 
     -- For each character name, find corresponding character object among all characters
     for i=1, #self.character_data do
-        local name = self.character_data[i]['name']
+        local name = self.character_data[i]['char_name']
         self.characters[name] = all_characters[name]
     end
 end
 
--- Set map based on name from scene file
-function Scene:setMap(all_maps)
-    self.map = all_maps[self.map_name]
-end
-
 -- Return all character objects belonging to this scene
-function Scene:getCharacters()
-    return self.characters
+function Scene:getActiveCharacters()
+    return self.current_map:getCharacters()
 end
 
 -- Return the map belonging to this scene
 function Scene:getMap()
-    return self.map
+    return self.current_map
 end
 
 -- Construct an instance of dialogue with the given character based on the current state
@@ -128,7 +140,7 @@ function Scene:getDialogueWith(partner)
 
     -- Change to secondary track of the previous ending track,
     -- if already talked on this starting track
-    local previous = self.previousDialogue[partner.name][starting_track]
+    local previous = self.previous_dialogue[partner.name][starting_track]
     if previous then
         starting_track = previous:sub(1,1) .. '2'
     end
@@ -140,23 +152,34 @@ end
 -- Resume a scene with all characters in their starting positions
 function Scene:start()
 
-    -- Start music
-    -- self.music:setLooping(true)
-    -- self.music:start()
-
-    -- Set starting positions and scene of each character
+    -- Set starting positions and scene of each character, tie to map
     for _, data in pairs(self.character_data) do
-        local char = self.characters[data['name']]
+
+        -- Set character fields
+        local char = self.characters[data['char_name']]
         char:setScene(self)
         char:resetPosition(tonumber(data['x']), tonumber(data['y']))
+
+        -- Add character info to relevant map
+        local is_player = (char == self.player)
+        self.maps[data['map_name']]:addCharacter(char, is_player)
+        if is_player then
+            self.current_map = self.maps[data['map_name']]
+        end
     end
+
+    -- Start music
+    -- local music = self.map_to_music[self.current_map:getName()]
+    -- music:setLooping(true)
+    -- music:start()
 end
 
 -- End the current scene, but retain its state
 function Scene:stop()
 
     -- Stop music
-    -- self.music:stop()
+    -- local music = self.map_to_music[self.current_map:getName()]
+    -- music:stop()
 
     -- Wipe scene from each character object
     for _, char in pairs(self.characters) do
@@ -165,37 +188,65 @@ function Scene:stop()
     end
 end
 
+-- Switch from one map to another when the player touches a transition tile
+-- and return the scene to change to if there is a scene change
+function Scene:switchMap(transition)
+
+    -- New map
+    local old_map = self.current_map:getName()
+    local new_map = transition['name']
+
+    -- Reset player's position
+    self.player:resetPosition((transition['x'] - 1) * TILE_WIDTH, (transition['y'] - 1) * TILE_HEIGHT)
+
+    -- Move player from old map to new map
+    self.maps[old_map]:dropCharacter(self.player)
+    self.maps[new_map]:addCharacter(self.player, true)
+
+    -- If music is different for new map, stop old music and start new music
+    local old_music = self.map_to_music[old_map]
+    local new_music = self.map_to_music[new_map]
+    if old_music ~= new_music then
+        -- old_music:stop()
+        -- new_music:setLooping(true)
+        -- new_music:start()
+    end
+
+    -- Switch current map to new map
+    self.current_map = self.maps[new_map]
+end
+
 -- Update the camera to center on the player but not cross the map edges
 function Scene:updateCamera()
 
+    -- Get fields from map and player
+    local pixel_width, pixel_height = self.current_map:getPixelDimensions()
+    local x, y = self.player:getPosition()
+    local w, h = self.player:getDimensions()
+
     -- Update the x position of the camera to center on the player character
-    local camMaxX = math.min(self.map.mapWidthPixels - VIRTUAL_WIDTH, self.player.x + self.player.width/2)
-    local camPlayerX = self.player.x + self.player.width/2 - VIRTUAL_WIDTH/2
-    self.cameraX = math.max(0, math.min(camPlayerX, camMaxX))
+    local cam_max_x = math.min(pixel_width - VIRTUAL_WIDTH, x + w/2)
+    local cam_player_x = x + w/2 - VIRTUAL_WIDTH/2
+    self.camera_x = math.max(0, math.min(cam_player_x, cam_max_x))
 
     -- Update the y position of the camera to center on the player character
-    local camMaxY = math.min(self.map.mapHeightPixels - VIRTUAL_HEIGHT, self.player.y + self.player.height/2)
-    local camPlayerY = self.player.y + self.player.height/2 - VIRTUAL_HEIGHT/2
-    self.cameraY = math.max(0, math.min(camPlayerY, camMaxY))
+    local cam_max_y = math.min(pixel_height - VIRTUAL_HEIGHT, y + w/2)
+    local cam_player_y = y + h/2 - VIRTUAL_HEIGHT/2
+    self.camera_y = math.max(0, math.min(cam_player_y, cam_max_y))
 end
 
 -- Update all of the characters and objects in a scene
 function Scene:update(dt)
 
-    -- Update the scene's map
-    self.map:update()
-
-    -- Update each character in the scene
-    for _, char in pairs(self.characters) do
-        char:update(dt)
-    end
+    -- Update the scene's map and characters
+    local transition = self.current_map:update(dt)
 
     -- Collect dialogue result for the player if there is one
     local end_track, start_track, talking_to = self.player:getDialogueResults()
     if end_track then
 
         -- Store that this conversation has already happened once
-        self.previousDialogue[talking_to.name][start_track] = end_track
+        self.previous_dialogue[talking_to.name][start_track] = end_track
 
         -- Execute state change if there is one
         local mapping = self.dialogue_maps[talking_to.name]
@@ -204,26 +255,27 @@ function Scene:update(dt)
         end
     end
 
+    -- Switch map if a map transition was requested
+    if transition then
+        self:switchMap(transition)
+    end
+
     -- Update camera position
     self:updateCamera()
+
+    -- No scene change
+    return nil
 end
 
 -- Render the map and characters of the scene at the current position, along with active dialogue
 function Scene:render()
 
     -- Move to the camera position
-    love.graphics.translate(-self.cameraX, -self.cameraY)
+    love.graphics.translate(-self.camera_x, -self.camera_y)
 
     -- Render the map
-    self.map:render()
-
-    -- Render all of the characters on the map
-    for _, char in pairs(self.characters) do
-        char:render()
-    end
+    self.current_map:render()
 
     -- Render current dialogue if the player is talking to someone
-    if self.player.currentDialogue then
-        self.player.currentDialogue:render(self.cameraX, self.cameraY)
-    end
+    self.player:renderDialogue(self.camera_x, self.camera_y)
 end

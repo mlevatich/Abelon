@@ -5,8 +5,11 @@ require 'Dialogue'
 
 Character = Class{}
 
+-- Dimensions of a tile
+TILE_WIDTH = 32
+TILE_HEIGHT = 32
+
 -- Class constants
-local ANIMATION_SPEED = 6.5
 local WIDTH = 32
 local HEIGHT = 40
 
@@ -37,26 +40,14 @@ function Character:init(name, is_player)
 
     -- Sprite animations
     self.animations = {
-        ['idle'] = Animation({
-            texture = self.texture,
-            frames = getSpriteQuads({0}, self.texture, self.width, self.height),
-            interval = 1 / ANIMATION_SPEED
-        }),
-        ['walking'] = Animation({
-            texture = self.textures,
-            frames = getSpriteQuads({1, 2, 3, 2}, self.texture, self.width, self.height),
-            interval = 1 / ANIMATION_SPEED
-        }),
-        ['talking'] = Animation({
-            texture = self.texture,
-            frames = getSpriteQuads({0}, self.texture, self.width, self.height),
-            interval = 1 / ANIMATION_SPEED
-        })
+        ['idle'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height)),
+        ['walking'] = Animation(getSpriteQuads({1, 2, 3, 2}, self.texture, self.width, self.height)),
+        ['talking'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height))
     }
     self.direction = 'left'
     self.state = 'idle'
     self.animation = self.animations[self.state]
-    self.currentFrame = self.animation:getCurrentFrame()
+    self.current_frame = self.animation:getCurrentFrame()
 
     -- Sprite behaviors
     self.behaviors = nil
@@ -94,8 +85,34 @@ function Character:init(name, is_player)
 
     -- Current game context for this sprite
     self.scene = nil
-    self.currentDialogue = nil
-    self.dialogueEndTrack = nil
+    self.current_dialogue = nil
+    self.dialogue_end_track = nil
+end
+
+-- Get character's name
+function Character:getName()
+    return self.name
+end
+
+-- Get character's position
+function Character:getPosition()
+    return self.x, self.y
+end
+
+-- Get character's dimensions
+function Character:getDimensions()
+    return self.width, self.height
+end
+
+
+-- Get the character's impression of the player
+function Character:getImpression()
+    return self.impression
+end
+
+-- Select a character's dialogue and interactions
+function Character:setScene(scene_obj)
+    self.scene = scene_obj
 end
 
 -- Modify a character's position
@@ -114,21 +131,11 @@ function Character:resetPosition(new_x, new_y)
     self.dy = 0
 end
 
--- Select a character's dialogue and interactions
-function Character:setScene(scene_obj)
-    self.scene = scene_obj
-end
-
 -- Change a character's behavior, and reset their corresponding animation
 function Character:changeBehavior(behavior)
     self.state = behavior
     self.animations[behavior]:restart()
     self.animation = self.animations[behavior]
-end
-
--- Get the character's impression of the player
-function Character:getImpression()
-    return self.impression
 end
 
 -- Change a character's impression of the player (cannot drop below zero)
@@ -154,7 +161,7 @@ function Character:startDialogue(partner)
         partner:changeBehavior('talking')
 
         -- Start dialogue with character based on current scene
-        self.currentDialogue = self.scene:getDialogueWith(partner)
+        self.current_dialogue = self.scene:getDialogueWith(partner)
     end
 end
 
@@ -162,18 +169,18 @@ end
 function Character:getDialogueResults()
 
     -- If there is no dialogue result, return nil
-    if not self.dialogueEndTrack then
+    if not self.dialogue_end_track then
         return nil, nil, nil
     end
 
     -- Otherwise, collect end track, start track, and conversation partner
-    local end_track = self.dialogueEndTrack
-    local start_track = self.currentDialogue.starting_track
-    local partner = self.currentDialogue.partner
+    local end_track = self.dialogue_end_track
+    local start_track = self.current_dialogue.starting_track
+    local partner = self.current_dialogue.partner
 
     -- Delete conversation
-    self.currentDialogue = nil
-    self.dialogueEndTrack = nil
+    self.current_dialogue = nil
+    self.dialogue_end_track = nil
 
     -- Change behaviors to idle
     self:changeBehavior('idle')
@@ -183,9 +190,18 @@ function Character:getDialogueResults()
     return end_track, start_track, partner
 end
 
--- Get the coordinates of the closest tile to the character
-function Character:tileOn()
-    return self.scene:getMap():tileAt(self.x + self.width / 2, self.y + self.height / 2)
+-- Check whether a character is on a tile
+function Character:onTile(x, y)
+
+    -- Check if the tile matches the tile at any corner of the character
+    local map = self.scene:getMap()
+    local nw = map:pixelOnTile(self.x, self.y, x, y)
+    local sw = map:pixelOnTile(self.x, self.y + self.height, x, y)
+    local ne = map:pixelOnTile(self.x + self.width, self.y, x, y)
+    local se = map:pixelOnTile(self.x + self.width, self.y + self.height, x, y)
+
+    -- Return any match
+    return nw or sw or ne or se
 end
 
 -- Handle all collisions in current frame
@@ -199,7 +215,7 @@ function Character:checkSpriteCollisions()
 
     -- Iterate over all active characters
     local target = nil
-    for name, char in pairs(self.scene:getCharacters()) do
+    for name, char in pairs(self.scene:getActiveCharacters()) do
         if char.name ~= self.name then
 
             -- Collision from right or left of target
@@ -252,7 +268,7 @@ function Character:checkMapCollisions()
         or map:collides(map:tileAt(self.x - 1, self.y + h / 2))
         or map:collides(map:tileAt(self.x - 1, self.y + h - 1)) then
             self.dx = 0
-            x_dest = map:tileAt(self.x - 1, self.y).x * map.tileWidth
+            x_dest = map:tileAt(self.x - 1, self.y).x * TILE_WIDTH
         end
 
     elseif self.dx > 0 then
@@ -262,7 +278,7 @@ function Character:checkMapCollisions()
         or map:collides(map:tileAt(self.x + w, self.y + h / 2))
         or map:collides(map:tileAt(self.x + w, self.y + h - 1)) then
             self.dx = 0
-            x_dest = (map:tileAt(self.x + w, self.y).x - 1) * map.tileWidth - w
+            x_dest = (map:tileAt(self.x + w, self.y).x - 1) * TILE_WIDTH - w
         end
     end
 
@@ -273,7 +289,7 @@ function Character:checkMapCollisions()
         if map:collides(map:tileAt(self.x, self.y - 1))
         or map:collides(map:tileAt(self.x + w - 1, self.y - 1)) then
             self.dy = 0
-            y_dest = map:tileAt(self.x, self.y - 1).y * map.tileHeight
+            y_dest = map:tileAt(self.x, self.y - 1).y * TILE_HEIGHT
         end
 
     elseif self.dy > 0 then
@@ -282,7 +298,7 @@ function Character:checkMapCollisions()
         if map:collides(map:tileAt(self.x, self.y + h))
         or map:collides(map:tileAt(self.x + w - 1, self.y + h)) then
             self.dy = 0
-            y_dest = (map:tileAt(self.x, self.y + h).y - 1) * map.tileHeight - h
+            y_dest = (map:tileAt(self.x, self.y + h).y - 1) * TILE_HEIGHT - h
         end
     end
 
@@ -302,11 +318,20 @@ function Character:update(dt)
 
     -- Update frame of animation
     self.animation:update(dt)
-    self.currentFrame = self.animation:getCurrentFrame()
+    self.current_frame = self.animation:getCurrentFrame()
 
     -- Update position based on velocity
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt
+end
+
+-- Render the player's dialogue at the camera coordinates
+function Character:renderDialogue(cam_x, cam_y)
+
+    -- Only render dialogue if it exists
+    if self.current_dialogue then
+        self.current_dialogue:render(cam_x, cam_y)
+    end
 end
 
 -- Render a character to the screen
@@ -319,5 +344,5 @@ function Character:render()
     end
 
     -- Draw sprite at position
-    love.graphics.draw(self.texture, self.currentFrame, self.x+self.xoff, self.y+self.yoff, 0, d, 1, self.xoff, self.yoff)
+    love.graphics.draw(self.texture, self.current_frame, self.x+self.xoff, self.y+self.yoff, 0, d, 1, self.xoff, self.yoff)
 end

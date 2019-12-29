@@ -21,15 +21,6 @@ function generateQuads(atlas, tilewidth, tileheight)
     return quads
 end
 
--- Absolute value function
-function abs(val)
-    if val < 0 then
-        return -val
-    else
-        return val
-    end
-end
-
 -- Get the quads listed in indices from the sprite's texture
 function getSpriteQuads(indices, tex, width, height)
     frames = {}
@@ -40,11 +31,21 @@ function getSpriteQuads(indices, tex, width, height)
     return frames
 end
 
--- Print the contents of a table (for debugging)
-function dumpTable(tbl)
-    print("dumping table...")
-    for k, v in pairs(tbl) do
-        print(k .. " | " .. v)
+-- Map a function over a table's values
+function mapf(func, tbl)
+    local new_tbl = {}
+    for k,v in pairs(tbl) do
+        new_tbl[k] = func(v)
+    end
+    return new_tbl
+end
+
+-- Absolute value function
+function abs(val)
+    if val < 0 then
+        return -val
+    else
+        return val
     end
 end
 
@@ -67,35 +68,19 @@ function split(str)
     return list
 end
 
--- Split a string into several lines of text based on a maximum
--- number of characters per line, without breaking up words
-function splitByCharLimit(text, char_limit)
-
+-- Read a file into a table of lines
+function readLines(filename)
     local lines = {}
-    local i = 1
-    local line_num = 1
-    local holdover_word = ''
-    while i <= #text do
-        lines[line_num] = ''
-        local word = holdover_word
-        for x = 1, char_limit - #holdover_word do
-            if i == #text then
-                lines[line_num] = lines[line_num] .. word .. text:sub(i,i)
-                i = i + 1
-                break
-            else
-                local c = text:sub(i,i)
-                if c == ' ' then
-                    lines[line_num] = lines[line_num] .. word .. ' '
-                    word = ''
-                else
-                    word = word .. c
-                end
-                i = i + 1
-            end
-        end
-        holdover_word = word
-        line_num = line_num + 1
+    for l in io.lines(filename) do
+        table.insert(lines, l)
     end
     return lines
+end
+
+-- Print the contents of a table (for debugging)
+function dumpTable(tbl)
+    print("dumping table...")
+    for k, v in pairs(tbl) do
+        print(k .. " | " .. v)
+    end
 end

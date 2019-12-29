@@ -1,13 +1,16 @@
-Dungeon
-Dim_Light
+~~Dungeon standard Dim_Light
 
 ~Abelon 300 300
-
-~Kath 200 250
-
-a1 B
-b1 B
 
 ~Uther 600 600
 
 B c1
+
+~~Palace standard Dim_Light
+
+~Kath 400 250
+
+a1 B
+b1 B
+
+// TODO: if a character's position changes due to a state change, add it after the state change (or cinematic?)

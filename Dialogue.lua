@@ -51,14 +51,9 @@ end
 -- Read the lines from the script file into the script data structure
 function Dialogue:parseScriptFile(scriptfile)
 
-    -- Read script file line-by-line
-    local lines = {}
-    for line in io.lines(scriptfile) do
-        lines[#lines+1] = line
-    end
-
     -- Read lines and store into script
     local page = 1
+    local lines = readLines(scriptfile)
     for i=1, #lines do
 
         -- A starting colon signals a new choice or line of dialogue, other lines are ignored
@@ -422,4 +417,37 @@ function Dialogue:render(x, y)
         local choices = self:getNext()['choices']
         self:renderChoice(choices, x, y, flip)
     end
+end
+
+-- Split a string into several lines of text based on a maximum
+-- number of characters per line, without breaking up words
+function splitByCharLimit(text, char_limit)
+
+    local lines = {}
+    local i = 1
+    local line_num = 1
+    local holdover_word = ''
+    while i <= #text do
+        lines[line_num] = ''
+        local word = holdover_word
+        for x = 1, char_limit - #holdover_word do
+            if i == #text then
+                lines[line_num] = lines[line_num] .. word .. text:sub(i,i)
+                i = i + 1
+                break
+            else
+                local c = text:sub(i,i)
+                if c == ' ' then
+                    lines[line_num] = lines[line_num] .. word .. ' '
+                    word = ''
+                else
+                    word = word .. c
+                end
+                i = i + 1
+            end
+        end
+        holdover_word = word
+        line_num = line_num + 1
+    end
+    return lines
 end
