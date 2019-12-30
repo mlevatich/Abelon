@@ -2,6 +2,12 @@ require 'Util'
 
 local WALKING_SPEED = 140
 
+-- Player halts
+function playerStill(dt, char)
+    char.dx = 0
+    char.dy = 0
+end
+
 -- Player controlled idle behavior
 function playerIdle(dt, char)
 

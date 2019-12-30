@@ -38,6 +38,10 @@ function Scene:init(id)
     self.camera_x = 0
     self.camera_y = 0
 
+    -- Rendering information
+    self.alpha = 1
+    self.fade_to = nil
+
     -- Read into the above fields from scene file
     self:parseSceneFile()
 end
@@ -190,14 +194,15 @@ end
 
 -- Switch from one map to another when the player touches a transition tile
 -- and return the scene to change to if there is a scene change
-function Scene:switchMap(transition)
+function Scene:performTransition()
 
     -- New map
+    local tr = self.in_transition
     local old_map = self.current_map:getName()
-    local new_map = transition['name']
+    local new_map = tr['name']
 
     -- Reset player's position
-    self.player:resetPosition((transition['x'] - 1) * TILE_WIDTH, (transition['y'] - 1) * TILE_HEIGHT)
+    self.player:resetPosition(tr['x'], tr['y'])
 
     -- Move player from old map to new map
     self.maps[old_map]:dropCharacter(self.player)
@@ -214,6 +219,37 @@ function Scene:switchMap(transition)
 
     -- Switch current map to new map
     self.current_map = self.maps[new_map]
+    self.in_transition = nil
+end
+
+-- Initiate, update, and perform map transitions and the associated fade-out and in
+function Scene:updateTransition(transition)
+
+    -- Start new transition if an argument was provided
+    if transition then
+        self.player:changeBehavior('still')
+        self.in_transition = transition
+    end
+
+    -- When fade out is complete, perform switch
+    if self.alpha == 0 then
+        self:performTransition()
+    end
+
+    -- If in a transition, fade out
+    if self.in_transition then
+        self.alpha = math.max(0, self.alpha - 0.05)
+    end
+
+    -- If map has switched, fade in until alpha is full
+    if not self.in_transition and self.alpha < 1 then
+        self.alpha = math.min(1, self.alpha + 0.05)
+
+        -- End transition when alpha is full
+        if self.alpha == 1 then
+            self.player:changeBehavior('idle')
+        end
+    end
 end
 
 -- Update the camera to center on the player but not cross the map edges
@@ -239,7 +275,7 @@ end
 function Scene:update(dt)
 
     -- Update the scene's map and characters
-    local transition = self.current_map:update(dt)
+    local new_transition = self.current_map:update(dt)
 
     -- Collect dialogue result for the player if there is one
     local end_track, start_track, talking_to = self.player:getDialogueResults()
@@ -255,10 +291,8 @@ function Scene:update(dt)
         end
     end
 
-    -- Switch map if a map transition was requested
-    if transition then
-        self:switchMap(transition)
-    end
+    -- Update current transition or initiate new one
+    self:updateTransition(new_transition)
 
     -- Update camera position
     self:updateCamera()
@@ -274,6 +308,7 @@ function Scene:render()
     love.graphics.translate(-self.camera_x, -self.camera_y)
 
     -- Render the map
+    love.graphics.setColor(255, 255, 255, self.alpha)
     self.current_map:render()
 
     -- Render current dialogue if the player is talking to someone

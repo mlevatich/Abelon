@@ -40,6 +40,7 @@ function Character:init(name, is_player)
 
     -- Sprite animations
     self.animations = {
+        ['still'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height)),
         ['idle'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height)),
         ['walking'] = Animation(getSpriteQuads({1, 2, 3, 2}, self.texture, self.width, self.height)),
         ['talking'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height))
@@ -53,6 +54,9 @@ function Character:init(name, is_player)
     self.behaviors = nil
     if is_player then
         self.behaviors = {
+            ['still'] = function(dt)
+                playerStill(dt, self)
+            end,
             ['idle'] = function(dt)
                 playerIdle(dt, self)
             end,
@@ -190,18 +194,38 @@ function Character:getDialogueResults()
     return end_track, start_track, partner
 end
 
--- Check whether a character is on a tile
+-- Check whether a character is on a tile and return displacement
 function Character:onTile(x, y)
 
     -- Check if the tile matches the tile at any corner of the character
     local map = self.scene:getMap()
-    local nw = map:pixelOnTile(self.x, self.y, x, y)
-    local sw = map:pixelOnTile(self.x, self.y + self.height, x, y)
-    local ne = map:pixelOnTile(self.x + self.width, self.y, x, y)
-    local se = map:pixelOnTile(self.x + self.width, self.y + self.height, x, y)
 
-    -- Return any match
-    return nw or sw or ne or se
+    -- Check northwest tile
+    local match, new_x, new_y = map:pixelOnTile(self.x, self.y, x, y)
+    if match then
+        return true, new_x, new_y
+    end
+
+    -- Check northeast tile
+    match, new_x, new_y = map:pixelOnTile(self.x + self.width, self.y, x, y)
+    if match then
+        return true, new_x - self.width, new_y
+    end
+
+    -- Check southwest tile
+    match, new_x, new_y = map:pixelOnTile(self.x, self.y + self.height, x, y)
+    if match then
+        return true, new_x, new_y - self.height
+    end
+
+    -- Check southeast tile
+    match, new_x, new_y = map:pixelOnTile(self.x + self.width, self.y + self.height, x, y)
+    if match then
+        return true, new_x - self.width, new_y - self.height
+    end
+
+    -- Return nil if no match
+    return false, nil, nil
 end
 
 -- Handle all collisions in current frame
@@ -335,7 +359,7 @@ function Character:renderDialogue(cam_x, cam_y)
 end
 
 -- Render a character to the screen
-function Character:render()
+function Character:render(alpha)
 
     -- Set direction of sprite to draw
     local d = 1

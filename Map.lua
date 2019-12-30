@@ -38,9 +38,15 @@ function Map:init(name, tileset, lighting)
     self.transition_tiles = {}
     self.transitions = {}
     for i = self.map_height + 3, #lines do
+
+        -- Transition tiles
         local data = split(lines[i])
         table.insert(self.transition_tiles, { ['x'] = tonumber(data[1]), ['y'] = tonumber(data[2]) })
-        table.insert(self.transitions, { ['name'] = data[3], ['x'] = tonumber(data[4]), ['y'] = tonumber(data[5]) })
+
+        -- Transition
+        local pixel_x = (tonumber(data[4]) - 1) * TILE_WIDTH
+        local pixel_y = (tonumber(data[5]) - 1) * TILE_HEIGHT
+        table.insert(self.transitions, { ['name'] = data[3], ['x'] = pixel_x, ['y'] = pixel_y })
     end
 
     -- Characters on the map
@@ -96,8 +102,17 @@ end
 
 -- Return whether a pixel coordinate is on the given tile coordinates
 function Map:pixelOnTile(pixel_x, pixel_y, tile_x, tile_y)
+
+    -- Get tile and check if it's a match
     local tile = self:tileAt(pixel_x, pixel_y)
-    return (tile['x'] == tile_x and tile['y'] == tile_y)
+    if (tile['x'] == tile_x and tile['y'] == tile_y) then
+        local origin_x = (tile_x - 1) * TILE_WIDTH
+        local origin_y = (tile_y - 1) * TILE_HEIGHT
+        return true, pixel_x - origin_x, pixel_y - origin_y
+    end
+
+    -- if no match, return nil
+    return false
 end
 
 -- Get the tile type at a given pixel coordinate
@@ -128,9 +143,11 @@ function Map:checkTransitionTiles()
     for i=1, #self.transition_tiles do
 
         -- If player is on a transition tile, we need to transition to the new map
-        local t = self.transition_tiles[i]
-        if self.player:onTile(t['x'], t['y']) then
-            return self.transitions[i]
+        local tt = self.transition_tiles[i]
+        local t = self.transitions[i]
+        local on, xd, yd = self.player:onTile(tt['x'], tt['y'])
+        if on then
+            return { ['name'] = t['name'], ['x'] = t['x'] + xd, ['y'] = t['y'] + yd }
         end
     end
 
