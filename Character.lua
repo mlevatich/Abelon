@@ -29,8 +29,6 @@ function Character:init(name, is_player)
     -- Size
     self.width = WIDTH
     self.height = HEIGHT
-    self.xoff = WIDTH / 2
-    self.yoff = HEIGHT / 2
 
     -- Sprite textures
     self.name = name
@@ -148,16 +146,31 @@ function Character:changeImpression(value)
 end
 
 -- When player presses space to interact, a dialogue is started
-function Character:startDialogue(partner)
+function Character:startDialogue()
 
-    -- If a character was collided with and space was pressed
+    -- Get nearby partner
+    local partner = nil
+    for _, char in pairs(self.scene:getActiveCharacters()) do
+        if char.name ~= self.name then
+
+            -- Check if character is close
+            if self:AABB(char, 10) then
+                partner = char
+                break
+            end
+        end
+    end
+
+    -- If a conversation partner is available, start the dialogue
     if partner then
 
-        -- Make character face player
+        -- Participants face each other
         if partner.x <= self.x then
             partner.direction = 'right'
+            self.direction = 'left'
         else
             partner.direction = 'left'
+            self.direction = 'right'
         end
 
         -- Change behavior to talking for both participants
@@ -228,109 +241,130 @@ function Character:onTile(x, y)
     return false, nil, nil
 end
 
+-- Check if the given character is within an offset distance to self
+function Character:AABB(char, offset)
+    local x_inside = (self.x < char.x + char.width + offset) and (self.x + self.width > char.x - offset)
+    local y_inside = (self.y < char.y + char.height + offset) and (self.y + self.height > char.y - offset)
+    return x_inside and y_inside
+end
+
 -- Handle all collisions in current frame
 function Character:checkCollisions()
     self:checkMapCollisions()
-    return self:checkSpriteCollisions()
+    self:checkSpriteCollisions()
 end
 
 -- Handle collisions with other sprites for this character
 function Character:checkSpriteCollisions()
 
     -- Iterate over all active characters
-    local target = nil
-    for name, char in pairs(self.scene:getActiveCharacters()) do
+    for _, char in pairs(self.scene:getActiveCharacters()) do
         if char.name ~= self.name then
 
             -- Collision from right or left of target
+            local x_move = nil
             local y_inside = (self.y < char.y + char.height) and (self.y + self.height > char.y)
             local right_dist = self.x - (char.x + char.width)
             local left_dist = char.x - (self.x + self.width)
             if y_inside and right_dist <= 0 and right_dist > -char.width/2 and self.dx < 0 then
-                self.dx = 0
-                self.x = char.x + char.width
-                target = char
+                x_move = char.x + char.width
             elseif y_inside and left_dist <= 0 and left_dist > -char.width/2 and self.dx > 0 then
-                self.dx = 0
-                self.x = char.x - self.width
-                target = char
+                x_move = char.x - self.width
             end
 
             -- Collision from below target or above target
+            local y_move = nil
             local x_inside = (self.x < char.x + char.width) and (self.x + self.width > char.x)
             local down_dist = self.y - (char.y + char.height)
             local up_dist = char.y - (self.y + self.height)
             if x_inside and down_dist <= 0 and down_dist > -char.height/2 and self.dy < 0 then
-                self.dy = 0
-                self.y = char.y + char.height
-                target = char
+                y_move = char.y + char.height
             elseif x_inside and up_dist <= 0 and up_dist > -char.height/2 and self.dy > 0 then
-                self.dy = 0
-                self.y = char.y - self.height
-                target = char
+                y_move = char.y - self.height
+            end
+
+            -- Perform shorter move
+            if x_move and y_move then
+                if abs(x_move - self.x) < abs(y_move - self.y) then
+                    self.x = x_move
+                else
+                    self.y = y_move
+                end
+            elseif x_move then
+                self.x = x_move
+            elseif y_move then
+                self.y = y_move
             end
         end
     end
-    return target
 end
 
 -- Handle map collisions for this character
 function Character:checkMapCollisions()
 
-    -- Final destination to move to
-    local x_dest = self.x
-    local y_dest = self.y
+    -- Convenience variables
     local map = self.scene:getMap()
     local h = self.height
     local w = self.width
 
-    -- Check for collision from left or right
-    if self.dx < 0 then
+    -- Check all surrounding tiles
+    local above_left = map:collides(map:tileAt(self.x, self.y - 1))
+    local above_right = map:collides(map:tileAt(self.x + w - 1, self.y - 1))
 
-        -- left
-        if map:collides(map:tileAt(self.x - 1, self.y))
-        or map:collides(map:tileAt(self.x - 1, self.y + h / 2))
-        or map:collides(map:tileAt(self.x - 1, self.y + h - 1)) then
-            self.dx = 0
-            x_dest = map:tileAt(self.x - 1, self.y).x * TILE_WIDTH
+    local below_left = map:collides(map:tileAt(self.x, self.y + h))
+    local below_right = map:collides(map:tileAt(self.x + w - 1, self.y + h))
+
+    local right = map:collides(map:tileAt(self.x + w, self.y + h / 2))
+    local right_above = map:collides(map:tileAt(self.x + w, self.y))
+    local right_below = map:collides(map:tileAt(self.x + w, self.y + h - 1))
+
+    local left = map:collides(map:tileAt(self.x - 1, self.y + h / 2))
+    local left_above = map:collides(map:tileAt(self.x - 1, self.y))
+    local left_below = map:collides(map:tileAt(self.x - 1, self.y + h - 1))
+
+    -- Conditions for a collision
+    local above_condition = (above_left and above_right)
+                         or (above_left and not left and not left_below)
+                         or (above_right and not right and not right_below)
+
+    local below_condition = (below_left and below_right)
+                         or (below_left and not left and not left_above)
+                         or (below_right and not right and not right_above)
+
+    local left_condition = (left_above and left)
+                        or (left_below and left)
+                        or (left_above and not above_right)
+                        or (left_below and not below_right)
+
+    local right_condition = (right_above and right)
+                         or (right_below and right)
+                         or (right_above and not above_left)
+                         or (right_below and not below_left)
+
+    -- Perform up-down move if it's small enough
+    if above_condition then
+        local y_move = map:tileAt(self.x, self.y - 1).y * TILE_HEIGHT
+        if abs(y_move - self.y) <= 3 then
+            self.y = y_move
         end
-
-    elseif self.dx > 0 then
-
-        -- right
-        if map:collides(map:tileAt(self.x + w, self.y))
-        or map:collides(map:tileAt(self.x + w, self.y + h / 2))
-        or map:collides(map:tileAt(self.x + w, self.y + h - 1)) then
-            self.dx = 0
-            x_dest = (map:tileAt(self.x + w, self.y).x - 1) * TILE_WIDTH - w
+    elseif below_condition then
+        local y_move = (map:tileAt(self.x, self.y + h).y - 1) * TILE_HEIGHT - h
+        if abs(y_move - self.y) <= 3 then
+            self.y = y_move
         end
     end
 
-    -- Check for collision from above or below
-    if self.dy < 0 then
-
-        -- above
-        if map:collides(map:tileAt(self.x, self.y - 1))
-        or map:collides(map:tileAt(self.x + w - 1, self.y - 1)) then
-            self.dy = 0
-            y_dest = map:tileAt(self.x, self.y - 1).y * TILE_HEIGHT
+    -- perform left-right move if it's small enough
+    if left_condition then
+        local x_move = map:tileAt(self.x - 1, self.y).x * TILE_WIDTH
+        if abs(x_move - self.x) <= 3 then
+            self.x = x_move
         end
-
-    elseif self.dy > 0 then
-
-        -- below
-        if map:collides(map:tileAt(self.x, self.y + h))
-        or map:collides(map:tileAt(self.x + w - 1, self.y + h)) then
-            self.dy = 0
-            y_dest = (map:tileAt(self.x, self.y + h).y - 1) * TILE_HEIGHT - h
+    elseif right_condition then
+        local x_move = (map:tileAt(self.x + w, self.y).x - 1) * TILE_WIDTH - w
+        if abs(x_move - self.x) <= 3 then
+            self.x = x_move
         end
-    end
-
-    -- Push sprite to destination of lowest distance
-    if abs(x_dest - self.x) < abs(y_dest - self.y) then
-        self.x = x_dest
-    else
-        self.y = y_dest
     end
 end
 
@@ -347,6 +381,9 @@ function Character:update(dt)
     -- Update position based on velocity
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt
+
+    -- Handle collisions with walls or sprites
+    self:checkCollisions()
 end
 
 -- Render the player's dialogue at the camera coordinates
@@ -368,5 +405,7 @@ function Character:render(alpha)
     end
 
     -- Draw sprite at position
-    love.graphics.draw(self.texture, self.current_frame, self.x+self.xoff, self.y+self.yoff, 0, d, 1, self.xoff, self.yoff)
+    local xoff = self.width / 2
+    local yoff = self.height / 2
+    love.graphics.draw(self.texture, self.current_frame, self.x + xoff, self.y + yoff, 0, d, 1, xoff, yoff)
 end

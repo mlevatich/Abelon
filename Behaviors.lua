@@ -72,12 +72,9 @@ function playerWalking(dt, char)
         char:changeBehavior('idle')
     end
 
-    -- Handle any collisions
-    local collided_with = char:checkCollisions()
-
     -- If space is pressed, character tries to interact with a nearby object
     if space then
-        char:startDialogue(collided_with)
+        char:startDialogue()
     end
 end
 
@@ -159,9 +156,6 @@ function defaultWalking(dt, char)
     if math.random() <= 0.05 then
         char:changeBehavior('idle')
     end
-
-    -- Handle any collisions
-    char:checkCollisions()
 end
 
 -- NPC talking behavior
