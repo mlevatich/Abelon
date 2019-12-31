@@ -11,8 +11,8 @@ function Map:init(name, tileset, lighting)
 
     -- Set map and tile parameters
     local meta = split(lines[1])
-    self.map_width = tonumber(meta[1])
-    self.map_height = tonumber(meta[2])
+    self.width = tonumber(meta[1])
+    self.height = tonumber(meta[2])
 
     -- Read collideable tile ids
     self.collide_tiles = mapf(tonumber, split(lines[2]))
@@ -21,13 +21,17 @@ function Map:init(name, tileset, lighting)
     self.name = name
     self.tilesheet = love.graphics.newImage('graphics/tilesets/' .. name .. '/' .. tileset .. '.png')
     self.quads = generateQuads(self.tilesheet, TILE_WIDTH, TILE_HEIGHT)
-    self.lighting = lighting
+
+    -- Lighting
+    self.lit = 0.5
+    self.ambient = { ['r'] = 20/255, ['g'] = 20/255, ['b'] = 40/255 }
+    self.lights = { { ['x'] = 800, ['y'] = 200, ['r'] = 248/255, ['g'] = 195/255, ['b'] = 119/255, ['intensity'] = 300 } }
 
     -- Read tiles from file
     self.tiles = {}
-    for y = 3, self.map_height + 2 do
+    for y = 3, self.height + 2 do
         local l = lines[y]
-        for x = 1, self.map_width do
+        for x = 1, self.width do
             local tile_id = tonumber(l:sub(x, x))
             self:setTile(x, y - 2, tile_id)
         end
@@ -37,7 +41,7 @@ function Map:init(name, tileset, lighting)
     -- Transitions gives the map to move to and the location on that map to start at
     self.transition_tiles = {}
     self.transitions = {}
-    for i = self.map_height + 3, #lines do
+    for i = self.height + 3, #lines do
 
         -- Transition tiles
         local data = split(lines[i])
@@ -83,7 +87,7 @@ end
 
 -- Get pixel dimensions of this maps
 function Map:getPixelDimensions()
-    return self.map_width * TILE_WIDTH, self.map_height * TILE_HEIGHT
+    return self.width * TILE_WIDTH, self.height * TILE_HEIGHT
 end
 
 -- Return whether a given tile is collidable (wall, obstacle)
@@ -115,6 +119,12 @@ function Map:pixelOnTile(pixel_x, pixel_y, tile_x, tile_y)
     return false
 end
 
+function Map:tileCenter(x, y)
+    local x_center = (x - 1) * TILE_WIDTH + TILE_WIDTH/2
+    local y_center = (y - 1) * TILE_HEIGHT + TILE_HEIGHT/2
+    return x_center, y_center
+end
+
 -- Get the tile type at a given pixel coordinate
 function Map:tileAt(x, y)
 
@@ -128,12 +138,12 @@ end
 
 -- Return the id of the tile at the given coordinate
 function Map:getTile(x, y)
-    return self.tiles[(y - 1) * self.map_width + x]
+    return self.tiles[(y - 1) * self.width + x]
 end
 
 -- Set the tile id at the given tile coordinate
 function Map:setTile(x, y, id)
-    self.tiles[(y - 1) * self.map_width + x] = id
+    self.tiles[(y - 1) * self.width + x] = id
 end
 
 -- Figure out whether a map needs to be switched to, and what map
@@ -167,12 +177,64 @@ function Map:update(dt)
     return self:checkTransitionTiles()
 end
 
+-- Light the whole map with the ambient light level
+function Map:applyAmbientLight(cam_x, cam_y)
+    love.graphics.setColor(self.ambient[1]/255, self.ambient[2]/255, self.ambient[3]/255, self.ambient[4])
+    love.graphics.rectangle("fill", cam_x, cam_y, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+end
+
+-- Light each tile based on their proximity to the map's light sources
+function Map:applyLightSources()
+
+    -- Iterate over all tiles
+    for x=1, self.width do
+        for y=1, self.height do
+
+            -- For each tile, add the light coming in from every source on the map
+            local alpha = self.lit
+            local total = { ['r'] = self.ambient['r'], ['g'] = self.ambient['g'], ['b'] = self.ambient['b'] }
+            for i=1, #self.lights do
+
+                -- Calculate distance between light and tile
+                local l = self.lights[i]
+                local xc, yc = self:tileCenter(x, y)
+                local dist = math.sqrt((l['x'] - xc) * (l['x'] - xc) + (l['y'] - yc) * (l['y'] - yc))
+
+                -- Calculate whether light reaches tile using bresenhem (short circuit if initial dist is too big)
+
+                -- Add this light's intensity to total based on distance
+                local contribution = math.max(0, (l['intensity'] - dist) / l['intensity'])
+                for _, c in pairs({'r', 'g', 'b'}) do
+                    total[c] = math.min(1, total[c] + contribution * l[c])
+                end
+                alpha = alpha * (1 - contribution)
+            end
+
+            -- Draw rectangle of light at the calculated total intensity over tile
+            love.graphics.setColor(total['r'], total['g'], total['b'], alpha)
+            love.graphics.rectangle("fill", (x - 1) * TILE_WIDTH, (y - 1) * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
+        end
+    end
+end
+
+-- Apply all lighting effects
+function Map:applyLighting()
+
+    -- Ambient light over whole map
+    --self:applyAmbientLight()
+
+    -- Individual light sources if the map is currently lit
+    if self.lit then
+        self:applyLightSources()
+    end
+end
+
 -- Renders the map to the screen
-function Map:render()
+function Map:render(cam_x, cam_y)
 
     -- Render all non-empty tiles
-    for y=1, self.map_height do
-        for x=1, self.map_width do
+    for y=1, self.height do
+        for x=1, self.width do
             local tile = self:getTile(x, y)
             if tile then
                 love.graphics.draw(self.tilesheet, self.quads[tile], (x-1) * TILE_WIDTH, (y-1) * TILE_HEIGHT)
@@ -184,4 +246,7 @@ function Map:render()
     for _, char in pairs(self.characters) do
         char:render()
     end
+
+    -- Apply lighting effects to map
+    self:applyLighting()
 end

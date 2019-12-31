@@ -308,8 +308,8 @@ function Scene:render()
     love.graphics.translate(-self.camera_x, -self.camera_y)
 
     -- Render the map
-    love.graphics.setColor(255, 255, 255, self.alpha)
-    self.current_map:render()
+    love.graphics.setColor(1, 1, 1, self.alpha)
+    self.current_map:render(self.camera_x, self.camera_y)
 
     -- Render current dialogue if the player is talking to someone
     self.player:renderDialogue(self.camera_x, self.camera_y)
