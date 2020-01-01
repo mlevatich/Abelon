@@ -22,11 +22,6 @@ function Map:init(name, tileset, lighting)
     self.tilesheet = love.graphics.newImage('graphics/tilesets/' .. name .. '/' .. tileset .. '.png')
     self.quads = generateQuads(self.tilesheet, TILE_WIDTH, TILE_HEIGHT)
 
-    -- Lighting
-    self.lit = 0.5
-    self.ambient = { ['r'] = 20/255, ['g'] = 20/255, ['b'] = 40/255 }
-    self.lights = { { ['x'] = 800, ['y'] = 200, ['r'] = 248/255, ['g'] = 195/255, ['b'] = 119/255, ['intensity'] = 300 } }
-
     -- Read tiles from file
     self.tiles = {}
     for y = 3, self.height + 2 do
@@ -41,16 +36,39 @@ function Map:init(name, tileset, lighting)
     -- Transitions gives the map to move to and the location on that map to start at
     self.transition_tiles = {}
     self.transitions = {}
-    for i = self.height + 3, #lines do
+    local idx = self.height + 5
+    while lines[idx] ~= '' do
 
         -- Transition tiles
-        local data = split(lines[i])
+        local data = split(lines[idx])
         table.insert(self.transition_tiles, { ['x'] = tonumber(data[1]), ['y'] = tonumber(data[2]) })
 
         -- Transition
         local pixel_x = (tonumber(data[4]) - 1) * TILE_WIDTH
         local pixel_y = (tonumber(data[5]) - 1) * TILE_HEIGHT
         table.insert(self.transitions, { ['name'] = data[3], ['x'] = pixel_x, ['y'] = pixel_y })
+        idx = idx + 1
+    end
+
+    -- Lighting data
+    self.lit = tonumber(lines[idx+2])
+    self.ambient = mapf(tonumber, split(lines[idx+3]))
+    self.lights = {}
+    idx = idx + 4
+    while idx <= #lines do
+
+        -- Each line is a single light source
+        local data = mapf(tonumber, split(lines[idx]))
+        local xc, yc = self:tileCenter(data[1], data[2])
+        table.insert(self.lights, {
+            ['x'] = xc,
+            ['y'] = yc,
+            ['r'] = data[3]/255,
+            ['g'] = data[4]/255,
+            ['b'] = data[5]/255,
+            ['intensity'] = data[6]
+        })
+        idx = idx + 1
     end
 
     -- Characters on the map
@@ -177,12 +195,6 @@ function Map:update(dt)
     return self:checkTransitionTiles()
 end
 
--- Light the whole map with the ambient light level
-function Map:applyAmbientLight(cam_x, cam_y)
-    love.graphics.setColor(self.ambient[1]/255, self.ambient[2]/255, self.ambient[3]/255, self.ambient[4])
-    love.graphics.rectangle("fill", cam_x, cam_y, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-end
-
 -- Light each tile based on their proximity to the map's light sources
 function Map:applyLightSources()
 
@@ -192,7 +204,7 @@ function Map:applyLightSources()
 
             -- For each tile, add the light coming in from every source on the map
             local alpha = self.lit
-            local total = { ['r'] = self.ambient['r'], ['g'] = self.ambient['g'], ['b'] = self.ambient['b'] }
+            local total = { ['r'] = self.ambient[1]/255, ['g'] = self.ambient[2]/255, ['b'] = self.ambient[3]/255 }
             for i=1, #self.lights do
 
                 -- Calculate distance between light and tile
@@ -219,9 +231,6 @@ end
 
 -- Apply all lighting effects
 function Map:applyLighting()
-
-    -- Ambient light over whole map
-    --self:applyAmbientLight()
 
     -- Individual light sources if the map is currently lit
     if self.lit then
