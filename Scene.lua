@@ -86,8 +86,8 @@ function Scene:parseSceneFile()
             table.insert(self.character_data, {
                 ['char_name'] = current_char_name,
                 ['map_name'] = current_map_name,
-                ['x'] = fields[2],
-                ['y'] = fields[3]
+                ['x'] = (fields[2] - 1) * TILE_WIDTH,
+                ['y'] = (fields[3] - 1) * TILE_HEIGHT
             })
             self.previous_dialogue[current_char_name] = {}
             self.dialogue_maps[current_char_name] = {}
