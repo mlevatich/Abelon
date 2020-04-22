@@ -17,6 +17,7 @@ function playerIdle(dt, char)
     local u = love.keyboard.isDown('up')
     local d = love.keyboard.isDown('down')
     local space = love.keyboard.wasPressed('space')
+    local inv = love.keyboard.wasPressed('e')
 
     -- If any direction is tapped, start walking, otherwise set velocity to zero
     if not (l == r) or not (u == d) then
@@ -26,8 +27,11 @@ function playerIdle(dt, char)
         char.dy = 0
     end
 
-    -- If space is pressed, character tries to interact with a nearby object
-    if space then
+    -- If e is pressed, the inventory opens. Otherwise, if space is pressed,
+    -- character tries to interact with a nearby object
+    if inv then
+        char:openInventory()
+    elseif space then
         char:startDialogue()
     end
 end
@@ -41,6 +45,7 @@ function playerWalking(dt, char)
     local u = love.keyboard.isDown('up')
     local d = love.keyboard.isDown('down')
     local space = love.keyboard.wasPressed('space')
+    local inv = love.keyboard.wasPressed('e')
 
     -- If a left/right direction is held, set x velocity and direction
     local continue = false
@@ -72,8 +77,11 @@ function playerWalking(dt, char)
         char:changeBehavior('idle')
     end
 
-    -- If space is pressed, character tries to interact with a nearby object
-    if space then
+    -- If e is pressed, the inventory opens. Otherwise, if space is pressed,
+    -- character tries to interact with a nearby object
+    if inv then
+        char:openInventory()
+    elseif space then
         char:startDialogue()
     end
 end
@@ -102,6 +110,35 @@ function playerTalking(dt, char)
 
     if u ~= d then
         char.current_dialogue:hover(u)
+    end
+end
+
+-- Player in-menu behavior
+function playerBrowsing(dt, char)
+
+    -- Character is still while a menu is open
+    char.dx = 0
+    char.dy = 0
+
+    -- Read keypresses
+    local l = love.keyboard.wasPressed('left')
+    local r = love.keyboard.wasPressed('right')
+    local u = love.keyboard.wasPressed('up')
+    local d = love.keyboard.wasPressed('down')
+    local e = love.keyboard.wasPressed('e')
+    local enter = love.keyboard.wasPressed('return')
+    local esc = love.keyboard.wasPressed('escape')
+
+    if esc or e then
+        char.open_menu:reset()
+        char.open_menu = nil
+        char:changeBehavior('idle')
+    elseif l then
+        char.open_menu:back()
+    elseif r or enter then
+        char.open_menu:forward()
+    elseif u ~= d then
+        char.open_menu:hover(u)
     end
 end
 

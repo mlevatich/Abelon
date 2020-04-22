@@ -278,7 +278,7 @@ function Scene:update(dt)
     local new_transition = self.current_map:update(dt)
 
     -- Collect dialogue result for the player if there is one
-    local end_track, start_track, talking_to = self.player:getDialogueResults()
+    local end_track, start_track, talking_to = self.player:dialogueResults()
     if end_track then
 
         -- Store that this conversation has already happened once
@@ -313,4 +313,7 @@ function Scene:render()
 
     -- Render current dialogue if the player is talking to someone
     self.player:renderDialogue(self.camera_x, self.camera_y)
+
+    -- Render current menu layout if the player is in inventory/shop
+    self.player:renderMenu(self.camera_x, self.camera_y)
 end

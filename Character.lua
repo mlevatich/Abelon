@@ -2,6 +2,7 @@ require 'Util'
 require 'Animation'
 require 'Behaviors'
 require 'Dialogue'
+require 'Menu'
 
 Character = Class{}
 
@@ -41,7 +42,8 @@ function Character:init(name, is_player)
         ['still'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height)),
         ['idle'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height)),
         ['walking'] = Animation(getSpriteQuads({1, 2, 3, 2}, self.texture, self.width, self.height)),
-        ['talking'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height))
+        ['talking'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height)),
+        ['browsing'] = Animation(getSpriteQuads({0}, self.texture, self.width, self.height))
     }
     self.direction = 'left'
     self.state = 'idle'
@@ -49,8 +51,38 @@ function Character:init(name, is_player)
     self.current_frame = self.animation:getCurrentFrame()
 
     -- Sprite behaviors
-    self.behaviors = nil
+    self.behaviors = {
+        ['idle'] = function(dt)
+            defaultIdle(dt, self)
+        end,
+        ['walking'] = function(dt)
+            defaultWalking(dt, self)
+        end,
+        ['talking'] = function(dt)
+            defaultTalking(dt, self)
+        end
+    }
+
+    -- Sprite's posessions
+    self.items = nil
+
+    -- Sprite's battle skills
+    self.skills = nil
+
+    -- Sprite's opinion of the player
+    self.impression = 20
+
+    -- Sprite sound effects
+    self.sounds = nil
+
+    -- Current scene
+    self.scene = nil
+
+    -- Extra configuration if the sprite is Abelon, the player character
+    -- TODO: player should be a superclass
     if is_player then
+
+        -- Abelon has different behaviors to account for the player's keyboard input
         self.behaviors = {
             ['still'] = function(dt)
                 playerStill(dt, self)
@@ -63,32 +95,43 @@ function Character:init(name, is_player)
             end,
             ['talking'] = function(dt)
                 playerTalking(dt, self)
+            end,
+            ['browsing'] = function(dt)
+                playerBrowsing(dt, self)
             end
         }
-    else
-        self.behaviors = {
-            ['idle'] = function(dt)
-                defaultIdle(dt, self)
-            end,
-            ['walking'] = function(dt)
-                defaultWalking(dt, self)
-            end,
-            ['talking'] = function(dt)
-                defaultTalking(dt, self)
-            end
+
+        -- Abelon can be in dialogue with other characters
+        self.current_dialogue = nil
+        self.dialogue_end_track = nil
+
+        -- Abelon's starting inventory
+        local base_inventory = {
+            {['name'] = 'Items', ['children'] = {
+                {['name'] = "Abelon's Axe", ['action'] = pass},
+                {['name'] = "Abelon's Cloak", ['action'] = pass}
+            }},
+            {['name'] = 'Party', ['children'] = {
+                {['name'] = "Abelon", ['action'] = pass},
+                {['name'] = "Kath", ['action'] = pass},
+                {['name'] = "Luci", ['action'] = pass}
+            }},
+            {['name'] = 'Settings', ['children'] = {
+                {['name'] = "Difficulty", ['action'] = pass},
+                {['name'] = "Video", ['action'] = pass},
+                {['name'] = "Audio", ['action'] = pass},
+                {['name'] = "Controls", ['action'] = pass}
+            }},
+            { ['name'] = 'Quicksave', ['action'] = function() love.event.quit(0) end }
         }
+        self.inventory = Menu(nil, base_inventory, BOX_MARGIN, BOX_MARGIN)
+
+        -- Abelon can open menus, like shops and the inventory
+        self.open_menu = nil
+
+        -- Abelon has a 'party' of other characters
+        self.party_members = nil
     end
-
-    -- Sprite's opinion of the player
-    self.impression = 20
-
-    -- Sprite sound effects
-    self.sounds = nil
-
-    -- Current game context for this sprite
-    self.scene = nil
-    self.current_dialogue = nil
-    self.dialogue_end_track = nil
 end
 
 -- Get character's name
@@ -145,6 +188,16 @@ function Character:changeImpression(value)
     self.impression = math.max(self.impression + value, 0)
 end
 
+-- When player presses i to open the inventory, the inventory menu appears and
+function Character:openInventory()
+
+    -- Change player behavior to menu-browsing
+    self:changeBehavior('browsing')
+
+    -- Set the inventory to be open
+    self.open_menu = self.inventory
+end
+
 -- When player presses space to interact, a dialogue is started
 function Character:startDialogue()
 
@@ -183,7 +236,7 @@ function Character:startDialogue()
 end
 
 -- Collect results from a finished dialogue
-function Character:getDialogueResults()
+function Character:dialogueResults()
 
     -- If there is no dialogue result, return nil
     if not self.dialogue_end_track then
@@ -392,6 +445,15 @@ function Character:renderDialogue(cam_x, cam_y)
     -- Only render dialogue if it exists
     if self.current_dialogue then
         self.current_dialogue:render(cam_x, cam_y)
+    end
+end
+
+-- Render the player's open menus at the camera coordinates
+function Character:renderMenu(cam_x, cam_y)
+
+    -- Only render menu if it exists
+    if self.open_menu then
+        self.open_menu:render(cam_x, cam_y)
     end
 end
 

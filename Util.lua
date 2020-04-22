@@ -40,6 +40,17 @@ function mapf(func, tbl)
     return new_tbl
 end
 
+-- Get maximum number in a table
+function max(tbl)
+    local best = -100000
+    for i=1, #tbl do
+        if tbl[i] > best then
+            best = tbl[i]
+        end
+    end
+    return best
+end
+
 -- Absolute value function
 function abs(val)
     if val < 0 then
@@ -77,10 +88,23 @@ function readLines(filename)
     return lines
 end
 
--- Print the contents of a table (for debugging)
-function dumpTable(tbl)
-    print("dumping table...")
-    for k, v in pairs(tbl) do
-        print(k .. " | " .. v)
+-- Converts a table or primitive into a readable string
+function toString(var)
+    if type(var) == 'table' then
+        local s = '{ '
+        for k,v in pairs(o) do
+            if type(k) ~= 'number' then k = '"' .. k .. '"' end
+            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
+        end
+        return s .. '} '
+    else
+        return tostring(var)
     end
 end
+
+-- Print the contents of any variable
+function dump(var)
+    print(toString(var))
+end
+
+function pass() end
