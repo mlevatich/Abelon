@@ -84,7 +84,7 @@ Hunters find game here, important to keep path clear.
 SCRIPT
 ******
 
-PROLOGUE
+SCENE: PROLOGUE
 
 // black screen
 
@@ -93,8 +93,9 @@ PROLOGUE
 // Slow fade in to Abelon standing in the middle of a summoning circle drawn in blood, in a clearing in a forest.
 // An open book lies on the ground nearby. The player gains control without any fanfare.
 
-- Book - "An open book lies on the ground, full of strange drawings and hastily scrawled paragraphs. The writing
-          is faded and barely legible, and the pages practically crumble to dust at the slightest touch."
+- Interact - Book - "An open book lies on the ground, full of strange drawings and hastily scrawled paragraphs.
+                     The writing is faded and barely legible, and the pages practically crumble to dust at the
+                     slightest touch."
 
 // Moving to the east through the clearing entrance, out of sight of the summoning circle,
 // triggers the following cinematic
@@ -187,7 +188,7 @@ A: Nothing we can't handle (Kath +1 impression)
     *If not in final fight*
 
         Kath: "Do save your ignea for our reunion with the knights, though. I suspect we'll need that spell again
-               when the real fight begins. Even I can see that unholy fire was no cheap cantrip."
+               when the real fight begins, and even I can tell that unholy fire was no cheap cantrip."
 
 *Kath dies*
 
@@ -243,12 +244,16 @@ Kath: "But look here. This trail of blood came dribbling from that wolf's mouth.
 // The player gains control of Abelon, and Kath follows behind. The player may choose to go north following the blood,
 // or continue east towards the north gate.
 
-THE HUNTER
+SCENE: THE HUNTER
 
 
 
-WITHIN EARSHOT
+SCENE: WITHIN EARSHOT
 
 
 
-THE CRYSTAL WOLF
+SCENE: THE CRYSTAL WOLF
+
+
+
+SCENE: THE HUNTED
