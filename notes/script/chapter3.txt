@@ -1,0 +1,24 @@
+****************************
+CHAPTER 3: Across the Sonder
+****************************
+
+
+
+*****
+NOTES
+*****
+
+Sonder is huge and full of stuff. Like a mini open world.
+
+Kath can act as a narrator in the first half when Abelon doesn't talk much.
+
+There are decisions on expeditions such as in the Sonder, but they won't cause fail states,
+only provide certain rewards.
+
+There is a New Years celebration on the road during expedition 1.
+
+
+
+******
+SCRIPT
+******

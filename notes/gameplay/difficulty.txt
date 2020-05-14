@@ -1,0 +1,9 @@
+On Normal difficulty, battles are designed to be beatable with fair ignea and cobalt usage and decent strategy,
+without necessarily exploring the map. Map goodies will make the battles easier and allow for more mistakes.
+
+On Adept difficulty, battles are beatable with excellent strategy and significant resource usage, requiring the player
+to explore the map thoroughly in order to have enough resources to win all of the battles.
+
+On Master difficulty, there is no save scumming, only a quicksave, and a single loss in battle deletes the save file.
+
+Difficulty can be lowered but not raised.

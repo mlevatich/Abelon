@@ -1,0 +1,254 @@
+***************************
+CHAPTER 1: The Forest Stirs
+***************************
+
+
+
+*****
+NOTES
+*****
+
+Kath can act as a narrator in the first half when Abelon doesn't talk much.
+
+Features must be present:
+Presentation
+Dialogue choice, many options
+Cinematic
+Stickers, blocking objects, interaction objects
+Two interacting quest states
+Interaction results: get item, get ability, costume change, quest state change
+Fail state
+Inventory
+Environment interact
+Combat, EXP
+Level Up
+
+In the forest to the north of Ebonach. Map is drawn in notebook.
+
+A monster attack has come from the north and west – wolves. Abelon, Kath, and some of the knights were dispatched to
+the north, where the enemy was strongest, but they have struggled to repel the monsters.
+
+Amidst the fighting, Abelon disappears. Kath notices, and leaves the fighting to look for him. Abelon,
+feeling the situation to be dire, left to find a spot to cast an incantation from his book. In a clearing
+to the west, having shaken the wolves off his trail, Abelon begins the ritual, hoping to return to the fight
+with renewed power and turn the tide.
+
+injured hunter, either look for wornfleet leaves, or go to lester the healer to get them.
+
+Further option to confuse kath by commenting on how much he knows about medicine.
+
+costume change when the knight is healed
+
+present leaves to knight
+
+many dialogue choices when talking to kath/lester.
+
+find a medallion in the grass somewhere, not used till chapter 1
+
+interact with environment to pick up leaves.
+
+three battles – first wolf, then a few wolves, then the big fight. Second fight causes a level up.
+
+In the big fight, condition to talk to lester if you found the knight but haven't healed him. Must kill all wolves,
+prevent them from entering city. More knights saved = bigger reward. If lester dies or you wait until after the fight
+to talk to him, it's too late to save the knight. Lester must leave during the fight.
+
+In the big fight, the boss wolf has ignea crystals embedded in him. Cause for concern.
+
+Fail state if you pick up the wrong leaf, then insist on finding the right one. When you get to the last battle,
+all the knights will be dead and it will be unwinnable.
+
+Couple optional fights in the north. Result in the area being cleared for hunters. You can do these after the big fight,
+if you want. If you choose to engage them before the big fight, it will also lead to the fail state of being too late.
+You can only do these if you have the resources left after the big fight – enough ignea and health.
+
+Saving the injured knight earns the biggest reward of the chapter. Maybe he tells you to come visit him in the barracks
+afterwards? Something new in chapter 1.
+
+Quest States: Injured knight status, fighting knight status, abelon spell
+
+Impressions tracked: How much does Kath suspect?
+
+Info-drops:
+Further north is a ruined city
+We're in a kingdom
+Monster attacks are especially frequent
+There's another attack from the West
+Kingdom is strapped due to attacks
+We're both knight captains, and we command these knights.
+Hunters find game here, important to keep path clear.
+
+
+
+******
+SCRIPT
+******
+
+PROLOGUE
+
+// black screen
+
+???: "...and no........y this ri......power unto......ummon thee................all of us!"
+
+// Slow fade in to Abelon standing in the middle of a summoning circle drawn in blood, in a clearing in a forest.
+// An open book lies on the ground nearby. The player gains control without any fanfare.
+
+- Book - "An open book lies on the ground, full of strange drawings and hastily scrawled paragraphs. The writing
+          is faded and barely legible, and the pages practically crumble to dust at the slightest touch."
+
+// Moving to the east through the clearing entrance, out of sight of the summoning circle,
+// triggers the following cinematic
+
+???: "Abelon! Finally!"
+
+// Kath enters from the east and begins speaking to Abelon
+
+???: "By Ignus, what are you doing out here? The knights are pinned at the north gate, to the man,
+      and suddenly you disappear! Come, we must return to the fight. Without our steel, the beasts might
+      finally break through to the gilded district...ach, we'd all be in for it then."
+
+???: "Wait, your arm. You're wounded. Let me see that."
+
+// A red glow briefly surrounds Abelon. His wound is healed.
+
+???: "I'll have none of your usual protests about bandages and such, that sword arm of yours is well worth my ignea.
+      Did one of the wolves follow you here? Did you kill it?"
+
+A: No, I'm alone
+
+    ???: "You're...well, what got your arm then? Hold on, what's all that behind you?"
+
+    A: A ritual (Kath -1 impression)
+
+        ???: "That sign in the earth is your work, then? Which explains your arm, but...a blood rite, Abelon? I've
+              only ever heard of them in stories...The kinds of stories that don't end well."
+
+        ???: "Whatever you've done, I dearly hope it will help us live to see daylight. We've wasted too much time
+              talking already. If you're not in danger here, we need to reinforce our soldiers, immediately. Come on!"
+
+    A: I don't know (Kath +1 awareness)
+
+        ???: "Hm, well I don't remember seeing it when I was last on salvage to the Ash...but it's a curiosity for
+              another time. If you're not in danger here, we need to reinforce our soldiers, immediately. Come on!"
+
+A: Who are you? (Kath +2 awareness)
+
+    ???: "...What? " TODO
+
+// Kath takes a few steps east, and suddenly stops
+
+???: "Ah. They must have followed me here. I'm sorry, Abelon."
+
+// The screen pans to the right, revealing two creatures that look like rabid wolves, facing towards the two knights.
+// A trail of blood on the ground starts at one of them and goes offscreen.
+
+A: You shouldn't have come, then (Kath -2 impression)
+
+    ???: "Well, a word of warning before running off might have accomplished as much! I suppose if I had vanished
+          in the middle of a battle, you wouldn't have spared me a second thought, then. Cold and calculating
+          to the last, our veteran captain is...Let's finish these beasts off quickly, so we can reach the knights."
+
+A: Nothing we can't handle (Kath +1 impression)
+
+    ???: "Now there's the grizzled old knight I remember! You had me worried for a moment. Let's finish them off
+          quickly so we can reach the knights!"
+
+-- Begin battle
+
+*Turn 1 start*
+
+    ???: "Right, let's do the usual song and dance, then. The young upstart will take his orders from the grumpy
+          old man."
+
+    Kath: "Captain Kath of Lefellen, at your command!"
+
+*Enemy turn 1 start*
+
+    Kath: "Here they come!"
+
+*Turn 2 start*
+
+    Kath: "Let's only use as much ignea as we need to. I shouldn't have to remind you, we've nowhere to reignite here
+           in the forest, and we'll need as much power as we can spare when we return to the gates."
+
+*When Abelon uses a demonic spell for the first time*
+
+    Kath: "By Ignus, what the hell did you just do, Abelon? I've never seen such unbelievable magic!"
+
+    A: A reward from the blood rite (Kath +1 impression)
+
+        Kath: "Amazing...perhaps your little detour was worth the trouble after all."
+
+    A: A secret spell of mine (Kath -1 impression)
+
+        Kath: "Oh really? I seem to recall a great many dire situations which this 'secret spell' of yours would have
+               resolved in short order. But you've never been one for sharing, have you..."
+
+    *If not in final fight*
+
+        Kath: "Do save your ignea for our reunion with the knights, though. I suspect we'll need that spell again
+               when the real fight begins. Even I can see that unholy fire was no cheap cantrip."
+
+*Kath dies*
+
+    Kath: "Urgh. Damn, hurts........But I refuse...to........"
+
+    FAIL STATE
+
+*Abelon dies*
+
+    Kath: "Abelon, no! NO!"
+
+    FAIL STATE
+
+*First wolf killed*
+
+    Kath: "That wolf won't be standing up again, at the very least. Forward! Aflame and alert, as they say."
+
+*Victory*
+
+    Kath: *huff* *huff* Ach, they aren't so tough when it's just a couple of the bastards.
+
+    A: Nice bladework (Kath +1 impression, +1 awareness)
+
+        Kath: "Why, a compliment? From you? I must have really outdone myself this time, or else you took a blow to
+               the head."
+
+    A: They didn't stand a chance
+
+        Kath: "No indeed, they didn't. I don't envy anyone or anything at the wrong end of your sword."
+
+-- End battle
+
+*If Abelon is wounded*
+
+    Kath: "Let me see your wounds."
+
+    // Kath approaches Abelon. A red glow surrounds Abelon and Kath as they are healed.
+
+*If Abelon is healthy*
+
+    Kath: "And not a scratch on you! Your skills never fail to impress, truly."
+
+Kath: "Now then, thankfully you didn't wander off too far from the fighting. The north gate is just ahead to the east,
+       first right turn on this path. We'll have to keep an eye out for more wolves – I'll follow behind you and watch
+       our back."
+
+// Kath walks forward, and stops at the bleeding wolf's original location
+
+Kath: "But look here. This trail of blood came dribbling from that wolf's mouth...he must have gotten to something
+       before he found us. It could be someone wounded in need of help, but following it will lead us away from Ebonach
+       and lose us time...damn!"
+
+// The player gains control of Abelon, and Kath follows behind. The player may choose to go north following the blood,
+// or continue east towards the north gate.
+
+THE HUNTER
+
+
+
+WITHIN EARSHOT
+
+
+
+THE CRYSTAL WOLF
