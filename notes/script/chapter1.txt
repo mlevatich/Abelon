@@ -8,21 +8,6 @@ CHAPTER 1: The Forest Stirs
 NOTES
 *****
 
-Kath can act as a narrator in the first half when Abelon doesn't talk much.
-
-Features must be present:
-Presentation
-Dialogue choice, many options
-Cinematic
-Stickers, blocking objects, interaction objects
-Two interacting quest states
-Interaction results: get item, get ability, costume change, quest state change
-Fail state
-Inventory
-Environment interact
-Combat, EXP
-Level Up
-
 In the forest to the north of Ebonach. Map is drawn in notebook.
 
 A monster attack has come from the north and west – wolves. Abelon, Kath, and some of the knights were dispatched to
@@ -37,9 +22,9 @@ injured hunter, either look for wornfleet leaves, or go to lester the healer to 
 
 Further option to confuse kath by commenting on how much he knows about medicine.
 
-costume change when the knight is healed
+costume change when the hunter is healed
 
-present leaves to knight
+present leaves to hunter
 
 many dialogue choices when talking to kath/lester.
 
@@ -58,16 +43,9 @@ In the big fight, the boss wolf has ignea crystals embedded in him. Cause for co
 Fail state if you pick up the wrong leaf, then insist on finding the right one. When you get to the last battle,
 all the knights will be dead and it will be unwinnable.
 
-Couple optional fights in the north. Result in the area being cleared for hunters. You can do these after the big fight,
-if you want. If you choose to engage them before the big fight, it will also lead to the fail state of being too late.
-You can only do these if you have the resources left after the big fight – enough ignea and health.
-
-Saving the injured knight earns the biggest reward of the chapter. Maybe he tells you to come visit him in the barracks
-afterwards? Something new in chapter 1.
+Saving the injured hunter earns the biggest reward of the chapter.
 
 Quest States: Injured knight status, fighting knight status, abelon spell
-
-Impressions tracked: How much does Kath suspect?
 
 Info-drops:
 Further north is a ruined city
@@ -75,8 +53,6 @@ We're in a kingdom
 Monster attacks are especially frequent
 There's another attack from the West
 Kingdom is strapped due to attacks
-We're both knight captains, and we command these knights.
-Hunters find game here, important to keep path clear.
 
 
 
@@ -119,7 +95,7 @@ A: No, I'm alone
 
     ???: "You're...well, what got your arm then? Hold on, what's all that behind you?"
 
-    A: A ritual (Kath -1 impression)
+    A: A ritual
 
         ???: "That sign in the earth is your work, then? Which explains your arm, but...a blood rite, Abelon? I've
               only ever heard of them in stories...The kinds of stories that don't end well."
@@ -244,16 +220,175 @@ Kath: "But look here. This trail of blood came dribbling from that wolf's mouth.
 // The player gains control of Abelon, and Kath follows behind. The player may choose to go north following the blood,
 // or continue east towards the north gate.
 
-SCENE: THE HUNTER
-
 
 
 SCENE: WITHIN EARSHOT
+
+// If the player continues east after the first fight, or after dealing with the hunter, or even on approach from
+// the east side after fighting the battle with the deer, the following scene plays.
+
+// A cutscene begins and the screen pans slightly downward.
+
+???: "Stand tall! Don't let a single one– Aagh!"
+
+???: "If you've got ignea left, launch a bolt on my signal! Ready...aim..."
+
+???: "Where are the captains?"
+
+???: "Hyaaaaaah!"
+
+// The screen pans up again.
+
+Kath: "From the sound of it, we haven't been overrun yet. Good.
+
+// The screen pans towards the enemies
+
+Kath: "But ach, ghouls on top of wolves? This just gets worse and worse. Let's cut our way through!"
+
+A: Who's commanding the knights? (Kath -1 impression)
+
+    Kath: "Eruta only knows, after you abandoned them and I had to come chasing after you..."
+
+    *If told Kath about ritual*
+
+        Kath: "Let's hope that ritual of yours was worth it. Ready your sword."
+
+    *If not told Kath about the ritual*
+
+        Kath: "King Sinclair will expect an explanation from you, you know, if we make it out of this alive.
+               Ready your sword."
+
+A: I shouldn't have left (Kath +1 impression, +1 awareness)
+
+    *if Kath awareness >= 3*
+
+        Kath: "Abelon, you...something's different about you, I swear it. But now's not the time for that, is it...
+               ready your sword."
+
+    *if Kath awareness < 3*
+
+        Kath: "But then, why did you...but I suppose now's not the time for that, is it? Ready your sword."
+
+-- Begin battle
+
+*Turn 1 start*
+
+    Kath: "By Ignus, one of those ghouls somehow got hold of a rock of ignea! By the size, that'd be...good for a
+           cantrip or two, unignited. Keep light on your feet, if that thing lands a spell on you it'll pierce right
+           through your armor."
+
+*Turn 2 start*
+
+    Kath: "The risen dead...ach, no matter how many times I see it, it still makes my blood run cold. There must have
+           been a graveyard here, at some point in the past. The Despair leaves nothing sacred..."
+
+    A: It wasn't always this way
+
+        Kath: "And with any luck, one day I'll get a taste of the peace and tranquility you old geezers are always
+               rattling on about. Ach, but I suspect there'll be plenty of ghouls standing between me and that day.
+               Forward!"
+
+    A: We'll get through it (Kath +1 impression, +1 awareness)
+
+        Kath: "Hah! You, cheering me up? Now I've seen it all."
+
+        Kath: "But if executioner Abelon is in good spirits and the charming Kath is caught sulking, people will think
+               Eruta's turned upside down! More than it already has, anyway. Forward!"
+
+*Victory*
+
+    Kath: "Ach, what a nightmare, fighting those things. The wolves, I can stomach, but ghouls are another matter.
+           Let's hope there are no more of them at the gates."
+
+-- End battle
 
 
 
 SCENE: THE CRYSTAL WOLF
 
+TODO
+
+
+
+SCENE: THE HUNTER
+
+TODO
+
 
 
 SCENE: THE HUNTED
+
+// In the northeast of the forest, three wolves have cornered an injured deer. The scene can be approached from
+// the west or the south. In either case, the following scene will trigger.
+
+*All scenarios*
+
+- Interact - Medallion - "A bronze medallion on a string, smeared with dirt. The image of a round shield over a
+                          longsword is engraved in the metal."
+
+    Text: "Pick it up?"
+
+        A: Yes
+
+            Text: "You brush the dirt off the medallion and put it in your pack"
+
+            (gain 1 bronze medallion)
+
+        A: No
+
+            Text: "You leave the medallion on the ground"
+
+// The screen pans towards the wolves
+
+*If the crystal wolf is not yet defeated*
+
+    Kath: "Hm, that deer looks to be about done for. Let's turn around while the wolves are distracted. We've no
+           business here, the knights need our help."
+
+    // Abelon gains control again. If you approach closer, a battle will trigger.
+
+    -- Begin battle
+
+    *Turn 1 start*
+
+        (Kath impression -1)
+
+        Kath: "Abelon, this is a mistake...but they've already noticed us. We'll have to fight!"
+
+    *Victory*
+
+        Kath: "Ach, this is bad...we've been gone far too long. Leave the deer. Come on, to the north gate!"
+
+    -- End battle
+
+    - Interact - Deer - "A young deer, with a gash across the stomach. Its chest rises and falls erratically.
+                         It's clearly having trouble breathing."
+
+        (Kath impression -1)
+
+        Kath: "Abelon, what are you doing? I said leave the deer!"
+
+*If the crystal wolf is defeated, but the area was already visited*
+
+    -- Begin battle
+
+    *Turn 1 start*
+
+        Kath: "Now that we know the capital is secure, we can take care of the rest of the wolves. We need to make sure
+               the forest is safe for hunters, else we'll lose a vital food source."
+
+    *Victory*
+
+        Kath: "*huff* That should be the last of them. Let's return to Ebonach. The king will be glad to know we've
+               been successful."
+
+        Kath: "Ach, shame about that deer, though. Poor thing never stood a chance."
+
+*If the crystal wolf is defeated, and the area was not already visited*
+
+    Kath: "" TODO
+
+*If the crystal wolf is defeated, and the wolves were already killed*
+
+    This state cannot be reached – if the wolves here are fought before the crystal wolf the battle with the crystal
+    wolf is unwinnable – most of the knights are dead.
