@@ -1,7 +1,38 @@
-Presentation system – present items/people to others in order to trigger either fail states or quest advances.
+TODO:
 
-Checkpoint system for save scumming. Make a maximum of two checkpoints. Quicksave (save file) doesn't count as a
-checkpoint. Something to do with chapter barriers?
+fix art/animations for four sprites
+
+dialogue rendering works with and without portraits
+
+blocking / non-blocking sprites
 
 merge dialogue and cinematics. Cinematic functionality is a superset of dialogues, no reason for them to be different
-subsystems.
+subsystems. Use lua files, not text files. Allow characters to stop, face one another on entering scene via config of
+the lua file, not by default in the scene setup
+
+Support more than two dialogue responses
+
+Make quest state into chapter state, a table keyed by state strings, not a letter. Fix chapter instance variables and
+methods accordingly.
+
+Augment scene engine with quest state and options like walking, events like rumbling, blocking or non-blocking
+sequences, etc. Support complex results, like costume changes, item gets, chapter state changes, ability gets, cinematic
+triggers, etc.
+
+Continue to draw assets, and make music, as necessary
+
+#17:
+-design menu flowchart v1
+-hover descriptions to menu items
+-let hover descriptions combine graphics and text
+-actions that either say you can't use, or close the menu and do some action
+-deal with right-side menu overflow
+#13 -> #27 -> #31 -> #18
+note: costume change is an interaction result
+
+Shopping
+
+Presentation system – present items/people to others in order to trigger either fail states or quest advances
+
+Core engine done! Implement chapter 1 minus the battles to exercise all of these features. Put scenes in place of
+battles.
