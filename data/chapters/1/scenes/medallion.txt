@@ -1,0 +1,5 @@
+: a1 : : medallion 0
+It's a medallion.
+
+: a2 : : medallion 0
+It's still a medallion.

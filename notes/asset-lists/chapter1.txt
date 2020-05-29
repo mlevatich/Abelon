@@ -1,0 +1,118 @@
+****************
+SPRITES/COSTUMES
+****************
+
+Abelon - Helmeted - DONE
+Abelon - Injured
+Kath
+Elaine
+Elaine - Injured
+Lester
+Generic Knight
+
+Wolf
+Ghoul
+Crystal Wolf
+
+Deer
+Medallion - DONE
+Books - DONE
+Bow
+Leaf 1 TODO
+Leaf 2 TODO
+Flower 1 TODO
+Flower 2 TODO
+Fallen Knight 1
+Fallen Knight 2
+
+*********
+PORTRAITS
+*********
+
+(Cheerful, Excited, Confident, Pained/Disgusted, Disappointed,
+Grieving, Angry, Defiant, Skeptical, Confused, Worried, Neutral)
+
+Kath - All
+Elaine - Subset TODO
+Lester - Subset TODO
+Generic Knight - Subset TODO
+
+**********
+ANIMATIONS
+**********
+
+Abelon - Walk
+Kath - Walk
+Lester - Walk
+Elaine - Walk
+Elaine - Stand
+
+Abelon - Start, Standby, Move, Hurt, End
+Kath - Start, Standby, Move, Hurt, End
+Lester - Start, Standby, Move, Hurt, End
+Generic Knight - Start, Standby, Move, Hurt, End
+Wolf - Start, Standby, Move, Hurt
+Ghoul - Start, Standby, Move, Hurt
+Crystal Wolf - Start, Standby, Move, Hurt
+
+
+Lester - Heal
+Generic Knight - Slash
+Generic Knight - Bolt
+Abelon - Spells TODO
+Kath - Spells TODO
+
+Wolf - Bite
+Ghoul - Swipe
+Ghoul - Magic TODO
+Crystal Wolf - Bite
+Crystal Wolf - Blaze
+Crystal Wolf - Cry
+
+********
+TILESETS
+********
+
+Forest - Fix base
+Forest - More contrast in treetop
+Forest - Three base types
+Forest - Path type
+
+********
+STICKERS
+********
+
+Ritual
+Blood Trail
+Weeds 1
+Weeds 2
+
+*********
+INVENTORY
+*********
+
+Abelon - Spell Icons TODO
+Kath - Spells TODO
+Abelon - Skilltree Icons - Hero, Demon, Executioner
+Kath - Skilltree Icons - Defender, Champion, Cleric
+
+Abelon's Sword
+Abelon's Cloak
+Leaf 1 TODO
+Leaf 2 TODO
+Flower 2 TODO
+Bow
+Medallion
+
+*****
+MUSIC
+*****
+
+Forest Explore
+Forest Battle
+
+***
+SFX
+***
+
+TODO

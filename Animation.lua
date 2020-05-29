@@ -1,4 +1,5 @@
 require 'Util'
+require 'Constants'
 
 Animation = Class{}
 
@@ -26,6 +27,12 @@ end
 function Animation:restart()
     self.timer = 0
     self.current_frame = 1
+end
+
+-- Sync this animation with a different animation
+function Animation:syncWith(previous)
+    self.timer = previous.timer
+    self.current_frame = previous.current_frame
 end
 
 -- Increment time and move to the appropriate frame

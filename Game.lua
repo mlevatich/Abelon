@@ -1,60 +1,51 @@
 require 'Util'
-require 'Scene'
-require 'Map'
-require 'Character'
+require 'Constants'
+
+require 'Chapter'
 
 Game = Class{}
-
-local NUM_SCENES = 1
 
 -- Initialize game context
 function Game:init()
 
-    -- All characters in the game
-    self.cast = {
-        ['Abelon'] = Character('Abelon', true),
-        ['Kath'] = Character('Kath', false),
-        ['Uther'] = Character('Uther', false),
-    }
+    -- Track current chapter
+    self.chapter_id = 0
+    self.chapter = nil
 
-    -- All scenes in the game
-    self.scenes = {}
-    for i=1, NUM_SCENES do
-        self.scenes[i] = Scene(i)
-        self.scenes[i]:loadCharacters(self.cast, self.cast['Abelon'])
-    end
+    -- TODO title screen stuff
 
-    -- Current scene
-    self.current_scene = nil
-
-    -- Initial game state
-    self:sceneChange(1)
+    -- Start first chapter
+    self:nextChapter()
 end
 
--- Clear all characters from the current map and change the current map
-function Game:sceneChange(scene_id)
+-- Clear all sprites from the current map and change the current map
+function Game:nextChapter()
 
-    -- Stop existing scene and start new scene
-    if self.current_scene then
-        self.current_scene:stop()
+    -- Stop existing chapter if there is one
+    if self.chapter then
+        self.chapter:endChapter()
     end
-    self.current_scene = self.scenes[scene_id]
-    self.current_scene:start()
+
+    -- TODO if last chapter, roll credits!
+
+    -- Start new chapter
+    self.chapter_id = self.chapter_id + 1
+    self.chapter = Chapter(self.chapter_id)
 end
 
 -- Update game state
 function Game:update(dt)
 
-    -- Update scene state, map, and all characters in scene
-    local new_scene_id = self.current_scene:update(dt)
+    -- Update chapter state, map, and all sprites in chapter
+    local chapter_end = self.chapter:update(dt)
 
-    -- Detect and handle scene change
-    if new_scene_id then
-        self:sceneChange(new_scene_id)
+    -- Detect and handle chapter change
+    if chapter_end then
+        self:nextChapter()
     end
 end
 
 -- Render everything!
 function Game:render()
-    self.current_scene:render()
+    self.chapter:render()
 end

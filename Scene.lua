@@ -1,319 +1,457 @@
 require 'Util'
-require 'Character'
-require 'Map'
-require 'Dialogue'
+require 'Constants'
 
 Scene = Class{}
 
--- Constructor for our scenario object
-function Scene:init(id)
+local LINES_PER_PAGE = 4
+local TEXT_INTERVAL = 0.03
+local BOX_WIDTH = VIRTUAL_WIDTH - BOX_MARGIN*2
+local CHARS_PER_LINE = math.floor((BOX_WIDTH - BOX_MARGIN*2 - PORTRAIT_SIZE)/(TEXT_MARGIN_X + FONT_SIZE))
+local BOX_HEIGHT = TEXT_MARGIN_Y*(LINES_PER_PAGE+2) + FONT_SIZE*LINES_PER_PAGE + BOX_MARGIN
 
-    -- Store id
-    self.id = id
+-- Initialize a new dialogue
+function Scene:init(scriptfile, target, sprites, starting_track)
 
-    -- Map info
-    self.maps = {}
-    self.current_map = nil
+    -- Parse the given file into the script data structure
+    self.script = {}
+    self:parseScriptFile(scriptfile)
 
-    -- Dict from map names to audio sources
-    self.map_to_music = {}
+    -- Participants
+    self.target = target
+    self.participants = {target}
+    self.all_sprites = sprites
 
-    -- Sprite info
-    self.characters = {}
-    self.player = nil
+    -- Record current position in the dialogue
+    self.page_num = 0
+    self.character_num = 0
 
-    -- State of a scene is a capital letter, determines dialogue and cinematic triggers
-    self.state = 'A'
+    -- Maintain current track and starting track
+    self.starting_track = starting_track
+    self.track = starting_track
 
-    -- Dialogue map is indexed by character name, giving a mapping from scene state to starting dialogue track,
-    -- and from ending dialogue track to new scene state
-    self.character_data = {}
-    self.dialogue_maps = {}
-    self.previous_dialogue = {}
+    -- Record which of two options is selected in a choice
+    self.selection = 1
 
-     -- Table of state and position triggers, and associated cinematic object (created via cinematic file)
-    self.cinematic_maps = {}
+    -- Record how much time has passed since the last update
+    self.timer = 0
 
-    -- Camera that follows coordinates of player character around the scene
-    self.camera_x = 0
-    self.camera_y = 0
-
-    -- Rendering information
-    self.alpha = 1
-    self.fade_to = nil
-
-    -- Read into the above fields from scene file
-    self:parseSceneFile()
+    -- Start at the first line of the given starting track
+    self:gotoNext()
 end
 
--- Read information about characters and dialogues into scene
-function Scene:parseSceneFile()
+-- Read the lines from the script file into the script data structure
+function Scene:parseScriptFile(scriptfile)
 
-    -- Read lines into list
-    local lines = readLines('Abelon/scenes/' .. self.id .. '/scenefile.txt')
-
-    -- Iterate over lines of scene file
-    local audio_sources = {}
-    local current_map_name = nil
-    local current_char_name = nil
+    -- Read lines and store into script
+    local page = 1
+    local lines = readLines(scriptfile)
     for i=1, #lines do
 
-        -- Lines starting with ~~ denote a new map
-        if lines[i]:sub(1,2) == '~~' then
+        -- A starting colon signals a new choice or line of dialogue, other lines are ignored
+        if lines[i]:sub(1,1) == ':' then
 
-            -- Read data from line
-            local fields = split(lines[i]:sub(3))
-            local map_name, tileset, music_name = fields[1], fields[2], fields[3]
-            current_map_name = map_name
+            -- Read parameters from this line
+            local params = split(lines[i]:sub(3))
 
-            -- Initialize map and tie it to scene
-            self.maps[map_name] = Map(map_name, tileset, nil)
+            -- Grab speaker and portrait id from end of params
+            local speaker = params[#params-1]
+            local portrait_id = tonumber(params[#params])
 
-            -- Maps sharing a music track share a pointer to the audio
-            if not audio_sources[music_name] then
-                audio_sources[music_name] = love.audio.newSource('audio/music/' .. music_name .. '.wav', 'static')
+            -- Read valid tracks for this line
+            local tracks = {}
+            local j = 1
+            while params[j] ~= ':' do
+                tracks[j] = params[j]
+                j = j + 1
             end
-            self.map_to_music[map_name] = audio_sources[music_name]
 
-        -- Lines starting with ~ denote a new character
-        elseif lines[i]:sub(1,1) == '~' then
+            -- Read all impression thresholds required for this line to appear
+            local thresholds = {}
+            while params[j+1] ~= ':' do
+                thresholds[#thresholds+1] = parseThreshold(params[j+1])
+                j = j + 1
+            end
 
-            -- Initialize data for new character
-            local fields = split(lines[i]:sub(2))
-            current_char_name = fields[1]
+            -- A line in the script is either a choice or a line of dialogue
+            if speaker == 'CHOICE' then
 
-            -- Initialize character data
-            table.insert(self.character_data, {
-                ['char_name'] = current_char_name,
-                ['map_name'] = current_map_name,
-                ['x'] = (fields[2] - 1) * TILE_WIDTH,
-                ['y'] = (fields[3] - 1) * TILE_HEIGHT
-            })
-            self.previous_dialogue[current_char_name] = {}
-            self.dialogue_maps[current_char_name] = {}
+                -- A choice has a set of tracks and list of choices
+                self.script[page] = {
+                    ['thresholds'] = thresholds,
+                    ['tracks'] = tracks,
+                    ['choices'] = {}
+                }
 
-        -- Other lines are state change mappings
-        elseif lines[i] ~= '' and lines[i]:sub(1,2) ~= '//' then
+                -- Parse choices and their effects from the following two lines in the file
+                for j=1, 2 do
 
-            -- Read a dialogue mapping for the current character
-            local map = self.dialogue_maps[current_char_name]
-            if lines[i]:sub(2,2) == ' ' then
-                map[lines[i]:sub(1,1)] = lines[i]:sub(3,4)
+                    -- Read the text and effects of a single option
+                    local rest = lines[i+j]:sub(6)
+                    local idx, _ = rest:find(':')
+                    local impressions = {}
+                    for imp in string.gmatch(rest:sub(1, idx-2), "%S+") do
+                        impressions[imp:sub(5)] = tonumber(imp:sub(2,3))
+                    end
+
+                    -- Store in choices
+                    self.script[page]['choices'][j] = {
+                        ['text'] = rest:sub(idx+2),
+                        ['to_track'] = lines[i+j]:sub(1,2),
+                        ['impressions'] = impressions
+                    }
+                end
+
             else
-                map[lines[i]:sub(1,2)] = lines[i]:sub(4,4)
+
+                -- A dialogue line has a speaker, portrait, tracks, length, and the text itself
+                self.script[page] = {
+                    ['speaker'] = speaker,
+                    ['portrait'] = portrait_id,
+                    ['text'] = splitByCharLimit(lines[i+1], CHARS_PER_LINE),
+                    ['length'] = #lines[i+1],
+                    ['thresholds'] = thresholds,
+                    ['tracks'] = tracks
+                }
             end
+
+            -- Page count is incremented whenever a new page is made
+            page = page + 1
         end
     end
 end
 
--- Set characters based on names from scene file
-function Scene:loadCharacters(all_characters, player)
+-- End the scene
+function Scene:close()
 
-    -- Denote player character
-    self.player = player
-
-    -- For each character name, find corresponding character object among all characters
-    for i=1, #self.character_data do
-        local name = self.character_data[i]['char_name']
-        self.characters[name] = all_characters[name]
+    -- Return participants to resting behavior
+    for i = 1, #self.participants do
+        self.participants[i]:atEase()
     end
 end
 
--- Return all character objects belonging to this scene
-function Scene:getActiveCharacters()
-    return self.current_map:getCharacters()
-end
+-- Read a string containing an impression threshold
+function parseThreshold(str)
 
--- Return the map belonging to this scene
-function Scene:getMap()
-    return self.current_map
-end
+    -- A threshold is either > some number or < some number
+    if str:find('>') then
 
--- Construct an instance of dialogue with the given character based on the current state
-function Scene:getDialogueWith(partner)
+        -- Format is 'name>val'
+        local idx, _ = str:find('>')
+        local name = str:sub(1, idx-1)
+        local val = tonumber(str:sub(idx+1))
 
-    -- Construct filename
-    local dialogue_file = 'Abelon/scenes/' .. self.id .. '/dialogue/' .. partner.name .. '.txt'
+        -- Return the name of the sprite and the function to check their impression against
+        return { ['name'] = name, ['test'] = function(n) return n > val end }
+    else
 
-    -- Get starting track from the current state
-    local mapping = self.dialogue_maps[partner.name][self.state]
-    local starting_track = 'a1'
-    if mapping then
-        starting_track = mapping
+        -- Format is 'name<val'
+        local idx, _ = str:find('<')
+        local name = str:sub(1, idx-1)
+        local val = tonumber(str:sub(idx+1))
+
+        -- Return the name of the sprite and the function to check their impression against
+        return { ['name'] = name, ['test'] = function(n) return n < val end }
     end
-
-    -- Change to secondary track of the previous ending track,
-    -- if already talked on this starting track
-    local previous = self.previous_dialogue[partner.name][starting_track]
-    if previous then
-        starting_track = previous:sub(1,1) .. '2'
-    end
-
-    -- Return dialogue object with starting track
-    return Dialogue(dialogue_file, self.player, partner, self.characters, starting_track)
 end
 
--- Resume a scene with all characters in their starting positions
-function Scene:start()
+-- Check if all required thresholds for the given page to be valid are met
+function Scene:meetsThresholds(page)
 
-    -- Set starting positions and scene of each character, tie to map
-    for _, data in pairs(self.character_data) do
+    -- Check if any sprite's impression doesn't meet the threshold
+    for i=1, #page['thresholds'] do
 
-        -- Set character fields
-        local char = self.characters[data['char_name']]
-        char:setScene(self)
-        char:resetPosition(tonumber(data['x']), tonumber(data['y']))
+        -- Get sprite's impression to test
+        local name = page['thresholds'][i]['name']
+        local impr = self.all_sprites[name]:getImpression()
 
-        -- Add character info to relevant map
-        local is_player = (char == self.player)
-        self.maps[data['map_name']]:addCharacter(char, is_player)
-        if is_player then
-            self.current_map = self.maps[data['map_name']]
+        -- Test impression
+        local test = page['thresholds'][i]['test']
+        if not test(impr) then
+            return false
         end
     end
 
-    -- Start music
-    -- local music = self.map_to_music[self.current_map:getName()]
-    -- music:setLooping(true)
-    -- music:start()
+    -- If no threshold failed, they all passed and this page is valid
+    return true
 end
 
--- End the current scene, but retain its state
-function Scene:stop()
+-- Retrieve the number of the next page for this track
+function Scene:nextValidPage(skip_choices)
 
-    -- Stop music
-    -- local music = self.map_to_music[self.current_map:getName()]
-    -- music:stop()
+    -- Start at page immediately after current
+    local page_id = self.page_num + 1
 
-    -- Wipe scene from each character object
-    for _, char in pairs(self.characters) do
-        char:setScene(nil)
-        char:resetPosition(0, 0)
-    end
-end
+    -- Gobble pages until a valid page is found or the end of the script is reached
+    while page_id <= #self.script do
 
--- Switch from one map to another when the player touches a transition tile
--- and return the scene to change to if there is a scene change
-function Scene:performTransition()
-
-    -- New map
-    local tr = self.in_transition
-    local old_map = self.current_map:getName()
-    local new_map = tr['name']
-
-    -- Reset player's position
-    self.player:resetPosition(tr['x'], tr['y'])
-
-    -- Move player from old map to new map
-    self.maps[old_map]:dropCharacter(self.player)
-    self.maps[new_map]:addCharacter(self.player, true)
-
-    -- If music is different for new map, stop old music and start new music
-    local old_music = self.map_to_music[old_map]
-    local new_music = self.map_to_music[new_map]
-    if old_music ~= new_music then
-        -- old_music:stop()
-        -- new_music:setLooping(true)
-        -- new_music:start()
-    end
-
-    -- Switch current map to new map
-    self.current_map = self.maps[new_map]
-    self.in_transition = nil
-end
-
--- Initiate, update, and perform map transitions and the associated fade-out and in
-function Scene:updateTransition(transition)
-
-    -- Start new transition if an argument was provided
-    if transition then
-        self.player:changeBehavior('still')
-        self.in_transition = transition
-    end
-
-    -- When fade out is complete, perform switch
-    if self.alpha == 0 then
-        self:performTransition()
-    end
-
-    -- If in a transition, fade out
-    if self.in_transition then
-        self.alpha = math.max(0, self.alpha - 0.05)
-    end
-
-    -- If map has switched, fade in until alpha is full
-    if not self.in_transition and self.alpha < 1 then
-        self.alpha = math.min(1, self.alpha + 0.05)
-
-        -- End transition when alpha is full
-        if self.alpha == 1 then
-            self.player:changeBehavior('idle')
+        -- If the page is for the current track (and isn't a choice if we're skipping those), return it
+        local p = self.script[page_id]
+        if contains(p['tracks'], self.track) and self:meetsThresholds(p) and not (skip_choices and p['choices']) then
+            return page_id
         end
+
+        -- Otherwise keep going
+        page_id = page_id + 1
+    end
+
+    -- If no matching page was found, we're at the end of the script
+    return page_id
+end
+
+-- Find the next line or choice on this track
+function Scene:getNext()
+
+    -- return next page in script (will be nil if end of script was reached)
+    return self.script[self:nextValidPage(false)]
+end
+
+-- Move on to the next page for this track, skipping choices
+function Scene:gotoNext()
+
+    -- Go to next page number and set character count to zero
+    self.page_num = self:nextValidPage(true)
+    self.character_num = 0
+end
+
+-- Determine if the current page has a choice after it
+function Scene:atChoice()
+
+    -- Get next page
+    local next = self:getNext()
+
+    -- Return true if next page exists and is a choice page
+    return (next and next['choices'] ~= nil)
+end
+
+-- Take a choice based on selection and propogate its effects
+function Scene:makeChoice()
+
+    -- Assume the choice is on the following page
+    local choice = self:getNext()['choices'][self.selection]
+
+    -- Need to jump forward in the script to the choice before switching tracks, in case there are lines from
+    -- the chosen track in between the current page and the choice page
+    self.page_num = self:nextValidPage(false)
+
+    -- Effects of choice is to change the dialogue track and change sprite impressions
+    self.track = choice['to_track']
+    for name, change in pairs(choice['impressions']) do
+        self.all_sprites[name]:changeImpression(change)
     end
 end
 
--- Update the camera to center on the player but not cross the map edges
-function Scene:updateCamera()
+-- Called when the player hits space while talking, returns ending track if is dialogue over or nil otherwise
+function Scene:advance()
 
-    -- Get fields from map and player
-    local pixel_width, pixel_height = self.current_map:getPixelDimensions()
-    local x, y = self.player:getPosition()
-    local w, h = self.player:getDimensions()
+    -- If we're at the end of a line, continue to next page
+    local page = self.script[self.page_num]
+    if page['length'] == self.character_num then
 
-    -- Update the x position of the camera to center on the player character
-    local cam_max_x = math.min(pixel_width - VIRTUAL_WIDTH, x + w/2)
-    local cam_player_x = x + w/2 - VIRTUAL_WIDTH/2
-    self.camera_x = math.max(0, math.min(cam_player_x, cam_max_x))
+        -- If we're waiting at a choice, then make choice based on current selection
+        if self:atChoice() then
+            self:makeChoice()
+        end
 
-    -- Update the y position of the camera to center on the player character
-    local cam_max_y = math.min(pixel_height - VIRTUAL_HEIGHT, y + w/2)
-    local cam_player_y = y + h/2 - VIRTUAL_HEIGHT/2
-    self.camera_y = math.max(0, math.min(cam_player_y, cam_max_y))
+        -- Advance to the next page, return dialogue results if no more pages
+        self:gotoNext()
+        if self.page_num > #self.script then
+            return self.track, self.starting_track, self.target
+        end
+    else
+
+        -- If not already at the end, jump to the end of the line
+        self.character_num = page['length']
+    end
+
+    -- Return nothing if scene is not over
+    return nil, nil, nil
 end
 
--- Update all of the characters and objects in a scene
+-- Called when player presses up or down while talking to hover a selection
+function Scene:hover(dir)
+
+    -- self.selection determines where the selection arrow is rendered
+    if dir == UP then
+        self.selection = math.max(1, self.selection - 1)
+    elseif dir == DOWN then
+        self.selection = math.min(2, self.selection + 1)
+    end
+end
+
+-- Increment time and move to the next character
 function Scene:update(dt)
 
-    -- Update the scene's map and characters
-    local new_transition = self.current_map:update(dt)
+    -- Update time passed
+    self.timer = self.timer + dt
 
-    -- Collect dialogue result for the player if there is one
-    local end_track, start_track, talking_to = self.player:dialogueResults()
-    if end_track then
+    -- Iteratively subtract interval from timer and increment character count
+    while self.timer > TEXT_INTERVAL do
+        self.timer = self.timer - TEXT_INTERVAL
+        self.character_num = math.min(self.script[self.page_num]['length'], self.character_num + 1)
+    end
+end
 
-        -- Store that this conversation has already happened once
-        self.previous_dialogue[talking_to.name][start_track] = end_track
+-- Render a black text box at the given position
+function Scene:renderTextBox(x, y)
 
-        -- Execute state change if there is one
-        local mapping = self.dialogue_maps[talking_to.name]
-        if mapping[end_track] then
-            self.state = mapping[end_track]
+    -- Render black text box
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.rectangle('fill', x + BOX_MARGIN, y + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT)
+end
+
+-- Render the speaker's name and portrait
+function Scene:renderSpeaker(speaker_id, portrait, x, y)
+
+    -- Get sprite associated with speaker_id
+    local sp = self.all_sprites[speaker_id]
+
+    -- Render name of current speaker
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print(sp:getName(), x + BOX_MARGIN*2, y + BOX_MARGIN + TEXT_MARGIN_Y)
+
+    -- Render portrait of current speaker
+    if sp.ptexture then
+        love.graphics.draw(sp.ptexture, sp.portraits[portrait], x + BOX_MARGIN, y + BOX_MARGIN*3, 0, 1, 1, 0, 0)
+    end
+end
+
+-- Render text in dialogue box up to current character position
+function Scene:renderText(text, base_x, base_y)
+
+    -- Determine starting location of text
+    love.graphics.setColor(1, 1, 1, 1)
+    local x_beginning = base_x + BOX_MARGIN*2 + PORTRAIT_SIZE
+    local y_beginning = base_y + BOX_MARGIN + TEXT_MARGIN_Y + 20
+
+    -- Iterate over lines and characters in the text, printing one-by-one
+    local line_num = 1
+    local char_num = 1
+    for _=1, self.character_num do
+
+        -- Position of current character
+        local x = x_beginning + (TEXT_MARGIN_X + FONT_SIZE) * (char_num - 1)
+        local y = y_beginning + (TEXT_MARGIN_Y + FONT_SIZE) * (line_num - 1)
+
+        -- Print character
+        love.graphics.print(text[line_num]:sub(char_num, char_num), x, y)
+
+        -- Increment character count
+        char_num = char_num + 1
+
+        -- If character count overflows, go to next line
+        if char_num > #text[line_num] then
+            line_num = line_num + 1
+            char_num = 1
+        end
+    end
+end
+
+-- Render choice box, options, and selection arrow
+function Scene:renderChoice(choices, base_x, base_y, flip)
+
+    -- Get the length of the longest option
+    local longest = 0
+    for i=1, #choices do
+        if #choices[i]['text'] > longest then
+            longest = #choices[i]['text']
         end
     end
 
-    -- Update current transition or initiate new one
-    self:updateTransition(new_transition)
+    -- Compute width and height of choice box
+    local w = BOX_MARGIN*2 + (TEXT_MARGIN_X + FONT_SIZE) * (longest) + 10
+    local h = TEXT_MARGIN_Y + (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
 
-    -- Update camera position
-    self:updateCamera()
+    -- Compute coordinates of choice box
+    local rect_x = base_x + BOX_MARGIN + BOX_WIDTH - w
+    local rect_y = base_y + BOX_MARGIN*2 + BOX_HEIGHT
+    if flip then
+        rect_y = base_y - TEXT_MARGIN_Y - (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
+    end
 
-    -- No scene change
-    return nil
+    -- Draw choice box
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.rectangle('fill', rect_x, rect_y, w, h)
+
+    -- Draw each option in choice box, character by character
+    love.graphics.setColor(1, 1, 1, 1)
+    for i=1, #choices do
+        for j=1, #choices[i]['text'] do
+
+            -- Get single character
+            local c = choices[i]['text']:sub(j,j)
+
+            -- Get position of character
+            local x = rect_x + BOX_MARGIN + (FONT_SIZE + TEXT_MARGIN_X) * (j + longest - #choices[i]['text'])
+            local y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (i-1)
+
+            -- Draw character
+            love.graphics.print(c, x, y)
+        end
+    end
+
+    -- Render selection arrow on the selected option
+    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (self.selection - 1)
+    love.graphics.print(">", rect_x + 15, arrow_y)
 end
 
--- Render the map and characters of the scene at the current position, along with active dialogue
-function Scene:render()
+-- Render dialogue to screen at current position
+function Scene:render(x, y)
 
-    -- Move to the camera position
-    love.graphics.translate(-self.camera_x, -self.camera_y)
+    -- Current page
+    local page = self.script[self.page_num]
 
-    -- Render the map
-    love.graphics.setColor(1, 1, 1, self.alpha)
-    self.current_map:render(self.camera_x, self.camera_y)
+    -- Render below the player if at the top of a map
+    local flip = false
+    if y == 0 then
+        y = VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN*2)
+        flip = true
+    end
 
-    -- Render current dialogue if the player is talking to someone
-    self.player:renderDialogue(self.camera_x, self.camera_y)
+    -- Render text box
+    self:renderTextBox(x, y)
 
-    -- Render current menu layout if the player is in inventory/shop
-    self.player:renderMenu(self.camera_x, self.camera_y)
+    -- Render speaker name and portrait
+    self:renderSpeaker(page['speaker'], page['portrait'], x, y)
+
+    -- Render text up to current character position
+    self:renderText(page['text'], x, y)
+
+    -- Render choice and selection arrow if there is a choice to make
+    if self:atChoice() and page['length'] == self.character_num then
+        local choices = self:getNext()['choices']
+        self:renderChoice(choices, x, y, flip)
+    end
+end
+
+-- Split a string into several lines of text based on a maximum
+-- number of characters per line, without breaking up words
+function splitByCharLimit(text, char_limit)
+
+    local lines = {}
+    local i = 1
+    local line_num = 1
+    local holdover_word = ''
+    while i <= #text do
+        lines[line_num] = ''
+        local word = holdover_word
+        for x = 1, char_limit - #holdover_word do
+            if i == #text then
+                lines[line_num] = lines[line_num] .. word .. text:sub(i,i)
+                i = i + 1
+                break
+            else
+                local c = text:sub(i,i)
+                if c == ' ' then
+                    lines[line_num] = lines[line_num] .. word .. ' '
+                    word = ''
+                else
+                    word = word .. c
+                end
+                i = i + 1
+            end
+        end
+        holdover_word = word
+        line_num = line_num + 1
+    end
+    return lines
 end

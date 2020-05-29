@@ -1,13 +1,7 @@
-Probably need lua functions, not text files, for complex interaction results and cinematic triggers.
-
-Consider whether objects, people, and stickers are not all simply sprites with different levels of interactivity.
-What is the best way to build an abstraction for all of these? Superclasses?
-
 Presentation system – present items/people to others in order to trigger either fail states or quest advances.
-
-You can have more than two choices for dialogue responses.
-
-Sprites can be blocking/non-blocking to allow you to pass through them.
 
 Checkpoint system for save scumming. Make a maximum of two checkpoints. Quicksave (save file) doesn't count as a
 checkpoint. Something to do with chapter barriers?
+
+merge dialogue and cinematics. Cinematic functionality is a superset of dialogues, no reason for them to be different
+subsystems.

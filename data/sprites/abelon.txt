@@ -1,0 +1,15 @@
+// Sprite attributes
+
+Name: Abelon
+Width: 32
+Height: 32
+Depth: 5
+Sheet: 0
+Interactive: yes
+Blocking: yes
+Animations: idle:0 walking:1,2,3,4
+Versions: standard injured
+Resting: wander
+Portrait: yes
+Impression: 50
+Awareness: 100

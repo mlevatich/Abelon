@@ -1,5 +1,7 @@
 require 'Util'
-require 'Dialogue'
+require 'Constants'
+
+require 'Scene'
 
 Menu = Class{}
 
@@ -75,14 +77,14 @@ function Menu:back()
 end
 
 -- Called when player presses up or down while in a menu to hover a selection
-function Menu:hover(up)
+function Menu:hover(dir)
     if self.child then
-        self.child:hover(up)
+        self.child:hover(dir)
     else
         -- self.hovering determines where the selection arrow is rendered
-        if up then
+        if dir == UP then
             self.hovering = math.max(1, self.hovering - 1)
-        else
+        elseif dir == DOWN then
             self.hovering = math.min(#self.children, self.hovering + 1)
         end
     end

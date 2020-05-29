@@ -1,0 +1,15 @@
+// Sprite attributes
+
+Name: Book
+Width: 32
+Height: 27
+Depth: 6
+Sheet: 93
+Interactive: yes
+Blocking: yes
+Animations: idle:0
+Versions: standard
+Resting: idle
+Portrait: no
+Impression: 0
+Awareness: 0

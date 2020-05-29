@@ -1,10 +1,10 @@
 Class = require 'class'
 push = require 'push'
-require 'Game'
 
--- Actual window resolution
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
+require 'Util'
+require 'Constants'
+
+require 'Game'
 
 -- Seed RNG
 math.randomseed(os.time())

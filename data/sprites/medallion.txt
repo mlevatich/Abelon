@@ -1,0 +1,15 @@
+// Sprite attributes
+
+Name: Medallion
+Width: 27
+Height: 29
+Depth: 6
+Sheet: 64
+Interactive: yes
+Blocking: no
+Animations: idle:0
+Versions: standard
+Resting: idle
+Portrait: no
+Impression: 0
+Awareness: 0

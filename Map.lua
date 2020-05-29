@@ -1,5 +1,7 @@
 require 'Util'
-require 'Character'
+require 'Constants'
+
+require 'Sprite'
 
 Map = Class{}
 
@@ -7,7 +9,7 @@ Map = Class{}
 function Map:init(name, tileset, lighting)
 
     -- Read lines of map file
-    local lines = readLines('Abelon/maps/' .. name .. '.txt')
+    local lines = readLines('Abelon/data/maps/' .. name .. '.txt')
 
     -- Set map and tile parameters
     local meta = split(lines[1])
@@ -71,31 +73,23 @@ function Map:init(name, tileset, lighting)
         idx = idx + 1
     end
 
-    -- Characters on the map
-    self.characters = {}
-    self.player = nil
+    -- Sprites on the map
+    self.sprites = {}
 end
 
--- Retrieve characters tied to this map
-function Map:getCharacters()
-    return self.characters
+-- Retrieve sprites tied to this map
+function Map:getSprites()
+    return self.sprites
 end
 
--- Populate the map with a character object
-function Map:addCharacter(char, is_player)
-
-    -- Set player object
-    if is_player then
-        self.player = char
-    end
-
-    -- Add to character list
-    self.characters[char:getName()] = char
+-- Populate the map with a sprite object
+function Map:addSprite(sp)
+    self.sprites[sp:getID()] = sp
 end
 
--- Remove a character object from this map
-function Map:dropCharacter(char)
-    self.characters[char:getName()] = nil
+-- Remove a sprite object from this map
+function Map:dropSprite(sp)
+    self.sprites[sp:getID()] = nil
 end
 
 -- Return name of map
@@ -165,7 +159,7 @@ function Map:setTile(x, y, id)
 end
 
 -- Figure out whether a map needs to be switched to, and what map
-function Map:checkTransitionTiles()
+function Map:checkTransitionTiles(player)
 
     -- Iterate over all transition tiles
     for i=1, #self.transition_tiles do
@@ -173,7 +167,7 @@ function Map:checkTransitionTiles()
         -- If player is on a transition tile, we need to transition to the new map
         local tt = self.transition_tiles[i]
         local t = self.transitions[i]
-        local on, xd, yd = self.player:onTile(tt['x'], tt['y'])
+        local on, xd, yd = player:onTile(tt['x'], tt['y'])
         if on then
             return { ['name'] = t['name'], ['x'] = t['x'] + xd, ['y'] = t['y'] + yd }
         end
@@ -184,15 +178,15 @@ function Map:checkTransitionTiles()
 end
 
 -- Update the map
-function Map:update(dt)
+function Map:update(dt, player)
 
-    -- Update each character on the map
-    for _, char in pairs(self.characters) do
+    -- Update each sprite on the map
+    for _, char in pairs(self.sprites) do
         char:update(dt)
     end
 
     -- Check if the map needs to be switched
-    return self:checkTransitionTiles()
+    return self:checkTransitionTiles(player)
 end
 
 -- Light each tile based on their proximity to the map's light sources
@@ -251,9 +245,9 @@ function Map:render(cam_x, cam_y)
         end
     end
 
-    -- Render all of the characters on the map
-    for _, char in pairs(self.characters) do
-        char:render()
+    -- Render all of the sprites on the map
+    for _, sp in pairs(self.sprites) do
+        sp:render(cam_x, cam_y)
     end
 
     -- Apply lighting effects to map

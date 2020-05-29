@@ -1,0 +1,15 @@
+// Sprite attributes
+
+Name: Kath
+Width: 32
+Height: 32
+Depth: 5
+Sheet: 32
+Interactive: yes
+Blocking: yes
+Animations: idle:0 walking:1,2,3,4
+Versions: standard
+Resting: wander
+Portrait: yes
+Impression: 50
+Awareness: 0

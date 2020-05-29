@@ -1,0 +1,5 @@
+: a1 : : book 0
+It's a book.
+
+: a2 : : book 0
+It's still a book.

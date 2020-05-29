@@ -1,3 +1,5 @@
+require 'Constants'
+
 -- Takes a spritesheet texture and width and height of tiles,
 -- and splits into quads that can be individually drawn
 function generateQuads(atlas, tilewidth, tileheight)
@@ -22,11 +24,11 @@ function generateQuads(atlas, tilewidth, tileheight)
 end
 
 -- Get the quads listed in indices from the sprite's texture
-function getSpriteQuads(indices, tex, width, height)
+function getSpriteQuads(indices, tex, width, height, sheet_position)
     frames = {}
     for x = 1, #indices do
         idx = indices[x]
-        frames[x] = love.graphics.newQuad((width + 1) * idx, 0, width, height, tex:getDimensions())
+        frames[x] = love.graphics.newQuad((width + 1) * idx, sheet_position, width, height, tex:getDimensions())
     end
     return frames
 end
@@ -77,6 +79,21 @@ function split(str)
         list[#list+1] = elem
     end
     return list
+end
+
+-- Split a spring by the given seperator
+function splitSep(str, sep)
+    local array = {}
+    local reg = string.format("([^%s]+)",sep)
+    for mem in string.gmatch(str,reg) do
+        table.insert(array, mem)
+    end
+    return array
+end
+
+-- Read the second value in a string split by whitespace
+function readField(str)
+    return split(str)[2]
 end
 
 -- Read a file into a table of lines
