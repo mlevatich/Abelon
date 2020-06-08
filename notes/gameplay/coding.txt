@@ -5,8 +5,6 @@ Abelon walk
 Kath walk
 Portraits for all sprites
 
-blocking / non-blocking sprites
-
 merge dialogue and cinematics. Cinematic functionality is a superset of dialogues, no reason for them to be different
 subsystems. Use lua files, not text files. Allow characters to stop, face one another on entering scene via config of
 the lua file, not by default in the scene setup
