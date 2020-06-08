@@ -1,8 +1,9 @@
 TODO:
 
-fix art/animations for four sprites
-
-dialogue rendering works with and without portraits
+Kath art
+Abelon walk
+Kath walk
+Portraits for all sprites
 
 blocking / non-blocking sprites
 

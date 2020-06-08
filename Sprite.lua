@@ -14,7 +14,7 @@ local INIT_VERSION = 'standard'
 local WANDER_SPEED = 70
 local LEASH_DISTANCE = 100
 
--- Each character has 12 possible portraits for 12 different emotions (some may not use them all)
+-- Each spacter has 12 possible portraits for 12 different emotions (some may not use them all)
 local PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
 -- Initialize a new sprite
@@ -175,6 +175,11 @@ end
 -- Is this sprite interactive?
 function Sprite:isInteractive()
     return self.interactive
+end
+
+-- Is this sprite blocking?
+function Sprite:isBlocking()
+    return self.blocking
 end
 
 -- Modify a sprite's base position
@@ -385,29 +390,29 @@ end
 function Sprite:_checkSpriteCollisions()
 
     -- Iterate over all active sprites
-    for _, char in pairs(self.chapter:getActiveSprites()) do
-        if char.name ~= self.name then
+    for _, sp in ipairs(self.chapter:getActiveSprites()) do
+        if sp.name ~= self.name and sp.blocking then
 
             -- Collision from right or left of target
             local x_move = nil
-            local y_inside = (self.y < char.y + char.h) and (self.y + self.h > char.y)
-            local right_dist = self.x - (char.x + char.w)
-            local left_dist = char.x - (self.x + self.w)
-            if y_inside and right_dist <= 0 and right_dist > -char.w/2 and self.dx < 0 then
-                x_move = char.x + char.w
-            elseif y_inside and left_dist <= 0 and left_dist > -char.w/2 and self.dx > 0 then
-                x_move = char.x - self.w
+            local y_inside = (self.y < sp.y + sp.h) and (self.y + self.h > sp.y)
+            local right_dist = self.x - (sp.x + sp.w)
+            local left_dist = sp.x - (self.x + self.w)
+            if y_inside and right_dist <= 0 and right_dist > -sp.w/2 and self.dx < 0 then
+                x_move = sp.x + sp.w
+            elseif y_inside and left_dist <= 0 and left_dist > -sp.w/2 and self.dx > 0 then
+                x_move = sp.x - self.w
             end
 
             -- Collision from below target or above target
             local y_move = nil
-            local x_inside = (self.x < char.x + char.w) and (self.x + self.w > char.x)
-            local down_dist = self.y - (char.y + char.h)
-            local up_dist = char.y - (self.y + self.h)
-            if x_inside and down_dist <= 0 and down_dist > -char.h/2 and self.dy < 0 then
-                y_move = char.y + char.h
-            elseif x_inside and up_dist <= 0 and up_dist > -char.h/2 and self.dy > 0 then
-                y_move = char.y - self.h
+            local x_inside = (self.x < sp.x + sp.w) and (self.x + self.w > sp.x)
+            local down_dist = self.y - (sp.y + sp.h)
+            local up_dist = sp.y - (self.y + self.h)
+            if x_inside and down_dist <= 0 and down_dist > -sp.h/2 and self.dy < 0 then
+                y_move = sp.y + sp.h
+            elseif x_inside and up_dist <= 0 and up_dist > -sp.h/2 and self.dy > 0 then
+                y_move = sp.y - self.h
             end
 
             -- Perform shorter move
@@ -520,7 +525,9 @@ function Sprite:update(dt)
     self:updatePosition(dt)
 
     -- Handle collisions with walls or other sprites
-    self:checkCollisions()
+    if self.blocking then
+        self:checkCollisions()
+    end
 end
 
 -- Render a sprite to the screen

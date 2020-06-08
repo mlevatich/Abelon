@@ -70,7 +70,7 @@ function Player:interact()
     -- Look through active sprites
     local chapter = self:getChapter()
     local target = nil
-    for _, sp in pairs(chapter:getActiveSprites()) do
+    for _, sp in ipairs(chapter:getActiveSprites()) do
 
         -- If sprite is close, interactive, and not the player, it's valid
         if sp:isInteractive() and sp:getID() ~= self:getID() and self:AABB(sp, 10) then
@@ -206,6 +206,7 @@ function Player:getImpression() return self.sp:getImpression() end
 function Player:getAwareness() return self.sp:getAwareness() end
 function Player:getChapter() return self.sp:getChapter() end
 function Player:isInteractive() return self.sp:isInteractive() end
+function Player:isBlocking() return self.sp:isBlocking() end
 function Player:resetPosition(arg1, arg2) return self.sp:resetPosition(arg1, arg2) end
 function Player:move(arg1, arg2) return self.sp:stop(arg1, arg2) end
 function Player:stop() return self.sp:stop() end

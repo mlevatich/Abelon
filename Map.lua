@@ -84,12 +84,29 @@ end
 
 -- Populate the map with a sprite object
 function Map:addSprite(sp)
-    self.sprites[sp:getID()] = sp
+
+    -- Insert sprite in order of depth
+    for i=1, #self.sprites do
+        if self.sprites[i]:getDepth() <= sp:getDepth() then
+            table.insert(self.sprites, i, sp)
+            return
+        end
+    end
+
+    -- If no sprite had lower depth, insert at end
+    self.sprites[#self.sprites+1] = sp
 end
 
 -- Remove a sprite object from this map
 function Map:dropSprite(sp)
-    self.sprites[sp:getID()] = nil
+
+    -- Find and remove sprite
+    for i=1, #self.sprites do
+        if self.sprites[i] == sp then
+            table.remove(self.sprites, i)
+            return
+        end
+    end
 end
 
 -- Return name of map
@@ -181,8 +198,8 @@ end
 function Map:update(dt, player)
 
     -- Update each sprite on the map
-    for _, char in pairs(self.sprites) do
-        char:update(dt)
+    for _, sp in pairs(self.sprites) do
+        sp:update(dt)
     end
 
     -- Check if the map needs to be switched

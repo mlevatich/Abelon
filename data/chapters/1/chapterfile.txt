@@ -1,8 +1,8 @@
 ~~forest standard Dim_Light
 
-~abelon 7 70
+~abelon 7 70 P
 
-~kath 10 80 P
+~kath 10 80
 
 a1 B
 b1 B
