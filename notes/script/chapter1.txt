@@ -34,18 +34,31 @@ interact with environment to pick up leaves.
 
 three battles – first wolf, then a few wolves, then the big fight. Second fight causes a level up.
 
-In the big fight, condition to talk to lester if you found the knight but haven't healed him. Must kill all wolves,
-prevent them from entering city. More knights saved = bigger reward. If lester dies or you wait until after the fight
-to talk to him, it's too late to save the knight. Lester must leave during the fight.
+In the big fight, must kill all wolves, prevent them from entering city. More knights saved = bigger reward.
+
+If you personally save Elaine, and haven't done fight 2 yet, she will join you, making it a much easier fight. Whichever
+battle is her first, she will comment on it.
+
+Shanti - Field Alchemist. Has an extra-turn ability, and various effects. Send her to save Elaine. Wields an ignea lantern.
+Lester - Shadowblade. Uses electrical magic and an enchanted dagger to assassinate foes.
+Elaine - Hunter. Uses a bow and the terrain to her advantage, out-positioning enemies.
+
+In the final fight, all three might be there if you save Elaine quickly. You can send Shanti after her to rescue her.
+If you take too long saving Elaine, Lester will be dead, and if you don't rescue Elaine during the battle, she will
+be dead. Whoever is in the battle cannot die without triggering a fail state, so at least two will survive.
+
+If you go straight to the knights without finding Elaine: (3 generic, 4 controlled, easy fight) - ELAINE DIES
+If you find Elaine but leave her: (2 generic, 4 controlled, medium fight) - ELAINE DIES
+If you send Shanti after Elaine to save her: (2 generic, 4 controlled, hard fight) - SAVED ALL 3
+If you save her in one leaf: (1 generic, 5 controlled, hard fight) - SAVED ALL 3
+If you save her in two leaves: (1 generic, 4 controlled, extremely hard fight) - LESTER DIES
+If you ever fight the wolves by the deer: (0 generic, 3/4 controlled, impossible fight) - LESTER DIES
 
 In the big fight, the boss wolf has ignea crystals embedded in him. Cause for concern.
 
-Fail state if you pick up the wrong leaf, then insist on finding the right one. When you get to the last battle,
-all the knights will be dead and it will be unwinnable.
+If you save Elaine before the final battle she will fight with you, making some special comments during her first fight.
 
-Saving the injured hunter earns the biggest reward of the chapter.
-
-Quest States: Injured knight status, fighting knight status, abelon spell
+Quest States: hunter status, fighting knights status, abelon spell
 
 Info-drops:
 Further north is a ruined city

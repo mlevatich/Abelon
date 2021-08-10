@@ -21,13 +21,46 @@ Abelon doesn't appreciate you working with the Watchers or the Fisherman, or spa
 These are not things he would do, and others comment on it. Abelon likes you if you help Sinclair, work with Kath,
 hang out in the barracks, and focus on killing monsters and protecting the city.
 
-A strange encounter with the King's spies
+Jericho is the royal tactician, a smart and ruthless commander who is nevertheless consumed with guilt at the costs
+of victory. He was appointed at the beginning of the Despair due to the need to escape encounters with fewer casualties.
+In chapter 2 we learn that he defended the west gate from attacking wolves and ghouls, and made a desperation play to
+bring down part of the ramparts on top of the enemy, killing some of the knights in order to win the day. He feels guilty
+about this, but everyone knows it was the only way to win.
+
+Mona is around. Perhaps she's with the watchers?
+
+Shanti hates Jericho for getting her brother Jonathan killed. She is filled with anger and unwilling to compromise, but
+is skilled and intelligent.
+
+Lester, a young prankster knight, acts like a sibling to Luci orphaned in the barracks, and has a big heart for others,
+but is careless with regard to his own safety.
+
+If you saved Elaine and told her about the deer, she teaches her younger sister to hunt and decides to join the knights.
+She is kind but inexperienced, emotion-driven, and afraid of combat.
+
+Luci acts as a red herring for Mona's daughter in chapters 2 and 3.
+
+Late in the chapter, you decide who to bring with you, between Shanti, Lester (if he's alive), and Elaine (if she's alive).
 
 Learn: Abelon is the oldest and most experienced commander, which is why the others take orders from you.
 
 Learn: Some of the archives were moved to the castle library after the dragon attack.
 
 Learn: What did Abelon do? (he executed the Cardinal)
+
+Other citizens in the capital:
+The blacksmith
+The shopkeeps
+The tailor
+The castle chef
+The servants
+The thieves
+The orphans (children under the care of the knights at the barracks, until someone else is willing to take them in)
+The healer (Sinclair's brother – a greedy fool who overcharges his patients)
+The knights
+The gatekeepers (they have a grim responsibility – to communicate a warning of monster attack at all costs)
+The Order of Watchers (a secretive organization)
+The fishermen (they've been pulling some strange corruption...)
 
 
 

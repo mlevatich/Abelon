@@ -1,15 +1,19 @@
 TODO:
 
-Kath art
-Abelon walk
-Kath walk
-Portraits for all sprites
+assets
+tileset:
 
 merge dialogue and cinematics. Cinematic functionality is a superset of dialogues, no reason for them to be different
 subsystems. Use lua files, not text files. Allow characters to stop, face one another on entering scene via config of
 the lua file, not by default in the scene setup
 
-Support more than two dialogue responses
+Keep in mind the presentation system when designing all of this.
+
+A scene is a list of entries, blocking or non-blocking. An entry could be an event (like chars facing one another, or
+a rumble in the ground), which is modeled as a lambda function taking the dialogue participants as input, plus extra
+params. Entries are key-value pairs, so the key determines what to do with the value. The scene engine itself can
+therefore be minimal. It checks  the key and then either calls the value function or renders dialogue if the value
+is dialogue. Support more than two dialogue responses.
 
 Make quest state into chapter state, a table keyed by state strings, not a letter. Fix chapter instance variables and
 methods accordingly.
@@ -17,8 +21,6 @@ methods accordingly.
 Augment scene engine with quest state and options like walking, events like rumbling, blocking or non-blocking
 sequences, etc. Support complex results, like costume changes, item gets, chapter state changes, ability gets, cinematic
 triggers, etc.
-
-Continue to draw assets, and make music, as necessary
 
 #17:
 -design menu flowchart v1

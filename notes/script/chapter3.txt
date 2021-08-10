@@ -15,7 +15,12 @@ Kath can act as a narrator in the first half when Abelon doesn't talk much.
 There are decisions on expeditions such as in the Sonder, but they won't cause fail states,
 only provide certain rewards.
 
-There is a New Years celebration on the road during expedition 1.
+There is a New Years celebration on the road during chapter 3.
+
+Mona comes along, as well as some other citizens. We bring food to Mistram, and our additional mission is to deliver
+these citizens, and bring back Opal.
+
+Mona says she was looking for her daughter in Ebonach.
 
 
 

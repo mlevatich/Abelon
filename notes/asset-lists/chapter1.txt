@@ -1,114 +1,116 @@
-****************
-SPRITES/COSTUMES
-****************
+*******
+SPRITES
+*******
 
-Abelon - Helmeted - DONE
-Abelon - Injured
-Kath
+DONE Abelon - Helmeted
+DONE Abelon - Injured
+DONE Kath
 Elaine
-Elaine - Injured
 Lester
+Shanti
 Generic Knight
 
 Wolf
 Ghoul
 Crystal Wolf
 
-Deer
-Medallion - DONE
-Books - DONE
+DONE Medallion
+DONE Books
 Bow
-Leaf 1 TODO
-Leaf 2 TODO
-Flower 1 TODO
-Flower 2 TODO
+Leaf 1 - Wornfleet
+Leaf 2 - Shafe
+Flower 1
+Flower 2 - Bellbloom
+Big Log (flippable, so can be put in diff places)
 Fallen Knight 1
 Fallen Knight 2
+Ritual
+Blood Trail
+Weeds 1
+Weeds 2
+Deer
 
 *********
 PORTRAITS
 *********
 
+For people:
 (Cheerful, Excited, Confident, Pained/Disgusted, Disappointed,
 Grieving, Angry, Defiant, Skeptical, Confused, Worried, Neutral)
 
-Kath - All
-Elaine - Subset TODO
-Lester - Subset TODO
-Generic Knight - Subset TODO
+Kath
+Elaine
+Lester
+Shanti
+Generic Knight
+
+Abelon's Sword
+Abelon's Cloak
+Wornfleet
+Shafe
+Flower 2
+Bow
+Medallion
 
 **********
 ANIMATIONS
 **********
 
-Abelon - Walk
+DONE Abelon - Walk
 Kath - Walk
 Lester - Walk
 Elaine - Walk
 Elaine - Stand
+Shanti - Walk
+Generic Knight - Walk
 
-Abelon - Start, Standby, Move, Hurt, End
-Kath - Start, Standby, Move, Hurt, End
-Lester - Start, Standby, Move, Hurt, End
-Generic Knight - Start, Standby, Move, Hurt, End
+Abelon - Start, Standby, Move, Hurt
+Kath - Start, Standby, Move, Hurt
+Lester - Start, Standby, Move, Hurt
+Shanti - Start, Standby, Move, Hurt
+Elaine - Start, Standby, Move, Hurt
+Generic Knight - Start, Standby, Move, Hurt
 Wolf - Start, Standby, Move, Hurt
 Ghoul - Start, Standby, Move, Hurt
 Crystal Wolf - Start, Standby, Move, Hurt
 
-
-Lester - Heal
-Generic Knight - Slash
-Generic Knight - Bolt
-Abelon - Spells TODO
-Kath - Spells TODO
+Lester - Electrocute, Stab
+Shanti - Lantern Flash, Potion
+Generic Knight - Slash, Bolt
+Elaine - Shoot, Trap
+Abelon - Spells
+Kath - Spells
 
 Wolf - Bite
 Ghoul - Swipe
-Ghoul - Magic TODO
+Ghoul - Magic Blast
 Crystal Wolf - Bite
 Crystal Wolf - Blaze
-Crystal Wolf - Cry
+Crystal Wolf - Howl
 
 ********
 TILESETS
 ********
 
+Forest - Try 2x2 trees, staggered. Re-arrange map to make this work.
 Forest - Fix base
-Forest - More contrast in treetop
 Forest - Three base types
 Forest - Path type
 
-********
-STICKERS
-********
+*****
+ICONS
+*****
 
-Ritual
-Blood Trail
-Weeds 1
-Weeds 2
-
-*********
-INVENTORY
-*********
-
-Abelon - Spell Icons TODO
-Kath - Spells TODO
-Abelon - Skilltree Icons - Hero, Demon, Executioner
-Kath - Skilltree Icons - Defender, Champion, Cleric
-
-Abelon's Sword
-Abelon's Cloak
-Leaf 1 TODO
-Leaf 2 TODO
-Flower 2 TODO
-Bow
-Medallion
+DONE Ability Types - Physical, Magic, Support/Healing, Positioning, Assist
+DONE Abelon - Skilltree Icons - Champion, Demon, Executioner
+DONE Kath - Skilltree Icons - Defender, Hero, Cleric
 
 *****
 MUSIC
 *****
 
 Forest Explore
+Forest Intense
 Forest Battle
 
 ***
