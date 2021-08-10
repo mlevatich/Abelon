@@ -71,14 +71,14 @@ function abs(val)
     end
 end
 
--- Check if the given table contains the given value
-function contains(t, val)
-    for _, v in pairs(t) do
+-- Check if the given table find the given value
+function find(t, val)
+    for k, v in pairs(t) do
         if v == val then
-            return true
+            return k
         end
     end
-    return false
+    return nil
 end
 
 -- Split a spring by whitespace
@@ -118,15 +118,27 @@ end
 function toString(var)
     if type(var) == 'table' then
         local s = '{ '
-        for k,v in pairs(o) do
+        for k,v in pairs(var) do
             if type(k) ~= 'number' then k = '"' .. k .. '"' end
-            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
+            s = s .. '[' .. k .. '] = ' .. toString(v) .. ','
         end
         return s .. '} '
     else
         return tostring(var)
     end
 end
+
+-- Deepcopy a table
+function deepcopy(obj, seen)
+    if type(obj) ~= 'table' then return obj end
+    if seen and seen[obj] then return seen[obj] end
+    local s = seen or {}
+    local res = setmetatable({}, getmetatable(obj))
+    s[obj] = res
+    for k, v in pairs(obj) do res[deepcopy(k, s)] = deepcopy(v, s) end
+    return res
+end
+
 
 -- Print the contents of any variable
 function dump(var)

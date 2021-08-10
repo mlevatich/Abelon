@@ -337,6 +337,7 @@ end
 function Sprite:_idleBehavior(dt)
     self.dx = 0
     self.dy = 0
+    self:changeAnimation('idle')
 end
 
 -- Check whether a sprite is on a tile and return displacement

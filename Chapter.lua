@@ -136,7 +136,7 @@ end
 function Chapter:endChapter()
 
     -- Stop music
-    -- self:stopMapMusic()
+    self:stopMapMusic()
 
     -- retire all sprites and write them to save file
     -- save relevant quest state info as well
@@ -158,33 +158,17 @@ function Chapter:startMapMusic()
 end
 
 function Chapter:stopMapMusic()
-    self.current_music:stop()
+    if self.current_music then
+        self.current_music:stop()
+    end
     self.current_music = nil
 end
 
--- Begin an interaction with the target sprite, which depends on the chapter, quest state, and whether
--- the player has previously interacted with this sprite
+-- Begin an interaction with the target sprite, which depends on the chapter,
+-- map, and quest state
 function Chapter:interactWith(target)
-
-    -- Construct filename
-    local scene_file = 'Abelon/data/chapters/' .. self.id .. '/scenes/' .. target:getID() .. '.txt'
-
-    -- Get starting track from the current state
-    local mapping = self.scene_maps[target:getID()][self.quest_state]
-    local starting_track = 'a1'
-    if mapping then
-        starting_track = mapping
-    end
-
-    -- Change to secondary track of the previous ending track,
-    -- if already talked on this starting track
-    local previous = self.previous_scene[target:getID()][starting_track]
-    if previous then
-        starting_track = previous:sub(1,1) .. '2'
-    end
-
-    -- Create scene object with starting track, and set active
-    self.current_scene = Scene(scene_file, target, self.sprites, starting_track)
+    local scene_id = target:getID() .. '_interact_' .. self.id
+    self.current_scene = Scene(scene_id, self.current_map, self.player)
 end
 
 -- Store player inputs to a scene, to be processed on update
@@ -210,9 +194,9 @@ function Chapter:updateScene(dt)
     self.current_scene:update(dt)
 
     -- Advance scene according to player input
-    local end_track, start_track, target = nil, nil, nil
+    local done = false
     if self.scene_inputs['advance'] then
-        end_track, start_track, target = self.current_scene:advance()
+        done = self.current_scene:advance()
     end
     self.current_scene:hover(self.scene_inputs['hover'])
 
@@ -220,23 +204,11 @@ function Chapter:updateScene(dt)
     self.scene_inputs = {}
 
     -- If scene has ended, shut it down and handle results
-    if end_track then
+    if done then
 
         -- End scene
         self.current_scene:close()
         self.current_scene = nil
-
-        -- Return control to player
-        self.player:changeBehavior('wander')
-
-        -- Store that this scene has already happened once
-        self.previous_scene[target:getID()][start_track] = end_track
-
-        -- Execute state change if there is one
-        local mapping = self.scene_maps[target:getID()]
-        if mapping[end_track] then
-            self.quest_state = mapping[end_track]
-        end
     end
 end
 
@@ -258,14 +230,12 @@ function Chapter:performTransition()
     -- If music is different for new map, stop old music and start new music
     local old_music = self.map_to_music[old_map]
     local new_music = self.map_to_music[new_map]
-    if old_music ~= new_music then
-        -- old_music:stop()
-        -- new_music:setLooping(true)
-        -- new_music:start()
-    end
+    local track_change = old_music ~= new_music
 
     -- Switch current map to new map
+    if track_change then self:stopMapMusic() end
     self.current_map = self.maps[new_map]
+    if track_change then self:startMapMusic() end
     self.in_transition = nil
 end
 
@@ -330,7 +300,9 @@ function Chapter:update(dt)
     end
 
     -- Update music
-    self.current_music:update(dt)
+    if self.current_music then
+        self.current_music:update(dt)
+    end
 
     -- Update current transition or initiate new one
     self:updateTransition(new_transition)

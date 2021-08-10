@@ -68,4 +68,6 @@ function Music:stop()
     -- Stop music
     self.src:stop()
     self.buf:stop()
+    self.src:seek(0.0)
+    self.buf:seek(0.0)
 end

@@ -1,123 +1,41 @@
 require 'Util'
 require 'Constants'
+require 'Scripts'
 
 Scene = Class{}
 
-local LINES_PER_PAGE = 4
-local TEXT_INTERVAL = 0.03
-local BOX_WIDTH = VIRTUAL_WIDTH - BOX_MARGIN*2
-local CHARS_PER_LINE = math.floor((BOX_WIDTH - BOX_MARGIN*2 - PORTRAIT_SIZE)/(TEXT_MARGIN_X + FONT_SIZE))
-local BOX_HEIGHT = TEXT_MARGIN_Y*(LINES_PER_PAGE+2) + FONT_SIZE*LINES_PER_PAGE + BOX_MARGIN
-
 -- Initialize a new dialogue
-function Scene:init(scriptfile, target, sprites, starting_track)
+function Scene:init(scene_id, map, player)
 
-    -- Parse the given file into the script data structure
-    self.script = {}
-    self:parseScriptFile(scriptfile)
+    -- Retrieve scene by id
+    self.id = scene_id
+    self.script = deepcopy(scripts[scene_id])
 
-    -- Participants
-    self.target = target
-    self.participants = {target}
-    self.all_sprites = sprites
+    -- Retrieve scene participants from the map
+    self.player = player
+    self.participants = {}
+    sps = map:getSprites()
+    for i=1, #self.script['ids'] do
+        sp_id = find(mapf(function(s) return s.id end, sps), self.script['ids'][i])
+        table.insert(self.participants, sps[sp_id])
+    end
 
-    -- Record current position in the dialogue
-    self.page_num = 0
-    self.character_num = 0
-
-    -- Maintain current track and starting track
-    self.starting_track = starting_track
-    self.track = starting_track
-
-    -- Record which of two options is selected in a choice
-    self.selection = 1
-
-    -- Record how much time has passed since the last update
-    self.timer = 0
-
-    -- Start at the first line of the given starting track
-    self:gotoNext()
+    -- Start scene from the first event in the script
+    self.event = 1
+    self:play()
 end
 
--- Read the lines from the script file into the script data structure
-function Scene:parseScriptFile(scriptfile)
-
-    -- Read lines and store into script
-    local page = 1
-    local lines = readLines(scriptfile)
-    for i=1, #lines do
-
-        -- A starting colon signals a new choice or line of dialogue, other lines are ignored
-        if lines[i]:sub(1,1) == ':' then
-
-            -- Read parameters from this line
-            local params = split(lines[i]:sub(3))
-
-            -- Grab speaker and portrait id from end of params
-            local speaker = params[#params-1]
-            local portrait_id = tonumber(params[#params])
-
-            -- Read valid tracks for this line
-            local tracks = {}
-            local j = 1
-            while params[j] ~= ':' do
-                tracks[j] = params[j]
-                j = j + 1
-            end
-
-            -- Read all impression thresholds required for this line to appear
-            local thresholds = {}
-            while params[j+1] ~= ':' do
-                thresholds[#thresholds+1] = parseThreshold(params[j+1])
-                j = j + 1
-            end
-
-            -- A line in the script is either a choice or a line of dialogue
-            if speaker == 'CHOICE' then
-
-                -- A choice has a set of tracks and list of choices
-                self.script[page] = {
-                    ['thresholds'] = thresholds,
-                    ['tracks'] = tracks,
-                    ['choices'] = {}
-                }
-
-                -- Parse choices and their effects from the following two lines in the file
-                for j=1, 2 do
-
-                    -- Read the text and effects of a single option
-                    local rest = lines[i+j]:sub(6)
-                    local idx, _ = rest:find(':')
-                    local impressions = {}
-                    for imp in string.gmatch(rest:sub(1, idx-2), "%S+") do
-                        impressions[imp:sub(5)] = tonumber(imp:sub(2,3))
-                    end
-
-                    -- Store in choices
-                    self.script[page]['choices'][j] = {
-                        ['text'] = rest:sub(idx+2),
-                        ['to_track'] = lines[i+j]:sub(1,2),
-                        ['impressions'] = impressions
-                    }
-                end
-
-            else
-
-                -- A dialogue line has a speaker, portrait, tracks, length, and the text itself
-                self.script[page] = {
-                    ['speaker'] = speaker,
-                    ['portrait'] = portrait_id,
-                    ['text'] = splitByCharLimit(lines[i+1], CHARS_PER_LINE),
-                    ['length'] = #lines[i+1],
-                    ['thresholds'] = thresholds,
-                    ['tracks'] = tracks
-                }
-            end
-
-            -- Page count is incremented whenever a new page is made
-            page = page + 1
+function Scene:play()
+    self.state = nil
+    self.wait = false
+    while not self.wait do
+        if self.event > #self.script['events'] then
+            return true
         end
+        self.script['events'][self.event](self)
+        self.event = self.event + 1
     end
+    return false
 end
 
 -- End the scene
@@ -129,165 +47,100 @@ function Scene:close()
     end
 end
 
--- Read a string containing an impression threshold
-function parseThreshold(str)
-
-    -- A threshold is either > some number or < some number
-    if str:find('>') then
-
-        -- Format is 'name>val'
-        local idx, _ = str:find('>')
-        local name = str:sub(1, idx-1)
-        local val = tonumber(str:sub(idx+1))
-
-        -- Return the name of the sprite and the function to check their impression against
-        return { ['name'] = name, ['test'] = function(n) return n > val end }
-    else
-
-        -- Format is 'name<val'
-        local idx, _ = str:find('<')
-        local name = str:sub(1, idx-1)
-        local val = tonumber(str:sub(idx+1))
-
-        -- Return the name of the sprite and the function to check their impression against
-        return { ['name'] = name, ['test'] = function(n) return n < val end }
-    end
-end
-
--- Check if all required thresholds for the given page to be valid are met
-function Scene:meetsThresholds(page)
-
-    -- Check if any sprite's impression doesn't meet the threshold
-    for i=1, #page['thresholds'] do
-
-        -- Get sprite's impression to test
-        local name = page['thresholds'][i]['name']
-        local impr = self.all_sprites[name]:getImpression()
-
-        -- Test impression
-        local test = page['thresholds'][i]['test']
-        if not test(impr) then
-            return false
+function Scene:processResult(result)
+    if result['impressions'] then
+        for i = 1, #result['impressions'] do
+            self.participants[i]:changeImpression(result['impressions'][i])
         end
     end
-
-    -- If no threshold failed, they all passed and this page is valid
-    return true
-end
-
--- Retrieve the number of the next page for this track
-function Scene:nextValidPage(skip_choices)
-
-    -- Start at page immediately after current
-    local page_id = self.page_num + 1
-
-    -- Gobble pages until a valid page is found or the end of the script is reached
-    while page_id <= #self.script do
-
-        -- If the page is for the current track (and isn't a choice if we're skipping those), return it
-        local p = self.script[page_id]
-        if contains(p['tracks'], self.track) and self:meetsThresholds(p) and not (skip_choices and p['choices']) then
-            return page_id
+    if result['awareness'] then
+        for i = 1, #result['awareness'] do
+            self.participants[i]:changeAwareness(result['awareness'][i])
         end
-
-        -- Otherwise keep going
-        page_id = page_id + 1
     end
-
-    -- If no matching page was found, we're at the end of the script
-    return page_id
-end
-
--- Find the next line or choice on this track
-function Scene:getNext()
-
-    -- return next page in script (will be nil if end of script was reached)
-    return self.script[self:nextValidPage(false)]
-end
-
--- Move on to the next page for this track, skipping choices
-function Scene:gotoNext()
-
-    -- Go to next page number and set character count to zero
-    self.page_num = self:nextValidPage(true)
-    self.character_num = 0
-end
-
--- Determine if the current page has a choice after it
-function Scene:atChoice()
-
-    -- Get next page
-    local next = self:getNext()
-
-    -- Return true if next page exists and is a choice page
-    return (next and next['choices'] ~= nil)
+    if result['callback'] then
+        local new_script = {
+            ['ids'] = self.script['ids'],
+            ['trigger'] = nil,
+            ['events'] = result['callback'],
+            ['result'] = {}
+        }
+        scripts[self.id] = new_script
+    end
 end
 
 -- Take a choice based on selection and propogate its effects
-function Scene:makeChoice()
+function Scene:choose()
 
     -- Assume the choice is on the following page
-    local choice = self:getNext()['choices'][self.selection]
+    local choice = self.state['selection']
 
-    -- Need to jump forward in the script to the choice before switching tracks, in case there are lines from
-    -- the chosen track in between the current page and the choice page
-    self.page_num = self:nextValidPage(false)
+    -- Effects of choice is to change impressions, awareness, callback, etc
+    self:processResult(self.state['choice_result'][choice])
 
-    -- Effects of choice is to change the dialogue track and change sprite impressions
-    self.track = choice['to_track']
-    for name, change in pairs(choice['impressions']) do
-        self.all_sprites[name]:changeImpression(change)
+    -- Response to the choice is inserted as events into current script
+    events = self.state['choice_events'][choice]
+    for i = 1, #events do
+        table.insert(self.script['events'], self.event, events[#events + 1 - i])
     end
 end
 
--- Called when the player hits space while talking, returns ending track if is dialogue over or nil otherwise
+-- Called when the player hits space while talking,
+-- returns ending track if is dialogue over or nil otherwise
 function Scene:advance()
+    if self.state then
 
-    -- If we're at the end of a line, continue to next page
-    local page = self.script[self.page_num]
-    if page['length'] == self.character_num then
+        -- Check if the current dialogue is still rendering
+        if self.state['length'] ~= self.state['cnum'] then
 
-        -- If we're waiting at a choice, then make choice based on current selection
-        if self:atChoice() then
-            self:makeChoice()
+            -- If not already at the end, jump to the end of the line
+            self.state['cnum'] = self.state['length']
+
+        else
+
+            -- If we're waiting at choice, then make choice based on selection
+            if self.state['choices'] then
+                self:choose()
+            end
+
+            -- Continue playing events
+            if self:play() then
+                self:processResult(self.script['result'])
+                return true
+            end
         end
-
-        -- Advance to the next page, return dialogue results if no more pages
-        self:gotoNext()
-        if self.page_num > #self.script then
-            return self.track, self.starting_track, self.target
-        end
-    else
-
-        -- If not already at the end, jump to the end of the line
-        self.character_num = page['length']
     end
 
-    -- Return nothing if scene is not over
-    return nil, nil, nil
+    -- Return false if scene is not over
+    return false
 end
 
 -- Called when player presses up or down while talking to hover a selection
 function Scene:hover(dir)
+    if self.state and self.state['selection'] then
 
-    -- self.selection determines where the selection arrow is rendered
-    if dir == UP then
-        self.selection = math.max(1, self.selection - 1)
-    elseif dir == DOWN then
-        self.selection = math.min(2, self.selection + 1)
+        -- self.selection determines where the selection arrow is rendered
+        if dir == UP then
+            self.state['selection'] = math.max(1, self.state['selection'] - 1)
+        elseif dir == DOWN then
+            self.state['selection'] = math.min(2, self.state['selection'] + 1)
+        end
     end
 end
 
 -- Increment time and move to the next character
 function Scene:update(dt)
+    if self.state then
 
-    -- Update time passed
-    self.timer = self.timer + dt
+        -- Update time passed
+        self.state['timer'] = self.state['timer'] + dt
 
-    -- Iteratively subtract interval from timer and increment character count
-    while self.timer > TEXT_INTERVAL do
-        self.timer = self.timer - TEXT_INTERVAL
-        self.character_num = math.min(self.script[self.page_num]['length'], self.character_num + 1)
+        -- Iteratively subtract interval from timer and increment char count
+        while self.state['timer'] > TEXT_INTERVAL do
+            self.state['timer'] = self.state['timer'] - TEXT_INTERVAL
+            self.state['cnum'] = math.min(self.state['length'],
+                                          self.state['cnum'] + 1)
+        end
     end
 end
 
@@ -300,10 +153,7 @@ function Scene:renderTextBox(x, y)
 end
 
 -- Render the speaker's name and portrait
-function Scene:renderSpeaker(speaker_id, portrait, x, y)
-
-    -- Get sprite associated with speaker_id
-    local sp = self.all_sprites[speaker_id]
+function Scene:renderSpeaker(sp, pid, x, y)
 
     -- Render name of current speaker
     love.graphics.setColor(1, 1, 1, 1)
@@ -311,7 +161,7 @@ function Scene:renderSpeaker(speaker_id, portrait, x, y)
 
     -- Render portrait of current speaker
     if sp.ptexture then
-        love.graphics.draw(sp.ptexture, sp.portraits[portrait], x + BOX_MARGIN, y + BOX_MARGIN*3, 0, 1, 1, 0, 0)
+        love.graphics.draw(sp.ptexture, sp.portraits[pid], x + BOX_MARGIN, y + BOX_MARGIN*3, 0, 1, 1, 0, 0)
     end
 end
 
@@ -326,7 +176,7 @@ function Scene:renderText(text, base_x, base_y)
     -- Iterate over lines and characters in the text, printing one-by-one
     local line_num = 1
     local char_num = 1
-    for _=1, self.character_num do
+    for _=1, self.state['cnum'] do
 
         -- Position of current character
         local x = x_beginning + (TEXT_MARGIN_X + FONT_SIZE) * (char_num - 1)
@@ -352,8 +202,8 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     -- Get the length of the longest option
     local longest = 0
     for i=1, #choices do
-        if #choices[i]['text'] > longest then
-            longest = #choices[i]['text']
+        if #choices[i] > longest then
+            longest = #choices[i]
         end
     end
 
@@ -375,13 +225,13 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     -- Draw each option in choice box, character by character
     love.graphics.setColor(1, 1, 1, 1)
     for i=1, #choices do
-        for j=1, #choices[i]['text'] do
+        for j=1, #choices[i] do
 
             -- Get single character
-            local c = choices[i]['text']:sub(j,j)
+            local c = choices[i]:sub(j,j)
 
             -- Get position of character
-            local x = rect_x + BOX_MARGIN + (FONT_SIZE + TEXT_MARGIN_X) * (j + longest - #choices[i]['text'])
+            local x = rect_x + BOX_MARGIN + (FONT_SIZE + TEXT_MARGIN_X) * (j + longest - #choices[i])
             local y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (i-1)
 
             -- Draw character
@@ -390,68 +240,33 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Render selection arrow on the selected option
-    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (self.selection - 1)
+    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (self.state['selection'] - 1)
     love.graphics.print(">", rect_x + 15, arrow_y)
 end
 
 -- Render dialogue to screen at current position
 function Scene:render(x, y)
+    if self.state then
 
-    -- Current page
-    local page = self.script[self.page_num]
-
-    -- Render below the player if at the top of a map
-    local flip = false
-    if y == 0 then
-        y = VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN*2)
-        flip = true
-    end
-
-    -- Render text box
-    self:renderTextBox(x, y)
-
-    -- Render speaker name and portrait
-    self:renderSpeaker(page['speaker'], page['portrait'], x, y)
-
-    -- Render text up to current character position
-    self:renderText(page['text'], x, y)
-
-    -- Render choice and selection arrow if there is a choice to make
-    if self:atChoice() and page['length'] == self.character_num then
-        local choices = self:getNext()['choices']
-        self:renderChoice(choices, x, y, flip)
-    end
-end
-
--- Split a string into several lines of text based on a maximum
--- number of characters per line, without breaking up words
-function splitByCharLimit(text, char_limit)
-
-    local lines = {}
-    local i = 1
-    local line_num = 1
-    local holdover_word = ''
-    while i <= #text do
-        lines[line_num] = ''
-        local word = holdover_word
-        for x = 1, char_limit - #holdover_word do
-            if i == #text then
-                lines[line_num] = lines[line_num] .. word .. text:sub(i,i)
-                i = i + 1
-                break
-            else
-                local c = text:sub(i,i)
-                if c == ' ' then
-                    lines[line_num] = lines[line_num] .. word .. ' '
-                    word = ''
-                else
-                    word = word .. c
-                end
-                i = i + 1
-            end
+        -- Render below the player if at the top of a map
+        local flip = false
+        if y == 0 then
+            y = VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN*2)
+            flip = true
         end
-        holdover_word = word
-        line_num = line_num + 1
+
+        -- Render text box
+        self:renderTextBox(x, y)
+
+        -- Render speaker name and portrait
+        self:renderSpeaker(self.state['speaker'], self.state['portrait'], x, y)
+
+        -- Render text up to current character position
+        self:renderText(self.state['text'], x, y)
+
+        -- Render choice and selection arrow if there is a choice to make
+        if self.state['choices'] and self.state['length'] == self.state['cnum'] then
+            self:renderChoice(self.state['choices'], x, y, flip)
+        end
     end
-    return lines
 end
