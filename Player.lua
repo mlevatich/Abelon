@@ -9,7 +9,8 @@ require 'Menu'
 Player = Class{}
 
 -- Movement constants
-local WALK_SPEED = 140
+local WALK_SPEED = 100
+local DIAG_SPEED = 80
 
 -- Initialize the player character, Abelon
 function Player:init(sp)
@@ -109,22 +110,38 @@ function Player:wanderBehavior(dt)
         self:changeAnimation('walking')
 
         -- If a left/right direction is held, set x velocity and direction
-        if l and not r then
+        if (l and not r) and (u and not d) then
+            self.sp.dir = LEFT
+            self.sp.dx = -DIAG_SPEED
+            self.sp.dy = -DIAG_SPEED
+        elseif (l and not r) and (d and not u) then
+            self.sp.dir = LEFT
+            self.sp.dx = -DIAG_SPEED
+            self.sp.dy = DIAG_SPEED
+        elseif (r and not l) and (u and not d) then
+            self.sp.dir = RIGHT
+            self.sp.dx = DIAG_SPEED
+            self.sp.dy = -DIAG_SPEED
+        elseif (r and not l) and (d and not u) then
+            self.sp.dir = RIGHT
+            self.sp.dx = DIAG_SPEED
+            self.sp.dy = DIAG_SPEED
+        elseif (l and not r) then
             self.sp.dir = LEFT
             self.sp.dx = -WALK_SPEED
-        elseif r and not l then
+            self.sp.dy = 0
+        elseif (r and not l) then
             self.sp.dir = RIGHT
             self.sp.dx = WALK_SPEED
+            self.sp.dy = 0
+        elseif (u and not d) then
+            self.sp.dy = -WALK_SPEED
+            self.sp.dx = 0
+        elseif (d and not u) then
+            self.sp.dy = WALK_SPEED
+            self.sp.dx = 0
         else
             self.sp.dx = 0
-        end
-
-        -- If an up/down direction is held, set y velocity in that direction
-        if d and not u then
-            self.sp.dy = WALK_SPEED
-        elseif u and not d then
-            self.sp.dy = -WALK_SPEED
-        else
             self.sp.dy = 0
         end
 
@@ -180,15 +197,12 @@ function Player:browsingBehavior(dt)
     elseif r or enter then
         self.open_menu:forward()
     elseif u ~= d then
-        self.open_menu:hover(u)
+        self.open_menu:hover(ite(u, UP, DOWN))
     end
 end
 
--- Render the player character
+-- Render the player character's interactions
 function Player:render(cam_x, cam_y)
-
-    -- Render the player's sprite
-    self.sp:render(cam_x, cam_y)
 
     -- Render menu if it exists
     if self.open_menu then

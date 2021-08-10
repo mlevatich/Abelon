@@ -5,6 +5,7 @@ require 'Player'
 require 'Sprite'
 require 'Map'
 require 'Scene'
+require 'Music'
 
 Chapter = Class{}
 
@@ -27,6 +28,7 @@ function Chapter:init(id, spriteesheet)
 
     -- Dict from map names to audio sources
     self.map_to_music = {}
+    self.current_music = nil
 
     -- Rendering information
     self.alpha = 1
@@ -80,7 +82,7 @@ function Chapter:load()
 
             -- Maps sharing a music track share a pointer to the audio
             if not audio_sources[music_name] then
-                audio_sources[music_name] = love.audio.newSource('audio/music/' .. music_name .. '.wav', 'static')
+                audio_sources[music_name] = Music(music_name)
             end
             self.map_to_music[map_name] = audio_sources[music_name]
 
@@ -127,17 +129,14 @@ function Chapter:load()
     end
 
     -- Start music
-    -- local music = self.map_to_music[self.current_map:getName()]
-    -- music:setLooping(true)
-    -- music:start()
+    self:startMapMusic()
 end
 
 -- End the current chapter and save what happened in it
 function Chapter:endChapter()
 
     -- Stop music
-    -- local music = self.map_to_music[self.current_map:getName()]
-    -- music:stop()
+    -- self:stopMapMusic()
 
     -- retire all sprites and write them to save file
     -- save relevant quest state info as well
@@ -152,6 +151,15 @@ end
 -- Return the active map belonging to this chapter
 function Chapter:getMap()
     return self.current_map
+end
+
+function Chapter:startMapMusic()
+    self.current_music = self.map_to_music[self.current_map:getName()]
+end
+
+function Chapter:stopMapMusic()
+    self.current_music:stop()
+    self.current_music = nil
 end
 
 -- Begin an interaction with the target sprite, which depends on the chapter, quest state, and whether
@@ -321,6 +329,9 @@ function Chapter:update(dt)
         self:updateScene(dt)
     end
 
+    -- Update music
+    self.current_music:update(dt)
+
     -- Update current transition or initiate new one
     self:updateTransition(new_transition)
 
@@ -340,6 +351,9 @@ function Chapter:render()
     -- Render the map
     love.graphics.setColor(1, 1, 1, self.alpha)
     self.current_map:render(self.camera_x, self.camera_y)
+
+    -- Render player inventory
+    self.player:render(self.camera_x, self.camera_y)
 
     -- Render effects and text from current scene if there is one
     if self.current_scene then

@@ -33,6 +33,15 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     return frames
 end
 
+-- ite
+function ite(i, t, e)
+    if i then
+        return t
+    else
+        return e
+    end
+end
+
 -- Map a function over a table's values
 function mapf(func, tbl)
     local new_tbl = {}

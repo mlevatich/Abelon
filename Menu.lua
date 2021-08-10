@@ -56,6 +56,9 @@ function Menu:initChildren(children_data)
 end
 
 function Menu:reset()
+    if self.child then
+        self.child:reset()
+    end
     self.child = nil
     self.hovering = 1
 end
@@ -72,6 +75,7 @@ function Menu:back()
     if self.child then
         self.child:back()
     elseif self.parent then
+        self:reset()
         self.parent.child = nil
     end
 end
