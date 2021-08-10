@@ -1,8 +1,0 @@
-: a1 : : book 0
-An open book lies on the ground, full of strange drawings and hastily scrawled paragraphs. The writing is faded and barely legible,
-
-: a1 : : book 0
-and the pages practically crumble to dust at the slightest touch.
-
-: a2 : : book 0
-On a second glance, it looks like there's another small book beneath the first.

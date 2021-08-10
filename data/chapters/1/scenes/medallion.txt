@@ -1,5 +1,0 @@
-: a1 : : medallion 0
-A silver medallion on a string lies on the ground, smeared with dirt. The image of a round shield over a longsword is engraved in the metal.
-
-: a2 : : medallion 0
-The medallion shines among the twigs and leaves of the forest floor.
