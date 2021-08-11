@@ -190,14 +190,14 @@ end
 -- Advance current scene and collect results from a finished scene
 function Chapter:updateScene(dt)
 
-    -- Move text forward
-    self.current_scene:update(dt)
-
     -- Advance scene according to player input
     if self.scene_inputs['advance'] then
         self.current_scene:advance()
     end
     self.current_scene:hover(self.scene_inputs['hover'])
+
+    -- Advance events in scene and text
+    self.current_scene:update(dt)
 
     -- Scene inputs are gobbled each frame
     self.scene_inputs = {}

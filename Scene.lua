@@ -22,22 +22,23 @@ function Scene:init(scene_id, map, player)
 
     -- Start scene from the first event in the script
     self.event = 1
-    self.active_events = 0
-    self.script_finished = false
+    self.active_events = {}
+    self.blocked_by = nil
+    self.text_state = nil
+    self.await_input = false
     self:play()
 end
 
 function Scene:play()
-    self.text_state = nil
-    self.await_input = false
-    while not self.await_input and self.event <= #self.script['events'] do
+    while not self.await_input and not self.blocked_by
+          and self.event <= #self.script['events'] do
         self.script['events'][self.event](self)
         self.event = self.event + 1
     end
 end
 
 function Scene:over()
-    local events_done = self.active_events == 0
+    local events_done = next(self.active_events) == nil
     local script_finished = self.event > #self.script['events']
     return script_finished and events_done and not self.await_input
 end
@@ -51,6 +52,13 @@ function Scene:close()
     -- Return participants to resting behavior
     for i = 1, #self.participants do
         self.participants[i]:atEase()
+    end
+end
+
+function Scene:release(label)
+    self.active_events[label] = nil
+    if self.blocked_by and self.blocked_by == label then
+        self.blocked_by = nil
     end
 end
 
@@ -108,8 +116,9 @@ function Scene:advance()
                 self:choose()
             end
 
-            -- Continue playing events
-            self:play()
+            -- Clear text state
+            self.text_state = nil
+            self.await_input = false
         end
     end
 end
@@ -142,6 +151,17 @@ function Scene:update(dt)
                                           self.text_state['cnum'] + 1)
         end
     end
+
+    -- Update wait timer
+    evs = self.active_events
+    if evs['wait'] then
+        evs['wait'] = evs['wait'] - dt
+        if evs['wait'] <= 0 then
+            self:release('wait')
+        end
+    end
+
+    self:play()
 end
 
 -- Render a black text box at the given position

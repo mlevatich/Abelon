@@ -60,7 +60,7 @@ function _say(scene, sp, portrait, requires_response, line)
     scene.await_input = not requires_response
 end
 
-function _look(sp1, sp2, player)
+function _lookAt(sp1, sp2, player)
 
     -- sp1 stops what they're doing
     if sp1 == player.sp then
@@ -74,11 +74,27 @@ function _look(sp1, sp2, player)
     sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
 end
 
-function walk(p1, tile_x, tile_y, path)
+function waitForEvent(label)
     return function(scene)
+        if scene.active_events[label] then
+            scene.blocked_by = label
+        end
+    end
+end
+
+function wait(seconds)
+    return function(scene)
+        scene.active_events['wait'] = seconds
+        scene.blocked_by = 'wait'
+    end
+end
+
+function walk(p1, tile_x, tile_y, label)
+    return function(scene)
+        scene.active_events[label] = true
         sp = scene.participants[p1]
         sp:addBehaviors({
-            ['walkTo'] = sp:walkToBehaviorGeneric(scene, tile_x, tile_y, path)
+            ['walkTo'] = sp:walkToBehaviorGeneric(scene, tile_x, tile_y, label)
         })
         sp:changeBehavior('walkTo')
     end
@@ -114,14 +130,20 @@ end
 
 function face(p1, p2)
     return function(scene)
-        _look(scene.participants[p1], scene.participants[p2], scene.player)
-        _look(scene.participants[p2], scene.participants[p1], scene.player)
+        _lookAt(scene.participants[p1], scene.participants[p2], scene.player)
+        _lookAt(scene.participants[p2], scene.participants[p1], scene.player)
     end
 end
 
-function look(p1, p2)
+function lookAt(p1, p2)
     return function(scene)
-        _look(scene.participants[p1], scene.participants[p2], scene.player)
+        _lookAt(scene.participants[p1], scene.participants[p2], scene.player)
+    end
+end
+
+function lookDir(p1, dir)
+    return function(scene)
+        scene.participants[p1].dir = dir
     end
 end
 
@@ -227,7 +249,7 @@ kath_interact_1 = {
             say(2, 3, false,
                 "Let me tell you a little bit about the history of the Kingdom."
             ),
-            walk(2, 30, 73, {UP, RIGHT}),
+            walk(2, 17, 82, 'ev-label-1'),
             say(2, 3, true,
                 "Do you know why the One Kingdom of Ebonach and Mistram is \z
                  called Lefally?"
@@ -275,6 +297,16 @@ kath_interact_1 = {
                     ['result'] = {}
                 }
             }),
+            waitForEvent('ev-label-1'),
+            wait(0.5),
+            lookDir(2, LEFT),
+            wait(0.5),
+            lookDir(2, RIGHT),
+            wait(1),
+            say(2, 1, false,
+                "...Well, that was a nice stroll. I've said all I need to, \z
+                 for now."
+            )
         },
         {
             say(2, 3, false,
@@ -289,7 +321,7 @@ book_interact_1 = {
     ['ids'] = {'abelon', 'book'},
     ['trigger'] = nil,
     ['events'] = {
-        look(1, 2),
+        lookAt(1, 2),
         say(2, 0, false,
             "An open book lies on the ground, full of strange drawings and \z
              hastily scrawled paragraphs. The writing is faded and barely \z
@@ -301,7 +333,7 @@ book_interact_1 = {
     },
     ['result'] = {
         ['callback'] = {
-            look(1, 2),
+            lookAt(1, 2),
             say(2, 0, false,
                 "On a second glance, it looks like there's another small book \z
                  beneath the first."
@@ -314,7 +346,7 @@ medallion_interact_1 = {
     ['ids'] = {'abelon', 'medallion'},
     ['trigger'] = nil,
     ['events'] = {
-        look(1, 2),
+        lookAt(1, 2),
         say(2, 0, true,
             "A silver medallion on a string lies on the ground, smeared with \z
              dirt. The image of a round shield over a longsword is engraved \z
@@ -344,7 +376,7 @@ medallion_interact_1 = {
     },
     ['result'] = {
         ['callback'] = {
-            look(1, 2),
+            lookAt(1, 2),
             say(2, 0, true,
                 "The medallion shines among the twigs and leaves of the \z
                  forest floor."

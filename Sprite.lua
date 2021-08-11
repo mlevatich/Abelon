@@ -259,6 +259,27 @@ function Sprite:atEase()
     self:changeBehavior(self.resting_behavior)
 end
 
+function Sprite:rePath(path)
+    local tmp = path[1]
+    path[1] = path[2]
+    path[2] = tmp
+    return path
+end
+
+function Sprite:pathTo(x, y)
+    local path = {RIGHT, DOWN}
+    if self.x > x then
+        path[1] = LEFT
+    end
+    if self.y > y then
+        path[2] = UP
+    end
+    if math.random() <= 0.5 then
+        path = self:rePath(path)
+    end
+    return path
+end
+
 -- Add new behavior functions or replace old ones for this sprite
 function Sprite:addBehaviors(new_behaviors)
     for name, fxn in pairs(new_behaviors) do
@@ -266,18 +287,16 @@ function Sprite:addBehaviors(new_behaviors)
     end
 end
 
-function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, path)
+function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, label)
     local map = self.chapter:getMap()
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
+    local path = self:pathTo(x_dst, y_dst)
     local prev_x, prev_y = -1, -1
-    scene.active_events = scene.active_events + 1
     return function(dt)
 
         local x, y = self:getPosition()
         if x == prev_x and y == prev_y then
-            local tmp = path[1]
-            path[1] = path[2]
-            path[2] = tmp
+            path = self:rePath(path)
         end
         prev_x = x
         prev_y = y
@@ -287,13 +306,13 @@ function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, path)
             self.y = y_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
-            scene.active_events = scene.active_events - 1
+            scene:release(label)
         elseif (path[2] == LEFT and y == y_dst and x <= x_dst) or
                (path[2] == RIGHT and y == y_dst and x >= x_dst) then
             self.x = x_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
-            scene.active_events = scene.active_events - 1
+            scene:release(label)
         else
             self:changeAnimation('walking')
             if path[1] == UP then

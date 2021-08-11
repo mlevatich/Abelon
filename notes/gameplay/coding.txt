@@ -1,19 +1,10 @@
 TODO list
 
-Walking: How to make sure a scene which ends before a walk finishes will not
-close prematurely? Pass a scene variable "event_queue" to the walk template
-function, which creates a spot on that queue, and clears it when the walk
-reaches its destination. Chapter only closes scene after event queue is empty.
-This queue can be re-used for other events. Blocking events look at the queue.
-
 Panning: Chapter checks the current scene state when figuring out camera actions.
 Camera should pan to and center on speaking sprite if the option is provided to
 say(), otherwise centers on Abelon by default. Pan() is also a scene event which
 causes the screen to pan to a provided coordinate until unPan() is called, at
 which point the screen pans back to Abelon.
-
-Waiting and blocking events: can also use chapter to check on scene status
-during updates.
 
 blocking and non-blocking rumble
 
