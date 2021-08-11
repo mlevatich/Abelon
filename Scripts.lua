@@ -74,6 +74,16 @@ function _look(sp1, sp2, player)
     sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
 end
 
+function walk(p1, tile_x, tile_y, path)
+    return function(scene)
+        sp = scene.participants[p1]
+        sp:addBehaviors({
+            ['walkTo'] = sp:walkToBehaviorGeneric(tile_x, tile_y, path)
+        })
+        sp:changeBehavior('walkTo')
+    end
+end
+
 function br(test, args, t_events, f_events)
     return function(scene)
         packed = {}
@@ -213,7 +223,58 @@ kath_interact_1 = {
         br(function(i) return i > 50 end, {{2, 'i'}}, {
             say(2, 1, false,
                 "I trust you, Abelon."
-            )
+            ),
+            say(2, 3, false,
+                "Let me tell you a little bit about the history of the Kingdom."
+            ),
+            walk(2, 13, 83, {DOWN, RIGHT}),
+            say(2, 3, true,
+                "Do you know why the One Kingdom of Ebonach and Mistram is \z
+                 called Lefally?"
+            ),
+            choice({
+                {
+                    ['response'] = "Yes",
+                    ['events'] = {
+                        say(2, 3, false,
+                            "Of course. Everyone does. Lefally, named after the \z
+                             proud first city of Lefellen, standing taller than \z
+                             the northern forest trees..."
+                        ),
+                        say(2, 2, false,
+                            "...In the place we now know as The Ash."
+                        ),
+                        say(2, 2, false,
+                            "But Abelon, you probably don't know this one. \z
+                             The truth is, I was born in Lefellen, just before \z
+                             the dragon attack. Before this whole nightmare \z
+                             began..."
+                        )
+                    },
+                    ['result'] = {}
+                },
+                {
+                    ['response'] = "No",
+                    ['events'] = {
+                        say(2, 3, false,
+                            "Ebonach wasn't always the capital. Indeed, at the \z
+                             beginning, it didn't exist. Lefally, named after the \z
+                             proud city of Lefellen, standing taller than \z
+                             the northern trees..."
+                        ),
+                        say(2, 2, false,
+                            "...In the place we now know as The Ash."
+                        ),
+                        say(2, 2, false,
+                            "I've kept this from you for a long time, but \z
+                             the truth is, I was born in Lefellen, just before \z
+                             the dragon attack. Before this whole nightmare \z
+                             began..."
+                        )
+                    },
+                    ['result'] = {}
+                }
+            }),
         },
         {
             say(2, 3, false,

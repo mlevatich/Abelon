@@ -142,7 +142,7 @@ function Sprite:getName()
     return self.name
 end
 
--- Get sprite's position
+-- Get sprite's position (top left)
 function Sprite:getPosition()
     return self.x, self.y
 end
@@ -182,6 +182,12 @@ function Sprite:isBlocking()
     return self.blocking
 end
 
+-- Stop sprite's velocity
+function Sprite:stop()
+    self.dx = 0
+    self.dy = 0
+end
+
 -- Modify a sprite's base position
 function Sprite:resetPosition(new_x, new_y)
 
@@ -194,20 +200,13 @@ function Sprite:resetPosition(new_x, new_y)
     self.y = new_y
 
     -- Stop sprite
-    self.dx = 0
-    self.dy = 0
+    self:stop()
 end
 
 -- Move sprite to new position
 function Sprite:move(x, y)
     self.x = x
     self.y = y
-end
-
--- Stop sprite's velocity
-function Sprite:stop()
-    self.dx = 0
-    self.dy = 0
 end
 
 -- Change a sprite's impression of Abelon (cannot drop below zero)
@@ -229,11 +228,11 @@ function Sprite:changeAnimation(new_animation_name)
     -- Start the new animation from the beginning (if it's actually new)
     if new_animation ~= self.current_animation then
         new_animation:restart()
-    end
 
-    -- Set the sprite's current animation to the new animation
-    self.current_animation = new_animation
-    self.animation_name = new_animation_name
+        -- Set the sprite's current animation to the new animation
+        self.current_animation = new_animation
+        self.animation_name = new_animation_name
+    end
 end
 
 -- Change a sprite's version so that it is rendered using a different set of animations
@@ -267,6 +266,70 @@ function Sprite:addBehaviors(new_behaviors)
     end
 end
 
+function Sprite:walkToBehaviorGeneric(tile_x, tile_y, path)
+    local map = self.chapter:getMap()
+    local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
+    return function(dt)
+        local x, y = self:getPosition()
+        if (path[2] == UP and x == x_dst and y <= y_dst) or
+           (path[2] == DOWN and x == x_dst and y >= y_dst) then
+            self.y = y_dst
+            self:resetPosition(self.x, self.y)
+            self:changeBehavior('idle')
+        elseif (path[2] == LEFT and y == y_dst and x <= x_dst) or
+               (path[2] == RIGHT and y == y_dst and x >= x_dst) then
+            self.x = x_dst
+            self:resetPosition(self.x, self.y)
+            self:changeBehavior('idle')
+        else
+            self:changeAnimation('walking')
+            if path[1] == UP then
+                if y <= y_dst then
+                    self.y = y_dst
+                    self.dy = 0
+                    self.dx = WANDER_SPEED * path[2]
+                    self.dir = path[2]
+                else
+                    self.dx = 0
+                    self.dy = -WANDER_SPEED
+                    self.dir = path[2]
+                end
+            elseif path[1] == DOWN then
+                if y >= y_dst then
+                    self.y = y_dst
+                    self.dy = 0
+                    self.dx = WANDER_SPEED * path[2]
+                    self.dir = path[2]
+                else
+                    self.dx = 0
+                    self.dy = WANDER_SPEED
+                    self.dir = path[2]
+                end
+            elseif path[1] == LEFT then
+                if x <= x_dst then
+                    self.x = x_dst
+                    self.dx = 0
+                    self.dy = WANDER_SPEED * ite(path[2] == DOWN, 1, -1)
+                else
+                    self.dy = 0
+                    self.dx = -WANDER_SPEED
+                    self.dir = LEFT
+                end
+            elseif path[1] == RIGHT then
+                if x >= x_dst then
+                    self.x = x_dst
+                    self.dx = 0
+                    self.dy = WANDER_SPEED * ite(path[2] == DOWN, 1, -1)
+                else
+                    self.dy = 0
+                    self.dx = WANDER_SPEED
+                    self.dir = RIGHT
+                end
+            end
+        end
+    end
+end
+
 -- Sprite wandering behavior
 function Sprite:_wanderBehavior(dt)
 
@@ -274,10 +337,7 @@ function Sprite:_wanderBehavior(dt)
     if (self.dx ~= 0 or self.dy ~= 0) and math.random() <= 0.05 then
 
         -- Stop moving
-        self.dx = 0
-        self.dy = 0
-
-        -- Start idling animation
+        self:stop()
         self:changeAnimation('idle')
 
     -- Chance to start walking in random direction if still
@@ -335,8 +395,7 @@ end
 
 -- Sprite idle behavior
 function Sprite:_idleBehavior(dt)
-    self.dx = 0
-    self.dy = 0
+    self:stop()
     self:changeAnimation('idle')
 end
 
