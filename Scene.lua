@@ -26,7 +26,7 @@ function Scene:init(scene_id, map, player)
 end
 
 function Scene:play()
-    self.state = nil
+    self.text_state = nil
     self.wait = false
     while not self.wait do
         if self.event > #self.script['events'] then
@@ -73,33 +73,31 @@ end
 function Scene:choose()
 
     -- Assume the choice is on the following page
-    local choice = self.state['selection']
+    local choice = self.text_state['selection']
 
     -- Effects of choice is to change impressions, awareness, callback, etc
-    self:processResult(self.state['choice_result'][choice])
+    self:processResult(self.text_state['choice_result'][choice])
 
     -- Response to the choice is inserted as events into current script
-    events = self.state['choice_events'][choice]
-    for i = 1, #events do
-        table.insert(self.script['events'], self.event, events[#events + 1 - i])
-    end
+    addEvents(self, self.text_state['choice_events'][choice], self.event)
 end
 
 -- Called when the player hits space while talking,
 -- returns ending track if is dialogue over or nil otherwise
 function Scene:advance()
-    if self.state then
+
+    if self.text_state then
 
         -- Check if the current dialogue is still rendering
-        if self.state['length'] ~= self.state['cnum'] then
+        if self.text_state['length'] ~= self.text_state['cnum'] then
 
             -- If not already at the end, jump to the end of the line
-            self.state['cnum'] = self.state['length']
+            self.text_state['cnum'] = self.text_state['length']
 
         else
 
             -- If we're waiting at choice, then make choice based on selection
-            if self.state['choices'] then
+            if self.text_state['choices'] then
                 self:choose()
             end
 
@@ -117,30 +115,30 @@ end
 
 -- Called when player presses up or down while talking to hover a selection
 function Scene:hover(dir)
-    if self.state and self.state['selection'] then
+    if self.text_state and self.text_state['selection'] then
 
         -- self.selection determines where the selection arrow is rendered
-        local n = #self.state['choices']
+        local n = #self.text_state['choices']
         if dir == UP then
-            self.state['selection'] = math.max(1, self.state['selection'] - 1)
+            self.text_state['selection'] = math.max(1, self.text_state['selection'] - 1)
         elseif dir == DOWN then
-            self.state['selection'] = math.min(n, self.state['selection'] + 1)
+            self.text_state['selection'] = math.min(n, self.text_state['selection'] + 1)
         end
     end
 end
 
 -- Increment time and move to the next character
 function Scene:update(dt)
-    if self.state then
+    if self.text_state then
 
         -- Update time passed
-        self.state['timer'] = self.state['timer'] + dt
+        self.text_state['timer'] = self.text_state['timer'] + dt
 
         -- Iteratively subtract interval from timer and increment char count
-        while self.state['timer'] > TEXT_INTERVAL do
-            self.state['timer'] = self.state['timer'] - TEXT_INTERVAL
-            self.state['cnum'] = math.min(self.state['length'],
-                                          self.state['cnum'] + 1)
+        while self.text_state['timer'] > TEXT_INTERVAL do
+            self.text_state['timer'] = self.text_state['timer'] - TEXT_INTERVAL
+            self.text_state['cnum'] = math.min(self.text_state['length'],
+                                          self.text_state['cnum'] + 1)
         end
     end
 end
@@ -177,7 +175,7 @@ function Scene:renderText(text, base_x, base_y)
     -- Iterate over lines and characters in the text, printing one-by-one
     local line_num = 1
     local char_num = 1
-    for _=1, self.state['cnum'] do
+    for _=1, self.text_state['cnum'] do
 
         -- Position of current character
         local x = x_beginning + (TEXT_MARGIN_X + FONT_SIZE) * (char_num - 1)
@@ -241,13 +239,13 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Render selection arrow on the selected option
-    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (self.state['selection'] - 1)
+    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (self.text_state['selection'] - 1)
     love.graphics.print(">", rect_x + 15, arrow_y)
 end
 
 -- Render dialogue to screen at current position
 function Scene:render(x, y)
-    if self.state then
+    if self.text_state then
 
         -- Render below the player if at the top of a map
         local flip = false
@@ -260,14 +258,14 @@ function Scene:render(x, y)
         self:renderTextBox(x, y)
 
         -- Render speaker name and portrait
-        self:renderSpeaker(self.state['speaker'], self.state['portrait'], x, y)
+        self:renderSpeaker(self.text_state['speaker'], self.text_state['portrait'], x, y)
 
         -- Render text up to current character position
-        self:renderText(self.state['text'], x, y)
+        self:renderText(self.text_state['text'], x, y)
 
         -- Render choice and selection arrow if there is a choice to make
-        if self.state['choices'] and self.state['length'] == self.state['cnum'] then
-            self:renderChoice(self.state['choices'], x, y, flip)
+        if self.text_state['choices'] and self.text_state['length'] == self.text_state['cnum'] then
+            self:renderChoice(self.text_state['choices'], x, y, flip)
         end
     end
 end

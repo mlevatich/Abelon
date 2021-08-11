@@ -34,16 +34,22 @@ function splitByCharLimit(text, char_limit)
     return lines
 end
 
+function addEvents(scene, e, at)
+    for i = 1, #e do
+        table.insert(scene.script['events'], at, e[#e + 1 - i])
+    end
+end
+
 function _choice(scene, op)
-    scene.state['choices'] = mapf(function(c) return c['response'] end, op)
-    scene.state['choice_result'] = mapf(function(c) return c['result'] end, op)
-    scene.state['choice_events'] = mapf(function(c) return c['events'] end, op)
-    scene.state['selection'] = 1
+    scene.text_state['choices'] = mapf(function(c) return c['response'] end, op)
+    scene.text_state['choice_result'] = mapf(function(c) return c['result'] end, op)
+    scene.text_state['choice_events'] = mapf(function(c) return c['events'] end, op)
+    scene.text_state['selection'] = 1
     scene.wait = true
 end
 
 function _say(scene, sp, portrait, requires_response, line)
-    scene.state = {
+    scene.text_state = {
         ['speaker'] = sp,
         ['portrait'] = portrait,
         ['text'] = splitByCharLimit(line, CHARS_PER_LINE),
@@ -68,27 +74,7 @@ function _look(sp1, sp2, player)
     sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
 end
 
-function condChoice(test, args, options)
-    return function(scene)
-        packed = {}
-        getI = function(p) return scene.participants[p]:getImpression() end
-        getA = function(p) return scene.participants[p]:getAwareness() end
-        for i = 1, #args do
-            packed[i] = ite(args[2] == 'i', getI(args[i][1]), getA(args[i][1]))
-        end
-        if test(table.unpack(packed)) then
-            _choice(scene, options)
-        end
-    end
-end
-
-function choice(options)
-    return function (scene)
-        _choice(scene, options)
-    end
-end
-
-function condSay(test, args, p1, portrait, requires_response, line)
+function br(test, args, t_events, f_events)
     return function(scene)
         packed = {}
         getI = function(p) return scene.participants[p]:getImpression() end
@@ -97,8 +83,16 @@ function condSay(test, args, p1, portrait, requires_response, line)
             packed[i] = ite(args[i][2] == 'i', getI(args[i][1]), getA(args[i][1]))
         end
         if test(unpack(packed)) then
-            _say(scene, scene.participants[p1], portrait, requires_response, line)
+            addEvents(scene, t_events, scene.event + 1)
+        else
+            addEvents(scene, f_events, scene.event + 1)
         end
+    end
+end
+
+function choice(options)
+    return function (scene)
+        _choice(scene, options)
     end
 end
 
@@ -216,12 +210,16 @@ kath_interact_1 = {
                 }
             }
         }),
-        condSay(function(i) return i > 50 end, {{2, 'i'}}, 2, 1, false,
-            "I trust you, Abelon."
-        ),
-        condSay(function(i) return i <= 50 end, {{2, 'i'}}, 2, 2, false,
-            "I don't trust you, Abelon."
-        )
+        br(function(i) return i > 50 end, {{2, 'i'}}, {
+            say(2, 1, false,
+                "I trust you, Abelon."
+            )
+        },
+        {
+            say(2, 3, false,
+                "I don't trust you, Abelon."
+            )
+        })
     },
     ['result'] = {}
 }
