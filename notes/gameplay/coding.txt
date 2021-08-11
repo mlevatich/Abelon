@@ -1,39 +1,28 @@
-TODO:
+TODO list
 
-assets
-tileset:
+#19: Augment scene engine with options like walking, events like
+rumbling, blocking or non-blocking sequences, screen panning, etc.
 
-merge dialogue and cinematics. Cinematic functionality is a superset of dialogues, no reason for them to be different
-subsystems. Use lua files, not text files. Allow characters to stop, face one another on entering scene via config of
-the lua file, not by default in the scene setup
+#31: Make quest state into chapter state, a table keyed by state strings, not a
+letter. Fix chapter instance variables and methods accordingly. Make following
+a quest-line coherent, try to avoid blowup. Test on simple dialogue-based quest.
 
-Keep in mind the presentation system when designing all of this.
+Cinematic triggers
 
-A scene is a list of entries, blocking or non-blocking. An entry could be an event (like chars facing one another, or
-a rumble in the ground), which is modeled as a lambda function taking the dialogue participants as input, plus extra
-params. Entries are key-value pairs, so the key determines what to do with the value. The scene engine itself can
-therefore be minimal. It checks  the key and then either calls the value function or renders dialogue if the value
-is dialogue. Support more than two dialogue responses.
+#27: Support complex results, like costume changes, item gets,
+chapter state changes, ability gets, new cinematic triggers, shopping menu,
+etc.
 
-Make quest state into chapter state, a table keyed by state strings, not a letter. Fix chapter instance variables and
-methods accordingly.
-
-Augment scene engine with quest state and options like walking, events like rumbling, blocking or non-blocking
-sequences, etc. Support complex results, like costume changes, item gets, chapter state changes, ability gets, cinematic
-triggers, etc.
-
-#17:
+#17: Inventory:
 -design menu flowchart v1
 -hover descriptions to menu items
 -let hover descriptions combine graphics and text
 -actions that either say you can't use, or close the menu and do some action
 -deal with right-side menu overflow
-#13 -> #27 -> #31 -> #18
-note: costume change is an interaction result
 
-Shopping
+#18: Shopping
 
-Presentation system – present items/people to others in order to trigger either fail states or quest advances
+#40: Presentation system – present items/people to others in order to trigger
+either fail states or quest advances
 
-Core engine done! Implement chapter 1 minus the battles to exercise all of these features. Put scenes in place of
-battles.
+That's the core interaction engine done, then time for COMBAT

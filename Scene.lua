@@ -120,10 +120,11 @@ function Scene:hover(dir)
     if self.state and self.state['selection'] then
 
         -- self.selection determines where the selection arrow is rendered
+        local n = #self.state['choices']
         if dir == UP then
             self.state['selection'] = math.max(1, self.state['selection'] - 1)
         elseif dir == DOWN then
-            self.state['selection'] = math.min(2, self.state['selection'] + 1)
+            self.state['selection'] = math.min(n, self.state['selection'] + 1)
         end
     end
 end

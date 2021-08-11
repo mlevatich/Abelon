@@ -155,6 +155,17 @@ kath_interact_1 = {
                     ['awareness'] = {0, 1},
                     ['impressions'] = {-1, 1}
                 }
+            },
+            {
+                ['response'] = "We were lucky",
+                ['events'] = {
+                    say(2, 1, true,
+                        "Lucky's one word for it. I would sooner credit those \z
+                         unholy spells you started slinging. Where on Eruta \z
+                         did you discover such magic?"
+                    )
+                },
+                ['result'] = {}
             }
         }),
         choice({
