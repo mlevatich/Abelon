@@ -1,12 +1,5 @@
 TODO list
 
-Simple pathing rules: Goal box must not overlap x or y coordinates with either
-1) leash box + abelon width around the sprite, or 2) any object in the
-"potential walk box" formed by the sprite and goal. Boundary spaces overlapping
-with the walk box must be convex.
-Simple pathing algorithm: detect when a collision is hit during walk and switch
-path[1] and path[2]
-
 Walking: How to make sure a scene which ends before a walk finishes will not
 close prematurely? Pass a scene variable "event_queue" to the walk template
 function, which creates a spot on that queue, and clears it when the walk

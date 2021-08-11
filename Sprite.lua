@@ -266,21 +266,34 @@ function Sprite:addBehaviors(new_behaviors)
     end
 end
 
-function Sprite:walkToBehaviorGeneric(tile_x, tile_y, path)
+function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, path)
     local map = self.chapter:getMap()
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
+    local prev_x, prev_y = -1, -1
+    scene.active_events = scene.active_events + 1
     return function(dt)
+
         local x, y = self:getPosition()
+        if x == prev_x and y == prev_y then
+            local tmp = path[1]
+            path[1] = path[2]
+            path[2] = tmp
+        end
+        prev_x = x
+        prev_y = y
+
         if (path[2] == UP and x == x_dst and y <= y_dst) or
            (path[2] == DOWN and x == x_dst and y >= y_dst) then
             self.y = y_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
+            scene.active_events = scene.active_events - 1
         elseif (path[2] == LEFT and y == y_dst and x <= x_dst) or
                (path[2] == RIGHT and y == y_dst and x >= x_dst) then
             self.x = x_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
+            scene.active_events = scene.active_events - 1
         else
             self:changeAnimation('walking')
             if path[1] == UP then

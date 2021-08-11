@@ -45,7 +45,7 @@ function _choice(scene, op)
     scene.text_state['choice_result'] = mapf(function(c) return c['result'] end, op)
     scene.text_state['choice_events'] = mapf(function(c) return c['events'] end, op)
     scene.text_state['selection'] = 1
-    scene.wait = true
+    scene.await_input = true
 end
 
 function _say(scene, sp, portrait, requires_response, line)
@@ -57,7 +57,7 @@ function _say(scene, sp, portrait, requires_response, line)
         ['cnum'] = 0,
         ['timer'] = 0
     }
-    scene.wait = not requires_response
+    scene.await_input = not requires_response
 end
 
 function _look(sp1, sp2, player)
@@ -78,7 +78,7 @@ function walk(p1, tile_x, tile_y, path)
     return function(scene)
         sp = scene.participants[p1]
         sp:addBehaviors({
-            ['walkTo'] = sp:walkToBehaviorGeneric(tile_x, tile_y, path)
+            ['walkTo'] = sp:walkToBehaviorGeneric(scene, tile_x, tile_y, path)
         })
         sp:changeBehavior('walkTo')
     end
@@ -227,7 +227,7 @@ kath_interact_1 = {
             say(2, 3, false,
                 "Let me tell you a little bit about the history of the Kingdom."
             ),
-            walk(2, 13, 83, {DOWN, RIGHT}),
+            walk(2, 30, 73, {UP, RIGHT}),
             say(2, 3, true,
                 "Do you know why the One Kingdom of Ebonach and Mistram is \z
                  called Lefally?"

@@ -1,0 +1,4 @@
+Max's pathing rules: Goal box must not overlap x or y coordinates with either
+1) leash box + abelon width around the sprite, or 2) any object in the
+"potential walk box" formed by the sprite and goal. Boundary spaces overlapping
+with the walk box must be convex.

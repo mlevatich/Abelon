@@ -194,9 +194,8 @@ function Chapter:updateScene(dt)
     self.current_scene:update(dt)
 
     -- Advance scene according to player input
-    local done = false
     if self.scene_inputs['advance'] then
-        done = self.current_scene:advance()
+        self.current_scene:advance()
     end
     self.current_scene:hover(self.scene_inputs['hover'])
 
@@ -204,7 +203,7 @@ function Chapter:updateScene(dt)
     self.scene_inputs = {}
 
     -- If scene has ended, shut it down and handle results
-    if done then
+    if self.current_scene:over() then
 
         -- End scene
         self.current_scene:close()

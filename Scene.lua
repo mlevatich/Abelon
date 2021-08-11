@@ -22,24 +22,31 @@ function Scene:init(scene_id, map, player)
 
     -- Start scene from the first event in the script
     self.event = 1
+    self.active_events = 0
+    self.script_finished = false
     self:play()
 end
 
 function Scene:play()
     self.text_state = nil
-    self.wait = false
-    while not self.wait do
-        if self.event > #self.script['events'] then
-            return true
-        end
+    self.await_input = false
+    while not self.await_input and self.event <= #self.script['events'] do
         self.script['events'][self.event](self)
         self.event = self.event + 1
     end
-    return false
+end
+
+function Scene:over()
+    local events_done = self.active_events == 0
+    local script_finished = self.event > #self.script['events']
+    return script_finished and events_done and not self.await_input
 end
 
 -- End the scene
 function Scene:close()
+
+    -- Process scene results
+    self:processResult(self.script['result'])
 
     -- Return participants to resting behavior
     for i = 1, #self.participants do
@@ -102,15 +109,9 @@ function Scene:advance()
             end
 
             -- Continue playing events
-            if self:play() then
-                self:processResult(self.script['result'])
-                return true
-            end
+            self:play()
         end
     end
-
-    -- Return false if scene is not over
-    return false
 end
 
 -- Called when player presses up or down while talking to hover a selection
