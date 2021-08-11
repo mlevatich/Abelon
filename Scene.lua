@@ -20,6 +20,12 @@ function Scene:init(scene_id, map, player)
         table.insert(self.participants, sps[sp_id])
     end
 
+    -- Scene camera
+    self.cam_lock = self.player
+    self.cam_offset_x = 0
+    self.cam_offset_y = 0
+    self.cam_speed = 300
+
     -- Start scene from the first event in the script
     self.event = 1
     self.active_events = {}
@@ -38,9 +44,8 @@ function Scene:play()
 end
 
 function Scene:over()
-    local events_done = next(self.active_events) == nil
     local script_finished = self.event > #self.script['events']
-    return script_finished and events_done and not self.await_input
+    return script_finished and not self.await_input and not self.blocked_by
 end
 
 -- End the scene

@@ -1,14 +1,8 @@
 TODO list
 
-Panning: Chapter checks the current scene state when figuring out camera actions.
-Camera should pan to and center on speaking sprite if the option is provided to
-say(), otherwise centers on Abelon by default. Pan() is also a scene event which
-causes the screen to pan to a provided coordinate until unPan() is called, at
-which point the screen pans back to Abelon.
-
 blocking and non-blocking rumble
 
-fade transition: always blocking
+fade-and-teleport: always blocking
 
 Separate from behaviors and animations, player has "controls". Being in scene
 is a set of controls, not a behavior. That way a player can be walking and

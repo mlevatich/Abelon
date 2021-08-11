@@ -21,6 +21,7 @@ function Chapter:init(id, spriteesheet)
     -- Camera that follows coordinates of player sprite around the chapter
     self.camera_x = 0
     self.camera_y = 0
+    self.camera_speed = 300
 
     -- Map info
     self.maps = {}
@@ -113,6 +114,7 @@ function Chapter:load()
             if is_player then
                 self.current_map = self.maps[current_map_name]
                 self.player = Player(new_sp)
+                self:updateCamera(100)
             end
 
         -- Other lines are state change mappings
@@ -129,7 +131,7 @@ function Chapter:load()
     end
 
     -- Start music
-    self:startMapMusic()
+    -- self:startMapMusic()
 end
 
 -- End the current chapter and save what happened in it
@@ -269,22 +271,46 @@ function Chapter:updateTransition(transition)
 end
 
 -- Update the camera to center on the player but not cross the map edges
-function Chapter:updateCamera()
+function Chapter:updateCamera(dt)
 
-    -- Get fields from map and player
+    -- Get fields from map and camera focus
     local pixel_width, pixel_height = self.current_map:getPixelDimensions()
-    local x, y = self.player:getPosition()
-    local w, h = self.player:getDimensions()
+    local focus = self.player
+    local x_offset = 0
+    local y_offset = 0
+    local speed = self.camera_speed
+    if self.current_scene then
+        focus = self.current_scene.cam_lock
+        x_offset = self.current_scene.cam_offset_x
+        y_offset = self.current_scene.cam_offset_y
+        speed = self.current_scene.cam_speed
+    end
 
-    -- Update the x position of the camera to center on the player character
-    local cam_max_x = math.min(pixel_width - VIRTUAL_WIDTH, x + w/2)
-    local cam_player_x = x + w/2 - VIRTUAL_WIDTH/2
-    self.camera_x = math.max(0, math.min(cam_player_x, cam_max_x))
+    local x, y = focus:getPosition()
+    local w, h = focus:getDimensions()
+    local x_target = x + w/2 + x_offset - VIRTUAL_WIDTH / 2
+    local y_target = y + h/2 + y_offset - VIRTUAL_HEIGHT / 2
+    local cam_max_x = pixel_width - VIRTUAL_WIDTH
+    local cam_max_y = pixel_height - VIRTUAL_HEIGHT
+    x_target = math.max(0, math.min(x_target, cam_max_x))
+    y_target = math.max(0, math.min(y_target, cam_max_y))
 
-    -- Update the y position of the camera to center on the player character
-    local cam_max_y = math.min(pixel_height - VIRTUAL_HEIGHT, y + w/2)
-    local cam_player_y = y + h/2 - VIRTUAL_HEIGHT/2
-    self.camera_y = math.max(0, math.min(cam_player_y, cam_max_y))
+    local new_x = ite(self.camera_x < x_target,
+        math.min(self.camera_x + speed * dt, x_target),
+        math.max(self.camera_x - speed * dt, x_target)
+    )
+    local new_y = ite(self.camera_y < y_target,
+        math.min(self.camera_y + speed * dt, y_target),
+        math.max(self.camera_y - speed * dt, y_target)
+    )
+
+    if new_x == x_target and new_y == y_target and self.current_scene then
+        self.current_scene:release('camera')
+    end
+
+    -- Update the y position of the camera to go towards the target
+    self.camera_x = math.max(0, math.min(new_x, cam_max_x))
+    self.camera_y = math.max(0, math.min(new_y, cam_max_y))
 end
 
 -- Update all of the sprites and objects in a chapter
@@ -307,7 +333,7 @@ function Chapter:update(dt)
     self:updateTransition(new_transition)
 
     -- Update camera position
-    self:updateCamera()
+    self:updateCamera(dt)
 
     -- No chapter change
     return nil

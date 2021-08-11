@@ -40,38 +40,20 @@ function addEvents(scene, e, at)
     end
 end
 
-function _choice(scene, op)
-    scene.text_state['choices'] = mapf(function(c) return c['response'] end, op)
-    scene.text_state['choice_result'] = mapf(function(c) return c['result'] end, op)
-    scene.text_state['choice_events'] = mapf(function(c) return c['events'] end, op)
-    scene.text_state['selection'] = 1
-    scene.await_input = true
-end
-
-function _say(scene, sp, portrait, requires_response, line)
-    scene.text_state = {
-        ['speaker'] = sp,
-        ['portrait'] = portrait,
-        ['text'] = splitByCharLimit(line, CHARS_PER_LINE),
-        ['length'] = #line,
-        ['cnum'] = 0,
-        ['timer'] = 0
-    }
-    scene.await_input = not requires_response
-end
-
-function _lookAt(sp1, sp2, player)
-
-    -- sp1 stops what they're doing
-    if sp1 == player.sp then
-        player:stop()
-        player:changeAnimation('idle')
-    else
-        sp1:changeBehavior('idle')
+function br(test, args, t_events, f_events)
+    return function(scene)
+        packed = {}
+        getI = function(p) return scene.participants[p]:getImpression() end
+        getA = function(p) return scene.participants[p]:getAwareness() end
+        for i = 1, #args do
+            packed[i] = ite(args[i][2] == 'i', getI(args[i][1]), getA(args[i][1]))
+        end
+        if test(unpack(packed)) then
+            addEvents(scene, t_events, scene.event + 1)
+        else
+            addEvents(scene, f_events, scene.event + 1)
+        end
     end
-
-    -- sp1 changes direction to face sp2
-    sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
 end
 
 function waitForEvent(label)
@@ -89,6 +71,26 @@ function wait(seconds)
     end
 end
 
+function pan(x, y, speed)
+    return function(scene)
+        scene.active_events['camera'] = true
+        scene.cam_offset_x = x
+        scene.cam_offset_y = y
+        scene.cam_speed = speed
+    end
+end
+
+function focus(p1, speed)
+    return function(scene)
+        scene.active_events['camera'] = true
+        sp = scene.participants[p1]
+        scene.cam_lock = sp
+        scene.cam_offset_x = 0
+        scene.cam_offset_y = 0
+        scene.cam_speed = speed
+    end
+end
+
 function walk(p1, tile_x, tile_y, label)
     return function(scene)
         scene.active_events[label] = true
@@ -100,32 +102,42 @@ function walk(p1, tile_x, tile_y, label)
     end
 end
 
-function br(test, args, t_events, f_events)
-    return function(scene)
-        packed = {}
-        getI = function(p) return scene.participants[p]:getImpression() end
-        getA = function(p) return scene.participants[p]:getAwareness() end
-        for i = 1, #args do
-            packed[i] = ite(args[i][2] == 'i', getI(args[i][1]), getA(args[i][1]))
-        end
-        if test(unpack(packed)) then
-            addEvents(scene, t_events, scene.event + 1)
-        else
-            addEvents(scene, f_events, scene.event + 1)
-        end
-    end
-end
-
-function choice(options)
+function choice(op)
     return function (scene)
-        _choice(scene, options)
+        scene.text_state['choices'] = mapf(function(c) return c['response'] end, op)
+        scene.text_state['choice_result'] = mapf(function(c) return c['result'] end, op)
+        scene.text_state['choice_events'] = mapf(function(c) return c['events'] end, op)
+        scene.text_state['selection'] = 1
+        scene.await_input = true
     end
 end
 
 function say(p1, portrait, requires_response, line)
     return function(scene)
-        _say(scene, scene.participants[p1], portrait, requires_response, line)
+        scene.text_state = {
+            ['speaker'] = scene.participants[p1],
+            ['portrait'] = portrait,
+            ['text'] = splitByCharLimit(line, CHARS_PER_LINE),
+            ['length'] = #line,
+            ['cnum'] = 0,
+            ['timer'] = 0
+        }
+        scene.await_input = not requires_response
     end
+end
+
+function _lookAt(sp1, sp2, player)
+
+    -- sp1 stops what they're doing
+    if sp1 == player.sp then
+        player:stop()
+        player:changeAnimation('idle')
+    else
+        sp1:changeBehavior('idle')
+    end
+
+    -- sp1 changes direction to face sp2
+    sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
 end
 
 function face(p1, p2)
@@ -152,6 +164,7 @@ kath_interact_1 = {
     ['trigger'] = nil,
     ['events'] = {
         face(1, 2),
+        focus(2, 100),
         say(2, 1, true,
             "Ho, Abelon! By Ignus, it's good to be alive! I must say, that \z
              was one of our closer brushes with death. But we made it, as we \z
@@ -194,6 +207,7 @@ kath_interact_1 = {
                 ['result'] = {}
             }
         }),
+        focus(2, 50),
         choice({
             {
                 ['response'] = "The Archives",
@@ -249,7 +263,7 @@ kath_interact_1 = {
             say(2, 3, false,
                 "Let me tell you a little bit about the history of the Kingdom."
             ),
-            walk(2, 17, 82, 'ev-label-1'),
+            walk(2, 21, 73, 'ev-walk-1'),
             say(2, 3, true,
                 "Do you know why the One Kingdom of Ebonach and Mistram is \z
                  called Lefally?"
@@ -263,6 +277,7 @@ kath_interact_1 = {
                              proud first city of Lefellen, standing taller than \z
                              the northern forest trees..."
                         ),
+                        waitForEvent('ev-walk-1'),
                         say(2, 2, false,
                             "...In the place we now know as The Ash."
                         ),
@@ -284,9 +299,21 @@ kath_interact_1 = {
                              proud city of Lefellen, standing taller than \z
                              the northern trees..."
                         ),
+                        waitForEvent('ev-walk-1'),
+                        waitForEvent('camera'),
+                        pan(0, -300, 80),
                         say(2, 2, false,
                             "...In the place we now know as The Ash."
                         ),
+                        say(2, 2, false,
+                            "That cold, desolate wasteland, where the once \z
+                             proud trees are now flattened, the city reduced \z
+                             to rubble..."
+                        ),
+                        waitForEvent('camera'),
+                        wait(1),
+                        focus(2, 80),
+                        waitForEvent('camera'),
                         say(2, 2, false,
                             "I've kept this from you for a long time, but \z
                              the truth is, I was born in Lefellen, just before \z
@@ -297,7 +324,6 @@ kath_interact_1 = {
                     ['result'] = {}
                 }
             }),
-            waitForEvent('ev-label-1'),
             wait(0.5),
             lookDir(2, LEFT),
             wait(0.5),
@@ -306,13 +332,17 @@ kath_interact_1 = {
             say(2, 1, false,
                 "...Well, that was a nice stroll. I've said all I need to, \z
                  for now."
-            )
+            ),
+            walk(2, 19, 76, 'ev-walk-2')
         },
         {
             say(2, 3, false,
                 "I don't trust you, Abelon."
             )
-        })
+        }),
+        focus(1, 100),
+        waitForEvent('camera'),
+        waitForEvent('ev-walk-2')
     },
     ['result'] = {}
 }
