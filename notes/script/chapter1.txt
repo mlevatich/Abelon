@@ -89,7 +89,7 @@ SCENE: PROLOGUE
 // Moving to the east through the clearing entrance, out of sight of the summoning circle,
 // triggers the following cinematic
 
-???: "Abelon! Finally!"
+???: "Abelon! At last!"
 
 // Kath enters from the east and begins speaking to Abelon
 
@@ -123,7 +123,10 @@ A: No, I'm alone
 
 A: Who are you? (Kath +2 awareness)
 
-    ???: "...What? " TODO
+    ???: "...What?"
+
+    ???: "Whatever's happened to you here, it's of less importance than the battle at the gate. Come, we must
+          reinforce our soldiers immediately!"
 
 // Kath takes a few steps east, and suddenly stops
 

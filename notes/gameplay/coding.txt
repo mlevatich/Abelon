@@ -1,15 +1,5 @@
 TODO list
 
-#31: Make quest state into chapter state, a table keyed by state strings, not a
-letter. Fix chapter instance variables and methods accordingly. Make following
-a quest-line coherent, try to avoid blowup. Test on simple dialogue-based quest.
-
-Cinematic triggers
-
-#27: Support complex results, like costume changes, item gets,
-chapter state changes, ability gets, new cinematic triggers, shopping menu,
-etc.
-
 #17: Inventory:
 -design menu flowchart v1
 -hover descriptions to menu items

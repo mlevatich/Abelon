@@ -5,11 +5,12 @@ require 'Scripts'
 Scene = Class{}
 
 -- Initialize a new dialogue
-function Scene:init(scene_id, map, player)
+function Scene:init(scene_id, map, player, chapter_state)
 
     -- Retrieve scene by id
     self.id = scene_id
     self.script = deepcopy(scripts[scene_id])
+    self.chapter_state = chapter_state
 
     -- Retrieve scene participants from the map
     self.player = player
@@ -20,12 +21,15 @@ function Scene:init(scene_id, map, player)
                      self.script['ids'][i])
         table.insert(self.participants, sps[sp_id])
     end
+    self.update_render = true
+    self.flip = false
 
     -- Scene camera
     self.cam_lock = self.player
     self.cam_offset_x = 0
     self.cam_offset_y = 0
     self.cam_speed = 300
+
 
     -- Start scene from the first event in the script
     self.event = 1
@@ -37,6 +41,8 @@ function Scene:init(scene_id, map, player)
 end
 
 function Scene:play()
+    --print("awaiting input? " .. tostring(self.await_input))
+    --print("blocked by: " .. tostring(self.blocked_by))
     while not self.await_input and not self.blocked_by
           and self.event <= #self.script['events'] do
         self.script['events'][self.event](self)
@@ -82,15 +88,26 @@ function Scene:processResult(result)
             self.participants[i]:changeAwareness(result['awareness'][i])
         end
     end
+    if result['state'] then
+        self.chapter_state[result['state']] = true
+    end
     if result['callback'] then
         local new_script = {
             ['ids'] = self.script['ids'],
-            ['trigger'] = nil,
             ['events'] = result['callback'],
             ['result'] = {}
         }
         scripts[self.id] = new_script
     end
+end
+
+function Scene:updateGroupY()
+    get_y_center = function(sp)
+        local x, y = sp:getPosition()
+        local w, h = sp:getDimensions()
+        return y + h/2
+    end
+    self.group_y = avg(mapf(get_y_center, self.participants))
 end
 
 -- Take a choice based on selection and propogate its effects
@@ -118,12 +135,15 @@ function Scene:advance()
             -- If not already at the end, jump to the end of the line
             self.text_state['cnum'] = self.text_state['length']
 
-        else
+        elseif self.await_input then
 
             -- If we're waiting at choice, then make choice based on selection
             if self.text_state['choices'] then
                 self:choose()
             end
+
+            -- Update participants approximate position to help with rendering
+            self.update_render = true
 
             -- Clear text state
             self.text_state = nil
@@ -160,6 +180,11 @@ function Scene:update(dt)
             self.text_state['timer'] = self.text_state['timer'] - TEXT_INTERVAL
             self.text_state['cnum'] = math.min(self.text_state['length'],
                                           self.text_state['cnum'] + 1)
+        end
+
+        if self.text_state['length'] == self.text_state['cnum'] and
+           self.blocked_by and self.blocked_by == 'text' then
+            self.blocked_by = nil
         end
     end
 
@@ -206,7 +231,7 @@ function Scene:renderSpeaker(sp, pid, x, y)
             sp.ptexture,
             sp.portraits[pid],
             x + BOX_MARGIN,
-            y + BOX_MARGIN * 3,
+            y + BOX_MARGIN * 2,
             0, 1, 1, 0, 0
         )
     end
@@ -255,15 +280,16 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Compute width and height of choice box
-    local w = BOX_MARGIN*2 + (TEXT_MARGIN_X + FONT_SIZE) * (longest) + 10
-    local h = TEXT_MARGIN_Y + (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
+    local w = BOX_MARGIN * 2 + (TEXT_MARGIN_X + FONT_SIZE) * (longest) + 10
+    local h = BOX_MARGIN / 2 + (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
 
     -- Compute coordinates of choice box
     local rect_x = base_x + BOX_MARGIN + BOX_WIDTH - w
-    local rect_y = base_y + BOX_MARGIN*2 + BOX_HEIGHT
+    local rect_y = base_y + BOX_MARGIN + BOX_HEIGHT + TEXT_MARGIN_Y
     if flip then
-        rect_y = base_y - TEXT_MARGIN_Y
+        rect_y = base_y
                - (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
+               + TEXT_MARGIN_Y
     end
 
     -- Draw choice box
@@ -281,7 +307,7 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
             -- Get position of character
             local x = rect_x + BOX_MARGIN
                     + (FONT_SIZE + TEXT_MARGIN_X) * (j + longest - #choices[i])
-            local y = rect_y + TEXT_MARGIN_Y
+            local y = rect_y + TEXT_MARGIN_Y + 2
                     + (FONT_SIZE + TEXT_MARGIN_Y) * (i-1)
 
             -- Draw character
@@ -290,20 +316,27 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Render selection arrow on the selected option
-    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y)
+    local arrow_y = rect_y + TEXT_MARGIN_Y + 2 + (FONT_SIZE + TEXT_MARGIN_Y)
                   * (self.text_state['selection'] - 1)
     love.graphics.print(">", rect_x + 15, arrow_y)
 end
 
 -- Render dialogue to screen at current position
 function Scene:render(x, y)
+
+    -- Update where text is rendered when asked
+    if self.update_render then
+        self:updateGroupY()
+        self.flip = y + VIRTUAL_HEIGHT / 3 > self.group_y
+        self.update_render = false
+    end
+
+    -- If there's text, render it
     if self.text_state then
 
-        -- Render below the player if at the top of a map
-        local flip = false
-        if y == 0 then
-            y = VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN * 2)
-            flip = true
+        -- Flip if need to
+        if self.flip then
+            y = y + VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN * 3.5)
         end
 
         -- Render text box
@@ -322,7 +355,7 @@ function Scene:render(x, y)
         -- Render choice and selection arrow if there is a choice to make
         if self.text_state['choices'] and
            self.text_state['length'] == self.text_state['cnum'] then
-            self:renderChoice(self.text_state['choices'], x, y, flip)
+            self:renderChoice(self.text_state['choices'], x, y, self.flip)
         end
     end
 end

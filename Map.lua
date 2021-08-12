@@ -96,7 +96,7 @@ end
 function Map:addSprite(sp)
 
     -- Insert sprite in order of depth
-    for i=1, #self.sprites do
+    for i = 1, #self.sprites do
         if self.sprites[i]:getDepth() <= sp:getDepth() then
             table.insert(self.sprites, i, sp)
             return
@@ -111,10 +111,24 @@ end
 function Map:dropSprite(sp)
 
     -- Find and remove sprite
-    for i=1, #self.sprites do
+    for i = 1, #self.sprites do
         if self.sprites[i] == sp then
             table.remove(self.sprites, i)
             return
+        end
+    end
+end
+
+-- Remove all sprites satisfying filter 'f'
+function Map:dropSpriteWhere(f)
+
+    -- Find and remove all sprites
+    local i = 1
+    while i <= #self.sprites do
+        if f(self.sprites[i]) then
+            table.remove(self.sprites, i)
+        else
+            i = i + 1
         end
     end
 end
@@ -180,6 +194,18 @@ function Map:tileAt(x, y)
         ['x'] = tile_x,
         ['y'] = tile_y,
         ['id'] = self:getTile(tile_x, tile_y)
+    }
+end
+
+function Map:tileAtExact(x, y)
+
+    -- Get tile coordinates from pixel coordinates
+    local tile_x = (x / TILE_WIDTH) + 1
+    local tile_y = (y / TILE_HEIGHT) + 1
+
+    return {
+        ['x'] = tile_x,
+        ['y'] = tile_y
     }
 end
 

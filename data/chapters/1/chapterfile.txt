@@ -1,6 +1,6 @@
 ~~forest standard forest
 
 ~abelon 7 70 P
-~kath 10 80
-~book 8 75
-~medallion 13 70
+~kath 36 73 kath_interact_base
+~book 8 75 book_interact_base
+~medallion 13 70 medallion_interact_base

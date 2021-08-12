@@ -278,13 +278,24 @@ function Sprite:rePath(path)
     return path
 end
 
-function Sprite:pathTo(x, y)
-    local path = {DOWN, RIGHT}
-    if self.x > x then
-        path[2] = LEFT
-    end
-    if self.y > y then
-        path[1] = UP
+function Sprite:pathTo(x, y, first)
+    local path = {}
+    if first and first == LEFT or first == RIGHT then
+        path = {RIGHT, DOWN}
+        if self.x > x then
+            path[1] = LEFT
+        end
+        if self.y > y then
+            path[2] = UP
+        end
+    else
+        path = {DOWN, RIGHT}
+        if self.x > x then
+            path[2] = LEFT
+        end
+        if self.y > y then
+            path[1] = UP
+        end
     end
     return path
 end
@@ -296,10 +307,10 @@ function Sprite:addBehaviors(new_behaviors)
     end
 end
 
-function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, label)
+function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, label, first)
     local map = self.chapter:getMap()
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
-    local path = self:pathTo(x_dst, y_dst)
+    local path = self:pathTo(x_dst, y_dst, first)
     local prev_x, prev_y = -1, -1
     local since_repath = 0
     return function(dt)

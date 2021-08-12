@@ -6,6 +6,8 @@ require 'Sprite'
 require 'Map'
 require 'Scene'
 require 'Music'
+require 'Triggers'
+require 'Scripts'
 
 Chapter = Class{}
 
@@ -42,7 +44,7 @@ function Chapter:init(id, spriteesheet)
     -- State of a chapter a dictionary of strings that correspond to different
     -- chapter events and determine quest progress, cinematic triggers, and
     -- sprite locations
-    self.chapter_state = {}
+    self.state = {}
 
     -- Tracking the scene the player is currently in
     self.current_scene = nil
@@ -94,7 +96,7 @@ function Chapter:load()
             current_sp_id = fields[1]
             local init_x = (tonumber(fields[2]) - 1) * TILE_WIDTH
             local init_y = (tonumber(fields[3]) - 1) * TILE_HEIGHT
-            local is_player = fields[4]
+            local first_interaction = fields[4]
 
             -- Initialize sprite object and set its starting position
             local new_sp = Sprite(current_sp_id, self.sheet, self)
@@ -106,10 +108,12 @@ function Chapter:load()
 
             -- If the sprite is the player character, we make the current map
             -- into the chapter's starting map, and initialize a player object
-            if is_player then
+            if first_interaction == 'P' then
                 self.current_map = self.maps[current_map_name]
                 self.player = Player(new_sp)
                 self:updateCamera(100)
+            else
+                scripts[current_sp_id] = scripts[first_interaction]
             end
         end
     end
@@ -139,6 +143,11 @@ function Chapter:getMap()
     return self.current_map
 end
 
+function Chapter:dropSprite(sp_id)
+    is_sp = function(s) return s.id == sp_id end
+    self.current_map:dropSpriteWhere(is_sp)
+end
+
 function Chapter:startMapMusic()
     self.current_music = self.map_to_music[self.current_map:getName()]
 end
@@ -150,11 +159,16 @@ function Chapter:stopMapMusic()
     self.current_music = nil
 end
 
--- Begin an interaction with the target sprite, which depends on the chapter,
--- map, and quest state
+-- Start scene with the given scene id
+function Chapter:launchScene(s_id)
+    self.player:changeMode('scene')
+    self.player:changeBehavior('idle')
+    self.current_scene = Scene(s_id, self.current_map, self.player, self.state)
+end
+
+-- Begin an interaction with the target sprite
 function Chapter:interactWith(target)
-    local scene_id = target:getID() .. '_interact_' .. self.id
-    self.current_scene = Scene(scene_id, self.current_map, self.player)
+    self:launchScene(target:getID())
 end
 
 -- Store player inputs to a scene, to be processed on update
@@ -262,8 +276,6 @@ function Chapter:updateCamera(dt)
 
     -- Default camera info
     local focus = self.player
-    local x, y = focus:getPosition()
-    local w, h = focus:getDimensions()
     local x_offset = 0
     local y_offset = 0
     local speed = self.camera_speed
@@ -277,6 +289,8 @@ function Chapter:updateCamera(dt)
     end
 
     -- Compute camera target to move to
+    local x, y = focus:getPosition()
+    local w, h = focus:getDimensions()
     local x_target = x + w/2 + x_offset - VIRTUAL_WIDTH / 2
     local y_target = y + h/2 + y_offset - VIRTUAL_HEIGHT / 2
     x_target = math.max(0, math.min(x_target, cam_max_x))
@@ -302,6 +316,21 @@ function Chapter:updateCamera(dt)
     self.camera_y = math.max(0, math.min(new_y, cam_max_y))
 end
 
+function Chapter:checkTriggers()
+    local i = 1
+    while i <= #triggers do
+        local check = triggers[i](self)
+        if check then
+            table.remove(triggers, i)
+            if check ~= DELETE then
+                self:launchScene(check)
+            end
+        else
+            i = i + 1
+        end
+    end
+end
+
 -- Update all of the sprites and objects in a chapter
 function Chapter:update(dt)
 
@@ -315,6 +344,8 @@ function Chapter:update(dt)
     if self.current_scene then
         self:updateScene(dt)
     end
+
+    self:checkTriggers()
 
     -- Update music
     if self.current_music then

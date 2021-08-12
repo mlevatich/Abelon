@@ -30,12 +30,12 @@ function Player:init(sp)
     self.mode = 'free'
 
     -- Abelon's starting inventory
-    local base_inventory = {
+    self.inventory = {
         {
             ['name'] = 'Items',
             ['children'] = {
-                { ['name'] = "Abelon's Axe", ['action'] = pass },
-                { ['name'] = "Abelon's Cloak", ['action'] = pass }
+                { ['name'] = "Abelon's axe", ['action'] = pass },
+                { ['name'] = "Abelon's cloak", ['action'] = pass }
             }
         },
         {
@@ -59,7 +59,7 @@ function Player:init(sp)
             ['action'] = function() love.event.quit(0) end
         }
     }
-    self.inventory = Menu(nil, base_inventory, BOX_MARGIN, BOX_MARGIN)
+    self:updateInventory()
 
     -- Abelon can open menus, like shops and the inventory
     self.open_menu = nil
@@ -76,7 +76,7 @@ function Player:openInventory()
     self:changeBehavior('idle')
 
     -- Set the inventory to be open
-    self.open_menu = self.inventory
+    self.open_menu = self.inventory_menu
 end
 
 -- When player presses space to interact, a dialogue is started
@@ -98,10 +98,25 @@ function Player:interact()
 
     -- Start this chapter's interaction with the found sprite
     if target then
-        self:changeMode('scene')
-        self:changeBehavior('idle')
         chapter:interactWith(target)
     end
+end
+
+function Player:updateInventory()
+    self.inventory_menu = Menu(nil, self.inventory, BOX_MARGIN, BOX_MARGIN)
+end
+
+function Player:acquire(item)
+    table.insert(self.inventory[1]['children'], item)
+    self:updateInventory()
+end
+
+function Player:has(item)
+    local item_names = mapf(
+        function(i) return i['name'] end,
+        self.inventory[1]['children']
+    )
+    return find(item_names, item)
 end
 
 function Player:changeMode(new_mode)

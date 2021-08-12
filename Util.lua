@@ -124,6 +124,14 @@ function find(t, val)
     return nil
 end
 
+function avg(t)
+    sum = 0
+    for k, v in pairs(t) do
+        sum = sum + v
+    end
+    return sum / #t
+end
+
 -- Split a spring by whitespace
 function split(str)
     local list = {}

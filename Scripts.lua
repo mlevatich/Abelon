@@ -1,6 +1,10 @@
 require 'Util'
 require 'Constants'
 
+function switchScriptFor(sp_id, new_id)
+    scripts[sp_id] = scripts[new_id]
+end
+
 function addEvents(scene, e, at)
     for i = 1, #e do
         table.insert(scene.script['events'], at, e[#e + 1 - i])
@@ -9,14 +13,22 @@ end
 
 function br(test, args, t_events, f_events)
     return function(scene)
-        vars = {}
+        local vars = {}
         getI = function(p) return scene.participants[p]:getImpression() end
         getA = function(p) return scene.participants[p]:getAwareness() end
         for i = 1, #args do
             vars[i] = ite(args[i][2] == 'i', getI(args[i][1]), getA(args[i][1]))
         end
-        events = ite(test(unpack(vars)), t_events, f_events)
+        local events = ite(test(unpack(vars)), t_events, f_events)
         addEvents(scene, events, scene.event + 1)
+    end
+end
+
+function waitForText()
+    return function(scene)
+        if scene.text_state then
+            scene.blocked_by = 'text'
+        end
     end
 end
 
@@ -47,7 +59,7 @@ end
 function focus(p1, speed)
     return function(scene)
         scene.active_events['camera'] = true
-        sp = scene.participants[p1]
+        local sp = scene.participants[p1]
         scene.cam_lock = sp
         scene.cam_offset_x = 0
         scene.cam_offset_y = 0
@@ -55,14 +67,45 @@ function focus(p1, speed)
     end
 end
 
-function walk(p1, tile_x, tile_y, label)
+function walk(p1, tile_x, tile_y, label, first)
     return function(scene)
         scene.active_events[label] = true
-        sp = scene.participants[p1]
+        local sp = scene.participants[p1]
         sp:addBehaviors({
-            ['walkTo'] = sp:walkToBehaviorGeneric(scene, tile_x, tile_y, label)
+            ['walkTo'] = sp:walkToBehaviorGeneric(
+                scene,
+                tile_x,
+                tile_y,
+                label,
+                first
+            )
         })
         sp:changeBehavior('walkTo')
+    end
+end
+
+function walkTo(p1, p2, label, first)
+    return function(scene)
+        local sp1 = scene.participants[p1]
+        local sp2 = scene.participants[p2]
+        local map = sp2.chapter:getMap()
+        local x, y = sp2:getPosition()
+        local sp2_tile = map:tileAtExact(x, y)
+        local offset = ite(sp1.x > sp2.x, 1.2, -1.2)
+        local tile_x = sp2_tile['x'] + offset
+        local tile_y = sp2_tile['y']
+
+        scene.active_events[label] = true
+        sp1:addBehaviors({
+            ['walkTo'] = sp1:walkToBehaviorGeneric(
+                scene,
+                tile_x,
+                tile_y,
+                label,
+                first
+            )
+        })
+        sp1:changeBehavior('walkTo')
     end
 end
 
@@ -115,9 +158,8 @@ function lookDir(p1, dir)
     end
 end
 
-kath_interact_1 = {
+kath_interact_base = {
     ['ids'] = {'abelon', 'kath'},
-    ['trigger'] = nil,
     ['events'] = {
         face(1, 2),
         focus(2, 100),
@@ -219,9 +261,9 @@ kath_interact_1 = {
             say(2, 3, false,
                 "Let me tell you a little bit about the history of the Kingdom."
             ),
-            walk(2, 21, 73, 'ev-walk-1'),
+            walk(2, 50, 63, 'walk1', RIGHT),
             wait(1.7),
-            walk(1, 19, 73, 'ev-walk-2'),
+            walk(1, 48, 63, 'walk2', RIGHT),
             say(2, 3, true,
                 "Do you know why the One Kingdom of Ebonach and Mistram is \z
                  called Lefally?"
@@ -235,8 +277,8 @@ kath_interact_1 = {
                              the proud first city of Lefellen, standing \z
                              taller than the northern forest trees..."
                         ),
-                        waitForEvent('ev-walk-1'),
-                        waitForEvent('ev-walk-2'),
+                        waitForEvent('walk1'),
+                        waitForEvent('walk2'),
                         say(2, 2, false,
                             "...In the place we now know as The Ash."
                         ),
@@ -259,8 +301,8 @@ kath_interact_1 = {
                              after the proud city of Lefellen, standing \z
                              taller than the northern trees..."
                         ),
-                        waitForEvent('ev-walk-1'),
-                        waitForEvent('ev-walk-2'),
+                        waitForEvent('walk1'),
+                        waitForEvent('walk2'),
                         waitForEvent('camera'),
                         pan(0, -600, 200),
                         say(2, 2, false,
@@ -286,7 +328,7 @@ kath_interact_1 = {
                     ['result'] = {}
                 }
             }),
-            wait(0.5),
+            wait(0.2),
             lookDir(2, RIGHT),
             wait(0.5),
             lookDir(2, LEFT),
@@ -295,10 +337,6 @@ kath_interact_1 = {
                 "...Well, that was a nice stroll. I've said all I need to, \z
                  for now."
             ),
-            wait(0.5),
-            walk(1, 17, 76, 'ev-walk-3'),
-            wait(0.3),
-            walk(2, 22, 76, 'ev-walk-4')
         },
         {
             say(2, 3, false,
@@ -306,16 +344,249 @@ kath_interact_1 = {
             )
         }),
         focus(1, 100),
-        waitForEvent('ev-walk-3'),
-        waitForEvent('ev-walk-4'),
         waitForEvent('camera')
     },
-    ['result'] = {}
+    ['result'] = {
+        ['state'] = 'kath_interact_base'
+    }
 }
 
-book_interact_1 = {
+kath_medallion_response = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        face(1, 2),
+        say(2, 1, true,
+            "Oh. I see you picked up that medallion from the ground. Is that \z
+             yours?"
+        ),
+        choice({
+            {
+                ['response'] = 'No',
+                ['events'] = {
+                    say(2, 1, false,
+                        "Ah, planning to return it to its rightful owner when \z
+                         we're back in town, then? How unexpectedly \z
+                         considerate of you."
+                    )
+                },
+                ['result'] = {
+                    ['callback'] = {
+                        face(1, 2),
+                        say(2, 1, false,
+                            "We'll have to get out of here before you can \z
+                             return the medallion!"
+                        )
+                    }
+                }
+            },
+            {
+                ['response'] = 'Yes',
+                ['events'] = {
+                    say(2, 1, false,
+                        "Well, how did it end up out here then? I've never \z
+                         known you to be careless with your possessions."
+                    )
+                },
+                ['result'] = {
+                    ['callback'] = {
+                        face(1, 2),
+                        say(2, 1, false,
+                            "I'm glad you've recovered your medallion, in any \z
+                             case."
+                        )
+                    }
+                }
+            }
+        })
+    },
+    ['result'] = {
+        ['state'] = 'kath_medallion_response'
+    }
+}
+
+meet_kath = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        lookAt(2, 1),
+        focus(2, 200),
+        pan(-200, 0, 100),
+        waitForEvent('camera'),
+        say(2, 3, false,
+            "Abelon! At last!"
+        ),
+        lookAt(1, 2),
+        walk(2, 29, 73, 'walk'),
+        focus(1, 50),
+        say(2, 3, false,
+            "By Ignus, what are you doing out here? The knights are pinned at \z
+             the north gate, to the man, and suddenly you disappear! Come, we \z
+             must return to the fight."
+        ),
+        say(2, 3, false,
+            "Without our steel, the beasts might finally break through to the \z
+            gilded district...ach, we'd all be in for it then."
+        ),
+        waitForEvent('walk'),
+        wait(0.3),
+        say(2, 2, false,
+            "Wait, your arm. You're wounded. Let me see that."
+        ),
+        walkTo(2, 1, 'walk'),
+        waitForEvent('walk'),
+        lookAt(2, 1),
+        wait(1),
+        walk(2, 28, 73, 'walk'),
+        waitForEvent('walk'),
+        lookAt(2, 1),
+        say(2, 3, true,
+            "I'll have none of your usual protests about bandages and such, \z
+             that sword arm of yours is well worth my ignea. Did one of the \z
+             wolves follow you here? Did you kill it?"
+        ),
+        choice({
+            {
+                ['response'] = "No, I'm alone",
+                ['events'] = {
+                    say(2, 2, false,
+                        "You're..."
+                    ),
+                    wait(0.2),
+                    lookDir(2, RIGHT),
+                    wait(0.5),
+                    lookDir(2, LEFT),
+                    wait(1),
+                    say(2, 2, true,
+                        "Well, what got your arm then? Hold on, what's all \z
+                         that behind you?"
+                    ),
+                    choice({
+                        {
+                            ['response'] = "A ritual",
+                            ['events'] = {
+                                say(2, 2, false,
+                                    "That sign in the earth is your work, \z
+                                     then? Which explains your arm, but...a \z
+                                     blood rite, Abelon?"
+                                ),
+                                say(2, 3, false,
+                                    "I've only ever heard of them in \z
+                                     stories... The kinds of stories that \z
+                                     don't end well."
+                                ),
+                                say(2, 3, false,
+                                    "Whatever you've done, I dearly hope it \z
+                                     will help us live to see daylight."
+                                ),
+                                say(2, 3, false,
+                                    "We've wasted too much time talking \z
+                                     already. If you're not in danger here, \z
+                                     we need to reinforce our soldiers, \z
+                                     immediately. Come on!"
+                                )
+                            },
+                            ['result'] = {
+                                ['state'] = "mentioned_blood_rite"
+                            }
+                        },
+                        {
+                            ['response'] = "I don't know",
+                            ['events'] = {
+                                say(2, 3, false,
+                                    "Hm, well I don't remember seeing it when \z
+                                     I was last on salvage to the Ash...but \z
+                                     it's a curiosity for another time."
+                                ),
+                                say(2, 3, false,
+                                    "If you're not in danger here, we need to \z
+                                     reinforce our soldiers, immediately. \z
+                                     Come on!"
+                                )
+                            },
+                            ['result'] = {
+                                ['awareness'] = {0, 1}
+                            }
+                        }
+                    })
+                },
+                ['result'] = {}
+            },
+            {
+                ['response'] = "Who are you?",
+                ['events'] = {
+                    say(2, 2, false,
+                        "...What? Please tell me this is a jest, Abelon..."
+                    ),
+                    wait(1.5),
+                    say(2, 3, false,
+                        "Whatever's happened to you here, it's of less \z
+                         importance than the battle at the gate. Come, we \z
+                         must reinforce our soldiers immediately!"
+                    )
+                },
+                ['result'] = {
+                    ['awareness'] = {0, 2}
+                }
+            }
+        }),
+        walk(2, 33, 73, 'walk'),
+        waitForEvent('walk'),
+        wait(0.5),
+        say(2, 2, true,
+            "Ah. They must have followed me here. I'm sorry, Abelon."
+        ),
+        waitForText(),
+        wait(0.5),
+        focus(2, 100),
+        pan(150, -50, 100),
+        wait(1),
+        walk(1, 32, 72, 'walk'),
+        waitForEvent('camera'),
+        waitForEvent('walk'),
+        choice({
+            {
+                ['response'] = "You shouldn't have come, then",
+                ['events'] = {
+                    say(2, 3, false,
+                        "Well, a word of warning before running off might \z
+                         have accomplished as much! I suppose if I had \z
+                         vanished in the middle of a battle,"
+                    ),
+                    say(2, 3, false,
+                        "you wouldn't have spared me a second thought, then. \z
+                         Cold and calculating to the last, our veteran \z
+                         captain is..."
+                    ),
+                    say(2, 3, false,
+                        "Let's finish these beasts off quickly, so we can \z
+                         reach the knights."
+                    )
+                },
+                ['result'] = {
+                    ['impression'] = {0, -2}
+                }
+            },
+            {
+                ['response'] = "Nothing we can't handle",
+                ['events'] = {
+                    say(2, 1, false,
+                        "Now there's the grizzled old knight I remember! You \z
+                         had me worried for a moment. Let's finish them off \z
+                         quickly so we can reach the knights!"
+                    )
+                },
+                ['result'] = {
+                    ['impression'] = {0, 1}
+                }
+            }
+        })
+    },
+    ['result'] = {
+        ['state'] = 'meet_kath'
+    }
+}
+
+book_interact_base = {
     ['ids'] = {'abelon', 'book'},
-    ['trigger'] = nil,
     ['events'] = {
         lookAt(1, 2),
         say(2, 0, false,
@@ -334,13 +605,13 @@ book_interact_1 = {
                 "On a second glance, it looks like there's another small book \z
                  beneath the first."
             )
-        }
+        },
+        ['state'] = 'book_interact_base'
     }
 }
 
-medallion_interact_1 = {
+medallion_interact_base = {
     ['ids'] = {'abelon', 'medallion'},
-    ['trigger'] = nil,
     ['events'] = {
         lookAt(1, 2),
         say(2, 0, true,
@@ -358,9 +629,7 @@ medallion_interact_1 = {
                     )
                 },
                 ['result'] = {
-                    ['state'] = 'have_medallion',
-                    ['gain'] = 'medallion',
-                    ['destroy'] = 'medallion'
+                    ['state'] = 'pick_up_medallion'
                 }
             },
             {
@@ -387,9 +656,7 @@ medallion_interact_1 = {
                         )
                     },
                     ['result'] = {
-                        ['state'] = 'have_medallion',
-                        ['gain'] = 'medallion',
-                        ['destroy'] = 'medallion'
+                        ['state'] = 'pick_up_medallion'
                     }
                 },
                 {
@@ -398,12 +665,15 @@ medallion_interact_1 = {
                     ['result'] = {}
                 }
             })
-        }
+        },
+        ['state'] = 'medallion_interact_base'
     }
 }
 
 scripts = {
-    ['kath_interact_1'] = kath_interact_1,
-    ['book_interact_1'] = book_interact_1,
-    ['medallion_interact_1'] = medallion_interact_1
+    ['kath_interact_base'] = kath_interact_base,
+    ['book_interact_base'] = book_interact_base,
+    ['medallion_interact_base'] = medallion_interact_base,
+    ['kath_medallion_response'] = kath_medallion_response,
+    ['meet_kath'] = meet_kath
 }
