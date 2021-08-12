@@ -58,6 +58,9 @@ function Scene:close()
     for i = 1, #self.participants do
         self.participants[i]:atEase()
     end
+
+    -- Give control back to the player
+    self.player:changeMode('free')
 end
 
 function Scene:release(label)

@@ -1,16 +1,5 @@
 TODO list
 
-blocking and non-blocking rumble
-
-fade-and-teleport: always blocking
-
-Separate from behaviors and animations, player has "controls". Being in scene
-is a set of controls, not a behavior. That way a player can be walking and
-still have scene controls.
-
-Have player follow a walking sprite to a destination nearby, by issuing a walk
-for the sprite, a short wait, and a walk for Abelon
-
 #31: Make quest state into chapter state, a table keyed by state strings, not a
 letter. Fix chapter instance variables and methods accordingly. Make following
 a quest-line coherent, try to avoid blowup. Test on simple dialogue-based quest.

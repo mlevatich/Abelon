@@ -246,6 +246,7 @@ function Chapter:updateTransition(transition)
     -- Start new transition if an argument was provided
     if transition then
         self.player:changeBehavior('idle')
+        self.player:changeMode('frozen')
         self.in_transition = transition
     end
 
@@ -265,7 +266,7 @@ function Chapter:updateTransition(transition)
 
         -- End transition when alpha is full
         if self.alpha == 1 then
-            self.player:changeBehavior('wander')
+            self.player:changeMode('free')
         end
     end
 end
@@ -318,6 +319,9 @@ function Chapter:update(dt)
 
     -- Update the chapter's active map and sprites
     local new_transition = self.current_map:update(dt, self.player)
+
+    -- Update player character based on key-presses
+    self.player:update(dt)
 
     -- Update the currently active scene
     if self.current_scene then

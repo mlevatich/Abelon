@@ -9,7 +9,7 @@ Interactive: yes
 Blocking: yes
 Animations: idle:0 walking:1,2,3,4
 Versions: standard injured
-Resting: wander
+Resting: idle
 Portrait: yes
 Impression: 50
 Awareness: 100

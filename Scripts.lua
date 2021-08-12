@@ -129,12 +129,7 @@ end
 function _lookAt(sp1, sp2, player)
 
     -- sp1 stops what they're doing
-    if sp1 == player.sp then
-        player:stop()
-        player:changeAnimation('idle')
-    else
-        sp1:changeBehavior('idle')
-    end
+    sp1:changeBehavior('idle')
 
     -- sp1 changes direction to face sp2
     sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
@@ -264,6 +259,8 @@ kath_interact_1 = {
                 "Let me tell you a little bit about the history of the Kingdom."
             ),
             walk(2, 21, 73, 'ev-walk-1'),
+            wait(1.7),
+            walk(1, 19, 73, 'ev-walk-2'),
             say(2, 3, true,
                 "Do you know why the One Kingdom of Ebonach and Mistram is \z
                  called Lefally?"
@@ -278,9 +275,11 @@ kath_interact_1 = {
                              the northern forest trees..."
                         ),
                         waitForEvent('ev-walk-1'),
+                        waitForEvent('ev-walk-2'),
                         say(2, 2, false,
                             "...In the place we now know as The Ash."
                         ),
+                        lookAt(2, 1),
                         say(2, 2, false,
                             "But Abelon, you probably don't know this one. \z
                              The truth is, I was born in Lefellen, just before \z
@@ -300,8 +299,9 @@ kath_interact_1 = {
                              the northern trees..."
                         ),
                         waitForEvent('ev-walk-1'),
+                        waitForEvent('ev-walk-2'),
                         waitForEvent('camera'),
-                        pan(0, -300, 80),
+                        pan(0, -600, 200),
                         say(2, 2, false,
                             "...In the place we now know as The Ash."
                         ),
@@ -312,7 +312,8 @@ kath_interact_1 = {
                         ),
                         waitForEvent('camera'),
                         wait(1),
-                        focus(2, 80),
+                        focus(2, 200),
+                        lookAt(2, 1),
                         waitForEvent('camera'),
                         say(2, 2, false,
                             "I've kept this from you for a long time, but \z
@@ -325,15 +326,18 @@ kath_interact_1 = {
                 }
             }),
             wait(0.5),
-            lookDir(2, LEFT),
-            wait(0.5),
             lookDir(2, RIGHT),
+            wait(0.5),
+            lookDir(2, LEFT),
             wait(1),
             say(2, 1, false,
                 "...Well, that was a nice stroll. I've said all I need to, \z
                  for now."
             ),
-            walk(2, 19, 76, 'ev-walk-2')
+            wait(0.5),
+            walk(1, 17, 76, 'ev-walk-3'),
+            wait(0.3),
+            walk(2, 22, 76, 'ev-walk-4')
         },
         {
             say(2, 3, false,
@@ -341,8 +345,9 @@ kath_interact_1 = {
             )
         }),
         focus(1, 100),
-        waitForEvent('camera'),
-        waitForEvent('ev-walk-2')
+        waitForEvent('ev-walk-3'),
+        waitForEvent('ev-walk-4'),
+        waitForEvent('camera')
     },
     ['result'] = {}
 }

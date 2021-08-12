@@ -18,14 +18,16 @@ function Player:init(sp)
     -- Player is a superclass of Sprite
     self.sp = sp
 
-    -- Abelon has different behaviors to account for the player's keyboard input
-    -- which overwrite the standard sprite behaviors
-    self:addBehaviors({
-        ['wander'] = function() self:wanderBehavior() end,
-        ['idle'] = function() self:idleBehavior() end,
-        ['scene'] = function() self:sceneBehavior() end,
-        ['browsing'] = function() self:browsingBehavior() end
-    })
+    self:addBehaviors({['free'] = function() pass() end})
+
+    -- Abelon has different modes to account for the player's keyboard input
+    self.modes = {
+        ['frozen'] = function() self:stillMode() end,
+        ['free'] = function() self:freeMode() end,
+        ['scene'] = function() self:sceneMode() end,
+        ['browse'] = function() self:browseMode() end
+    }
+    self.mode = 'free'
 
     -- Abelon's starting inventory
     local base_inventory = {
@@ -58,8 +60,8 @@ end
 function Player:openInventory()
 
     -- Change player behavior to menu-browsing
-    self:changeBehavior('browsing')
-    self:changeAnimation('idle')
+    self:changeMode('browsing')
+    self:changeBehavior('idle')
 
     -- Set the inventory to be open
     self.open_menu = self.inventory
@@ -82,20 +84,24 @@ function Player:interact()
 
     -- Start this chapter's interaction with the found sprite
     if target then
-        self:changeBehavior('scene')
+        self:changeMode('scene')
+        self:changeBehavior('idle')
         chapter:interactWith(target)
     end
 end
 
--- For stopping the player
-function Player:idleBehavior(dt)
-    self:stop()
+function Player:changeMode(new_mode)
+    self.mode = new_mode
 end
 
--- Normal player movement behavior
-function Player:wanderBehavior(dt)
+-- Cannot accept keypresses in frozen mode
+function Player:frozenMode(dt)
+    pass()
+end
 
-    -- Read keypresses
+function Player:freeMode(dt)
+
+    -- Get keypresses
     local l = love.keyboard.isDown('left')
     local r = love.keyboard.isDown('right')
     local u = love.keyboard.isDown('up')
@@ -107,6 +113,7 @@ function Player:wanderBehavior(dt)
     if not (l == r) or not (u == d) then
 
         -- Change animation to walking
+        self:changeBehavior('free')
         self:changeAnimation('walking')
 
         -- If a left/right direction is held, set x velocity and direction
@@ -147,9 +154,8 @@ function Player:wanderBehavior(dt)
 
     -- If no direction was tapped, stop walking
     else
-        -- Halt and change to idle animation
-        self:stop()
-        self:changeAnimation('idle')
+        -- Idle behavior
+        self:changeBehavior('idle')
     end
 
     -- If e is pressed, the inventory opens. Otherwise, if space is pressed,
@@ -161,8 +167,7 @@ function Player:wanderBehavior(dt)
     end
 end
 
--- Player in-scene behavior
-function Player:sceneBehavior(dt)
+function Player:sceneMode(dt)
 
     -- Get keypresses
     local u = love.keyboard.wasPressed('up')
@@ -173,11 +178,7 @@ function Player:sceneBehavior(dt)
     self:getChapter():sceneInput(space, u, d)
 end
 
--- Player in-menu behavior
-function Player:browsingBehavior(dt)
-
-    -- Player is still while a menu is open
-    self:stop()
+function Player:browsingMode(dt)
 
     -- Read keypresses
     local l = love.keyboard.wasPressed('left')
@@ -191,7 +192,7 @@ function Player:browsingBehavior(dt)
     if esc or e then
         self.open_menu:reset()
         self.open_menu = nil
-        self:changeBehavior('wander')
+        self:changeMode('free')
     elseif l then
         self.open_menu:back()
     elseif r or enter then
@@ -199,6 +200,11 @@ function Player:browsingBehavior(dt)
     elseif u ~= d then
         self.open_menu:hover(ite(u, UP, DOWN))
     end
+end
+
+-- Update player character based on key presses
+function Player:update(dt)
+    self.modes[self.mode](dt)
 end
 
 -- Render the player character's interactions
@@ -234,4 +240,3 @@ function Player:addBehaviors(arg1) return self.sp:addBehaviors(arg1) end
 function Player:AABB(arg1, arg2) return self.sp:AABB(arg1, arg2) end
 function Player:onTile(arg1, arg2) return self.sp:onTile(arg1, arg2) end
 function Player:checkCollisions() return self.sp:checkCollisions() end
-function Player:update(dt) return self.sp:update(dt) end

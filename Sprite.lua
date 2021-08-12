@@ -12,7 +12,7 @@ local INIT_VERSION = 'standard'
 
 -- Movement constants
 local WANDER_SPEED = 70
-local LEASH_DISTANCE = 100
+local LEASH_DISTANCE = 90
 
 -- Each spacter has 12 possible portraits for 12 different emotions (some may not use them all)
 local PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
@@ -267,15 +267,12 @@ function Sprite:rePath(path)
 end
 
 function Sprite:pathTo(x, y)
-    local path = {RIGHT, DOWN}
+    local path = {DOWN, RIGHT}
     if self.x > x then
-        path[1] = LEFT
+        path[2] = LEFT
     end
     if self.y > y then
-        path[2] = UP
-    end
-    if math.random() <= 0.5 then
-        path = self:rePath(path)
+        path[1] = UP
     end
     return path
 end
@@ -292,11 +289,21 @@ function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, label)
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
     local path = self:pathTo(x_dst, y_dst)
     local prev_x, prev_y = -1, -1
+    local since_repath = 0
     return function(dt)
+
+        if since_repath ~= 0 then
+            since_repath = since_repath - dt
+        end
+        if since_repath < 0 then
+            since_repath = 0
+            path = self:rePath(path)
+        end
 
         local x, y = self:getPosition()
         if x == prev_x and y == prev_y then
             path = self:rePath(path)
+            since_repath = 1
         end
         prev_x = x
         prev_y = y
