@@ -21,7 +21,8 @@ function Music:init(name)
     self.src = love.audio.newSource(audio_file, 'stream')
     self.src:setLooping(false)
 
-    -- We maintain a duplicate in a buffer to fade in as the src fades out, to accomplish smooth looping
+    -- We maintain a duplicate in a buffer to fade in as the src fades out,
+    -- to accomplish smooth looping
     self.buf = love.audio.newSource(audio_file, 'stream')
     self.buf:setLooping(false)
 end
@@ -35,9 +36,10 @@ function Music:update(dt)
         self.src:play()
     end
 
-    -- Looping is controlled by fading out the source track as the buffer track fades in
-    local fade_factor = (self.src:tell() - self.begin_fade) / self.fade_duration
-    if fade_factor >= 0 and fade_factor < 1 then
+    -- Looping is controlled by fading out the source track
+    -- as the buffer track fades in
+    local factor = (self.src:tell() - self.begin_fade) / self.fade_duration
+    if factor >= 0 and factor < 1 then
 
         -- Make sure buf is playing, starting from where the song's intro ends
         if not self.buf:isPlaying() then
@@ -45,11 +47,12 @@ function Music:update(dt)
             self.buf:play()
         end
 
-        -- Set volume of src and buf according to fade_factor (volumes add up to full volume)
-        self.src:setVolume(1 - fade_factor)
-        self.buf:setVolume(fade_factor)
+        -- Set volume of src and buf according to fade_factor
+        -- (volumes add up to full volume)
+        self.src:setVolume(1 - factor)
+        self.buf:setVolume(factor)
 
-    elseif fade_factor >= 1 then
+    elseif factor >= 1 then
 
         -- Buf is the only thing playing now, at full volume
         self.buf:setVolume(1)

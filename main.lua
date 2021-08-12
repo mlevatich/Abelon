@@ -16,16 +16,20 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 function love.load()
 
     -- Set up a screen with the virtual width and height
-    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
-        fullscreen = false,
-        resizable = true
-    })
+    push:setupScreen(
+        VIRTUAL_WIDTH,
+        VIRTUAL_HEIGHT,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        { fullscreen = false, resizable = true }
+    )
     love.window.setTitle('Abelon')
 
     -- Font used by LOVE's text engine
-    love.graphics.setFont(love.graphics.newFont('graphics/fonts/font.ttf', FONT_SIZE))
+    local font_file = 'graphics/fonts/font.ttf'
+    love.graphics.setFont(love.graphics.newFont(font_file, FONT_SIZE))
 
-    -- Storing
+    -- Storing keypresses
     love.keyboard.keysPressed = {}
     love.keyboard.keysReleased = {}
 

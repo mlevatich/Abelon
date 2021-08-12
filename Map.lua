@@ -9,7 +9,8 @@ Map = Class{}
 function Map:init(name, tileset, lighting)
 
     -- Read lines of map file
-    local lines = readLines('Abelon/data/maps/' .. name .. '.txt')
+    local map_file = 'Abelon/data/maps/' .. name .. '.txt'
+    local lines = readLines(map_file)
 
     -- Set map and tile parameters
     local meta = split(lines[1])
@@ -20,8 +21,9 @@ function Map:init(name, tileset, lighting)
     self.collide_tiles = mapf(tonumber, split(lines[2]))
 
     -- Map texture and tile array
+    local tile_file = 'graphics/tilesets/' .. name .. '/' .. tileset .. '.png'
     self.name = name
-    self.tilesheet = love.graphics.newImage('graphics/tilesets/' .. name .. '/' .. tileset .. '.png')
+    self.tilesheet = love.graphics.newImage(tile_file)
     self.quads = generateQuads(self.tilesheet, TILE_WIDTH, TILE_HEIGHT)
 
     -- Read tiles from file
@@ -35,7 +37,8 @@ function Map:init(name, tileset, lighting)
     end
 
     -- Transition tiles gives the tiles on this map that move to a new map
-    -- Transitions gives the map to move to and the location on that map to start at
+    -- Transitions gives the map to move to
+    -- and the location on that map to start at
     self.transition_tiles = {}
     self.transitions = {}
     local idx = self.height + 5
@@ -43,12 +46,19 @@ function Map:init(name, tileset, lighting)
 
         -- Transition tiles
         local data = split(lines[idx])
-        table.insert(self.transition_tiles, { ['x'] = tonumber(data[1]), ['y'] = tonumber(data[2]) })
+        table.insert(self.transition_tiles, {
+            ['x'] = tonumber(data[1]),
+            ['y'] = tonumber(data[2])
+        })
 
         -- Transition
         local pixel_x = (tonumber(data[4]) - 1) * TILE_WIDTH
         local pixel_y = (tonumber(data[5]) - 1) * TILE_HEIGHT
-        table.insert(self.transitions, { ['name'] = data[3], ['x'] = pixel_x, ['y'] = pixel_y })
+        table.insert(self.transitions, {
+            ['name'] = data[3],
+            ['x'] = pixel_x,
+            ['y'] = pixel_y
+        })
         idx = idx + 1
     end
 
@@ -166,7 +176,11 @@ function Map:tileAt(x, y)
     local tile_y = math.floor(y / TILE_HEIGHT) + 1
 
     -- return tile object
-    return { ['x'] = tile_x, ['y'] = tile_y, ['id'] = self:getTile(tile_x, tile_y) }
+    return {
+        ['x'] = tile_x,
+        ['y'] = tile_y,
+        ['id'] = self:getTile(tile_x, tile_y)
+    }
 end
 
 -- Return the id of the tile at the given coordinate
@@ -185,12 +199,16 @@ function Map:checkTransitionTiles(player)
     -- Iterate over all transition tiles
     for i=1, #self.transition_tiles do
 
-        -- If player is on a transition tile, we need to transition to the new map
+        -- If player is on a transition tile, need to transition to the new map
         local tt = self.transition_tiles[i]
         local t = self.transitions[i]
         local on, xd, yd = player:onTile(tt['x'], tt['y'])
         if on then
-            return { ['name'] = t['name'], ['x'] = t['x'] + xd, ['y'] = t['y'] + yd }
+            return {
+                ['name'] = t['name'],
+                ['x'] = t['x'] + xd,
+                ['y'] = t['y'] + yd
+            }
         end
     end
 
@@ -217,29 +235,42 @@ function Map:applyLightSources()
     for x=1, self.width do
         for y=1, self.height do
 
-            -- For each tile, add the light coming in from every source on the map
+            -- For each tile, add the light coming from every source on the map
             local alpha = self.lit
-            local total = { ['r'] = self.ambient[1]/255, ['g'] = self.ambient[2]/255, ['b'] = self.ambient[3]/255 }
+            local total = {
+                ['r'] = self.ambient[1]/255,
+                ['g'] = self.ambient[2]/255,
+                ['b'] = self.ambient[3]/255
+            }
             for i=1, #self.lights do
 
                 -- Calculate distance between light and tile
                 local l = self.lights[i]
                 local xc, yc = self:tileCenter(x, y)
-                local dist = math.sqrt((l['x'] - xc) * (l['x'] - xc) + (l['y'] - yc) * (l['y'] - yc))
+                local x_dist, y_dist = l['x'] - xc, l['y'] - yc
+                local dist = math.sqrt(x_dist * x_dist + y_dist * y_dist)
 
-                -- Calculate whether light reaches tile using bresenhem (short circuit if initial dist is too big)
+                -- Calculate whether light reaches tile using bresenhem
+                -- (short circuit if initial dist is too big)
 
                 -- Add this light's intensity to total based on distance
-                local contribution = math.max(0, (l['intensity'] - dist) / l['intensity'])
+                local contribution = math.max(0,
+                    (l['intensity'] - dist) / l['intensity'])
                 for _, c in pairs({'r', 'g', 'b'}) do
                     total[c] = math.min(1, total[c] + contribution * l[c])
                 end
                 alpha = alpha * (1 - contribution)
             end
 
-            -- Draw rectangle of light at the calculated total intensity over tile
+            -- Draw rectangle of light at the total intensity over tile
             love.graphics.setColor(total['r'], total['g'], total['b'], alpha)
-            love.graphics.rectangle("fill", (x - 1) * TILE_WIDTH, (y - 1) * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT)
+            love.graphics.rectangle(
+                "fill",
+                (x - 1) * TILE_WIDTH,
+                (y - 1) * TILE_HEIGHT,
+                TILE_WIDTH,
+                TILE_HEIGHT
+            )
         end
     end
 end
@@ -261,7 +292,12 @@ function Map:render(cam_x, cam_y)
         for x=1, self.width do
             local tile = self:getTile(x, y)
             if tile then
-                love.graphics.draw(self.tilesheet, self.quads[tile], (x-1) * TILE_WIDTH, (y-1) * TILE_HEIGHT)
+                love.graphics.draw(
+                    self.tilesheet,
+                    self.quads[tile],
+                    (x-1) * TILE_WIDTH,
+                    (y-1) * TILE_HEIGHT
+                )
             end
         end
     end

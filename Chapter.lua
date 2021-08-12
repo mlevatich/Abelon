@@ -39,17 +39,14 @@ function Chapter:init(id, spriteesheet)
     self.sprites = {}
     self.player = nil
 
-    -- State of a chapter is a capital letter, determines scene triggers
-    self.quest_state = 'A'
-
-    -- Scene map is indexed by sprite name, giving a mapping from chapter state to starting scene track,
-    -- and from ending scene track to new chapter state
-    self.scene_inputs = {}
-    self.scene_maps = {}
-    self.previous_scene = {}
+    -- State of a chapter a dictionary of strings that correspond to different
+    -- chapter events and determine quest progress, cinematic triggers, and
+    -- sprite locations
+    self.chapter_state = {}
 
     -- Tracking the scene the player is currently in
     self.current_scene = nil
+    self.scene_inputs = {}
 
     -- Read into the above fields from chapter file
     self:load()
@@ -59,10 +56,12 @@ end
 function Chapter:load()
 
     -- Load chapter's spritesheet into memory
-    self.sheet = love.graphics.newImage('graphics/spritesheets/ch' .. self.id .. '.png')
+    local sheet_file = 'graphics/spritesheets/ch' .. self.id .. '.png'
+    self.sheet = love.graphics.newImage(sheet_file)
 
     -- Read lines into list
-    local lines = readLines('Abelon/data/chapters/' .. self.id .. '/chapterfile.txt')
+    local chap_file = 'Abelon/data/chapters/' .. self.id .. '/chapterfile.txt'
+    local lines = readLines(chap_file)
 
     -- Iterate over lines of chapter file
     local audio_sources = {}
@@ -75,17 +74,17 @@ function Chapter:load()
 
             -- Read data from line
             local fields = split(lines[i]:sub(3))
-            local map_name, tileset, music_name = fields[1], fields[2], fields[3]
+            local map_name, tileset, song = fields[1], fields[2], fields[3]
             current_map_name = map_name
 
             -- Initialize map and tie it to chapter
             self.maps[map_name] = Map(map_name, tileset, nil)
 
             -- Maps sharing a music track share a pointer to the audio
-            if not audio_sources[music_name] then
-                audio_sources[music_name] = Music(music_name)
+            if not audio_sources[song] then
+                audio_sources[song] = Music(song)
             end
-            self.map_to_music[map_name] = audio_sources[music_name]
+            self.map_to_music[map_name] = audio_sources[song]
 
         -- Lines starting with ~ denote a new sprite
         elseif lines[i]:sub(1,1) == '~' then
@@ -96,10 +95,6 @@ function Chapter:load()
             local init_x = (tonumber(fields[2]) - 1) * TILE_WIDTH
             local init_y = (tonumber(fields[3]) - 1) * TILE_HEIGHT
             local is_player = fields[4]
-
-            -- Register this sprite's ID with the chapter's scene data structures
-            self.previous_scene[current_sp_id] = {}
-            self.scene_maps[current_sp_id] = {}
 
             -- Initialize sprite object and set its starting position
             local new_sp = Sprite(current_sp_id, self.sheet, self)
@@ -116,22 +111,11 @@ function Chapter:load()
                 self.player = Player(new_sp)
                 self:updateCamera(100)
             end
-
-        -- Other lines are state change mappings
-        elseif lines[i] ~= '' and lines[i]:sub(1,2) ~= '//' then
-
-            -- Read a scene mapping for the current sprite
-            local map = self.scene_maps[current_sp_id]
-            if lines[i]:sub(2,2) == ' ' then
-                map[lines[i]:sub(1,1)] = lines[i]:sub(3,4)
-            else
-                map[lines[i]:sub(1,2)] = lines[i]:sub(4,4)
-            end
         end
     end
 
     -- Start music
-    -- self:startMapMusic()
+    self:startMapMusic()
 end
 
 -- End the current chapter and save what happened in it
@@ -197,17 +181,13 @@ function Chapter:updateScene(dt)
         self.current_scene:advance()
     end
     self.current_scene:hover(self.scene_inputs['hover'])
+    self.scene_inputs = {}
 
     -- Advance events in scene and text
     self.current_scene:update(dt)
 
-    -- Scene inputs are gobbled each frame
-    self.scene_inputs = {}
-
     -- If scene has ended, shut it down and handle results
     if self.current_scene:over() then
-
-        -- End scene
         self.current_scene:close()
         self.current_scene = nil
     end
@@ -240,7 +220,8 @@ function Chapter:performTransition()
     self.in_transition = nil
 end
 
--- Initiate, update, and perform map transitions and the associated fade-out and in
+-- Initiate, update, and perform map transitions
+-- and the associated fade-out and in
 function Chapter:updateTransition(transition)
 
     -- Start new transition if an argument was provided
@@ -274,12 +255,20 @@ end
 -- Update the camera to center on the player but not cross the map edges
 function Chapter:updateCamera(dt)
 
-    -- Get fields from map and camera focus
+    -- Get camera bounds from map
     local pixel_width, pixel_height = self.current_map:getPixelDimensions()
+    local cam_max_x = pixel_width - VIRTUAL_WIDTH
+    local cam_max_y = pixel_height - VIRTUAL_HEIGHT
+
+    -- Default camera info
     local focus = self.player
+    local x, y = focus:getPosition()
+    local w, h = focus:getDimensions()
     local x_offset = 0
     local y_offset = 0
     local speed = self.camera_speed
+
+    -- Overwrite camera info from scene if it exists
     if self.current_scene then
         focus = self.current_scene.cam_lock
         x_offset = self.current_scene.cam_offset_x
@@ -287,15 +276,13 @@ function Chapter:updateCamera(dt)
         speed = self.current_scene.cam_speed
     end
 
-    local x, y = focus:getPosition()
-    local w, h = focus:getDimensions()
+    -- Compute camera target to move to
     local x_target = x + w/2 + x_offset - VIRTUAL_WIDTH / 2
     local y_target = y + h/2 + y_offset - VIRTUAL_HEIGHT / 2
-    local cam_max_x = pixel_width - VIRTUAL_WIDTH
-    local cam_max_y = pixel_height - VIRTUAL_HEIGHT
     x_target = math.max(0, math.min(x_target, cam_max_x))
     y_target = math.max(0, math.min(y_target, cam_max_y))
 
+    -- Compute move in the direction of camera target based on dt
     local new_x = ite(self.camera_x < x_target,
         math.min(self.camera_x + speed * dt, x_target),
         math.max(self.camera_x - speed * dt, x_target)
@@ -305,11 +292,12 @@ function Chapter:updateCamera(dt)
         math.max(self.camera_y - speed * dt, y_target)
     )
 
+    -- Release the camera event from the scene if the camera is done moving
     if new_x == x_target and new_y == y_target and self.current_scene then
         self.current_scene:release('camera')
     end
 
-    -- Update the y position of the camera to go towards the target
+    -- Update camera position
     self.camera_x = math.max(0, math.min(new_x, cam_max_x))
     self.camera_y = math.max(0, math.min(new_y, cam_max_y))
 end
@@ -343,7 +331,8 @@ function Chapter:update(dt)
     return nil
 end
 
--- Render the map and sprites of the chapter at the current position, along with active scene
+-- Render the map and sprites of the chapter at the current position,
+-- along with active scene
 function Chapter:render()
 
     -- Move to the camera position

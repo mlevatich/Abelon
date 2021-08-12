@@ -16,7 +16,8 @@ function Scene:init(scene_id, map, player)
     self.participants = {}
     sps = map:getSprites()
     for i=1, #self.script['ids'] do
-        sp_id = find(mapf(function(s) return s.id end, sps), self.script['ids'][i])
+        sp_id = find(mapf(function(s) return s.id end, sps),
+                     self.script['ids'][i])
         table.insert(self.participants, sps[sp_id])
     end
 
@@ -138,9 +139,11 @@ function Scene:hover(dir)
         -- self.selection determines where the selection arrow is rendered
         local n = #self.text_state['choices']
         if dir == UP then
-            self.text_state['selection'] = math.max(1, self.text_state['selection'] - 1)
+            self.text_state['selection'] = math.max(1,
+                self.text_state['selection'] - 1)
         elseif dir == DOWN then
-            self.text_state['selection'] = math.min(n, self.text_state['selection'] + 1)
+            self.text_state['selection'] = math.min(n,
+                self.text_state['selection'] + 1)
         end
     end
 end
@@ -177,7 +180,13 @@ function Scene:renderTextBox(x, y)
 
     -- Render black text box
     love.graphics.setColor(0, 0, 0, 1)
-    love.graphics.rectangle('fill', x + BOX_MARGIN, y + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT)
+    love.graphics.rectangle(
+        'fill',
+        x + BOX_MARGIN,
+        y + BOX_MARGIN,
+        BOX_WIDTH,
+        BOX_HEIGHT
+    )
 end
 
 -- Render the speaker's name and portrait
@@ -185,11 +194,21 @@ function Scene:renderSpeaker(sp, pid, x, y)
 
     -- Render name of current speaker
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print(sp:getName(), x + BOX_MARGIN*2, y + BOX_MARGIN + TEXT_MARGIN_Y)
+    love.graphics.print(
+        sp:getName(),
+        x + BOX_MARGIN * 2,
+        y + BOX_MARGIN + TEXT_MARGIN_Y
+    )
 
     -- Render portrait of current speaker
     if sp.ptexture then
-        love.graphics.draw(sp.ptexture, sp.portraits[pid], x + BOX_MARGIN, y + BOX_MARGIN*3, 0, 1, 1, 0, 0)
+        love.graphics.draw(
+            sp.ptexture,
+            sp.portraits[pid],
+            x + BOX_MARGIN,
+            y + BOX_MARGIN * 3,
+            0, 1, 1, 0, 0
+        )
     end
 end
 
@@ -243,7 +262,8 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     local rect_x = base_x + BOX_MARGIN + BOX_WIDTH - w
     local rect_y = base_y + BOX_MARGIN*2 + BOX_HEIGHT
     if flip then
-        rect_y = base_y - TEXT_MARGIN_Y - (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
+        rect_y = base_y - TEXT_MARGIN_Y
+               - (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
     end
 
     -- Draw choice box
@@ -259,8 +279,10 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
             local c = choices[i]:sub(j,j)
 
             -- Get position of character
-            local x = rect_x + BOX_MARGIN + (FONT_SIZE + TEXT_MARGIN_X) * (j + longest - #choices[i])
-            local y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (i-1)
+            local x = rect_x + BOX_MARGIN
+                    + (FONT_SIZE + TEXT_MARGIN_X) * (j + longest - #choices[i])
+            local y = rect_y + TEXT_MARGIN_Y
+                    + (FONT_SIZE + TEXT_MARGIN_Y) * (i-1)
 
             -- Draw character
             love.graphics.print(c, x, y)
@@ -268,7 +290,8 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Render selection arrow on the selected option
-    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y) * (self.text_state['selection'] - 1)
+    local arrow_y = rect_y + TEXT_MARGIN_Y + (FONT_SIZE + TEXT_MARGIN_Y)
+                  * (self.text_state['selection'] - 1)
     love.graphics.print(">", rect_x + 15, arrow_y)
 end
 
@@ -279,7 +302,7 @@ function Scene:render(x, y)
         -- Render below the player if at the top of a map
         local flip = false
         if y == 0 then
-            y = VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN*2)
+            y = VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN * 2)
             flip = true
         end
 
@@ -287,13 +310,18 @@ function Scene:render(x, y)
         self:renderTextBox(x, y)
 
         -- Render speaker name and portrait
-        self:renderSpeaker(self.text_state['speaker'], self.text_state['portrait'], x, y)
+        self:renderSpeaker(
+            self.text_state['speaker'],
+            self.text_state['portrait'],
+            x, y
+        )
 
         -- Render text up to current character position
         self:renderText(self.text_state['text'], x, y)
 
         -- Render choice and selection arrow if there is a choice to make
-        if self.text_state['choices'] and self.text_state['length'] == self.text_state['cnum'] then
+        if self.text_state['choices'] and
+           self.text_state['length'] == self.text_state['cnum'] then
             self:renderChoice(self.text_state['choices'], x, y, flip)
         end
     end

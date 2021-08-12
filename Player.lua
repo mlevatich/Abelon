@@ -31,21 +31,33 @@ function Player:init(sp)
 
     -- Abelon's starting inventory
     local base_inventory = {
-        {['name'] = 'Items', ['children'] = {
-            {['name'] = "Abelon's Axe", ['action'] = pass},
-            {['name'] = "Abelon's Cloak", ['action'] = pass}
-        }},
-        {['name'] = 'Party', ['children'] = {
-            {['name'] = "Abelon", ['action'] = pass},
-            {['name'] = "Kath", ['action'] = pass}
-        }},
-        {['name'] = 'Settings', ['children'] = {
-            {['name'] = "Difficulty", ['action'] = pass},
-            {['name'] = "Video", ['action'] = pass},
-            {['name'] = "Audio", ['action'] = pass},
-            {['name'] = "Controls", ['action'] = pass}
-        }},
-        { ['name'] = 'Quicksave', ['action'] = function() love.event.quit(0) end }
+        {
+            ['name'] = 'Items',
+            ['children'] = {
+                { ['name'] = "Abelon's Axe", ['action'] = pass },
+                { ['name'] = "Abelon's Cloak", ['action'] = pass }
+            }
+        },
+        {
+            ['name'] = 'Party',
+            ['children'] = {
+                { ['name'] = "Abelon", ['action'] = pass },
+                { ['name'] = "Kath", ['action'] = pass }
+            }
+        },
+        {
+            ['name'] = 'Settings',
+            ['children'] = {
+                { ['name'] = "Difficulty", ['action'] = pass },
+                { ['name'] = "Video", ['action'] = pass },
+                { ['name'] = "Audio", ['action'] = pass },
+                { ['name'] = "Controls", ['action'] = pass }
+            }
+        },
+        {
+            ['name'] = 'Quicksave',
+            ['action'] = function() love.event.quit(0) end
+        }
     }
     self.inventory = Menu(nil, base_inventory, BOX_MARGIN, BOX_MARGIN)
 
@@ -60,7 +72,7 @@ end
 function Player:openInventory()
 
     -- Change player behavior to menu-browsing
-    self:changeMode('browsing')
+    self:changeMode('browse')
     self:changeBehavior('idle')
 
     -- Set the inventory to be open
@@ -76,7 +88,9 @@ function Player:interact()
     for _, sp in ipairs(chapter:getActiveSprites()) do
 
         -- If sprite is close, interactive, and not the player, it's valid
-        if sp:isInteractive() and sp:getID() ~= self:getID() and self:AABB(sp, 10) then
+        if sp:isInteractive() and
+           sp:getID() ~= self:getID() and
+           self:AABB(sp, 10) then
             target = sp
             break
         end
@@ -178,7 +192,7 @@ function Player:sceneMode(dt)
     self:getChapter():sceneInput(space, u, d)
 end
 
-function Player:browsingMode(dt)
+function Player:browseMode(dt)
 
     -- Read keypresses
     local l = love.keyboard.wasPressed('left')
@@ -227,16 +241,16 @@ function Player:getAwareness() return self.sp:getAwareness() end
 function Player:getChapter() return self.sp:getChapter() end
 function Player:isInteractive() return self.sp:isInteractive() end
 function Player:isBlocking() return self.sp:isBlocking() end
-function Player:resetPosition(arg1, arg2) return self.sp:resetPosition(arg1, arg2) end
-function Player:move(arg1, arg2) return self.sp:stop(arg1, arg2) end
+function Player:resetPosition(a, b) return self.sp:resetPosition(a, b) end
+function Player:move(a, b) return self.sp:stop(a, b) end
 function Player:stop() return self.sp:stop() end
-function Player:changeImpression(arg1) return self.sp:changeImpression(arg1) end
-function Player:changeAwareness(arg1) return self.sp:changeAwareness(arg1) end
-function Player:changeAnimation(arg1) return self.sp:changeAnimation(arg1) end
-function Player:changeVersion(arg1) return self.sp:changeVersion(arg1) end
-function Player:changeBehavior(arg1) return self.sp:changeBehavior(arg1) end
+function Player:changeImpression(a) return self.sp:changeImpression(a) end
+function Player:changeAwareness(a) return self.sp:changeAwareness(a) end
+function Player:changeAnimation(a) return self.sp:changeAnimation(a) end
+function Player:changeVersion(a) return self.sp:changeVersion(a) end
+function Player:changeBehavior(a) return self.sp:changeBehavior(a) end
 function Player:atEase() return self.sp:atEase() end
-function Player:addBehaviors(arg1) return self.sp:addBehaviors(arg1) end
-function Player:AABB(arg1, arg2) return self.sp:AABB(arg1, arg2) end
-function Player:onTile(arg1, arg2) return self.sp:onTile(arg1, arg2) end
+function Player:addBehaviors(a) return self.sp:addBehaviors(a) end
+function Player:AABB(a, b) return self.sp:AABB(a, b) end
+function Player:onTile(a, b) return self.sp:onTile(a, b) end
 function Player:checkCollisions() return self.sp:checkCollisions() end

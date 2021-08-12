@@ -5,9 +5,6 @@ require 'Scene'
 
 Menu = Class{}
 
--- TODO: maybe an interactions stack, so I can have messages on top of menus ("you can't use this right now"),
--- and menus on top of messages (talking to a shopkeeper before shopping)?
-
 -- Initialize a new menu
 function Menu:init(parent, children_data, x, y)
 

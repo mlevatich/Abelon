@@ -14,12 +14,17 @@ function generateQuads(atlas, tilewidth, tileheight)
     local quads = {}
     for y = 0, sheetHeight - 1 do
         for x = 0, sheetWidth - 1 do
-            quads[sheetCounter] = love.graphics.newQuad(x*tilewidth, y*tileheight, tilewidth, tileheight, dim, atlas)
+            quads[sheetCounter] = love.graphics.newQuad(
+                x*tilewidth,
+                y*tileheight,
+                tilewidth,
+                tileheight,
+                dim,
+                atlas
+            )
             sheetCounter = sheetCounter + 1
         end
     end
-
-    -- Return separate quads in list
     return quads
 end
 
@@ -28,9 +33,47 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     frames = {}
     for x = 1, #indices do
         idx = indices[x]
-        frames[x] = love.graphics.newQuad((width + 1) * idx, sheet_position, width, height, tex:getDimensions())
+        frames[x] = love.graphics.newQuad(
+            (width + 1) * idx,
+            sheet_position,
+            width,
+            height,
+            tex:getDimensions()
+        )
     end
     return frames
+end
+
+-- Split a string into several lines of text based on a maximum
+-- number of characters per line, without breaking up words
+function splitByCharLimit(text, char_limit)
+    local lines = {}
+    local i = 1
+    local line_num = 1
+    local holdover_word = ''
+    while i <= #text do
+        lines[line_num] = ''
+        local word = holdover_word
+        for x = 1, char_limit - #holdover_word do
+            if i == #text then
+                lines[line_num] = lines[line_num] .. word .. text:sub(i,i)
+                i = i + 1
+                break
+            else
+                local c = text:sub(i,i)
+                if c == ' ' then
+                    lines[line_num] = lines[line_num] .. word .. ' '
+                    word = ''
+                else
+                    word = word .. c
+                end
+                i = i + 1
+            end
+        end
+        holdover_word = word
+        line_num = line_num + 1
+    end
+    return lines
 end
 
 -- ite
@@ -138,7 +181,6 @@ function deepcopy(obj, seen)
     for k, v in pairs(obj) do res[deepcopy(k, s)] = deepcopy(v, s) end
     return res
 end
-
 
 -- Print the contents of any variable
 function dump(var)

@@ -14,7 +14,8 @@ local INIT_VERSION = 'standard'
 local WANDER_SPEED = 70
 local LEASH_DISTANCE = 90
 
--- Each spacter has 12 possible portraits for 12 different emotions (some may not use them all)
+-- Each spacter has 12 possible portraits for
+-- 12 different emotions (some may not use them all)
 local PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
 -- Initialize a new sprite
@@ -51,8 +52,15 @@ function Sprite:init(id, spritesheet, chapter)
     self.ptexture = nil
     self.portraits = nil
     if readField(data[13]) == 'yes' then
-        self.ptexture = love.graphics.newImage('graphics/portraits/' .. self.name .. '.png')
-        self.portraits = getSpriteQuads(PORTRAIT_INDICES, self.ptexture, PORTRAIT_SIZE, PORTRAIT_SIZE, 0)
+        local portrait_file = 'graphics/portraits/' .. self.name .. '.png'
+        self.ptexture = love.graphics.newImage(portrait_file)
+        self.portraits = getSpriteQuads(
+            PORTRAIT_INDICES,
+            self.ptexture,
+            PORTRAIT_SIZE,
+            PORTRAIT_SIZE,
+            0
+        )
     end
 
     -- y-position on spritesheet of first costume
@@ -80,12 +88,13 @@ function Sprite:init(id, spritesheet, chapter)
     for i = 1, #version_names do
 
         -- Y position on spritesheet for this version of the sprite
-        local sheet_offset = base_y + (i - 1) * self.h
+        local s_offset = base_y + (i - 1) * self.h
 
         -- Pull the animations from the spritesheet
         local quads = {}
         for name, frames in pairs(animations) do
-            quads[name] = Animation(getSpriteQuads(frames, self.sheet, self.w, self.h, sheet_offset))
+            sqs = getSpriteQuads(frames, self.sheet, self.w, self.h, s_offset)
+            quads[name] = Animation(sqs)
         end
 
         -- Associate the created animations with this version of the sprite
@@ -96,7 +105,8 @@ function Sprite:init(id, spritesheet, chapter)
     self.dir = INIT_DIRECTION
     self.animation_name = INIT_ANIMATION
     self.version_name = INIT_VERSION
-    self.current_animation = self.versions[self.version_name][self.animation_name]
+    local curam = self.versions[self.version_name][self.animation_name]
+    self.current_animation = curam
     self.on_frame = self.current_animation:getCurrentFrame()
 
     -- Sprite behaviors
@@ -120,7 +130,8 @@ function Sprite:init(id, spritesheet, chapter)
     -- Sprite's capabilities in battle
     -- TODO read stats and abilities from file
     -- stats is a dict keyed by stat names with numeric values
-    -- skills is a multi-level table split by skill trees, where each skill has requirements, effects, and
+    -- skills is a multi-level table split by skill trees,
+    -- where each skill has requirements, effects, and
     -- a boolean of whether it is unlocked
     self.stats = nil
     self.skills = nil
@@ -235,7 +246,8 @@ function Sprite:changeAnimation(new_animation_name)
     end
 end
 
--- Change a sprite's version so that it is rendered using a different set of animations
+-- Change a sprite's version so that it is rendered
+-- using a different set of animations
 function Sprite:changeVersion(new_version_name)
 
     -- Get the animation for the new version, based on current state
@@ -463,7 +475,8 @@ function Sprite:onTile(x, y)
     end
 
     -- Check southeast tile
-    match, new_x, new_y = map:pixelOnTile(self.x + self.w, self.y + self.h, x, y)
+    match, new_x, new_y = map:pixelOnTile(self.x + self.w,
+                                          self.y + self.h, x, y)
     if match then
         return true, new_x - self.w, new_y - self.h
     end
@@ -474,8 +487,10 @@ end
 
 -- Check if the given sprite is within an offset distance to self
 function Sprite:AABB(sp, offset)
-    local x_inside = (self.x < sp.x + sp.w + offset) and (self.x + self.w > sp.x - offset)
-    local y_inside = (self.y < sp.y + sp.h + offset) and (self.y + self.h > sp.y - offset)
+    local x_inside = (self.x < sp.x + sp.w + offset) and
+                     (self.x + self.w > sp.x - offset)
+    local y_inside = (self.y < sp.y + sp.h + offset) and
+                     (self.y + self.h > sp.y - offset)
     return x_inside and y_inside
 end
 
@@ -497,9 +512,11 @@ function Sprite:_checkSpriteCollisions()
             local y_inside = (self.y < sp.y + sp.h) and (self.y + self.h > sp.y)
             local right_dist = self.x - (sp.x + sp.w)
             local left_dist = sp.x - (self.x + self.w)
-            if y_inside and right_dist <= 0 and right_dist > -sp.w/2 and self.dx < 0 then
+            if y_inside and right_dist <= 0 and
+               right_dist > -sp.w/2 and self.dx < 0 then
                 x_move = sp.x + sp.w
-            elseif y_inside and left_dist <= 0 and left_dist > -sp.w/2 and self.dx > 0 then
+            elseif y_inside and left_dist <= 0 and
+                   left_dist > -sp.w/2 and self.dx > 0 then
                 x_move = sp.x - self.w
             end
 
@@ -508,9 +525,11 @@ function Sprite:_checkSpriteCollisions()
             local x_inside = (self.x < sp.x + sp.w) and (self.x + self.w > sp.x)
             local down_dist = self.y - (sp.y + sp.h)
             local up_dist = sp.y - (self.y + self.h)
-            if x_inside and down_dist <= 0 and down_dist > -sp.h/2 and self.dy < 0 then
+            if x_inside and down_dist <= 0 and
+               down_dist > -sp.h/2 and self.dy < 0 then
                 y_move = sp.y + sp.h
-            elseif x_inside and up_dist <= 0 and up_dist > -sp.h/2 and self.dy > 0 then
+            elseif x_inside and up_dist <= 0 and
+                   up_dist > -sp.h/2 and self.dy > 0 then
                 y_move = sp.y - self.h
             end
 
@@ -614,7 +633,8 @@ end
 -- Per-frame updates to a sprite's state
 function Sprite:update(dt)
 
-    -- Update velocity, direction, behavior, and animation based on current behavior
+    -- Update velocity, direction, behavior,
+    -- and animation based on current behavior
     self.behaviors[self.current_behavior](dt)
 
     -- Update frame of animation
@@ -632,6 +652,17 @@ end
 -- Render a sprite to the screen
 function Sprite:render(cam_x, cam_y)
 
-    -- Draw sprite's current animation frame, at its current position, in its current direction
-    love.graphics.draw(self.sheet, self.on_frame, self.x+self.w/2, self.y+self.h/2, 0, self.dir, 1, self.w/2, self.h/2)
+    -- Draw sprite's current animation frame, at its current position,
+    -- in its current direction
+    love.graphics.draw(
+        self.sheet,
+        self.on_frame,
+        self.x + self.w / 2,
+        self.y + self.h / 2,
+        0,
+        self.dir,
+        1,
+        self.w / 2,
+        self.h / 2
+    )
 end

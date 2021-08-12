@@ -1,12 +1,6 @@
 ~~forest standard forest
 
 ~abelon 7 70 P
-
 ~kath 10 80
-
-a1 B
-b1 B
-
 ~book 8 75
-
 ~medallion 13 70

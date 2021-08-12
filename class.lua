@@ -81,7 +81,6 @@ local function new(class)
 	end})
 end
 
--- interface for cross class-system compatibility (see https://github.com/bartbes/Class-Commons).
 if class_commons ~= false and not common then
 	common = {}
 	function common.class(name, prototype, parent)

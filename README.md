@@ -6,6 +6,7 @@ Currently in development.
 
 # Development instructions
 
-Download and install LÖVE (https://love2d.org/), and create the alias 'love' on the command line.
+Download and install LÖVE (https://love2d.org/), and create the alias 'love' on
+the command line.
 
 Clone the repo into a directory called ```Abelon```, and run ```love Abelon```.

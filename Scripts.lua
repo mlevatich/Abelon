@@ -1,39 +1,6 @@
 require 'Util'
 require 'Constants'
 
--- Split a string into several lines of text based on a maximum
--- number of characters per line, without breaking up words
-function splitByCharLimit(text, char_limit)
-
-    local lines = {}
-    local i = 1
-    local line_num = 1
-    local holdover_word = ''
-    while i <= #text do
-        lines[line_num] = ''
-        local word = holdover_word
-        for x = 1, char_limit - #holdover_word do
-            if i == #text then
-                lines[line_num] = lines[line_num] .. word .. text:sub(i,i)
-                i = i + 1
-                break
-            else
-                local c = text:sub(i,i)
-                if c == ' ' then
-                    lines[line_num] = lines[line_num] .. word .. ' '
-                    word = ''
-                else
-                    word = word .. c
-                end
-                i = i + 1
-            end
-        end
-        holdover_word = word
-        line_num = line_num + 1
-    end
-    return lines
-end
-
 function addEvents(scene, e, at)
     for i = 1, #e do
         table.insert(scene.script['events'], at, e[#e + 1 - i])
@@ -42,17 +9,14 @@ end
 
 function br(test, args, t_events, f_events)
     return function(scene)
-        packed = {}
+        vars = {}
         getI = function(p) return scene.participants[p]:getImpression() end
         getA = function(p) return scene.participants[p]:getAwareness() end
         for i = 1, #args do
-            packed[i] = ite(args[i][2] == 'i', getI(args[i][1]), getA(args[i][1]))
+            vars[i] = ite(args[i][2] == 'i', getI(args[i][1]), getA(args[i][1]))
         end
-        if test(unpack(packed)) then
-            addEvents(scene, t_events, scene.event + 1)
-        else
-            addEvents(scene, f_events, scene.event + 1)
-        end
+        events = ite(test(unpack(vars)), t_events, f_events)
+        addEvents(scene, events, scene.event + 1)
     end
 end
 
@@ -104,9 +68,10 @@ end
 
 function choice(op)
     return function (scene)
-        scene.text_state['choices'] = mapf(function(c) return c['response'] end, op)
-        scene.text_state['choice_result'] = mapf(function(c) return c['result'] end, op)
-        scene.text_state['choice_events'] = mapf(function(c) return c['events'] end, op)
+        slect = function(s) return mapf(function(c) return c[s] end, op) end
+        scene.text_state['choices'] = slect('response')
+        scene.text_state['choice_result'] = slect('result')
+        scene.text_state['choice_events'] = slect('events')
         scene.text_state['selection'] = 1
         scene.await_input = true
     end
@@ -126,25 +91,21 @@ function say(p1, portrait, requires_response, line)
     end
 end
 
-function _lookAt(sp1, sp2, player)
-
-    -- sp1 stops what they're doing
+function _lookAt(sp1, sp2)
     sp1:changeBehavior('idle')
-
-    -- sp1 changes direction to face sp2
     sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
 end
 
 function face(p1, p2)
     return function(scene)
-        _lookAt(scene.participants[p1], scene.participants[p2], scene.player)
-        _lookAt(scene.participants[p2], scene.participants[p1], scene.player)
+        _lookAt(scene.participants[p1], scene.participants[p2])
+        _lookAt(scene.participants[p2], scene.participants[p1])
     end
 end
 
 function lookAt(p1, p2)
     return function(scene)
-        _lookAt(scene.participants[p1], scene.participants[p2], scene.player)
+        _lookAt(scene.participants[p1], scene.participants[p2])
     end
 end
 
@@ -270,9 +231,9 @@ kath_interact_1 = {
                     ['response'] = "Yes",
                     ['events'] = {
                         say(2, 3, false,
-                            "Of course. Everyone does. Lefally, named after the \z
-                             proud first city of Lefellen, standing taller than \z
-                             the northern forest trees..."
+                            "Of course. Everyone does. Lefally, named after \z
+                             the proud first city of Lefellen, standing \z
+                             taller than the northern forest trees..."
                         ),
                         waitForEvent('ev-walk-1'),
                         waitForEvent('ev-walk-2'),
@@ -282,9 +243,9 @@ kath_interact_1 = {
                         lookAt(2, 1),
                         say(2, 2, false,
                             "But Abelon, you probably don't know this one. \z
-                             The truth is, I was born in Lefellen, just before \z
-                             the dragon attack. Before this whole nightmare \z
-                             began..."
+                             The truth is, I was born in Lefellen, just \z
+                             before the dragon attack. Before this whole \z
+                             nightmare began..."
                         )
                     },
                     ['result'] = {}
@@ -293,10 +254,10 @@ kath_interact_1 = {
                     ['response'] = "No",
                     ['events'] = {
                         say(2, 3, false,
-                            "Ebonach wasn't always the capital. Indeed, at the \z
-                             beginning, it didn't exist. Lefally, named after the \z
-                             proud city of Lefellen, standing taller than \z
-                             the northern trees..."
+                            "Ebonach wasn't always the capital. Indeed, at \z
+                             the beginning, it didn't exist. Lefally, named \z
+                             after the proud city of Lefellen, standing \z
+                             taller than the northern trees..."
                         ),
                         waitForEvent('ev-walk-1'),
                         waitForEvent('ev-walk-2'),
@@ -317,9 +278,9 @@ kath_interact_1 = {
                         waitForEvent('camera'),
                         say(2, 2, false,
                             "I've kept this from you for a long time, but \z
-                             the truth is, I was born in Lefellen, just before \z
-                             the dragon attack. Before this whole nightmare \z
-                             began..."
+                             the truth is, I was born in Lefellen, just \z
+                             before the dragon attack. Before this whole \z
+                             nightmare began..."
                         )
                     },
                     ['result'] = {}
