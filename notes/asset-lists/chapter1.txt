@@ -51,6 +51,7 @@ Shafe
 Flower 2
 Bow
 Medallion
+Books
 
 **********
 ANIMATIONS
