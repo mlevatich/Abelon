@@ -230,7 +230,7 @@ function Scene:renderSpeaker(sp, pid, x, y)
         love.graphics.draw(
             sp.ptexture,
             sp.portraits[pid],
-            x + BOX_MARGIN,
+            x + BOX_MARGIN * 1.5,
             y + BOX_MARGIN * 2,
             0, 1, 1, 0, 0
         )

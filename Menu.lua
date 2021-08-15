@@ -20,8 +20,8 @@ function Menu:init(parent, children_data, x, y)
 
     -- Store menu width and height so they aren't re-calculated at each render
     local longest_word = max(mapf(function(s) return #s end, mapf(function(e) return e['name'] end, children_data)))
-    self.width = (FONT_SIZE + TEXT_MARGIN_X) * longest_word + BOX_MARGIN*2 + 10
-    self.height = (FONT_SIZE + TEXT_MARGIN_Y) * (#children_data) + BOX_MARGIN*2 - TEXT_MARGIN_Y
+    self.width = (FONT_SIZE + TEXT_MARGIN_X) * longest_word + BOX_MARGIN*2
+    self.height = (FONT_SIZE + TEXT_MARGIN_Y) * (#children_data) + BOX_MARGIN - TEXT_MARGIN_Y
 
     -- The different options on this menu
     self.hovering = 1
@@ -38,7 +38,7 @@ function Menu:initChildren(children_data)
         if not cur['action'] then
 
             -- Calculate base position
-            local child_x = self.rel_x + self.width + BOX_MARGIN
+            local child_x = self.rel_x + self.width + BOX_MARGIN/4
             local child_y = self.rel_y
 
             -- Init menu and open action
@@ -104,18 +104,18 @@ function Menu:render(cam_x, cam_y)
     -- Render options
     love.graphics.setColor(1, 1, 1, 1)
     for i=1, #self.children do
-        local cur_y = y + BOX_MARGIN + (i-1) * (FONT_SIZE + TEXT_MARGIN_Y)
+        local cur_y = y + BOX_MARGIN/2 + (i-1) * (FONT_SIZE + TEXT_MARGIN_Y)
         local word = self.children[i]['name']
         for j=1, #word do
             local char = word:sub(j,j)
-            local cur_x = 10 + x + BOX_MARGIN + (j-1) * (FONT_SIZE + TEXT_MARGIN_X)
+            local cur_x = 5 + x + BOX_MARGIN + (j-1) * (FONT_SIZE + TEXT_MARGIN_X)
             love.graphics.print(char, cur_x, cur_y)
         end
     end
 
     -- Render selection arrow over what is being hovered, if this is the leaf menus
-    local arrow_y = y + BOX_MARGIN + (FONT_SIZE + TEXT_MARGIN_Y) * (self.hovering - 1)
-    love.graphics.print(">", x + 15, arrow_y)
+    local arrow_y = y + BOX_MARGIN/2 + (FONT_SIZE + TEXT_MARGIN_Y) * (self.hovering - 1)
+    love.graphics.print(">", x + 10, arrow_y)
 
     -- Render child menu if there is one
     if self.child then

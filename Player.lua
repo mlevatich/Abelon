@@ -135,7 +135,7 @@ function Player:freeMode(dt)
     local r = love.keyboard.isDown('right')
     local u = love.keyboard.isDown('up')
     local d = love.keyboard.isDown('down')
-    local space = love.keyboard.wasPressed('space')
+    local f = love.keyboard.wasPressed('f')
     local inv = love.keyboard.wasPressed('e')
 
     -- If any direction is tapped, start walking
@@ -191,7 +191,7 @@ function Player:freeMode(dt)
     -- player tries to interact with a nearby object
     if inv then
         self:openInventory()
-    elseif space then
+    elseif f then
         self:interact()
     end
 end
@@ -201,33 +201,32 @@ function Player:sceneMode(dt)
     -- Get keypresses
     local u = love.keyboard.wasPressed('up')
     local d = love.keyboard.wasPressed('down')
-    local space = love.keyboard.wasPressed('space')
+    local f = love.keyboard.wasPressed('f')
 
     -- Advance scene based on keypresses
-    self:getChapter():sceneInput(space, u, d)
+    self:getChapter():sceneInput(f, u, d)
 end
 
 function Player:browseMode(dt)
 
     -- Read keypresses
-    local l = love.keyboard.wasPressed('left')
-    local r = love.keyboard.wasPressed('right')
-    local u = love.keyboard.wasPressed('up')
-    local d = love.keyboard.wasPressed('down')
+    local up = love.keyboard.wasPressed('up')
+    local down = love.keyboard.wasPressed('down')
+    local f = love.keyboard.wasPressed('f')
+    local d = love.keyboard.wasPressed('d')
     local e = love.keyboard.wasPressed('e')
-    local enter = love.keyboard.wasPressed('return')
     local esc = love.keyboard.wasPressed('escape')
 
     if esc or e then
         self.open_menu:reset()
         self.open_menu = nil
         self:changeMode('free')
-    elseif l then
+    elseif d then
         self.open_menu:back()
-    elseif r or enter then
+    elseif f then
         self.open_menu:forward()
-    elseif u ~= d then
-        self.open_menu:hover(ite(u, UP, DOWN))
+    elseif up ~= down then
+        self.open_menu:hover(ite(up, UP, DOWN))
     end
 end
 
