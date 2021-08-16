@@ -158,522 +158,257 @@ function lookDir(p1, dir)
     end
 end
 
-kath_interact_base = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        face(1, 2),
-        focus(2, 100),
-        say(2, 1, true,
-            "Ho, Abelon! By Ignus, it's good to be alive! I must say, that \z
-             was one of our closer brushes with death. But we made it, as we \z
-             always do."
-        ),
-        choice({
-            {
-                ['response'] = "Thanks to me",
-                ['events'] = {
-                    say(2, 1, true,
-                        "Yes, that magic was... something, wasn't it. Where \z
-                         on Eruta did you discover such spells?"
-                    )
-                },
-                ['result'] = {}
-            },
-            {
-                ['response'] = "Thanks to you",
-                ['events'] = {
-                    say(2, 1, true,
-                        "Come Abelon, we've known each other too long for \z
-                         flattery. That strange magic of yours carried the \z
-                         day. Where on Eruta did you discover such spells?"
-                    )
-                },
-                ['result'] = {
-                    ['awareness'] = {0, 1},
-                    ['impressions'] = {-1, 1}
-                }
-            },
-            {
-                ['response'] = "We were lucky",
-                ['events'] = {
-                    say(2, 1, true,
-                        "Lucky's one word for it. I would sooner credit those \z
-                         unholy spells you started slinging. Where on Eruta \z
-                         did you discover such magic?"
-                    )
-                },
-                ['result'] = {}
-            }
-        }),
-        focus(2, 50),
-        choice({
-            {
-                ['response'] = "The Archives",
-                ['events'] = {
-                    say(2, 1, false,
-                        "You jest! No one makes it through the Ash without a \z
-                         battalion and supplies, not to mention it's a week's \z
-                         journey. I would have caught wind of this \z
-                         expedition, surely!"
-                    )
-                },
-                ['result'] = {
-                    ['impressions'] = {0, 1},
-                    ['callback'] = {
-                        face(1, 2),
-                        say(2, 1, false,
-                            "I'll have to hear more about this trip of yours \z
-                             to the Ash, but perhaps it's best left for \z
-                             another time."
-                        )
-                    }
-                }
-            },
-            {
-                ['response'] = "My secret",
-                ['events'] = {
-                    say(2, 2, false,
-                        "Abelon, that's... quite a thing to keep secret. Ah \z
-                         well. I know how you are when you've made up your \z
-                         mind."
-                    )
-                },
-                ['result'] = {
-                    ['impressions'] = {0, -1},
-                    ['callback'] = {
-                        face(1, 2),
-                        say(2, 3, false,
-                            "You will tell me eventually, won't you? Or at \z
-                             least His Majesty? If we equipped our mages with \z
-                             those spells of yours, why,"
-                        ),
-                        say(2, 3, false,
-                            "this city might survive the winter after all..."
-                        )
-                    }
-                }
-            }
-        }),
-        br(function(i) return i > 50 end, {{2, 'i'}}, {
-            say(2, 1, false,
-                "I trust you, Abelon."
+scripts = {
+
+    ['medallion_use'] = {
+        ['ids'] = {'medallion'},
+        ['events'] = {
+            say(1, 0, false,
+                "You hold up the medallion by its rough, frayed string. A thin, \z
+                slightly misshapen disk of silver hangs from the end, turning \z
+                lazily towards you..."
             ),
-            say(2, 3, false,
-                "Let me tell you a little bit about the history of the Kingdom."
-            ),
-            walk(2, 50, 63, 'walk1', RIGHT),
-            wait(1.7),
-            walk(1, 48, 63, 'walk2', RIGHT),
-            say(2, 3, true,
-                "Do you know why the One Kingdom of Ebonach and Mistram is \z
-                 called Lefally?"
+            say(1, 0, false,
+                "...to reveal an etching of a round buckler over an ordinary \z
+                 longsword. The craftsmanship is amateur."
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['kath_interact_base'] = {
+        ['ids'] = {'abelon', 'kath'},
+        ['events'] = {
+            face(1, 2),
+            focus(2, 100),
+            say(2, 1, true,
+                "Ho, Abelon! By Ignus, it's good to be alive! I must say, that \z
+                 was one of our closer brushes with death. But we made it, as we \z
+                 always do."
             ),
             choice({
                 {
-                    ['response'] = "Yes",
+                    ['response'] = "Thanks to me",
                     ['events'] = {
-                        say(2, 3, false,
-                            "Of course. Everyone does. Lefally, named after \z
-                             the proud first city of Lefellen, standing \z
-                             taller than the northern forest trees..."
-                        ),
-                        waitForEvent('walk1'),
-                        waitForEvent('walk2'),
-                        say(2, 2, false,
-                            "...In the place we now know as The Ash."
-                        ),
-                        lookAt(2, 1),
-                        say(2, 2, false,
-                            "But Abelon, you probably don't know this one. \z
-                             The truth is, I was born in Lefellen, just \z
-                             before the dragon attack. Before this whole \z
-                             nightmare began..."
+                        say(2, 1, true,
+                            "Yes, that magic was... something, wasn't it. Where \z
+                             on Eruta did you discover such spells?"
                         )
                     },
                     ['result'] = {}
                 },
                 {
-                    ['response'] = "No",
+                    ['response'] = "Thanks to you",
                     ['events'] = {
-                        say(2, 3, false,
-                            "Ebonach wasn't always the capital. Indeed, at \z
-                             the beginning, it didn't exist. Lefally, named \z
-                             after the proud city of Lefellen, standing \z
-                             taller than the northern trees..."
-                        ),
-                        waitForEvent('walk1'),
-                        waitForEvent('walk2'),
-                        waitForEvent('camera'),
-                        pan(0, -600, 200),
-                        say(2, 2, false,
-                            "...In the place we now know as The Ash."
-                        ),
-                        say(2, 2, false,
-                            "That cold, desolate wasteland, where the once \z
-                             proud trees are now flattened, the city reduced \z
-                             to rubble..."
-                        ),
-                        waitForEvent('camera'),
-                        wait(1),
-                        focus(2, 200),
-                        lookAt(2, 1),
-                        waitForEvent('camera'),
-                        say(2, 2, false,
-                            "I've kept this from you for a long time, but \z
-                             the truth is, I was born in Lefellen, just \z
-                             before the dragon attack. Before this whole \z
-                             nightmare began..."
+                        say(2, 1, true,
+                            "Come Abelon, we've known each other too long for \z
+                             flattery. That strange magic of yours carried the \z
+                             day. Where on Eruta did you discover such spells?"
+                        )
+                    },
+                    ['result'] = {
+                        ['awareness'] = {0, 1},
+                        ['impressions'] = {-1, 1}
+                    }
+                },
+                {
+                    ['response'] = "We were lucky",
+                    ['events'] = {
+                        say(2, 1, true,
+                            "Lucky's one word for it. I would sooner credit those \z
+                             unholy spells you started slinging. Where on Eruta \z
+                             did you discover such magic?"
                         )
                     },
                     ['result'] = {}
                 }
             }),
-            wait(0.2),
-            lookDir(2, RIGHT),
-            wait(0.5),
-            lookDir(2, LEFT),
-            wait(1),
-            say(2, 1, false,
-                "...Well, that was a nice stroll. I've said all I need to, \z
-                 for now."
-            ),
-        },
-        {
-            say(2, 3, false,
-                "I don't trust you, Abelon."
-            )
-        }),
-        focus(1, 100),
-        waitForEvent('camera')
-    },
-    ['result'] = {
-        ['state'] = 'kath_interact_base'
-    }
-}
-
-kath_medallion_response = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        face(1, 2),
-        say(2, 1, true,
-            "Oh. I see you picked up that medallion from the ground. Is that \z
-             yours?"
-        ),
-        choice({
-            {
-                ['response'] = 'No',
-                ['events'] = {
-                    say(2, 1, false,
-                        "Ah, planning to return it to its rightful owner when \z
-                         we're back in town, then? How unexpectedly \z
-                         considerate of you."
-                    )
-                },
-                ['result'] = {
-                    ['callback'] = {
-                        face(1, 2),
+            focus(2, 50),
+            choice({
+                {
+                    ['response'] = "The Archives",
+                    ['events'] = {
                         say(2, 1, false,
-                            "We'll have to get out of here before you can \z
-                             return the medallion!"
+                            "You jest! No one makes it through the Ash without a \z
+                             battalion and supplies, not to mention it's a week's \z
+                             journey. I would have caught wind of this \z
+                             expedition, surely!"
                         )
-                    }
-                }
-            },
-            {
-                ['response'] = 'Yes',
-                ['events'] = {
-                    say(2, 1, false,
-                        "Well, how did it end up out here then? I've never \z
-                         known you to be careless with your possessions."
-                    )
-                },
-                ['result'] = {
-                    ['callback'] = {
-                        face(1, 2),
-                        say(2, 1, false,
-                            "I'm glad you've recovered your medallion, in any \z
-                             case."
-                        )
-                    }
-                }
-            }
-        })
-    },
-    ['result'] = {
-        ['state'] = 'kath_medallion_response'
-    }
-}
-
-meet_kath = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        lookAt(2, 1),
-        focus(2, 200),
-        pan(-200, 0, 100),
-        waitForEvent('camera'),
-        say(2, 3, false,
-            "Abelon! At last!"
-        ),
-        lookAt(1, 2),
-        walk(2, 29, 73, 'walk'),
-        focus(1, 50),
-        say(2, 3, false,
-            "By Ignus, what are you doing out here? The knights are pinned at \z
-             the north gate, to the man, and suddenly you disappear! Come, we \z
-             must return to the fight."
-        ),
-        say(2, 3, false,
-            "Without our steel, the beasts might finally break through to the \z
-            gilded district...ach, we'd all be in for it then."
-        ),
-        waitForEvent('walk'),
-        wait(0.3),
-        say(2, 2, false,
-            "Wait, your arm. You're wounded. Let me see that."
-        ),
-        walkTo(2, 1, 'walk'),
-        waitForEvent('walk'),
-        lookAt(2, 1),
-        wait(1),
-        walk(2, 28, 73, 'walk'),
-        waitForEvent('walk'),
-        lookAt(2, 1),
-        say(2, 3, true,
-            "I'll have none of your usual protests about bandages and such, \z
-             that sword arm of yours is well worth my ignea. Did one of the \z
-             wolves follow you here? Did you kill it?"
-        ),
-        choice({
-            {
-                ['response'] = "No, I'm alone",
-                ['events'] = {
-                    say(2, 2, false,
-                        "You're..."
-                    ),
-                    wait(0.2),
-                    lookDir(2, RIGHT),
-                    wait(0.5),
-                    lookDir(2, LEFT),
-                    wait(1),
-                    say(2, 2, true,
-                        "Well, what got your arm then? Hold on, what's all \z
-                         that behind you?"
-                    ),
-                    choice({
-                        {
-                            ['response'] = "A ritual",
-                            ['events'] = {
-                                say(2, 2, false,
-                                    "That sign in the earth is your work, \z
-                                     then? Which explains your arm, but...a \z
-                                     blood rite, Abelon?"
-                                ),
-                                say(2, 3, false,
-                                    "I've only ever heard of them in \z
-                                     stories... The kinds of stories that \z
-                                     don't end well."
-                                ),
-                                say(2, 3, false,
-                                    "Whatever you've done, I dearly hope it \z
-                                     will help us live to see daylight."
-                                ),
-                                say(2, 3, false,
-                                    "We've wasted too much time talking \z
-                                     already. If you're not in danger here, \z
-                                     we need to reinforce our soldiers, \z
-                                     immediately. Come on!"
-                                )
-                            },
-                            ['result'] = {
-                                ['state'] = "mentioned_blood_rite"
-                            }
-                        },
-                        {
-                            ['response'] = "I don't know",
-                            ['events'] = {
-                                say(2, 3, false,
-                                    "Hm, well I don't remember seeing it when \z
-                                     I was last on salvage to the Ash...but \z
-                                     it's a curiosity for another time."
-                                ),
-                                say(2, 3, false,
-                                    "If you're not in danger here, we need to \z
-                                     reinforce our soldiers, immediately. \z
-                                     Come on!"
-                                )
-                            },
-                            ['result'] = {
-                                ['awareness'] = {0, 1}
-                            }
+                    },
+                    ['result'] = {
+                        ['impressions'] = {0, 1},
+                        ['callback'] = {
+                            face(1, 2),
+                            say(2, 1, false,
+                                "I'll have to hear more about this trip of yours \z
+                                 to the Ash, but perhaps it's best left for \z
+                                 another time."
+                            )
                         }
-                    })
+                    }
                 },
-                ['result'] = {}
+                {
+                    ['response'] = "My secret",
+                    ['events'] = {
+                        say(2, 2, false,
+                            "Abelon, that's... quite a thing to keep secret. Ah \z
+                             well. I know how you are when you've made up your \z
+                             mind."
+                        )
+                    },
+                    ['result'] = {
+                        ['impressions'] = {0, -1},
+                        ['callback'] = {
+                            face(1, 2),
+                            say(2, 3, false,
+                                "You will tell me eventually, won't you? Or at \z
+                                 least His Majesty? If we equipped our mages with \z
+                                 those spells of yours, why,"
+                            ),
+                            say(2, 3, false,
+                                "this city might survive the winter after all..."
+                            )
+                        }
+                    }
+                }
+            }),
+            br(function(i) return i > 50 end, {{2, 'i'}}, {
+                say(2, 1, false,
+                    "I trust you, Abelon."
+                ),
+                say(2, 3, false,
+                    "Let me tell you a little bit about the history of the Kingdom."
+                ),
+                walk(2, 50, 63, 'walk1', RIGHT),
+                wait(1.7),
+                walk(1, 48, 63, 'walk2', RIGHT),
+                say(2, 3, true,
+                    "Do you know why the One Kingdom of Ebonach and Mistram is \z
+                     called Lefally?"
+                ),
+                choice({
+                    {
+                        ['response'] = "Yes",
+                        ['events'] = {
+                            say(2, 3, false,
+                                "Of course. Everyone does. Lefally, named after \z
+                                 the proud first city of Lefellen, standing \z
+                                 taller than the northern forest trees..."
+                            ),
+                            waitForEvent('walk1'),
+                            waitForEvent('walk2'),
+                            say(2, 2, false,
+                                "...In the place we now know as The Ash."
+                            ),
+                            lookAt(2, 1),
+                            say(2, 2, false,
+                                "But Abelon, you probably don't know this one. \z
+                                 The truth is, I was born in Lefellen, just \z
+                                 before the dragon attack. Before this whole \z
+                                 nightmare began..."
+                            )
+                        },
+                        ['result'] = {}
+                    },
+                    {
+                        ['response'] = "No",
+                        ['events'] = {
+                            say(2, 3, false,
+                                "Ebonach wasn't always the capital. Indeed, at \z
+                                 the beginning, it didn't exist. Lefally, named \z
+                                 after the proud city of Lefellen, standing \z
+                                 taller than the northern trees..."
+                            ),
+                            waitForEvent('walk1'),
+                            waitForEvent('walk2'),
+                            waitForEvent('camera'),
+                            pan(0, -600, 200),
+                            say(2, 2, false,
+                                "...In the place we now know as The Ash."
+                            ),
+                            say(2, 2, false,
+                                "That cold, desolate wasteland, where the once \z
+                                 proud trees are now flattened, the city reduced \z
+                                 to rubble..."
+                            ),
+                            waitForEvent('camera'),
+                            wait(1),
+                            focus(2, 200),
+                            lookAt(2, 1),
+                            waitForEvent('camera'),
+                            say(2, 2, false,
+                                "I've kept this from you for a long time, but \z
+                                 the truth is, I was born in Lefellen, just \z
+                                 before the dragon attack. Before this whole \z
+                                 nightmare began..."
+                            )
+                        },
+                        ['result'] = {}
+                    }
+                }),
+                wait(0.2),
+                lookDir(2, RIGHT),
+                wait(0.5),
+                lookDir(2, LEFT),
+                wait(1),
+                say(2, 1, false,
+                    "...Well, that was a nice stroll. I've said all I need to, \z
+                     for now."
+                ),
             },
             {
-                ['response'] = "Who are you?",
-                ['events'] = {
-                    say(2, 2, false,
-                        "...What? Please tell me this is a jest, Abelon..."
-                    ),
-                    wait(1.5),
-                    say(2, 3, false,
-                        "Whatever's happened to you here, it's of less \z
-                         importance than the battle at the gate. Come, we \z
-                         must reinforce our soldiers immediately!"
-                    )
-                },
-                ['result'] = {
-                    ['awareness'] = {0, 2}
-                }
-            }
-        }),
-        walk(2, 33, 73, 'walk'),
-        waitForEvent('walk'),
-        wait(0.5),
-        say(2, 2, true,
-            "Ah. They must have followed me here. I'm sorry, Abelon."
-        ),
-        waitForText(),
-        wait(0.5),
-        focus(2, 100),
-        pan(150, -50, 100),
-        wait(1),
-        walk(1, 32, 72, 'walk'),
-        waitForEvent('camera'),
-        waitForEvent('walk'),
-        choice({
-            {
-                ['response'] = "You shouldn't have come, then",
-                ['events'] = {
-                    say(2, 3, false,
-                        "Well, a word of warning before running off might \z
-                         have accomplished as much! I suppose if I had \z
-                         vanished in the middle of a battle,"
-                    ),
-                    say(2, 3, false,
-                        "you wouldn't have spared me a second thought, then. \z
-                         Cold and calculating to the last, our veteran \z
-                         captain is..."
-                    ),
-                    say(2, 3, false,
-                        "Let's finish these beasts off quickly, so we can \z
-                         reach the knights."
-                    )
-                },
-                ['result'] = {
-                    ['impression'] = {0, -2}
-                }
-            },
-            {
-                ['response'] = "Nothing we can't handle",
-                ['events'] = {
-                    say(2, 1, false,
-                        "Now there's the grizzled old knight I remember! You \z
-                         had me worried for a moment. Let's finish them off \z
-                         quickly so we can reach the knights!"
-                    )
-                },
-                ['result'] = {
-                    ['impression'] = {0, 1}
-                }
-            }
-        })
+                say(2, 3, false,
+                    "I don't trust you, Abelon."
+                )
+            }),
+            focus(1, 100),
+            waitForEvent('camera')
+        },
+        ['result'] = {
+            ['state'] = 'kath_interact_base'
+        }
     },
-    ['result'] = {
-        ['do'] = function(c)
-            local kath = c.current_map:getSpriteById('kath')
-            c.player:joinParty(kath)
-        end
-    }
-}
 
-book_interact_base = {
-    ['ids'] = {'abelon', 'book'},
-    ['events'] = {
-        lookAt(1, 2),
-        say(2, 0, false,
-            "An open book lies on the ground, full of strange drawings and \z
-             hastily scrawled paragraphs. The writing is faded and barely \z
-             legible,"
-        ),
-        say(2, 0, false,
-            "and the pages practically crumble to dust at the slightest touch."
-        )
-    },
-    ['result'] = {
-        ['callback'] = {
+    ['book_interact_base'] = {
+        ['ids'] = {'abelon', 'book'},
+        ['events'] = {
             lookAt(1, 2),
             say(2, 0, false,
-                "On a second glance, it looks like there's another small book \z
-                 beneath the first."
+                "An open book lies on the ground, full of strange drawings and \z
+                 hastily scrawled paragraphs. The writing is faded and barely \z
+                 legible,"
+            ),
+            say(2, 0, false,
+                "and the pages practically crumble to dust at the slightest touch."
             )
-        }
-    }
-}
-
-medallion_use = {
-    ['ids'] = {'medallion'},
-    ['events'] = {
-        say(1, 0, false,
-            "You hold up the medallion by its rough, frayed string. A thin, \z
-            slightly misshapen disk of silver hangs from the end, turning \z
-            lazily towards you..."
-        ),
-        say(1, 0, false,
-            "...to reveal an etching of a round buckler over an ordinary \z
-             longsword. The craftsmanship is amateur."
-        )
-    },
-    ['result'] = {}
-}
-
-medallion_interact_base = {
-    ['ids'] = {'abelon', 'medallion'},
-    ['events'] = {
-        lookAt(1, 2),
-        say(2, 0, true,
-            "A silver medallion on a string lies on the ground, smeared with \z
-             dirt. The image of a round shield over a longsword is engraved \z
-             in the metal."
-        ),
-        choice({
-            {
-                ['response'] = "Pick it up",
-                ['events'] = {
-                    say(2, 0, false,
-                        "You brush the dirt off of the medallion and place it \z
-                         in your pack."
-                    )
-                },
-                ['result'] = {
-                    ['do'] = function(c)
-                        local sp = c:dropSprite('medallion')
-                        c.player:acquire(sp)
-                    end
-                }
-            },
-            {
-                ['response'] = "Leave it",
-                ['events'] = {},
-                ['result'] = {}
+        },
+        ['result'] = {
+            ['callback'] = {
+                lookAt(1, 2),
+                say(2, 0, false,
+                    "On a second glance, it looks like there's another small book \z
+                     beneath the first."
+                )
             }
-        })
+        }
     },
-    ['result'] = {
-        ['callback'] = {
+
+    ['medallion_interact_base'] = {
+        ['ids'] = {'abelon', 'medallion'},
+        ['events'] = {
             lookAt(1, 2),
             say(2, 0, true,
-                "The medallion shines among the twigs and leaves of the \z
-                 forest floor."
+                "A silver medallion on a string lies on the ground, smeared with \z
+                 dirt. The image of a round shield over a longsword is engraved \z
+                 in the metal."
             ),
             choice({
                 {
                     ['response'] = "Pick it up",
                     ['events'] = {
                         say(2, 0, false,
-                            "You brush the dirt off of the medallion and \z
-                             place it in your pack."
+                            "You brush the dirt off of the medallion and place it \z
+                             in your pack."
                         )
                     },
                     ['result'] = {
@@ -689,15 +424,274 @@ medallion_interact_base = {
                     ['result'] = {}
                 }
             })
+        },
+        ['result'] = {
+            ['callback'] = {
+                lookAt(1, 2),
+                say(2, 0, true,
+                    "The medallion shines among the twigs and leaves of the \z
+                     forest floor."
+                ),
+                choice({
+                    {
+                        ['response'] = "Pick it up",
+                        ['events'] = {
+                            say(2, 0, false,
+                                "You brush the dirt off of the medallion and \z
+                                 place it in your pack."
+                            )
+                        },
+                        ['result'] = {
+                            ['do'] = function(c)
+                                local sp = c:dropSprite('medallion')
+                                c.player:acquire(sp)
+                            end
+                        }
+                    },
+                    {
+                        ['response'] = "Leave it",
+                        ['events'] = {},
+                        ['result'] = {}
+                    }
+                })
+            }
+        }
+    },
+
+    ['kath_medallion_response'] = {
+        ['ids'] = {'abelon', 'kath'},
+        ['events'] = {
+            face(1, 2),
+            say(2, 1, true,
+                "Oh. I see you picked up that medallion from the ground. Is that \z
+                 yours?"
+            ),
+            choice({
+                {
+                    ['response'] = 'No',
+                    ['events'] = {
+                        say(2, 1, false,
+                            "Ah, planning to return it to its rightful owner when \z
+                             we're back in town, then? How unexpectedly \z
+                             considerate of you."
+                        )
+                    },
+                    ['result'] = {
+                        ['callback'] = {
+                            face(1, 2),
+                            say(2, 1, false,
+                                "We'll have to get out of here before you can \z
+                                 return the medallion!"
+                            )
+                        }
+                    }
+                },
+                {
+                    ['response'] = 'Yes',
+                    ['events'] = {
+                        say(2, 1, false,
+                            "Well, how did it end up out here then? I've never \z
+                             known you to be careless with your possessions."
+                        )
+                    },
+                    ['result'] = {
+                        ['callback'] = {
+                            face(1, 2),
+                            say(2, 1, false,
+                                "I'm glad you've recovered your medallion, in any \z
+                                 case."
+                            )
+                        }
+                    }
+                }
+            })
+        },
+        ['result'] = {
+            ['state'] = 'kath_medallion_response'
+        }
+    },
+
+    ['meet_kath'] = {
+        ['ids'] = {'abelon', 'kath'},
+        ['events'] = {
+            lookAt(2, 1),
+            focus(2, 200),
+            pan(-200, 0, 100),
+            waitForEvent('camera'),
+            say(2, 3, false,
+                "Abelon! At last!"
+            ),
+            lookAt(1, 2),
+            walk(2, 29, 73, 'walk'),
+            focus(1, 50),
+            say(2, 3, false,
+                "By Ignus, what are you doing out here? The knights are pinned at \z
+                 the north gate, to the man, and suddenly you disappear! Come, we \z
+                 must return to the fight."
+            ),
+            say(2, 3, false,
+                "Without our steel, the beasts might finally break through to the \z
+                gilded district...ach, we'd all be in for it then."
+            ),
+            waitForEvent('walk'),
+            wait(0.3),
+            say(2, 2, false,
+                "Wait, your arm. You're wounded. Let me see that."
+            ),
+            walkTo(2, 1, 'walk'),
+            waitForEvent('walk'),
+            lookAt(2, 1),
+            wait(1),
+            walk(2, 28, 73, 'walk'),
+            waitForEvent('walk'),
+            lookAt(2, 1),
+            say(2, 3, true,
+                "I'll have none of your usual protests about bandages and such, \z
+                 that sword arm of yours is well worth my ignea. Did one of the \z
+                 wolves follow you here? Did you kill it?"
+            ),
+            choice({
+                {
+                    ['response'] = "No, I'm alone",
+                    ['events'] = {
+                        say(2, 2, false,
+                            "You're..."
+                        ),
+                        wait(0.2),
+                        lookDir(2, RIGHT),
+                        wait(0.5),
+                        lookDir(2, LEFT),
+                        wait(1),
+                        say(2, 2, true,
+                            "Well, what got your arm then? Hold on, what's all \z
+                             that behind you?"
+                        ),
+                        choice({
+                            {
+                                ['response'] = "A ritual",
+                                ['events'] = {
+                                    say(2, 2, false,
+                                        "That sign in the earth is your work, \z
+                                         then? Which explains your arm, but...a \z
+                                         blood rite, Abelon?"
+                                    ),
+                                    say(2, 3, false,
+                                        "I've only ever heard of them in \z
+                                         stories... The kinds of stories that \z
+                                         don't end well."
+                                    ),
+                                    say(2, 3, false,
+                                        "Whatever you've done, I dearly hope it \z
+                                         will help us live to see daylight."
+                                    ),
+                                    say(2, 3, false,
+                                        "We've wasted too much time talking \z
+                                         already. If you're not in danger here, \z
+                                         we need to reinforce our soldiers, \z
+                                         immediately. Come on!"
+                                    )
+                                },
+                                ['result'] = {
+                                    ['state'] = "mentioned_blood_rite"
+                                }
+                            },
+                            {
+                                ['response'] = "I don't know",
+                                ['events'] = {
+                                    say(2, 3, false,
+                                        "Hm, well I don't remember seeing it when \z
+                                         I was last on salvage to the Ash...but \z
+                                         it's a curiosity for another time."
+                                    ),
+                                    say(2, 3, false,
+                                        "If you're not in danger here, we need to \z
+                                         reinforce our soldiers, immediately. \z
+                                         Come on!"
+                                    )
+                                },
+                                ['result'] = {
+                                    ['awareness'] = {0, 1}
+                                }
+                            }
+                        })
+                    },
+                    ['result'] = {}
+                },
+                {
+                    ['response'] = "Who are you?",
+                    ['events'] = {
+                        say(2, 2, false,
+                            "...What? Please tell me this is a jest, Abelon..."
+                        ),
+                        wait(1.5),
+                        say(2, 3, false,
+                            "Whatever's happened to you here, it's of less \z
+                             importance than the battle at the gate. Come, we \z
+                             must reinforce our soldiers immediately!"
+                        )
+                    },
+                    ['result'] = {
+                        ['awareness'] = {0, 2}
+                    }
+                }
+            }),
+            walk(2, 33, 73, 'walk'),
+            waitForEvent('walk'),
+            wait(0.5),
+            say(2, 2, true,
+                "Ah. They must have followed me here. I'm sorry, Abelon."
+            ),
+            waitForText(),
+            wait(0.5),
+            focus(2, 100),
+            pan(150, -50, 100),
+            wait(1),
+            walk(1, 32, 72, 'walk'),
+            waitForEvent('camera'),
+            waitForEvent('walk'),
+            choice({
+                {
+                    ['response'] = "You shouldn't have come, then",
+                    ['events'] = {
+                        say(2, 3, false,
+                            "Well, a word of warning before running off might \z
+                             have accomplished as much! I suppose if I had \z
+                             vanished in the middle of a battle,"
+                        ),
+                        say(2, 3, false,
+                            "you wouldn't have spared me a second thought, then. \z
+                             Cold and calculating to the last, our veteran \z
+                             captain is..."
+                        ),
+                        say(2, 3, false,
+                            "Let's finish these beasts off quickly, so we can \z
+                             reach the knights."
+                        )
+                    },
+                    ['result'] = {
+                        ['impression'] = {0, -2}
+                    }
+                },
+                {
+                    ['response'] = "Nothing we can't handle",
+                    ['events'] = {
+                        say(2, 1, false,
+                            "Now there's the grizzled old knight I remember! You \z
+                             had me worried for a moment. Let's finish them off \z
+                             quickly so we can reach the knights!"
+                        )
+                    },
+                    ['result'] = {
+                        ['impression'] = {0, 1}
+                    }
+                }
+            })
+        },
+        ['result'] = {
+            ['do'] = function(c)
+                local kath = c.current_map:getSpriteById('kath')
+                c.player:joinParty(kath)
+            end
         }
     }
-}
-
-scripts = {
-    ['medallion_use'] = medallion_use,
-    ['kath_interact_base'] = kath_interact_base,
-    ['book_interact_base'] = book_interact_base,
-    ['medallion_interact_base'] = medallion_interact_base,
-    ['kath_medallion_response'] = kath_medallion_response,
-    ['meet_kath'] = meet_kath
 }
