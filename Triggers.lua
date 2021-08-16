@@ -25,16 +25,6 @@ function mkSimpleTrigger(check, action)
     end
 end
 
-kathMedallionResponse = mkSimpleTrigger(
-    function(c)
-        return c.state['kath_interact_base'] and
-               c.player:has('medallion')
-    end,
-    function(c)
-        switchScriptFor('kath', 'kath_medallion_response')
-    end
-)
-
 meetKath = mkAreaTrigger(
     function(x) return x > 25 end,
     function(y) return true end,
@@ -42,6 +32,5 @@ meetKath = mkAreaTrigger(
 )
 
 triggers = {
-    kathMedallionResponse,
     meetKath
 }

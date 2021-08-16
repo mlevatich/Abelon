@@ -13,7 +13,7 @@ local INIT_VERSION = 'standard'
 
 -- Movement constants
 local WANDER_SPEED = 70
-local LEASH_DISTANCE = 90
+local LEASH_DISTANCE = TILE_WIDTH * 1.5
 
 -- Each spacter has 12 possible portraits for
 -- 12 different emotions (some may not use them all)
@@ -196,8 +196,7 @@ end
 
 -- Sprite as a menu item (sprite must be a party member with stats and skills)
 function Sprite:toMenuItem()
-    return MenuItem(self.name, {}, "See options for " .. self.name,
-                    nil, nil, nil)
+    return MenuItem(self.name, {}, "See options for " .. self.name)
 end
 
 -- Stop sprite's velocity

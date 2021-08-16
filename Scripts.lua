@@ -458,14 +458,17 @@ scripts = {
         }
     },
 
-    ['kath_medallion_response'] = {
+    ['medallion_present_kath'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
             face(1, 2),
+            walkTo(1, 2, 'walk'),
             say(2, 1, true,
                 "Oh. I see you picked up that medallion from the ground. Is that \z
                  yours?"
             ),
+            waitForEvent('walk'),
+            face(1, 2),
             choice({
                 {
                     ['response'] = 'No',
@@ -480,8 +483,7 @@ scripts = {
                         ['callback'] = {
                             face(1, 2),
                             say(2, 1, false,
-                                "We'll have to get out of here before you can \z
-                                 return the medallion!"
+                                "You're quite enchanted by that thing, aren't you?"
                             )
                         }
                     }
@@ -498,17 +500,14 @@ scripts = {
                         ['callback'] = {
                             face(1, 2),
                             say(2, 1, false,
-                                "I'm glad you've recovered your medallion, in any \z
-                                 case."
+                                "You're quite enchanted by that thing, aren't you?"
                             )
                         }
                     }
                 }
             })
         },
-        ['result'] = {
-            ['state'] = 'kath_medallion_response'
-        }
+        ['result'] = {}
     },
 
     ['meet_kath'] = {

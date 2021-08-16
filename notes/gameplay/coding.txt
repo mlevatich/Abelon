@@ -5,17 +5,10 @@ Forest theme to supercollider
 Use twilight of the gods for fight music
 
 #17: Inventory:
--hover descriptions to menu items
--scrolling
--let hover descriptions combine graphics and text
--actions that either say you can't use, or close the menu and do some action
--deal with right-side menu overflow
--menu class should be flexible enough to be used either for battle or
-for inventory management
+-hover descriptions
+-confirm screen
+-hover info box
 
 COMBAT
-
-#40: Presentation system – present items/people to others in order to trigger
-either fail states or quest advances
 
 #18: Shopping

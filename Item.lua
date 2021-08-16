@@ -96,11 +96,33 @@ function mkDiscard(id)
     end
 end
 
-function useMedallion(c)
-    c:launchScene('medallion_use')
+function launch(script_id)
+    return function(c)
+        c:launchScene(script_id)
+    end
+end
+
+function nearKath(c)
+    local x, y = c.player.sp:getPosition()
+    local kx, ky = c.current_map:getSpriteById('kath'):getPosition()
+    return abs(x - kx) <= TILE_WIDTH * 4 and abs(y - ky) <= TILE_HEIGHT * 4
 end
 
 items = {
+
+    ['medallion'] = Item(
+        'medallion',
+        'Silver medallion',
+        mkUse('medallion',
+            { function(c) return true end },
+            { launch('medallion_use') }
+        ),
+        mkPresent('medallion',
+            { nearKath },
+            { launch('medallion_present_kath') }
+        ),
+        true
+    ),
 
     ["sword"] = Item(
         'sword',
@@ -180,14 +202,5 @@ items = {
         mkUse('longbow', {}, {}),
         mkPresent('longbow', {}, {}),
         false
-    ),
-
-    ['medallion'] = Item(
-        'medallion',
-        'Silver medallion',
-        mkUse('medallion', { function(c) return true end }, { useMedallion }),
-        mkPresent('medallion', {}, {}),
-        true
     )
-
 }
