@@ -13,13 +13,16 @@ function MenuItem:init(name, children, h_desc, h_render, action, confirm)
     self.hover_render = h_render
     self.action = action
     self.confirm_msg = confirm
-
+    if confirm then
+        local cm, _ = splitByCharLimit(confirm, CBOX_CHARS_PER_LINE)
+        self.confirm_msg = cm
+    end
 end
 
 Menu = Class{}
 
 -- Initialize a new menu
-function Menu:init(parent, menu_items, x, y)
+function Menu:init(parent, menu_items, x, y, confirm_msg)
 
     -- What is the parent menu of this menu (nil if a top-level menu)
     self.parent = parent
@@ -37,6 +40,11 @@ function Menu:init(parent, menu_items, x, y)
     self.height = (FONT_SIZE + TEXT_MARGIN_Y)
                 * (math.min(#menu_items, MAX_MENU_ITEMS))
                 + BOX_MARGIN - TEXT_MARGIN_Y
+
+    -- Is this a confirmation prompt? If so, what is the message?
+    -- (optional parameter)
+    self.confirm_msg = confirm_msg
+
 
     -- The different options on this menu
     self.hovering = 1
@@ -61,11 +69,34 @@ function Menu:initSubmenus()
             local old_action = cur.action
             cur.action = function(c)
                 self.selected = submenu
-                if old_action then
-                    old_action(c)
-                end
+                if old_action then old_action(c) end
             end
 
+        elseif cur.confirm_msg then
+
+            -- Base position of confirm message
+            local msg = cur.confirm_msg
+            local next_x = VIRTUAL_WIDTH/2
+                         - ((FONT_SIZE + TEXT_MARGIN_X) * 3 + BOX_MARGIN*2)/2
+
+            -- Witchcraft
+            local next_y = (VIRTUAL_HEIGHT + TEXT_MARGIN_Y) / 2
+                         + (#msg/2 - 1) * (FONT_SIZE + TEXT_MARGIN_Y)
+
+            -- Menu item's action is forwarded to 'Yes' on the confirm screen,
+            -- which is another submenu
+            local n = MenuItem('No', {})
+            local y = MenuItem('Yes', {})
+            local submenu = Menu(self, {n, y}, next_x, next_y, msg)
+            local inherited_action = cur.action
+            n.action = function(c) submenu:back() end
+            y.action = function(c)
+                submenu:back()
+                inherited_action(c)
+            end
+            cur.action = function(c)
+                self.selected = submenu
+            end
         end
     end
 end
@@ -126,20 +157,52 @@ function Menu:hover(dir)
     end
 end
 
-function Menu:render(cam_x, cam_y)
+function Menu:renderConfirmMessage(cam_x, cam_y)
+    local msg = self.confirm_msg
+    local longest = max(mapf(function(m) return #m end, msg))
+    local cbox_w = (FONT_SIZE + TEXT_MARGIN_X) * longest + BOX_MARGIN*2
+    local cbox_h = (FONT_SIZE + TEXT_MARGIN_Y) * (#msg + 2)
+                 + BOX_MARGIN*2 - TEXT_MARGIN_Y
+    local cbox_x = cam_x + VIRTUAL_WIDTH/2 - cbox_w/2
+    local cbox_y = cam_y + VIRTUAL_HEIGHT/2 - cbox_h/2
+    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+    love.graphics.rectangle('fill', cbox_x, cbox_y, cbox_w, cbox_h)
+    love.graphics.setColor(1, 1, 1, 1)
+    for i=1, #msg do
+        local base_x = cam_x + VIRTUAL_WIDTH/2
+                     - (#msg[i] * (FONT_SIZE + TEXT_MARGIN_X))/2
+        local base_y = cbox_y + BOX_MARGIN
+                     + (FONT_SIZE + TEXT_MARGIN_Y) * (i-1)
+        for j=1, #msg[i] do
+            local char = msg[i]:sub(j, j)
+            local cur_x = base_x + (j-1) * (FONT_SIZE + TEXT_MARGIN_X)
+            love.graphics.print(char, cur_x, base_y)
+        end
+    end
+end
 
-    -- Top left of box
-    local x = cam_x + self.rel_x
-    local y = cam_y + self.rel_y
+function Menu:renderHoverDescription(cam_x, cam_y)
+    local selection = self.menu_items[self.base + self.hovering - 1]
+    if selection.hover_desc then
+        local desc = selection.hover_desc
 
-    -- Render black menu box
-    love.graphics.setColor(0, 0, 0, 1)
-    love.graphics.rectangle('fill', x, y, self.width, self.height)
+        local desc_x_base = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
+                          - #desc * (FONT_SIZE + TEXT_MARGIN_X)
+        local desc_y_base = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
+        for i = 1, #desc do
+            local char = desc:sub(i, i)
+            local cur_x = desc_x_base + (i-1) * (FONT_SIZE + TEXT_MARGIN_X)
+            love.graphics.print(char, cur_x, desc_y_base)
+        end
+    end
+end
 
-    -- Render options
+function Menu:renderMenuItems(x, y)
+
     love.graphics.setColor(1, 1, 1, 1)
     for i=1, math.min(#self.menu_items, MAX_MENU_ITEMS) do
-        local cur_y = y + BOX_MARGIN/2 + (i-1) * (FONT_SIZE + TEXT_MARGIN_Y)
+        local cur_y = y + BOX_MARGIN / 2 + (i - 1)
+                    * (FONT_SIZE + TEXT_MARGIN_Y)
         local word = self.menu_items[i + self.base - 1].name
         for j=1, #word do
             local char = word:sub(j,j)
@@ -155,29 +218,40 @@ function Menu:render(cam_x, cam_y)
     if self.base <= #self.menu_items - MAX_MENU_ITEMS then
         love.graphics.print("^", x + self.width - 5, y + self.height - 6, math.pi)
     end
+end
 
-    -- Render selection arrow over what is being hovered
+function Menu:renderSelectionArrow(x, y)
     local arrow_y = y + BOX_MARGIN/2
                   + (FONT_SIZE + TEXT_MARGIN_Y)
                   * (self.hovering - 1)
     love.graphics.print(">", x + 10, arrow_y)
+end
+
+function Menu:render(cam_x, cam_y)
+
+    -- Top left of menu box
+    local x = cam_x + self.rel_x
+    local y = cam_y + self.rel_y
+
+    -- If this is a confirmation menu, render confirmation box,
+    -- otherwise render normal menu box
+    if self.confirm_msg then
+        self:renderConfirmMessage(cam_x, cam_y)
+    else
+        love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+        love.graphics.rectangle('fill', x, y, self.width, self.height)
+    end
+
+    -- Render options
+    self:renderMenuItems(x, y)
+
+    -- Render arrow over item being hovered
+    self:renderSelectionArrow(x, y)
 
     -- Render child menu if there is one or hover info if this is the leaf menu
     if self.selected then
         self.selected:render(cam_x, cam_y)
     else
-        local selection = self.menu_items[self.base + self.hovering - 1]
-        if selection.hover_desc then
-            local desc = selection.hover_desc
-
-            local desc_x_base = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
-                              - #desc * (FONT_SIZE + TEXT_MARGIN_X)
-            local desc_y_base = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
-            for i = 1, #desc do
-                local char = desc:sub(i, i)
-                local cur_x = desc_x_base + (i-1) * (FONT_SIZE + TEXT_MARGIN_X)
-                love.graphics.print(char, cur_x, desc_y_base)
-            end
-        end
+        self:renderHoverDescription(cam_x, cam_y)
     end
 end

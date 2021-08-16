@@ -38,8 +38,46 @@ function Player:init(sp)
     -- Abelon's party
     self.party = { self.sp }
 
+    -- Abelon can open menus, like shops and the inventory
+    self.open_menu = nil
+end
+
+-- When player presses i to open the inventory, the inventory menu appears
+function Player:openInventory()
+
+    -- Change player behavior to menu-browsing
+    self:changeMode('browse')
+    self:changeBehavior('idle')
+
+    -- Make menu
+    local inv_ch = mapf(function(i) return i:toMenuItem() end, self.inventory)
+    local party_ch = mapf(function(sp) return sp:toMenuItem() end, self.party)
+
+    local inv_m = MenuItem('Items', inv_ch, 'View possessions')
+    local party_m = MenuItem('Party', party_ch, 'View traveling companions')
+    local menu = { inv_m, party_m, self:mkSettingsMenu(), self:mkQuitMenu() }
+
+    -- Open inventory menu
+    self.open_menu = Menu(nil, menu, BOX_MARGIN, BOX_MARGIN)
+end
+
+function Player:mkQuitMenu()
     local placeholder = function(c) pass() end
-    self.settings_m = MenuItem('Settings', {
+    local die = function(c) love.event.quit(0) end
+    return MenuItem('Quit', {
+        MenuItem('Save and quit', {}, nil, nil, die,
+            "Save current progress and close the game?"
+        ),
+        MenuItem('Restart chapter', {}, nil, nil, placeholder,
+            "Are you SURE you want to restart the chapter? You will lose ALL \z
+             progress made during the chapter."
+        )
+    }, 'Save and quit, or restart the chapter', nil, nil, nil)
+end
+
+function Player:mkSettingsMenu()
+    local placeholder = function(c) pass() end
+    return MenuItem('Settings', {
         MenuItem('Video', {
             MenuItem('Coming soon!', {})
         }, 'Change video settings'),
@@ -65,50 +103,17 @@ function Player:init(sp)
         }, 'Change audio settings'),
         MenuItem('Difficulty', {
             MenuItem('Normal', {}, "Switch to this difficulty", nil, placeholder,
-                "Permanently lower the difficulty to Normal? Difficulty can \z
+                "Lower the difficulty to Normal? Difficulty can \z
                  be lowered but not raised."
             ),
             MenuItem('Adept', {}, "Switch to this difficulty", nil, placeholder,
-                "Permanently lower the difficulty to Adept? Difficulty can \z
+                "Lower the difficulty to Adept? Difficulty can \z
                  be lowered but not raised."
             ),
             MenuItem('Master', {}, "Switch to this difficulty"),
         }, 'View and lower difficulty level'),
         MenuItem('Formulas', {}, nil, nil)
     }, 'View settings and information')
-
-    local die = function(c) love.event.quit(0) end
-    self.quit_m = MenuItem('Quit', {
-        MenuItem('Save and quit', {}, nil, nil, die,
-            "Save current progress and close the game?"
-        ),
-        MenuItem('Restart chapter', {}, nil, nil, placeholder,
-            "Are you SURE you want to restart the chapter? You will lose ALL \z
-             progress made during the chapter."
-        )
-    }, 'Save and quit, or restart the chapter', nil, nil, nil)
-
-    -- Abelon can open menus, like shops and the inventory
-    self.open_menu = nil
-end
-
--- When player presses i to open the inventory, the inventory menu appears
-function Player:openInventory()
-
-    -- Change player behavior to menu-browsing
-    self:changeMode('browse')
-    self:changeBehavior('idle')
-
-    -- Make menu
-    local inv_ch = mapf(function(i) return i:toMenuItem() end, self.inventory)
-    local party_ch = mapf(function(sp) return sp:toMenuItem() end, self.party)
-
-    local inv_m = MenuItem('Items', inv_ch, 'View possessions')
-    local party_m = MenuItem('Party', party_ch, 'View traveling companions')
-    local menu = { inv_m, party_m, self.settings_m, self.quit_m }
-
-    -- Open inventory menu
-    self.open_menu = Menu(nil, menu, BOX_MARGIN, BOX_MARGIN)
 end
 
 function Player:acquire(sp)

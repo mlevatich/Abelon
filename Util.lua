@@ -73,7 +73,14 @@ function splitByCharLimit(text, char_limit)
         holdover_word = word
         line_num = line_num + 1
     end
-    return lines
+    local new_len = #text
+    for i=1, #lines do
+        if lines[i]:sub(-1) == ' ' then
+            lines[i] = lines[i]:sub(0, -2)
+            new_len = new_len - 1
+        end
+    end
+    return lines, new_len
 end
 
 -- ite

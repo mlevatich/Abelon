@@ -1,9 +1,12 @@
 TODO list
 
+Item class should assume it has sprite, don't store name and id. Store item
+description and hover box info though.
+
 #49: Inventory:
--confirm screen
--hover info box, sprite portraits
 -Monospace font
+-Change chapter difficulty properly, render icons next to menu text
+-hover info box, sprite portraits
 
 Kath walk animation
 Forest theme to supercollider

@@ -24,7 +24,7 @@ function Scene:init(scene_id, map, player, chapter)
                      self.script['ids'][i])
         table.insert(self.participants, sps[sp_id])
     end
-    self.update_render = true
+    self.update_render = false
     self.flip = false
 
     -- Scene camera
@@ -32,7 +32,6 @@ function Scene:init(scene_id, map, player, chapter)
     self.cam_offset_x = 0
     self.cam_offset_y = 0
     self.cam_speed = 300
-
 
     -- Start scene from the first event in the script
     self.event = 1
@@ -147,7 +146,7 @@ function Scene:advance()
             end
 
             -- Update participants approximate position to help with rendering
-            self.update_render = true
+            -- self.update_render = true
 
             -- Clear text state
             self.text_state = nil
@@ -208,7 +207,7 @@ end
 function Scene:renderTextBox(x, y)
 
     -- Render black text box
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle(
         'fill',
         x + BOX_MARGIN,
@@ -224,11 +223,14 @@ function Scene:renderSpeaker(sp, pid, x, y)
 
         -- Render name of current speaker
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.print(
-            sp:getName(),
-            x + BOX_MARGIN * 2,
-            y + BOX_MARGIN + TEXT_MARGIN_Y
-        )
+        local n = sp:getName()
+        local base_x = x + BOX_MARGIN * 2
+        local base_y = y + BOX_MARGIN + TEXT_MARGIN_Y
+        for i=1, #n do
+            local char = n:sub(i, i)
+            local cur_x = base_x + (i - 1) * (TEXT_MARGIN_X + FONT_SIZE)
+            love.graphics.print(char, cur_x, base_y)
+        end
 
         -- Render portrait of current speaker
         if sp.ptexture then
@@ -299,7 +301,7 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Draw choice box
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill', rect_x, rect_y, w, h)
 
     -- Draw each option in choice box, character by character

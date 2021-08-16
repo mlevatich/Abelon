@@ -122,11 +122,12 @@ end
 
 function say(p1, portrait, requires_response, line)
     return function(scene)
+        broken, new_length = splitByCharLimit(line, CHARS_PER_LINE)
         scene.text_state = {
             ['speaker'] = ite(p1, scene.participants[p1], nil),
             ['portrait'] = portrait,
-            ['text'] = splitByCharLimit(line, CHARS_PER_LINE),
-            ['length'] = #line,
+            ['text'] = broken,
+            ['length'] = new_length,
             ['cnum'] = 0,
             ['timer'] = 0
         }
