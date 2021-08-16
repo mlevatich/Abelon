@@ -1,8 +1,9 @@
 require 'Util'
 require 'Constants'
+
 require 'Scripts'
 
-function areaTrigger(xTrigger, yTrigger, scene_id)
+function mkAreaTrigger(xTrigger, yTrigger, scene_id)
     return function(c)
         local x, y = c.player:getPosition()
         local tile = c.current_map:tileAt(x, y)
@@ -13,7 +14,7 @@ function areaTrigger(xTrigger, yTrigger, scene_id)
     end
 end
 
-function simpleTrigger(check, action)
+function mkSimpleTrigger(check, action)
     return function(c)
         if check(c) then
             action(c)
@@ -24,34 +25,23 @@ function simpleTrigger(check, action)
     end
 end
 
-kathMedallionResponse = simpleTrigger(
+kathMedallionResponse = mkSimpleTrigger(
     function(c)
         return c.state['kath_interact_base'] and
-               c.player:has('Silver medallion')
+               c.player:has('medallion')
     end,
     function(c)
         switchScriptFor('kath', 'kath_medallion_response')
     end
 )
 
-pickUpMedallion = simpleTrigger(
-    function(c)
-        return c.state['pick_up_medallion']
-    end,
-    function(c)
-        c:dropSprite('medallion')
-        c.player:acquire({ ['name'] = "Silver medallion", ['action'] = pass })
-    end
-)
-
-meetKath = areaTrigger(
+meetKath = mkAreaTrigger(
     function(x) return x > 25 end,
     function(y) return true end,
     'meet_kath'
 )
 
 triggers = {
-    pickUpMedallion,
     kathMedallionResponse,
     meetKath
 }

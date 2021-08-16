@@ -123,7 +123,7 @@ end
 function say(p1, portrait, requires_response, line)
     return function(scene)
         scene.text_state = {
-            ['speaker'] = scene.participants[p1],
+            ['speaker'] = ite(p1, scene.participants[p1], nil),
             ['portrait'] = portrait,
             ['text'] = splitByCharLimit(line, CHARS_PER_LINE),
             ['length'] = #line,
@@ -581,7 +581,10 @@ meet_kath = {
         })
     },
     ['result'] = {
-        ['state'] = 'meet_kath'
+        ['do'] = function(c)
+            local kath = c.current_map:getSpriteById('kath')
+            c.player:joinParty(kath)
+        end
     }
 }
 
@@ -605,9 +608,24 @@ book_interact_base = {
                 "On a second glance, it looks like there's another small book \z
                  beneath the first."
             )
-        },
-        ['state'] = 'book_interact_base'
+        }
     }
+}
+
+medallion_use = {
+    ['ids'] = {'medallion'},
+    ['events'] = {
+        say(1, 0, false,
+            "You hold up the medallion by its rough, frayed string. A thin, \z
+            slightly misshapen disk of silver hangs from the end, turning \z
+            lazily towards you..."
+        ),
+        say(1, 0, false,
+            "...to reveal an etching of a round buckler over an ordinary \z
+             longsword. The craftsmanship is amateur."
+        )
+    },
+    ['result'] = {}
 }
 
 medallion_interact_base = {
@@ -629,7 +647,10 @@ medallion_interact_base = {
                     )
                 },
                 ['result'] = {
-                    ['state'] = 'pick_up_medallion'
+                    ['do'] = function(c)
+                        local sp = c:dropSprite('medallion')
+                        c.player:acquire(sp)
+                    end
                 }
             },
             {
@@ -656,7 +677,10 @@ medallion_interact_base = {
                         )
                     },
                     ['result'] = {
-                        ['state'] = 'pick_up_medallion'
+                        ['do'] = function(c)
+                            local sp = c:dropSprite('medallion')
+                            c.player:acquire(sp)
+                        end
                     }
                 },
                 {
@@ -665,12 +689,12 @@ medallion_interact_base = {
                     ['result'] = {}
                 }
             })
-        },
-        ['state'] = 'medallion_interact_base'
+        }
     }
 }
 
 scripts = {
+    ['medallion_use'] = medallion_use,
     ['kath_interact_base'] = kath_interact_base,
     ['book_interact_base'] = book_interact_base,
     ['medallion_interact_base'] = medallion_interact_base,

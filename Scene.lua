@@ -1,23 +1,26 @@
 require 'Util'
 require 'Constants'
+
 require 'Scripts'
 
 Scene = Class{}
 
 -- Initialize a new dialogue
-function Scene:init(scene_id, map, player, chapter_state)
+function Scene:init(scene_id, map, player, chapter)
 
     -- Retrieve scene by id
     self.id = scene_id
     self.script = deepcopy(scripts[scene_id])
-    self.chapter_state = chapter_state
+    self.chapter = chapter
 
     -- Retrieve scene participants from the map
     self.player = player
     self.participants = {}
-    sps = map:getSprites()
+    local getId = function(s) return s.id end
+    local getSp = function(i) return i.sp end
+    local sps = concat(map:getSprites(), mapf(getSp, self.player.inventory))
     for i=1, #self.script['ids'] do
-        sp_id = find(mapf(function(s) return s.id end, sps),
+        sp_id = find(mapf(getId, sps),
                      self.script['ids'][i])
         table.insert(self.participants, sps[sp_id])
     end
@@ -41,8 +44,6 @@ function Scene:init(scene_id, map, player, chapter_state)
 end
 
 function Scene:play()
-    --print("awaiting input? " .. tostring(self.await_input))
-    --print("blocked by: " .. tostring(self.blocked_by))
     while not self.await_input and not self.blocked_by
           and self.event <= #self.script['events'] do
         self.script['events'][self.event](self)
@@ -89,7 +90,10 @@ function Scene:processResult(result)
         end
     end
     if result['state'] then
-        self.chapter_state[result['state']] = true
+        self.chapter.state[result['state']] = true
+    end
+    if result['do'] then
+        result['do'](self.chapter)
     end
     if result['callback'] then
         local new_script = {
@@ -216,24 +220,26 @@ end
 
 -- Render the speaker's name and portrait
 function Scene:renderSpeaker(sp, pid, x, y)
+    if sp then
 
-    -- Render name of current speaker
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print(
-        sp:getName(),
-        x + BOX_MARGIN * 2,
-        y + BOX_MARGIN + TEXT_MARGIN_Y
-    )
-
-    -- Render portrait of current speaker
-    if sp.ptexture then
-        love.graphics.draw(
-            sp.ptexture,
-            sp.portraits[pid],
-            x + BOX_MARGIN * 1.5,
-            y + BOX_MARGIN * 2,
-            0, 1, 1, 0, 0
+        -- Render name of current speaker
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.print(
+            sp:getName(),
+            x + BOX_MARGIN * 2,
+            y + BOX_MARGIN + TEXT_MARGIN_Y
         )
+
+        -- Render portrait of current speaker
+        if sp.ptexture then
+            love.graphics.draw(
+                sp.ptexture,
+                sp.portraits[pid],
+                x + BOX_MARGIN * 1.5,
+                y + BOX_MARGIN * 2,
+                0, 1, 1, 0, 0
+            )
+        end
     end
 end
 

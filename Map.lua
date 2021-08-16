@@ -126,11 +126,19 @@ function Map:dropSpriteWhere(f)
     local i = 1
     while i <= #self.sprites do
         if f(self.sprites[i]) then
-            table.remove(self.sprites, i)
-        else
-            i = i + 1
+            return table.remove(self.sprites, i)
         end
     end
+end
+
+-- Get a sprite by its id
+function Map:getSpriteById(id)
+    for i = 1, #self.sprites do
+        if self.sprites[i]:getID() == id then
+            return self.sprites[i]
+        end
+    end
+    return nil
 end
 
 -- Return name of map

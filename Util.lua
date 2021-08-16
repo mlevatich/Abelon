@@ -94,6 +94,17 @@ function mapf(func, tbl)
     return new_tbl
 end
 
+function concat(t1, t2)
+    local t3 = {}
+    for _,v in pairs(t1) do
+        table.insert(t3, v)
+    end
+    for _,v in pairs(t2) do
+        table.insert(t3, v)
+    end
+    return t3
+end
+
 -- Get maximum number in a table
 function max(tbl)
     local best = -100000

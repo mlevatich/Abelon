@@ -2,6 +2,7 @@ require 'Util'
 require 'Constants'
 
 require 'Animation'
+require 'Menu'
 
 Sprite = Class{}
 
@@ -29,7 +30,7 @@ function Sprite:init(id, spritesheet, chapter)
     local data = readLines(data_file)
 
     -- In game displayed name
-    self.name = readField(data[3])
+    self.name = string.sub(data[3], 7)
 
     -- Size
     self.w = tonumber(readField(data[4]))
@@ -191,6 +192,12 @@ end
 -- Is this sprite blocking?
 function Sprite:isBlocking()
     return self.blocking
+end
+
+-- Sprite as a menu item (sprite must be a party member with stats and skills)
+function Sprite:toMenuItem()
+    return MenuItem(self.name, {}, "See options for " .. self.name,
+                    nil, nil, nil)
 end
 
 -- Stop sprite's velocity

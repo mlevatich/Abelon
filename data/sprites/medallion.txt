@@ -1,6 +1,6 @@
 // Sprite attributes
 
-Name: Medallion
+Name: Silver medallion
 Width: 20
 Height: 22
 Depth: 6

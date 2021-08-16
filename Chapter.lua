@@ -145,7 +145,7 @@ end
 
 function Chapter:dropSprite(sp_id)
     is_sp = function(s) return s.id == sp_id end
-    self.current_map:dropSpriteWhere(is_sp)
+    return self.current_map:dropSpriteWhere(is_sp)
 end
 
 function Chapter:startMapMusic()
@@ -163,7 +163,7 @@ end
 function Chapter:launchScene(s_id)
     self.player:changeMode('scene')
     self.player:changeBehavior('idle')
-    self.current_scene = Scene(s_id, self.current_map, self.player, self.state)
+    self.current_scene = Scene(s_id, self.current_map, self.player, self)
 end
 
 -- Begin an interaction with the target sprite
@@ -338,7 +338,7 @@ function Chapter:update(dt)
     local new_transition = self.current_map:update(dt, self.player)
 
     -- Update player character based on key-presses
-    self.player:update(dt)
+    self.player:update(self)
 
     -- Update the currently active scene
     if self.current_scene then
