@@ -156,14 +156,28 @@ function Menu:render(cam_x, cam_y)
         love.graphics.print("^", x + self.width - 5, y + self.height - 6, math.pi)
     end
 
-    -- Render selection arrow over what is being hovered, if this is the leaf menus
+    -- Render selection arrow over what is being hovered
     local arrow_y = y + BOX_MARGIN/2
                   + (FONT_SIZE + TEXT_MARGIN_Y)
                   * (self.hovering - 1)
     love.graphics.print(">", x + 10, arrow_y)
 
-    -- Render child menu if there is one
+    -- Render child menu if there is one or hover info if this is the leaf menu
     if self.selected then
         self.selected:render(cam_x, cam_y)
+    else
+        local selection = self.menu_items[self.base + self.hovering - 1]
+        if selection.hover_desc then
+            local desc = selection.hover_desc
+
+            local desc_x_base = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
+                              - #desc * (FONT_SIZE + TEXT_MARGIN_X)
+            local desc_y_base = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
+            for i = 1, #desc do
+                local char = desc:sub(i, i)
+                local cur_x = desc_x_base + (i-1) * (FONT_SIZE + TEXT_MARGIN_X)
+                love.graphics.print(char, cur_x, desc_y_base)
+            end
+        end
     end
 end

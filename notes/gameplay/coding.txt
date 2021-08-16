@@ -1,7 +1,6 @@
 TODO list
 
 #49: Inventory:
--hover descriptions
 -confirm screen
 -hover info box, sprite portraits
 -Monospace font
