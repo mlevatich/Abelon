@@ -1,14 +1,54 @@
 TODO list
 
+#49: Inventory:
+-hover descriptions
+-confirm screen
+-hover info box, sprite portraits
+-Monospace font
+
 Kath walk animation
 Forest theme to supercollider
 Use twilight of the gods for fight music
 
-#17: Inventory:
--hover descriptions
--confirm screen
--hover info box
+COMBAT:
+#34
+#35
+#36
+#37
+#38
+Enemy AI
+Enemy phase
 
-COMBAT
+#18: Shopping and gold
 
-#18: Shopping
+Title screen v0
+#15: Save state
+Battle game over
+
+v1 combat abilities for abelon and kath
+v1 skill trees for abelon and kath
+level up
+skill point spending
+attribute +1 at level up
+
+Combat assets: enemy wolves, wolf idle, attack animations, attack sfx, etc
+Basic beep and boop sfx
+
+Redo forest tileset
+Redo lighting engine
+
+Elaine scenario assets
+implement Elaine scenario
+
+Ghoul scenario assets
+implement Ghoul scenario
+
+Deer scenario assets
+implement Deer scenario
+
+Lester, Shanti, Crystal Wolf, Generic knight assets
+Implement crystal wolf scenario
+Chapter 1 endcard
+
+Tutorial
+Make executable
