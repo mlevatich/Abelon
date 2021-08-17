@@ -5,6 +5,11 @@ require 'Scripts'
 
 Scene = Class{}
 
+local PAUSE_CHARS = {'. ', '! ', '? ', '.', '!', '?'}
+local BREATHE_CHARS = {', ', ','}
+local PAUSE_WEIGHT = 10
+local BREATHE_WEIGHT = 3
+
 -- Initialize a new dialogue
 function Scene:init(scene_id, map, player, chapter)
 
@@ -171,21 +176,58 @@ function Scene:hover(dir)
     end
 end
 
+function Scene:getTwoChars()
+    local line_num = 1
+    local char_num = 0
+    for _=1, self.text_state['cnum'] do
+
+        -- Increment character count
+        char_num = char_num + 1
+
+        -- If character count overflows, go to next line
+        if char_num > #self.text_state['text'][line_num] then
+            line_num = line_num + 1
+            char_num = 1
+        end
+    end
+
+    return self.text_state['text'][line_num]:sub(char_num, char_num + 1)
+
+end
+
+function Scene:updateWithWeight(weight)
+    local text = self.text_state
+    if text['cweight'] == weight then
+        text['cnum'] = math.min(text['length'], text['cnum'] + 1)
+        text['cweight'] = 0
+    else
+        text['cweight'] = text['cweight'] + 1
+    end
+end
+
 -- Increment time and move to the next character
 function Scene:update(dt)
-    if self.text_state then
+    local text = self.text_state
+    if text then
 
         -- Update time passed
-        self.text_state['timer'] = self.text_state['timer'] + dt
+        text['timer'] = text['timer'] + dt
 
         -- Iteratively subtract interval from timer and increment char count
-        while self.text_state['timer'] > TEXT_INTERVAL do
-            self.text_state['timer'] = self.text_state['timer'] - TEXT_INTERVAL
-            self.text_state['cnum'] = math.min(self.text_state['length'],
-                                          self.text_state['cnum'] + 1)
+        while text['timer'] > TEXT_INTERVAL do
+            text['timer'] = text['timer'] - TEXT_INTERVAL
+
+            local c = self:getTwoChars()
+            if find(PAUSE_CHARS, c) then
+                self:updateWithWeight(PAUSE_WEIGHT)
+            elseif find(BREATHE_CHARS, c) then
+                self:updateWithWeight(BREATHE_WEIGHT)
+            else
+                self:updateWithWeight(0)
+            end
         end
 
-        if self.text_state['length'] == self.text_state['cnum'] and
+        if text['length'] == text['cnum'] and
            self.blocked_by and self.blocked_by == 'text' then
             self.blocked_by = nil
         end
@@ -329,6 +371,14 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     love.graphics.print(">", rect_x + 15, arrow_y)
 end
 
+-- Render small indicator that current page is done
+function Scene:renderAdvanceIndicator(x, y)
+    local indicator_x = x + BOX_MARGIN + BOX_WIDTH - 7
+    local indicator_y = y + BOX_MARGIN + BOX_HEIGHT - 7
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("^", indicator_x, indicator_y, math.pi)
+end
+
 -- Render dialogue to screen at current position
 function Scene:render(x, y)
 
@@ -360,10 +410,13 @@ function Scene:render(x, y)
         -- Render text up to current character position
         self:renderText(self.text_state['text'], x, y)
 
-        -- Render choice and selection arrow if there is a choice to make
-        if self.text_state['choices'] and
-           self.text_state['length'] == self.text_state['cnum'] then
-            self:renderChoice(self.text_state['choices'], x, y, self.flip)
+        -- Render choice and selection arrow if there is a choice to make, or
+        -- render indicator that text is finished if there's no choice
+        if self.text_state['cnum'] == self.text_state['length'] then
+            if self.text_state['choices'] then
+                self:renderChoice(self.text_state['choices'], x, y, self.flip)
+            end
+            self:renderAdvanceIndicator(x, y)
         end
     end
 end

@@ -26,8 +26,6 @@ function love.load()
     love.window.setTitle('Abelon')
 
     -- Font used by LOVE's text engine
-    -- 12 pt ponde, 0 margin
-    -- 16 pt vt323, -7 margin
     local font_file = 'graphics/fonts/' .. FONT .. '.ttf'
     love.graphics.setFont(love.graphics.newFont(font_file, FONT_SIZE))
 

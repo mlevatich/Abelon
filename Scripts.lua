@@ -129,6 +129,7 @@ function say(p1, portrait, requires_response, line)
             ['text'] = broken,
             ['length'] = new_length,
             ['cnum'] = 0,
+            ['cweight'] = 0,
             ['timer'] = 0
         }
         scene.await_input = not requires_response
@@ -531,7 +532,7 @@ scripts = {
             ),
             say(2, 3, false,
                 "Without our steel, the beasts might finally break through to the \z
-                gilded district...ach, we'd all be in for it then."
+                gilded district... ach, we'd all be in for it then."
             ),
             waitForEvent('walk'),
             wait(0.3),
@@ -572,7 +573,7 @@ scripts = {
                                 ['events'] = {
                                     say(2, 2, false,
                                         "That sign in the earth is your work, \z
-                                         then? Which explains your arm, but...a \z
+                                         then? Which explains your arm, but... a \z
                                          blood rite, Abelon?"
                                     ),
                                     say(2, 3, false,
@@ -600,7 +601,7 @@ scripts = {
                                 ['events'] = {
                                     say(2, 3, false,
                                         "Hm, well I don't remember seeing it when \z
-                                         I was last on salvage to the Ash...but \z
+                                         I was last on salvage to the Ash... but \z
                                          it's a curiosity for another time."
                                     ),
                                     say(2, 3, false,
@@ -669,7 +670,7 @@ scripts = {
                         )
                     },
                     ['result'] = {
-                        ['impression'] = {0, -2}
+                        ['impressions'] = {0, -2}
                     }
                 },
                 {
@@ -682,7 +683,7 @@ scripts = {
                         )
                     },
                     ['result'] = {
-                        ['impression'] = {0, 1}
+                        ['impressions'] = {0, 1}
                     }
                 }
             })
