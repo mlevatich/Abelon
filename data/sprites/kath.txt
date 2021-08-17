@@ -13,3 +13,7 @@ Resting: wander
 Portrait: yes
 Impression: 50
 Awareness: 0
+Discard: no
+Present:
+
+The knight Kath.

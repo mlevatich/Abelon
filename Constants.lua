@@ -38,5 +38,8 @@ RIGHT = 1
 UP    = 3
 DOWN  = 4
 
+-- Misc
+PRESENT_DISTANCE = 4
+
 -- Trigger vars
 DELETE = '__del__'

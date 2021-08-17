@@ -3,6 +3,8 @@ require 'Constants'
 
 require 'Animation'
 require 'Menu'
+require 'Scripts'
+require 'Triggers'
 
 Sprite = Class{}
 
@@ -128,17 +130,23 @@ function Sprite:init(id, spritesheet, chapter)
     self.impression = tonumber(readField(data[14]))
     self.awareness = tonumber(readField(data[15]))
 
-    -- Sprite's capabilities in battle
-    -- TODO read stats and abilities from file
-    -- stats is a dict keyed by stat names with numeric values
-    -- skills is a multi-level table split by skill trees,
-    -- where each skill has requirements, effects, and
-    -- a boolean of whether it is unlocked
+    -- Info that allows this sprite to be treated as an item
+    self.can_discard = (readField(data[16]) == 'yes')
+    self.present_to = nil
+    local present_str = readField(data[17])
+    if present_str then
+        self.present_to = splitSep(present_str, ',')
+    end
+    local desc = ''
+    for i = 19, #data do
+        desc = desc .. data[i] .. ' '
+    end
+    self.description = desc:sub(1, -1)
+
+    -- Info that allows this sprite to be treated as a party member
     self.stats = nil
     self.skills = nil
-
-    -- Sound affects associated with the sprite
-    self.sounds = nil
+    self.skill_points = 0
 
     -- Current chapter inhabited by sprite
     self.chapter = chapter
@@ -194,8 +202,100 @@ function Sprite:isBlocking()
     return self.blocking
 end
 
--- Sprite as a menu item (sprite must be a party member with stats and skills)
-function Sprite:toMenuItem()
+-- Sprite as an item in a menu
+function Sprite:toItem()
+
+    -- Initialize sprite options
+    local n = self.name
+    local u = MenuItem('Use', {}, nil, nil, self:mkUse())
+    local p = MenuItem('Present', {}, nil, nil, self:mkPresent())
+    local children = {u, p}
+    if self.can_discard then
+        local d = MenuItem('Discard', {}, nil, nil, self:mkDiscard(),
+            "Discard the " .. string.lower(n) .. "? It will be gone forever."
+        )
+        table.insert(children, d)
+    end
+
+    -- Initialize hover information
+    -- TODO
+
+    -- Create menu item
+    return MenuItem(n, children, 'See item options')
+end
+
+function Sprite:mkUse()
+
+    -- Add fail scene for this item
+    scripts[self.id .. '_use_fail'] = {
+        ['ids'] = {self.id},
+        ['events'] = {
+            say(1, 0, false,
+                "There's no use for the " .. string.lower(self.name) .. " \z
+                 at the moment."
+            )
+        },
+        ['result'] = {}
+    }
+
+    -- Function is pulled from triggers file, unique for each item
+    return item_triggers[self.id]
+end
+
+function Sprite:mkPresent()
+
+    -- Add fail scene for this item
+    scripts[self.id .. '_present_fail'] = {
+        ['ids'] = {self.id},
+        ['events'] = {
+            say(1, 0, false,
+                "You remove the " .. string.lower(self.name) .. " from your \z
+                 pack, but no one nearby seems to notice."
+
+            )
+        },
+        ['result'] = {}
+    }
+
+    -- Function checks if player is near a sprite in the present list, and if
+    -- so, presents to them. Otherwise launch failure scene.
+    return function(c)
+        for _, sp_id in pairs(self.present_to) do
+            if c:playerNearSprite(sp_id) then
+                c:launchScene(self.id .. '_present_' .. sp_id)
+                return
+            end
+        end
+        c:launchScene(self.id .. '_present_fail')
+    end
+end
+
+function Sprite:mkDiscard()
+
+    -- Add discard scene for this item
+    scripts[self.id .. '_discard'] = {
+        ['ids'] = {self.id},
+        ['events'] = {
+            say(1, 0, false,
+                "You remove the " .. string.lower(self.name) .. " from \z
+                 your pack and leave it behind."
+            )
+        },
+        ['result'] = {
+            ['do'] = function(c)
+                c.player:discard(self.id)
+            end
+        }
+    }
+
+    -- Function plays the discard scene
+    return function(c)
+        c:launchScene(self.id .. '_discard')
+    end
+end
+
+-- Sprite as a party member in a menu
+function Sprite:toPartyMember()
     return MenuItem(self.name, {}, "See options for " .. self.name)
 end
 

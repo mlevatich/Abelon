@@ -3,12 +3,15 @@ require 'Constants'
 
 require 'Scripts'
 
-function mkAreaTrigger(xTrigger, yTrigger, scene_id)
+function mkAreaTrigger(scene_id, map_id, xTrigger, yTrigger)
     return function(c)
         local x, y = c.player:getPosition()
-        local tile = c.current_map:tileAt(x, y)
-        if xTrigger(tile['x']) and yTrigger(tile['y']) then
-            return scene_id
+        local id = c.current_map:getName()
+        if id == map_id then
+            local tile = c.current_map:tileAt(x, y)
+            if xTrigger(tile['x']) and yTrigger(tile['y']) then
+                return scene_id
+            end
         end
         return nil
     end
@@ -25,12 +28,28 @@ function mkSimpleTrigger(check, action)
     end
 end
 
-meetKath = mkAreaTrigger(
-    function(x) return x > 25 end,
-    function(y) return true end,
-    'meet_kath'
-)
+scene_triggers = {
+    mkAreaTrigger('meet_kath', 'forest',
+        function(x) return x > 25 end,
+        function(y) return true end
+    )
+}
 
-triggers = {
-    meetKath
+function mkUseTrigger(id, checks, actions)
+    return function(c)
+        for i=1, #checks do
+            if checks[i](c) then
+                actions[i](c)
+                return
+            end
+        end
+        c:launchScene(id .. '_use_fail')
+    end
+end
+
+item_triggers = {
+    ['medallion'] = mkUseTrigger('medallion',
+        { function(c) return true end },
+        { function(c) c:launchScene('medallion_use') end }
+    )
 }

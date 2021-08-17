@@ -143,6 +143,17 @@ function Chapter:getMap()
     return self.current_map
 end
 
+function Chapter:playerNearSprite(sp_id)
+    local x, y = self.player.sp:getPosition()
+    local sp = self.current_map:getSpriteById(sp_id)
+    if sp then
+        local kx, ky = sp:getPosition()
+        return abs(x - kx) <= PRESENT_DISTANCE * TILE_WIDTH
+           and abs(y - ky) <= PRESENT_DISTANCE * TILE_HEIGHT
+    end
+    return false
+end
+
 function Chapter:dropSprite(sp_id)
     is_sp = function(s) return s.id == sp_id end
     return self.current_map:dropSpriteWhere(is_sp)
@@ -316,12 +327,12 @@ function Chapter:updateCamera(dt)
     self.camera_y = math.max(0, math.min(new_y, cam_max_y))
 end
 
-function Chapter:checkTriggers()
+function Chapter:checkSceneTriggers()
     local i = 1
-    while i <= #triggers do
-        local check = triggers[i](self)
+    while i <= #scene_triggers do
+        local check = scene_triggers[i](self)
         if check then
-            table.remove(triggers, i)
+            table.remove(scene_triggers, i)
             if check ~= DELETE then
                 self:launchScene(check)
             end
@@ -345,7 +356,7 @@ function Chapter:update(dt)
         self:updateScene(dt)
     end
 
-    self:checkTriggers()
+    self:checkSceneTriggers()
 
     -- Update music
     if self.current_music then

@@ -166,13 +166,10 @@ scripts = {
         ['ids'] = {'medallion'},
         ['events'] = {
             say(1, 0, false,
-                "You hold up the medallion by its rough, frayed string. A thin, \z
-                slightly misshapen disk of silver hangs from the end, turning \z
-                lazily towards you..."
-            ),
-            say(1, 0, false,
-                "...to reveal an etching of a round buckler over an ordinary \z
-                 longsword. The craftsmanship is amateur."
+                "The silver medallion turns lazily as you hold it by its rope. \z
+                 You pull it over your head. The fraying rope itches the back \z
+                 of your neck, and the metal lump is inordinatelty heavy. \z
+                 Who would wear this? You put it away."
             )
         },
         ['result'] = {}

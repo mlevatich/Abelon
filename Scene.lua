@@ -21,11 +21,9 @@ function Scene:init(scene_id, map, player, chapter)
     -- Retrieve scene participants from the map
     self.player = player
     self.participants = {}
-    local getId = function(s) return s.id end
-    local getSp = function(i) return i.sp end
-    local sps = concat(map:getSprites(), mapf(getSp, self.player.inventory))
+    local sps = concat(map:getSprites(), self.player.inventory)
     for i=1, #self.script['ids'] do
-        sp_id = find(mapf(getId, sps),
+        sp_id = find(mapf(function(s) return s.id end, sps),
                      self.script['ids'][i])
         table.insert(self.participants, sps[sp_id])
     end
@@ -191,6 +189,7 @@ function Scene:getTwoChars()
         end
     end
 
+    char_num = math.max(char_num, 1)
     return self.text_state['text'][line_num]:sub(char_num, char_num + 1)
 
 end

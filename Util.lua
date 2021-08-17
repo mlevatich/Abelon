@@ -132,7 +132,7 @@ function abs(val)
     end
 end
 
--- Check if the given table find the given value
+-- Find the given value in the table, return key, or nil if missing
 function find(t, val)
     for k, v in pairs(t) do
         if v == val then

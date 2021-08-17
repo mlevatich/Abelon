@@ -13,3 +13,7 @@ Resting: idle
 Portrait: yes
 Impression: 50
 Awareness: 100
+Discard: no
+Present:
+
+The knight Abelon.

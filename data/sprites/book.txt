@@ -13,3 +13,7 @@ Resting: idle
 Portrait: no
 Impression: 0
 Awareness: 0
+Discard: no
+Present:
+
+A strange book.

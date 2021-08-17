@@ -13,3 +13,10 @@ Resting: idle
 Portrait: no
 Impression: 0
 Awareness: 0
+Discard: yes
+Present: kath
+
+A crude approximation of a disk, hammered out of pure silver. An engraving on
+the face depicts a round buckler in front an ordinary longsword. A thin,
+fraying rope passes through a tiny hole in the metal, allowing it to be worn
+around the neck. The craftsmanship is amateur.

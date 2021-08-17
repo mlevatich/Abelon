@@ -5,7 +5,6 @@ require 'Animation'
 require 'Scene'
 require 'Sprite'
 require 'Menu'
-require 'Item'
 
 Player = Class{}
 
@@ -31,9 +30,7 @@ function Player:init(sp)
     self.mode = 'free'
 
     -- Abelon's inventory
-    self.inventory = {
-        items['sword']
-    }
+    self.inventory = {}
 
     -- Abelon's party
     self.party = { self.sp }
@@ -50,8 +47,8 @@ function Player:openInventory()
     self:changeBehavior('idle')
 
     -- Make menu
-    local inv_ch = mapf(function(i) return i:toMenuItem() end, self.inventory)
-    local party_ch = mapf(function(sp) return sp:toMenuItem() end, self.party)
+    local inv_ch = mapf(function(sp) return sp:toItem() end, self.inventory)
+    local party_ch = mapf(function(sp) return sp:toPartyMember() end, self.party)
 
     local inv_m = MenuItem('Items', inv_ch, 'View possessions')
     local party_m = MenuItem('Party', party_ch, 'View traveling companions')
@@ -117,18 +114,16 @@ function Player:mkSettingsMenu()
 end
 
 function Player:acquire(sp)
-    local item = items[sp:getID()]
-    item.sp = sp
-    table.insert(self.inventory, item)
+    table.insert(self.inventory, sp)
 end
 
 function Player:has(id)
-    return find(items[id], self.inventory)
+    return find(id, mapf(function(s) return s.id end, self.inventory))
 end
 
 function Player:discard(id)
     for i = 1, #self.inventory do
-        if self.inventory[i] == items[id] then
+        if self.inventory[i].id == id then
             table.remove(self.inventory, i)
             return
         end
