@@ -1,10 +1,18 @@
 TODO list
 
-Item class should assume it has sprite, don't store name and id. Store item
-description and hover box info though.
+Item is not a class, just use sprite and have Triggers.lua contain the list of
+use triggers. So Items.lua can be deleted. Sprite file contains presenttriggers
+(which is just a list of characters that it can be presented to), description,
+and discardability. Hover box for items is always the same for each item.
+Sprite.lua can have a toItem and toPartyMember method.
+
+SKILLS however, will probably need their own class.
 
 #49: Inventory:
 -Monospace font
+-Scenes should pause for a moment at commas or periods. Increment a counter
+instead of advancing in the scene update function when encountering commas
+or periods
 -Change chapter difficulty properly, render icons next to menu text
 -hover info box, sprite portraits
 
