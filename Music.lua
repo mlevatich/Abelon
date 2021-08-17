@@ -19,16 +19,18 @@ function Music:init(name)
     -- Load audio source
     local audio_file = 'audio/music/' .. self.name .. '.wav'
     self.src = love.audio.newSource(audio_file, 'stream')
+    self.src:setVolume(1)
     self.src:setLooping(false)
 
     -- We maintain a duplicate in a buffer to fade in as the src fades out,
     -- to accomplish smooth looping
     self.buf = love.audio.newSource(audio_file, 'stream')
+    self.buf:setVolume(1)
     self.buf:setLooping(false)
 end
 
 -- Update/start the music
-function Music:update(dt)
+function Music:update(dt, volume)
 
     -- Start music track if it hasn't started already
     if not self.src:isPlaying() then
@@ -49,19 +51,25 @@ function Music:update(dt)
 
         -- Set volume of src and buf according to fade_factor
         -- (volumes add up to full volume)
-        self.src:setVolume(1 - factor)
-        self.buf:setVolume(factor)
+        self.src:setVolume((1 - factor) * volume)
+        self.buf:setVolume(factor * volume)
 
     elseif factor >= 1 then
 
         -- Buf is the only thing playing now, at full volume
-        self.buf:setVolume(1)
+        self.buf:setVolume(volume)
+        self.src:setVolume(0)
         self.src:stop()
 
         -- Switch refs
         local tmp = self.src
         self.src = self.buf
         self.buf = tmp
+    else
+
+        -- Normally, src volume is full, buf volume is 0
+        self.src:setVolume(volume)
+        self.buf:setVolume(0)
     end
 end
 

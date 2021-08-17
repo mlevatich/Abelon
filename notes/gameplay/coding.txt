@@ -1,7 +1,7 @@
 TODO list
 
 #49: Inventory:
--Change chapter difficulty properly, render icons next to menu text
+-Change chapter difficulty properly, volume, properly, render icons next to menu text
 -hover info box, sprite portraits
 
 Kath walk animation
@@ -17,9 +17,7 @@ COMBAT:
 Enemy AI
 Enemy phase
 
-#18: Shopping and gold
-
-Title screen v0
+Title screen v0 (continue (if save file detected), new game -> choose difficulty)
 #15: Save state
 Battle game over
 
@@ -31,6 +29,8 @@ attribute +1 at level up
 
 Combat assets: enemy wolves, wolf idle, attack animations, attack sfx, etc
 Basic beep and boop sfx
+
+#18: Shopping and gold
 
 Redo forest tileset
 Redo lighting engine

@@ -3,7 +3,7 @@ require 'Constants'
 
 MenuItem = Class{}
 
-function MenuItem:init(name, children, h_desc, h_render, action, confirm)
+function MenuItem:init(name, children, h_desc, h_render, action, confirm, p)
 
     self.name = name
     self.children = children
@@ -17,6 +17,7 @@ function MenuItem:init(name, children, h_desc, h_render, action, confirm)
         local cm, _ = splitByCharLimit(confirm, CBOX_CHARS_PER_LINE)
         self.confirm_msg = cm
     end
+    self.setPen = ite(p, p, function(c) love.graphics.setColor(1, 1, 1, 1) end)
 end
 
 Menu = Class{}
@@ -72,7 +73,7 @@ function Menu:initSubmenus()
                 if old_action then old_action(c) end
             end
 
-        elseif cur.confirm_msg then
+        elseif cur.confirm_msg and cur.action then
 
             -- Base position of confirm message
             local msg = cur.confirm_msg
@@ -182,6 +183,8 @@ function Menu:renderConfirmMessage(cam_x, cam_y)
 end
 
 function Menu:renderHoverDescription(cam_x, cam_y)
+
+    love.graphics.setColor(1, 1, 1, 1)
     local selection = self.menu_items[self.base + self.hovering - 1]
     if selection.hover_desc then
         local desc = selection.hover_desc
@@ -197,21 +200,23 @@ function Menu:renderHoverDescription(cam_x, cam_y)
     end
 end
 
-function Menu:renderMenuItems(x, y)
+function Menu:renderMenuItems(x, y, c)
 
-    love.graphics.setColor(1, 1, 1, 1)
+
     for i=1, math.min(#self.menu_items, MAX_MENU_ITEMS) do
         local cur_y = y + BOX_MARGIN / 2 + (i - 1)
                     * (FONT_SIZE + TEXT_MARGIN_Y)
-        local word = self.menu_items[i + self.base - 1].name
-        for j=1, #word do
-            local char = word:sub(j,j)
+        local item = self.menu_items[i + self.base - 1]
+        item.setPen(c)
+        for j=1, #item.name do
+            local char = item.name:sub(j,j)
             local cur_x = 5 + x + BOX_MARGIN + (j-1) * (FONT_SIZE + TEXT_MARGIN_X)
             love.graphics.print(char, cur_x, cur_y)
         end
     end
 
     -- Render indicator of more content
+    love.graphics.setColor(1, 1, 1, 1)
     if self.base > 1 then
         love.graphics.print("^", x + self.width - 11, y + 6)
     end
@@ -224,10 +229,11 @@ function Menu:renderSelectionArrow(x, y)
     local arrow_y = y + BOX_MARGIN/2
                   + (FONT_SIZE + TEXT_MARGIN_Y)
                   * (self.hovering - 1)
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(">", x + 10, arrow_y)
 end
 
-function Menu:render(cam_x, cam_y)
+function Menu:render(cam_x, cam_y, c)
 
     -- Top left of menu box
     local x = cam_x + self.rel_x
@@ -243,14 +249,14 @@ function Menu:render(cam_x, cam_y)
     end
 
     -- Render options
-    self:renderMenuItems(x, y)
+    self:renderMenuItems(x, y, c)
 
     -- Render arrow over item being hovered
     self:renderSelectionArrow(x, y)
 
     -- Render child menu if there is one or hover info if this is the leaf menu
     if self.selected then
-        self.selected:render(cam_x, cam_y)
+        self.selected:render(cam_x, cam_y, c)
     else
         self:renderHoverDescription(cam_x, cam_y)
     end

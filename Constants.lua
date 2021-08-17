@@ -38,6 +38,17 @@ RIGHT = 1
 UP    = 3
 DOWN  = 4
 
+-- Difficulty
+NORMAL = 1
+ADEPT  = 2
+MASTER = 3
+
+-- Volume Levels
+OFF  = 0
+LOW  = 0.33
+MED  = 0.66
+HIGH = 1
+
 -- Misc
 PRESENT_DISTANCE = 4
 

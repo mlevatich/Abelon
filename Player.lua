@@ -59,55 +59,101 @@ function Player:openInventory()
 end
 
 function Player:mkQuitMenu()
-    local placeholder = function(c) pass() end
     local die = function(c) love.event.quit(0) end
     return MenuItem('Quit', {
         MenuItem('Save and quit', {}, nil, nil, die,
             "Save current progress and close the game?"
         ),
-        MenuItem('Restart chapter', {}, nil, nil, placeholder,
+        MenuItem('Restart chapter', {}, nil, nil, pass,
             "Are you SURE you want to restart the chapter? You will lose ALL \z
              progress made during the chapter."
         )
-    }, 'Save and quit, or restart the chapter', nil, nil, nil)
+    }, 'Save and quit, or restart the chapter')
 end
 
 function Player:mkSettingsMenu()
-    local placeholder = function(c) pass() end
+    local highlight = { 0.7, 1, 1, 1 }
+    local sv = function(k, v)
+        return function(c)
+            if     k == 'm' then c:setMusicVolume(v)
+            elseif k == 's' then c:setSfxVolume(v)
+            elseif k == 't' then c:setTextVolume(v)
+            end
+        end
+    end
+    local iv = function(k, v)
+        return function(c)
+            if (k == 'm' and c.music_volume == v) or
+               (k == 's' and c.sfx_volume == v) or
+               (k == 't' and c.text_volume == v) then
+                love.graphics.setColor(unpack(highlight))
+            else
+                love.graphics.setColor(1, 1, 1, 1)
+            end
+        end
+    end
+    local setD = function(d)
+        if self.sp.chapter.difficulty > d then
+            return function(c)
+                c:setDifficulty(d)
+                c.player:changeMode('free')
+            end
+        else
+            return nil
+        end
+    end
+    local isD = function(d)
+        return function(c)
+            if c.difficulty == d then
+                love.graphics.setColor(unpack(highlight))
+            else
+                love.graphics.setColor(1, 1, 1, 1)
+            end
+        end
+    end
     return MenuItem('Settings', {
         MenuItem('Video', {
             MenuItem('Coming soon!', {})
         }, 'Change video settings'),
         MenuItem('Volume', {
             MenuItem('Music', {
-                MenuItem('Off', {}, nil, nil, placeholder, nil),
-                MenuItem('Low', {}, nil, nil, placeholder, nil),
-                MenuItem('Medium', {}, nil, nil, placeholder, nil),
-                MenuItem('High', {}, nil, nil, placeholder, nil)
+                MenuItem('Off',  {}, nil, nil, sv('m', OFF),  nil, iv('m', OFF)),
+                MenuItem('Low',  {}, nil, nil, sv('m', LOW),  nil, iv('m', LOW)),
+                MenuItem('Med',  {}, nil, nil, sv('m', MED),  nil, iv('m', MED)),
+                MenuItem('High', {}, nil, nil, sv('m', HIGH), nil, iv('m', HIGH))
             }, 'Set music volume'),
             MenuItem('Sound effects', {
-                MenuItem('Off', {}, nil, nil, placeholder, nil),
-                MenuItem('Low', {}, nil, nil, placeholder, nil),
-                MenuItem('Medium', {}, nil, nil, placeholder, nil),
-                MenuItem('High', {}, nil, nil, placeholder, nil)
+                MenuItem('Off',  {}, nil, nil, sv('s', OFF),  nil, iv('s', OFF)),
+                MenuItem('Low',  {}, nil, nil, sv('s', LOW),  nil, iv('s', LOW)),
+                MenuItem('Med',  {}, nil, nil, sv('s', MED),  nil, iv('s', MED)),
+                MenuItem('High', {}, nil, nil, sv('s', HIGH), nil, iv('s', HIGH))
             }, 'Set sound effects volume'),
             MenuItem('Text effects', {
-                MenuItem('Off', {}, nil, nil, placeholder, nil),
-                MenuItem('Low', {}, nil, nil, placeholder, nil),
-                MenuItem('Medium', {}, nil, nil, placeholder, nil),
-                MenuItem('High', {}, nil, nil, placeholder, nil)
+                MenuItem('Off',  {}, nil, nil, sv('t', OFF),  nil, iv('t', OFF)),
+                MenuItem('Low',  {}, nil, nil, sv('t', LOW),  nil, iv('t', LOW)),
+                MenuItem('Med',  {}, nil, nil, sv('t', MED),  nil, iv('t', MED)),
+                MenuItem('High', {}, nil, nil, sv('t', HIGH), nil, iv('t', HIGH))
             }, 'Set text volume')
         }, 'Change audio settings'),
         MenuItem('Difficulty', {
-            MenuItem('Normal', {}, "Switch to this difficulty", nil, placeholder,
+            MenuItem('Normal', {}, "Switch to this difficulty", nil,
+                setD(NORMAL),
                 "Lower the difficulty to Normal? Difficulty can \z
-                 be lowered but not raised."
+                 be lowered but not raised.",
+                isD(NORMAL)
             ),
-            MenuItem('Adept', {}, "Switch to this difficulty", nil, placeholder,
+            MenuItem('Adept', {}, "Switch to this difficulty", nil,
+                setD(ADEPT),
                 "Lower the difficulty to Adept? Difficulty can \z
-                 be lowered but not raised."
+                 be lowered but not raised.",
+                isD(ADEPT)
             ),
-            MenuItem('Master', {}, "Switch to this difficulty"),
+            MenuItem('Master', {}, "Switch to this difficulty", nil,
+                setD(MASTER),
+                "Lower the difficulty to Master? Difficulty can \z
+                 be lowered but not raised.",
+                isD(MASTER)
+            ),
         }, 'View and lower difficulty level'),
         MenuItem('Formulas', {}, nil, nil)
     }, 'View settings and information')
@@ -158,7 +204,9 @@ function Player:interact()
 end
 
 function Player:changeMode(new_mode)
-    self.open_menu = nil
+    if new_mode ~= 'browse' then
+        self.open_menu = nil
+    end
     self.mode = new_mode
 end
 
@@ -280,11 +328,11 @@ function Player:update(c)
 end
 
 -- Render the player character's interactions
-function Player:render(cam_x, cam_y)
+function Player:render(cam_x, cam_y, c)
 
     -- Render menu if it exists
     if self.open_menu then
-        self.open_menu:render(cam_x, cam_y)
+        self.open_menu:render(cam_x, cam_y, c)
     end
 end
 

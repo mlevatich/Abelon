@@ -33,6 +33,11 @@ function Chapter:init(id, spriteesheet)
     self.map_to_music = {}
     self.current_music = nil
 
+    -- Volume levels
+    self.music_volume = HIGH
+    self.sfx_volume   = HIGH
+    self.text_volume  = HIGH
+
     -- Rendering information
     self.alpha = 1
     self.fade_to = nil
@@ -40,6 +45,9 @@ function Chapter:init(id, spriteesheet)
     -- Sprites in this chapter
     self.sprites = {}
     self.player = nil
+
+    -- Difficulty level
+    self.difficulty = MASTER
 
     -- State of a chapter a dictionary of strings that correspond to different
     -- chapter events and determine quest progress, cinematic triggers, and
@@ -84,7 +92,7 @@ function Chapter:load()
 
             -- Maps sharing a music track share a pointer to the audio
             if not audio_sources[song] then
-                audio_sources[song] = Music(song)
+                audio_sources[song] = Music(song, self.music_volume)
             end
             self.map_to_music[map_name] = audio_sources[song]
 
@@ -159,6 +167,10 @@ function Chapter:dropSprite(sp_id)
     return self.current_map:dropSpriteWhere(is_sp)
 end
 
+function Chapter:setDifficulty(d)
+    self.difficulty = d
+end
+
 function Chapter:startMapMusic()
     self.current_music = self.map_to_music[self.current_map:getName()]
 end
@@ -168,6 +180,18 @@ function Chapter:stopMapMusic()
         self.current_music:stop()
     end
     self.current_music = nil
+end
+
+function Chapter:setMusicVolume(vol)
+    self.music_volume = vol
+end
+
+function Chapter:setSfxVolume(vol)
+    self.sfx_volume = vol
+end
+
+function Chapter:setTextVolume(vol)
+    self.text_volume = vol
 end
 
 -- Start scene with the given scene id
@@ -360,7 +384,7 @@ function Chapter:update(dt)
 
     -- Update music
     if self.current_music then
-        self.current_music:update(dt)
+        self.current_music:update(dt, self.music_volume)
     end
 
     -- Update current transition or initiate new one
@@ -385,7 +409,7 @@ function Chapter:render()
     self.current_map:render(self.camera_x, self.camera_y)
 
     -- Render player inventory
-    self.player:render(self.camera_x, self.camera_y)
+    self.player:render(self.camera_x, self.camera_y, self)
 
     -- Render effects and text from current scene if there is one
     if self.current_scene then
