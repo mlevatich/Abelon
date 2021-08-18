@@ -1,0 +1,23 @@
+The game is divided into chapters. Chapters fall into two rough categories:
+questing chapters and expedition chapters.
+
+Expedition chapters occur when the party has a destination and is trying to
+get there - there are very limited opportunities to replenish resources, few
+people to talk to, few quests to go on, few to no fail states, and the story is
+sustained by intra-party interactions. The chapter will have an open layout that
+encourages exploration, and many battles to encounter.
+
+Questing chapters occur when the party is at a destination and figuring out
+what to do there or what the situation is. The party is split up during questing
+chapters, so Abelon flies solo and may meet the party members around the area.
+Exploration is still encouraged, but the total map area is smaller than in an
+expedition chapter. It is, however, more densely populated with people and
+quest lines! The story is advanced most in these places, through mysteries to
+investigate, interweaving quest lines, high-drama cinematics, and new
+characters. Many of the rewards to be gained in questing chapters serve as good
+preparation for an upcoming expedition chapter. Questing chapters have some
+battles, but far fewer than an expedition chapter.
+
+Currently, the game is planned to be 7 chapters long. Chapters 1, 3, 5, and 6
+are expedition chapters (there is a small quest hub between 5 and 6), while
+chapters 2 and 4 are questing chapters. Chapter 7 is a hybrid.

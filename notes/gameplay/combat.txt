@@ -1,35 +1,43 @@
-Assist system: get attack and defense bonuses based on your position relative to other allies. Assists affect a range
-of tiles like moves in chess. Could be an assist to close characters, far away characters, diagonal characters,
+Every turn, each character on the team does a move, action, rest of move (X
+amount of movement points total), assist. The player may choose the order in
+which the characters act.
+
+Assist system: get attack and defense bonuses based on your position relative
+to other allies. Assists affect a range of tiles like moves in chess. Could be
+an assist to close characters, far away characters, diagonal characters,
 characters in a straight line, characters around an enemy. etc.
 
-Every turn, each character on the team does a move, action, assist
+Characters have weapon skills, spells, and assists, as well as passives (not
+many passives though). Spells and assists may cost ignea. These four types of
+abilities can be learned through a skill tree system. This, along with stats,
+represent the bulk of the progression in the game.
 
-Characters have weapon skills, spells, and assists, as well as passives. Weapon skills, spells, and assists may have
-cooldowns or cost ignea or cobalt. These four types of abilities can be learned through a skill tree system. This,
-along with stats, represent the bulk of the progression in the game.
+Spells, and some assists, deplete ignea. Each character has their own store
+of ignea, making it work much like mana in your average RPG.
 
-Ignea and cobalt spells, and some assists, deplete two resources, ignea and cobalt. Each character has their own store
-of these two resources, making them work much like mana in your average RPG.
+Plan your whole turn to kill as many people as possible and leave yourself with
+lots of defensive assists!
 
-Moving turn order is a thing too, potentially. Plan your whole turn to kill as many people as possible and leave
-yourself with lots of defensive assists!
+Maps are mostly mid-sized, but size varies. A battle should take about 30min.
+Varied objectives to spice things up (escape, defend, kill target, kill all).
+All maps have turn limits, and most have optional objectives - loot!
 
-Assists can help people with cobalt spenders or ignea spenders sometimes. Potentially party members can be given
-more cobalt or ignea, choice?
+Performing actions grants EXP. EXP levels up characters, which grants a skill
+point and some stat boosts. In addition to flat boosts, extra boost to a stat
+can be chosen, a la superstar saga. The amount of EXP for each level up scales
+upwards, and monsters give a flat amount of EXP, so lower leveled characters
+can catch up. Leveling up is faster in the early game.
 
-Maps are mostly mid-sized, but size varies. A battle should take about 30min. Varied objectives to spice things up
-(escape, defend, kill target, kill all). All maps have turn limits, and most have optional objectives - loot!
+One reset turn ability per battle. No divine pulse. If any unit dies in battle,
+the battle is lost. After a loss in battle, the player may choose to restart
+the battle or restart the chapter.
 
-Winning a battle grants EXP based on each fighter's participation, EXP levels up characters, which grants a skill
-point and some stat boosts. In addition to flat boosts, extra boost to a stat can be chosen, a la superstar saga.
-The amount of EXP for each level up scales upwards, and monsters give a flat amount of EXP, so lower leveled
-characters can catch up. Leveling up is faster in the early game.
+Attributes:
+Endurance: health (1 endurance = 1 hp)
+Focus: ignea (1 focus = 1 ignea)
+Force: attack scaling (damage dealt = base damage + force * scaling (avg 1))
+Affinity: assist scaling (variety of effects)
+Reaction: physical defense (damage taken = attack damage - reaction/2)
+Agility: movement range (range = agility/5)
 
-There is 1 divine pulse equivalent ability per battle, in case a mistake is made.
-
-If any unit dies in battle, the battle is lost.
-
-The game doesn't need a magic resistance stat. Physical attacks should just eat up CON, while magic attacks deal less
-damage but pierce DEF. That way building both CON and DEF is ideal, but some situations might call for more of one
-or the other, influencing strategy. You could often fight a mix of spell casters and physical attackers, and
-occasionally fight a horde of one type.
+Results in formulas always round down

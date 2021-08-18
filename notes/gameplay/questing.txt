@@ -1,0 +1,16 @@
+In rest areas, before an expedition, the player is granted a fixed sum of
+money or can find money. This money is used to purchase consumables for use on
+the expedition. Consumables might be abilities like grenades, cobalt or ignea
+restoratives, stat boosts, or other limited use powers like the ability to
+reveal treasure. These items may not all be purchased in one place but instead
+be scattered around the rest area, encouraging exploration (e.g. a priest might
+bless Kath's shield, or a potion seller might whip up an attack-raising,
+defense-lowering brew). Different consumables are available depending on the
+rest area.
+
+Many rewards and shopping locations are unlocked by doing specific things in
+the rest area, which close out other options. Some rewards are paid for, some
+are free if they are particularly challenging to find.
+
+Quest rewards may also include learning a brand-new ability outside of any
+skill tree.

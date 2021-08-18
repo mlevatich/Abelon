@@ -1,5 +1,6 @@
 TODO list
 
+#49
 sprite combat stats
 sprite file has base stats
 skill class with type (attack, spell, assist), tree_id, cost, effect, range,

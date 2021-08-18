@@ -1,26 +1,41 @@
-Every character has three skill "paths" to choose from, named by nouns (e.g. Abelon has Hero, Demon, and Executioner),
-with an associated icon and color.
+Every character has three skill "paths" to choose from, named by nouns
+(e.g. Abelon has Champion, Demon, and Executioner), with an associated icon and
+color.
 
-A skill in path X grants a point in path X, but may require a threshold of points from paths X Y or Z.
+A skill in path X grants a point in path X, but may require a threshold of
+points from paths X Y or Z.
 
-Everyone will be about level 12 by the end of the game, and each level grants a skill.
+Everyone will be about level 20 by the end of the game, and each level grants a
+skill (or rarely, a passive. A character might have 0-3 passives by the end).
 
-Characters are recruited at some level appropriate to where they arrive in the game, and get some number of starting
-skills and corresponding points. Essentially, they already have some skills "unlocked". However, the number of skills
-they start with may not be equal to their starting level – every character, at recruitment, only has 5 or so spells so
-as not to overwhelm the player, even if they start at level 9. Abelon will have 10-12 skills at the end of the game,
-while other characters will have fewer (Gaheris might have only 6-7).
+Characters are recruited at some level appropriate to where they arrive in the
+game, and get some number of starting skills and corresponding points.
+Essentially, they already have some skills "unlocked". However, the number of
+skills they start with may not be equal to their starting level – every
+character, at recruitment, only has 6-7 spells so as not to overwhelm the
+player, even if they start at a high level. Abelon will have 18-20 skills at
+the end of the game, while other characters will have fewer (Gaheris might have
+only 7-8).
 
-The skill requirements should be designed such that a) there are enough choices with each level up (3 or 4 seems
-like a good number), b) a character will possess about half of their total unlockable skills by the end of the game,
-and c) by the end of the game, a character will still not even meet the requirements for a good number of skills
-(i.e. at least some skills have specific high requirements and need heavy investment).
+The skill requirements should be designed such that a) there are enough choices
+with each level up (3 or 4 seems like a good number), b) a character will
+possess about half of their total unlockable skills by the end of the game,
+and c) by the end of the game, a character will still not even meet the
+requirements for a good number of skills (i.e. at least some skills have
+specific high requirements and need heavy investment).
 
-Skills with higher requirements should generally cost more cobalt and ignea and have higher cooldowns, but should be
-much more (situationally!) powerful, and indicate an extreme specialization in the particular path (i.e. the "top" of
-Kath's Defender tree should have an expensive Forbearance-esque skill, and the "top" of Abelon's Executioner tree
-could have an instant death ability that costs Abelon some stats or health). Skills with high cross-path requirements
-should also be incredibly powerful, and feel very unique.
+Skills with higher requirements should generally cost more ignea, but should be
+much more (situationally!) powerful, and indicate an extreme specialization in
+the particular path (i.e. the "top" of Kath's Defender tree should have an
+expensive Forbearance-esque skill, and the "top" of Abelon's Executioner tree
+could have an instant death ability that costs Abelon some stats or health).
+Skills with high cross-path requirements should also be incredibly powerful,
+and feel very unique.
 
-Low requirement skills should be low-cost, low-cooldown, bread and butter abilities like basic attacks, set-ups, and
-movement abilities that open lots of strategic options without themselves doing much.
+Low requirement skills should be low-cost, low-cooldown, bread and butter
+abilities like basic attacks, set-ups, and movement abilities that open lots of
+strategic options without themselves doing much.
+
+No skill should ever be a direct upgrade of another skill. On level up, there
+should never be an obvious choice - every skill has situational uses and
+tradeoffs.
