@@ -132,26 +132,44 @@ function Sprite:init(id, spritesheet, chapter)
 
     -- Info that allows this sprite to be treated as an item
     self.can_discard = (readField(data[16]) == 'yes')
-    self.present_to = nil
+    self.present_to = {}
     local present_str = readField(data[17])
     if present_str then
         self.present_to = splitSep(present_str, ',')
     end
     local desc = ''
-    for i = 20, #data do
+    for i = 23, #data do
         desc = desc .. data[i] .. ' '
     end
     self.description = desc:sub(1, -1)
 
     -- Info that allows this sprite to be treated as a party member
     self.attributes = {}
-    local attribute_strs = split(data[18])
+    local attribute_strs = split(data[19])
     for i = 2, #attribute_strs do
         local pair = splitSep(attribute_strs[i],':')
         self.attributes[pair[1]] = tonumber(pair[2])
     end
-    self.skills = nil
+    self.skill_trees = {}
+    local skilltree_strs = split(data[20])
+    local getSk = function(sk_id) return skills[sk_id] end
+    for i = 2, #skilltree_strs do
+        local p = splitSep(skilltree_strs[i],':')
+        self.skill_trees[i - 1] = { ['name'] = p[1], ['skills'] = {} }
+        if p[2] then
+            self.skill_trees[i - 1]['skills'] = mapf(getSk, splitSep(p[2], ','))
+        end
+    end
+    self.skills = {}
+    local skill_str = readField(data[21])
+    if skill_str then
+        self.skills = mapf(getSk, splitSep(skill_str))
+    end
     self.skill_points = 0
+    self.health = self.attributes['endurance']
+    self.ignea = self.attributes['focus']
+    self.level = readField(data[18])
+    self.exp = 0
 
     -- Current chapter inhabited by sprite
     self.chapter = chapter
@@ -224,27 +242,11 @@ function Sprite:toItem()
 
     -- Initialize hover information
     local hover_data = {
-        {
-            ['type'] = 'text',
-            ['data'] = self.name,
-            ['x'] = BOX_MARGIN / 2,
-            ['y'] = BOX_MARGIN / 2
-        },
-        {
-            ['type'] = 'image',
-            ['texture'] = self.ptexture,
-            ['data'] = self.portraits[1],
-            ['x'] = BOX_MARGIN / 2,
-            ['y'] = BOX_MARGIN / 2 + FONT_SIZE + TEXT_MARGIN_Y,
-            ['w'] = PORTRAIT_SIZE,
-            ['h'] = PORTRAIT_SIZE
-        },
-        {
-            ['type'] = 'text',
-            ['data'] = self.description,
-            ['x'] = BOX_MARGIN / 2 + PORTRAIT_SIZE + BOX_MARGIN,
-            ['y'] = BOX_MARGIN + FONT_SIZE + TEXT_MARGIN_Y
-        }
+        mkEle('text', self.name, HALF_MARGIN, HALF_MARGIN),
+        mkEle('image', self.portraits[1],
+            HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, self.ptexture),
+        mkEle('text', self.description,
+            HALF_MARGIN * 3 + PORTRAIT_SIZE, BOX_MARGIN + LINE_HEIGHT)
     }
 
     -- Create menu item
@@ -323,7 +325,98 @@ end
 
 -- Sprite as a party member in a menu
 function Sprite:toPartyMember()
-    return MenuItem(self.name, {}, "See options for " .. self.name)
+
+    -- Make attributes option
+    local attrs = MenuItem('Attributes', {}, 'View ' .. self.name .. "'s stats")
+
+    -- Make skills option
+    local skills = MenuItem('Skills', {
+        -- TODO: list skill types (Weapon, Spell, Assist)
+    }, 'View ' .. self.name .. "'s known skills")
+
+    -- Make skill trees option
+    local check_unspent = function(c)
+        if self.skill_points > 0 then
+            love.graphics.setColor(unpack(HIGHLIGHT))
+        end
+    end
+    local learn = MenuItem('Learn (' .. self.skill_points .. ')', {
+        -- TODO list three trees
+    }, 'Learn new skills', nil, nil, nil, check_unspent)
+
+    -- Make hbox
+    local hbox = self:buildAttributeBox()
+
+    -- Put it all together!
+    local opts = { attrs, skills, learn }
+    return MenuItem(self.name, opts, "See options for " .. self.name, hbox)
+end
+
+function Sprite:buildAttributeBox()
+
+    -- Constants
+    local attrib_x = BOX_MARGIN + 110
+    local skills_x = attrib_x + 240
+    local indent = 40
+    local indent2 = 30
+    local sp_x = HALF_MARGIN + indent
+    local attrib_ind = attrib_x + indent
+    local skills_ind = skills_x + indent
+    local line = function(i)
+        return HALF_MARGIN + LINE_HEIGHT * (i - 1)
+    end
+
+    -- Creating some needed strings
+    local lvl_str = 'Lvl: ' .. tostring(self.level)
+    local hp_str  = 'Hp: '  .. tostring(self.health) .. '/'
+                            .. tostring(self.attributes['endurance'])
+    local ign_str = 'Ign: ' .. tostring(self.ignea) .. '/'
+                            .. tostring(self.attributes['focus'])
+    local exp_str = 'Exp: ' .. tostring(self.exp) .. '/100'
+
+    -- Build all elements
+    return {
+        mkEle('text', self.name, HALF_MARGIN, line(1)),
+        mkEle('text', 'Attributes', attrib_x, line(1)),
+        mkEle('text', 'Skills Learned', skills_x, line(1)),
+        mkEle('image', self.versions[self.version_name]['idle'].frames[1],
+            sp_x, line(2) + 5, self.sheet),
+        mkEle('text', lvl_str,
+            sp_x - #lvl_str * CHAR_WIDTH / 2 + self.w / 2, line(4)),
+        mkEle('text', hp_str,
+            sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
+        mkEle('text', ign_str,
+            sp_x - #ign_str * CHAR_WIDTH / 2 + self.w / 2, line(6)),
+        mkEle('text', exp_str,
+            sp_x - #exp_str * CHAR_WIDTH / 2 + self.w / 2, line(7)),
+        mkEle('text', 'Endurance',                 attrib_ind,       line(2)),
+        mkEle('text', 'Focus',                     attrib_ind,       line(4)),
+        mkEle('text', 'Force',                     attrib_ind,       line(6)),
+        mkEle('text', 'Affinity',                  attrib_ind + 100, line(2)),
+        mkEle('text', 'Reaction',                  attrib_ind + 100, line(4)),
+        mkEle('text', 'Agility',                   attrib_ind + 100, line(6)),
+        mkEle('text', self.skill_trees[1]['name'], skills_ind,       line(2)),
+        mkEle('text', self.skill_trees[2]['name'], skills_ind,       line(4)),
+        mkEle('text', self.skill_trees[3]['name'], skills_ind,       line(6)),
+        mkEle('text', tostring(self.attributes['endurance']),
+            attrib_ind + indent2,       line(3)),
+        mkEle('text', tostring(self.attributes['focus']),
+            attrib_ind + indent2,       line(5)),
+        mkEle('text', tostring(self.attributes['force']),
+            attrib_ind + indent2,       line(7)),
+        mkEle('text', tostring(self.attributes['affinity']),
+            attrib_ind + indent2 + 100, line(3)),
+        mkEle('text', tostring(self.attributes['reaction']),
+            attrib_ind + indent2 + 100, line(5)),
+        mkEle('text', tostring(self.attributes['agility']),
+            attrib_ind + indent2 + 100, line(7)),
+        mkEle('text', tostring(#self.skill_trees[1]['skills']),
+            skills_ind + indent2,       line(3)),
+        mkEle('text', tostring(#self.skill_trees[2]['skills']),
+            skills_ind + indent2,       line(5)),
+        mkEle('text', tostring(#self.skill_trees[3]['skills']),
+            skills_ind + indent2,       line(7))
+    }
 end
 
 -- Stop sprite's velocity

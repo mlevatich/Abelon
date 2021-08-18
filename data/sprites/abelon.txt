@@ -15,6 +15,9 @@ Impression: 50
 Awareness: 100
 Discard: no
 Present:
+Level: 6
 Attributes: endurance:22 focus:10 force:17 affinity:4 reaction:6 agility:11
+Skilltrees: Demon: Champion: Executioner:
+Skills:
 
 The knight Abelon.

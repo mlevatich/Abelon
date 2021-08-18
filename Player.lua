@@ -72,7 +72,6 @@ function Player:mkQuitMenu()
 end
 
 function Player:mkSettingsMenu()
-    local highlight = { 0.7, 1, 1, 1 }
     local sv = function(k, v)
         return function(c)
             if     k == 'm' then c:setMusicVolume(v)
@@ -86,7 +85,7 @@ function Player:mkSettingsMenu()
             if (k == 'm' and c.music_volume == v) or
                (k == 's' and c.sfx_volume == v) or
                (k == 't' and c.text_volume == v) then
-                love.graphics.setColor(unpack(highlight))
+                love.graphics.setColor(unpack(HIGHLIGHT))
             else
                 love.graphics.setColor(1, 1, 1, 1)
             end
@@ -105,7 +104,7 @@ function Player:mkSettingsMenu()
     local isD = function(d)
         return function(c)
             if c.difficulty == d then
-                love.graphics.setColor(unpack(highlight))
+                love.graphics.setColor(unpack(HIGHLIGHT))
             else
                 love.graphics.setColor(1, 1, 1, 1)
             end

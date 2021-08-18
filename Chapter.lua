@@ -34,7 +34,7 @@ function Chapter:init(id, spriteesheet)
     self.current_music = nil
 
     -- Volume levels
-    self.music_volume = HIGH
+    self.music_volume = OFF
     self.sfx_volume   = HIGH
     self.text_volume  = HIGH
 

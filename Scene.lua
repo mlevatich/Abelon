@@ -269,7 +269,7 @@ function Scene:renderSpeaker(sp, pid, x, y)
         local base_y = y + BOX_MARGIN + TEXT_MARGIN_Y
         for i=1, #n do
             local char = n:sub(i, i)
-            local cur_x = base_x + (i - 1) * (TEXT_MARGIN_X + FONT_SIZE)
+            local cur_x = base_x + (i - 1) * CHAR_WIDTH
             love.graphics.print(char, cur_x, base_y)
         end
 
@@ -300,8 +300,8 @@ function Scene:renderText(text, base_x, base_y)
     for _=1, self.text_state['cnum'] do
 
         -- Position of current character
-        local x = x_beginning + (TEXT_MARGIN_X + FONT_SIZE) * (char_num - 1)
-        local y = y_beginning + (TEXT_MARGIN_Y + FONT_SIZE) * (line_num - 1)
+        local x = x_beginning + CHAR_WIDTH * (char_num - 1)
+        local y = y_beginning + LINE_HEIGHT * (line_num - 1)
 
         -- Print character
         love.graphics.print(text[line_num]:sub(char_num, char_num), x, y)
@@ -329,15 +329,15 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Compute width and height of choice box
-    local w = BOX_MARGIN * 2 + (TEXT_MARGIN_X + FONT_SIZE) * (longest) + 10
-    local h = BOX_MARGIN / 2 + (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
+    local w = BOX_MARGIN * 2 + CHAR_WIDTH * (longest) + 10
+    local h = HALF_MARGIN + LINE_HEIGHT * (#choices)
 
     -- Compute coordinates of choice box
     local rect_x = base_x + BOX_MARGIN + BOX_WIDTH - w
     local rect_y = base_y + BOX_MARGIN + BOX_HEIGHT + TEXT_MARGIN_Y
     if flip then
         rect_y = base_y
-               - (TEXT_MARGIN_Y + FONT_SIZE) * (#choices)
+               - LINE_HEIGHT * (#choices)
                + TEXT_MARGIN_Y
     end
 
@@ -355,9 +355,9 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
 
             -- Get position of character
             local x = rect_x + BOX_MARGIN
-                    + (FONT_SIZE + TEXT_MARGIN_X) * (j + longest - #choices[i])
+                    + CHAR_WIDTH * (j + longest - #choices[i])
             local y = rect_y + TEXT_MARGIN_Y + 2
-                    + (FONT_SIZE + TEXT_MARGIN_Y) * (i-1)
+                    + LINE_HEIGHT * (i-1)
 
             -- Draw character
             love.graphics.print(c, x, y)
@@ -365,7 +365,7 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     end
 
     -- Render selection arrow on the selected option
-    local arrow_y = rect_y + TEXT_MARGIN_Y + 2 + (FONT_SIZE + TEXT_MARGIN_Y)
+    local arrow_y = rect_y + TEXT_MARGIN_Y + 2 + LINE_HEIGHT
                   * (self.text_state['selection'] - 1)
     love.graphics.print(">", rect_x + 15, arrow_y)
 end

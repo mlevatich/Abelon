@@ -44,6 +44,12 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     return frames
 end
 
+function mkEle(t, data, x, y, extra)
+    local ele = { ['type'] = t, ['data'] = data, ['x'] = x, ['y'] = y }
+    if t == 'image' then ele['texture'] = extra end
+    return ele
+end
+
 -- Split a string into several lines of text based on a maximum
 -- number of characters per line, without breaking up words
 function splitByCharLimit(text, char_limit)

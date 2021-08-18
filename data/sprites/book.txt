@@ -15,6 +15,9 @@ Impression: 0
 Awareness: 0
 Discard: no
 Present:
+Level: 0
 Attributes:
+Skilltrees:
+Skills:
 
 A strange book.
