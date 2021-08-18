@@ -15,5 +15,6 @@ Impression: 50
 Awareness: 0
 Discard: no
 Present:
+Attributes: endurance:23 focus:8 force:11 affinity:10 reaction:11 agility:10
 
 The knight Kath.

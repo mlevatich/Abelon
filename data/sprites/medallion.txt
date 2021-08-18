@@ -15,6 +15,7 @@ Impression: 0
 Awareness: 0
 Discard: yes
 Present: kath
+Attributes:
 
 A crude medallion hammered out of silver, strung on a thin rope that allows it
 to be worn around the neck. The engraving on the metal depicts a round buckler

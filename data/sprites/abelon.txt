@@ -15,5 +15,6 @@ Impression: 50
 Awareness: 100
 Discard: no
 Present:
+Attributes: endurance:22 focus:10 force:17 affinity:4 reaction:6 agility:11
 
 The knight Abelon.

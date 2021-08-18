@@ -250,10 +250,6 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
                 end
             end
         elseif e['type'] == 'image' then
-            -- love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-            -- love.graphics.rectangle('fill',
-            --     x + e['x'], y + e['y'], e['w'], e['h']
-            -- )
             love.graphics.setColor(1, 1, 1, 1)
             love.graphics.draw(
                 e['texture'],

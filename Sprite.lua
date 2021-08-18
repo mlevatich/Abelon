@@ -138,13 +138,18 @@ function Sprite:init(id, spritesheet, chapter)
         self.present_to = splitSep(present_str, ',')
     end
     local desc = ''
-    for i = 19, #data do
+    for i = 20, #data do
         desc = desc .. data[i] .. ' '
     end
     self.description = desc:sub(1, -1)
 
     -- Info that allows this sprite to be treated as a party member
-    self.stats = nil
+    self.attributes = {}
+    local attribute_strs = split(data[18])
+    for i = 2, #attribute_strs do
+        local pair = splitSep(attribute_strs[i],':')
+        self.attributes[pair[1]] = tonumber(pair[2])
+    end
     self.skills = nil
     self.skill_points = 0
 

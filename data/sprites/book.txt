@@ -15,5 +15,6 @@ Impression: 0
 Awareness: 0
 Discard: no
 Present:
+Attributes:
 
 A strange book.
