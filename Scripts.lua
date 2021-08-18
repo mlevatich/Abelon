@@ -165,7 +165,7 @@ scripts = {
     ['medallion_use'] = {
         ['ids'] = {'medallion'},
         ['events'] = {
-            say(1, 0, false,
+            say(1, 1, false,
                 "The silver medallion turns lazily as you hold it by its rope. \z
                  You pull it over your head. The fraying rope itches the back \z
                  of your neck, and the metal lump is inordinatelty heavy. \z
@@ -396,7 +396,7 @@ scripts = {
         ['ids'] = {'abelon', 'medallion'},
         ['events'] = {
             lookAt(1, 2),
-            say(2, 0, true,
+            say(2, 1, true,
                 "A silver medallion on a string lies on the ground, smeared with \z
                  dirt. The image of a round shield over a longsword is engraved \z
                  in the metal."
@@ -405,7 +405,7 @@ scripts = {
                 {
                     ['response'] = "Pick it up",
                     ['events'] = {
-                        say(2, 0, false,
+                        say(2, 1, false,
                             "You brush the dirt off of the medallion and place it \z
                              in your pack."
                         )
@@ -427,7 +427,7 @@ scripts = {
         ['result'] = {
             ['callback'] = {
                 lookAt(1, 2),
-                say(2, 0, true,
+                say(2, 1, true,
                     "The medallion shines among the twigs and leaves of the \z
                      forest floor."
                 ),
@@ -435,7 +435,7 @@ scripts = {
                     {
                         ['response'] = "Pick it up",
                         ['events'] = {
-                            say(2, 0, false,
+                            say(2, 1, false,
                                 "You brush the dirt off of the medallion and \z
                                  place it in your pack."
                             )

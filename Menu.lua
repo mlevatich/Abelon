@@ -3,14 +3,14 @@ require 'Constants'
 
 MenuItem = Class{}
 
-function MenuItem:init(name, children, h_desc, h_render, action, confirm, p)
+function MenuItem:init(name, children, h_desc, h_box, action, confirm, p)
 
     self.name = name
     self.children = children
 
     -- optional, may be nil
     self.hover_desc = h_desc
-    self.hover_render = h_render
+    self.hover_box = h_box
     self.action = action
     self.confirm_msg = confirm
     if confirm then
@@ -83,6 +83,7 @@ function Menu:initSubmenus()
             -- Witchcraft
             local next_y = (VIRTUAL_HEIGHT + TEXT_MARGIN_Y) / 2
                          + (#msg/2 - 1) * (FONT_SIZE + TEXT_MARGIN_Y)
+                         - BOX_MARGIN/2
 
             -- Menu item's action is forwarded to 'Yes' on the confirm screen,
             -- which is another submenu
@@ -165,7 +166,7 @@ function Menu:renderConfirmMessage(cam_x, cam_y)
     local cbox_h = (FONT_SIZE + TEXT_MARGIN_Y) * (#msg + 2)
                  + BOX_MARGIN*2 - TEXT_MARGIN_Y
     local cbox_x = cam_x + VIRTUAL_WIDTH/2 - cbox_w/2
-    local cbox_y = cam_y + VIRTUAL_HEIGHT/2 - cbox_h/2
+    local cbox_y = cam_y + VIRTUAL_HEIGHT/2 - cbox_h/2 - BOX_MARGIN/2
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill', cbox_x, cbox_y, cbox_w, cbox_h)
     love.graphics.setColor(1, 1, 1, 1)
@@ -225,6 +226,46 @@ function Menu:renderMenuItems(x, y, c)
     end
 end
 
+function Menu:renderHoverBox(cam_x, cam_y, h_box)
+
+    -- Hover box top left
+    local x = cam_x + BOX_MARGIN
+    local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - HBOX_HEIGHT
+
+    -- Draw hover box
+    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+    love.graphics.rectangle('fill', x, y, HBOX_WIDTH, HBOX_HEIGHT)
+
+    -- Draw elements in box relative to top left
+    for i = 1, #h_box do
+        local e = h_box[i]
+        if e['type'] == 'text' then
+            love.graphics.setColor(1, 1, 1, 1)
+            local msg = splitByCharLimit(h_box[i]['data'], HBOX_CHARS_PER_LINE)
+            for j = 1, #msg do
+                local cy = y + e['y'] + (TEXT_MARGIN_Y + FONT_SIZE) * (j-1)
+                for k = 1, #msg[j] do
+                    local cx = x + e['x'] + (TEXT_MARGIN_X + FONT_SIZE) * (k-1)
+                    love.graphics.print(msg[j]:sub(k, k), cx, cy)
+                end
+            end
+        elseif e['type'] == 'image' then
+            -- love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+            -- love.graphics.rectangle('fill',
+            --     x + e['x'], y + e['y'], e['w'], e['h']
+            -- )
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(
+                e['texture'],
+                e['data'],
+                x + e['x'],
+                y + e['y'],
+                0, 1, 1, 0, 0
+            )
+        end
+    end
+end
+
 function Menu:renderSelectionArrow(x, y)
     local arrow_y = y + BOX_MARGIN/2
                   + (FONT_SIZE + TEXT_MARGIN_Y)
@@ -253,6 +294,11 @@ function Menu:render(cam_x, cam_y, c)
 
     -- Render arrow over item being hovered
     self:renderSelectionArrow(x, y)
+
+    local h_box = self.menu_items[self.hovering + self.base - 1].hover_box
+    if h_box then
+        self:renderHoverBox(cam_x, cam_y, h_box)
+    end
 
     -- Render child menu if there is one or hover info if this is the leaf menu
     if self.selected then

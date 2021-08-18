@@ -55,7 +55,7 @@ function Sprite:init(id, spritesheet, chapter)
     self.ptexture = nil
     self.portraits = nil
     if readField(data[13]) == 'yes' then
-        local portrait_file = 'graphics/portraits/' .. self.name .. '.png'
+        local portrait_file = 'graphics/portraits/' .. self.id .. '.png'
         self.ptexture = love.graphics.newImage(portrait_file)
         self.portraits = getSpriteQuads(
             PORTRAIT_INDICES,
@@ -206,22 +206,44 @@ end
 function Sprite:toItem()
 
     -- Initialize sprite options
-    local n = self.name
     local u = MenuItem('Use', {}, nil, nil, self:mkUse())
     local p = MenuItem('Present', {}, nil, nil, self:mkPresent())
     local children = {u, p}
     if self.can_discard then
         local d = MenuItem('Discard', {}, nil, nil, self:mkDiscard(),
-            "Discard the " .. string.lower(n) .. "? It will be gone forever."
+            "Discard the " .. string.lower(self.name) ..
+            "? It will be gone forever."
         )
         table.insert(children, d)
     end
 
     -- Initialize hover information
-    -- TODO
+    local hover_data = {
+        {
+            ['type'] = 'text',
+            ['data'] = self.name,
+            ['x'] = BOX_MARGIN / 2,
+            ['y'] = BOX_MARGIN / 2
+        },
+        {
+            ['type'] = 'image',
+            ['texture'] = self.ptexture,
+            ['data'] = self.portraits[1],
+            ['x'] = BOX_MARGIN / 2,
+            ['y'] = BOX_MARGIN / 2 + FONT_SIZE + TEXT_MARGIN_Y,
+            ['w'] = PORTRAIT_SIZE,
+            ['h'] = PORTRAIT_SIZE
+        },
+        {
+            ['type'] = 'text',
+            ['data'] = self.description,
+            ['x'] = BOX_MARGIN / 2 + PORTRAIT_SIZE + BOX_MARGIN,
+            ['y'] = BOX_MARGIN + FONT_SIZE + TEXT_MARGIN_Y
+        }
+    }
 
     -- Create menu item
-    return MenuItem(n, children, 'See item options')
+    return MenuItem(self.name, children, 'See item options', hover_data)
 end
 
 function Sprite:mkUse()
@@ -230,7 +252,7 @@ function Sprite:mkUse()
     scripts[self.id .. '_use_fail'] = {
         ['ids'] = {self.id},
         ['events'] = {
-            say(1, 0, false,
+            say(1, 1, false,
                 "There's no use for the " .. string.lower(self.name) .. " \z
                  at the moment."
             )
@@ -248,7 +270,7 @@ function Sprite:mkPresent()
     scripts[self.id .. '_present_fail'] = {
         ['ids'] = {self.id},
         ['events'] = {
-            say(1, 0, false,
+            say(1, 1, false,
                 "You remove the " .. string.lower(self.name) .. " from your \z
                  pack, but no one nearby seems to notice."
 
@@ -276,7 +298,7 @@ function Sprite:mkDiscard()
     scripts[self.id .. '_discard'] = {
         ['ids'] = {self.id},
         ['events'] = {
-            say(1, 0, false,
+            say(1, 1, false,
                 "You remove the " .. string.lower(self.name) .. " from \z
                  your pack and leave it behind."
             )

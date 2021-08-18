@@ -10,13 +10,12 @@ Blocking: no
 Animations: idle:0
 Versions: standard
 Resting: idle
-Portrait: no
+Portrait: yes
 Impression: 0
 Awareness: 0
 Discard: yes
 Present: kath
 
-A crude approximation of a disk, hammered out of pure silver. An engraving on
-the face depicts a round buckler in front an ordinary longsword. A thin,
-fraying rope passes through a tiny hole in the metal, allowing it to be worn
-around the neck. The craftsmanship is amateur.
+A crude medallion hammered out of silver, strung on a thin rope that allows it
+to be worn around the neck. The engraving on the metal depicts a round buckler
+in front a longsword.

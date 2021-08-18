@@ -1,8 +1,13 @@
 TODO list
 
-#49: Inventory:
--Change chapter difficulty properly, volume, properly, render icons next to menu text
--hover info box, sprite portraits
+sprite combat stats
+sprite file has base stats
+skill class with type (attack, spell, assist), tree_id, cost, effect, range,
+requirements, and toMenuItem fxn (which creates the custom info box)
+sprite has learned skills and notlearned skills in seperate lists
+learning menu borrows from skill's toMenuItem function and applies it to
+notlearned skills, but adds children (yes,no,confirm)
+sprite file has base skills
 
 Kath walk animation
 Forest theme to supercollider
@@ -18,7 +23,8 @@ Enemy AI
 Enemy phase
 
 Title screen v0 (continue (if save file detected), new game -> choose difficulty)
-#15: Save state
+#15: Save state (rewrite sprite files to savedata, pull from there first if it
+exists unless new game)
 Battle game over
 
 v1 combat abilities for abelon and kath
