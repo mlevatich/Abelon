@@ -1,15 +1,7 @@
 TODO list
 
 #49
-skill class with type (attack, spell, assist), tree_id, cost, effect, range,
-requirements, and toMenuItem fxn (which creates the custom info box)
-sprite has learned skills and notlearned skills in seperate lists
-learning menu borrows from skill's toMenuItem function and applies it to
-notlearned skills, but adds children (yes,no,confirm)
-sprite file has base skills, which pull from a skills.lua file containing the
-expanded skill info in an id-keyed dict, like triggers.lua
-
-parse helper
+hbox for skills, semantics for effects, range
 
 Kath walk animation
 Sam's software suggestion for music

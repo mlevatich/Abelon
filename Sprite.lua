@@ -3,6 +3,7 @@ require 'Constants'
 
 require 'Animation'
 require 'Menu'
+require 'Skill'
 require 'Scripts'
 require 'Triggers'
 
@@ -163,7 +164,7 @@ function Sprite:init(id, spritesheet, chapter)
     self.skills = {}
     local skill_str = readField(data[21])
     if skill_str then
-        self.skills = mapf(getSk, splitSep(skill_str))
+        self.skills = mapf(getSk, splitSep(skill_str, ','))
     end
     self.skill_points = 0
     self.health = self.attributes['endurance']
@@ -326,30 +327,75 @@ end
 -- Sprite as a party member in a menu
 function Sprite:toPartyMember()
 
-    -- Make attributes option
-    local attrs = MenuItem('Attributes', {}, 'View ' .. self.name .. "'s stats")
-
     -- Make skills option
+    local learnedOf = function(t)
+        return filter(function(s) return s.type == t end, self.skills)
+    end
+    local skToMenu = function(s) return s:toMenuItem() end
     local skills = MenuItem('Skills', {
-        -- TODO: list skill types (Weapon, Spell, Assist)
-    }, 'View ' .. self.name .. "'s known skills")
+        MenuItem('Weapon', mapf(skToMenu, learnedOf(WEAPON)),
+                 'View ' .. self.name .. "'s weapon skills"),
+        MenuItem('Spell', mapf(skToMenu, learnedOf(SPELL)),
+                 'View ' .. self.name .. "'s spells"),
+        MenuItem('Assist', mapf(skToMenu, learnedOf(ASSIST)),
+                 'View ' .. self.name .. "'s assists")
+    }, 'View ' .. self.name .. "'s learned skills")
 
     -- Make skill trees option
-    local check_unspent = function(c)
+    local checkUnspent = function(c)
         if self.skill_points > 0 then
             love.graphics.setColor(unpack(HIGHLIGHT))
         end
     end
+    local mkLearn = function(s) return self:mkLearnable(s.id, s:toMenuItem()) end
+    local skt = self.skill_trees
     local learn = MenuItem('Learn (' .. self.skill_points .. ')', {
-        -- TODO list three trees
-    }, 'Learn new skills', nil, nil, nil, check_unspent)
+        MenuItem(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
+                 'View the ' .. skt[1]['name'] .. " tree"),
+        MenuItem(skt[2]['name'], mapf(mkLearn, skt[2]['skills']),
+                 'View the ' .. skt[2]['name'] .. " tree"),
+        MenuItem(skt[3]['name'], mapf(mkLearn, skt[3]['skills']),
+                 'View the ' .. skt[3]['name'] .. " tree")
+    }, 'Learn new skills', nil, nil, nil, checkUnspent)
 
     -- Make hbox
     local hbox = self:buildAttributeBox()
 
     -- Put it all together!
-    local opts = { attrs, skills, learn }
+    local opts = { skills, learn }
     return MenuItem(self.name, opts, "See options for " .. self.name, hbox)
+end
+
+function Sprite:isLearnable(sk_id)
+    if self.skill_points <= 0 then return false end
+    for tid, threshold in pairs(skills[sk_id].reqs) do
+        points = #filter(function(s) return s.tree_id == tid end, self.skills)
+        if points < threshold then return false end
+    end
+    return true
+end
+
+function Sprite:mkLearnable(sk_id, sk_item)
+    sk_item.hover_desc = 'Learn ' .. sk_item.name
+    if find(self.skills, skills[sk_id]) then
+        sk_item.setPen = function(c)
+            love.graphics.setColor(unpack(DISABLE))
+        end
+    elseif self:isLearnable(sk_id) then
+        sk_item.setPen = function(c)
+            love.graphics.setColor(unpack(HIGHLIGHT))
+        end
+        sk_item.action = function(c)
+            self:learn(sk_id)
+            c.player:changeMode('free')
+        end
+        local cm, _ = splitByCharLimit(
+            "Spend one skill point to learn " .. sk_item.name .. "?",
+            CBOX_CHARS_PER_LINE
+        )
+        sk_item.confirm_msg = cm
+    end
+    return sk_item
 end
 
 function Sprite:buildAttributeBox()
@@ -373,6 +419,10 @@ function Sprite:buildAttributeBox()
     local ign_str = 'Ign: ' .. tostring(self.ignea) .. '/'
                             .. tostring(self.attributes['focus'])
     local exp_str = 'Exp: ' .. tostring(self.exp) .. '/100'
+    local learnedIn = function(tn)
+        local tree = self.skill_trees[tn]['skills']
+        return filter(function(s) return find(self.skills, s) end, tree)
+    end
 
     -- Build all elements
     return {
@@ -410,13 +460,21 @@ function Sprite:buildAttributeBox()
             attrib_ind + indent2 + 100, line(5)),
         mkEle('text', tostring(self.attributes['agility']),
             attrib_ind + indent2 + 100, line(7)),
-        mkEle('text', tostring(#self.skill_trees[1]['skills']),
+        mkEle('text', tostring(#learnedIn(1)),
             skills_ind + indent2,       line(3)),
-        mkEle('text', tostring(#self.skill_trees[2]['skills']),
+        mkEle('text', tostring(#learnedIn(2)),
             skills_ind + indent2,       line(5)),
-        mkEle('text', tostring(#self.skill_trees[3]['skills']),
+        mkEle('text', tostring(#learnedIn(3)),
             skills_ind + indent2,       line(7))
     }
+end
+
+-- Learn a new skill
+function Sprite:learn(sk_id)
+    if self.skill_points > 0 then
+        self.skill_points = self.skill_points - 1
+        table.insert(self.skills, skills[sk_id])
+    end
 end
 
 -- Stop sprite's velocity

@@ -107,6 +107,20 @@ function mapf(func, tbl)
     return new_tbl
 end
 
+function filter(func, tbl)
+    local new_tbl = {}
+    for k,v in pairs(tbl) do
+        if func(v) then
+            if type(k) == "number" and math.floor(k) == k then
+                table.insert(new_tbl, v)
+            else
+                new_tbl[k] = v
+            end
+        end
+    end
+    return new_tbl
+end
+
 function concat(t1, t2)
     local t3 = {}
     for _,v in pairs(t1) do

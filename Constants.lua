@@ -22,6 +22,7 @@ TEXT_INTERVAL  = 0.03
 MAX_MENU_ITEMS = 5
 RECT_ALPHA     = 0.4
 HBOX_WIDTH     = 540
+DISABLE        = { 1, 1, 1, 0.5 }
 HIGHLIGHT      = { 0.7, 1, 1, 1 }
 
 
@@ -53,6 +54,11 @@ DOWN  = 4
 NORMAL = 1
 ADEPT  = 2
 MASTER = 3
+
+-- Skill types
+WEAPON = 1
+SPELL  = 2
+ASSIST = 3
 
 -- Volume Levels
 OFF  = 0

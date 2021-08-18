@@ -301,7 +301,9 @@ function Menu:render(cam_x, cam_y, c)
 
     -- Only render deepest hover box
     local h_box = self.menu_items[self.hovering + self.base - 1].hover_box
-    if h_box  and not hbox_rendered then
+    if h_box and not hbox_rendered then
         self:renderHoverBox(cam_x, cam_y, h_box)
+        return true
     end
+    return hbox_rendered
 end
