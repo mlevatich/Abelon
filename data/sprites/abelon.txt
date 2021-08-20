@@ -17,7 +17,7 @@ Discard: no
 Present:
 Level: 6
 Attributes: endurance:22 focus:10 force:17 affinity:4 reaction:6 agility:11
-Skilltrees: Demon:conflagration Champion:guard_blindspot Executioner:cleave
-Skills: cleave,guard_blindspot
+Skilltrees: Demon:conflagration Champion:guard_blindspot Executioner:sever
+Skills: sever,guard_blindspot
 
 The knight Abelon.

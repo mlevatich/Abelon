@@ -67,6 +67,9 @@ function Sprite:init(id, spritesheet, chapter)
         )
     end
 
+    self.itex = chapter.itex
+    self.icons = chapter.icons
+
     -- y-position on spritesheet of first costume
     local base_y = tonumber(readField(data[7]))
 
@@ -243,10 +246,10 @@ function Sprite:toItem()
 
     -- Initialize hover information
     local hover_data = {
-        mkEle('text', self.name, HALF_MARGIN, HALF_MARGIN),
+        mkEle('text', {self.name}, HALF_MARGIN, HALF_MARGIN),
         mkEle('image', self.portraits[1],
             HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, self.ptexture),
-        mkEle('text', self.description,
+        mkEle('text', splitByCharLimit(self.description, HBOX_CHARS_PER_LINE),
             HALF_MARGIN * 3 + PORTRAIT_SIZE, BOX_MARGIN + LINE_HEIGHT)
     }
 
@@ -331,7 +334,7 @@ function Sprite:toPartyMember()
     local learnedOf = function(t)
         return filter(function(s) return s.type == t end, self.skills)
     end
-    local skToMenu = function(s) return s:toMenuItem() end
+    local skToMenu = function(s) return s:toMenuItem(self.itex, self.icons, self.skill_trees[1]['name']) end
     local skills = MenuItem('Skills', {
         MenuItem('Weapon', mapf(skToMenu, learnedOf(WEAPON)),
                  'View ' .. self.name .. "'s weapon skills"),
@@ -347,7 +350,7 @@ function Sprite:toPartyMember()
             love.graphics.setColor(unpack(HIGHLIGHT))
         end
     end
-    local mkLearn = function(s) return self:mkLearnable(s.id, s:toMenuItem()) end
+    local mkLearn = function(s) return self:mkLearnable(s.id, s:toMenuItem(self.itex, self.icons, self.skill_trees[1]['name'])) end
     local skt = self.skill_trees
     local learn = MenuItem('Learn (' .. self.skill_points .. ')', {
         MenuItem(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
@@ -368,7 +371,9 @@ end
 
 function Sprite:isLearnable(sk_id)
     if self.skill_points <= 0 then return false end
-    for tid, threshold in pairs(skills[sk_id].reqs) do
+    for i = 1, #skills[sk_id].reqs do
+        local tid = skills[sk_id].reqs[i][1]
+        local threshold = skills[sk_id].reqs[i][2]
         points = #filter(function(s) return s.tree_id == tid end, self.skills)
         if points < threshold then return false end
     end
@@ -402,7 +407,7 @@ function Sprite:buildAttributeBox()
 
     -- Constants
     local attrib_x = BOX_MARGIN + 110
-    local skills_x = attrib_x + 240
+    local skills_x = attrib_x + 260
     local indent = 40
     local indent2 = 30
     local sp_x = HALF_MARGIN + indent
@@ -419,6 +424,9 @@ function Sprite:buildAttributeBox()
     local ign_str = 'Ign: ' .. tostring(self.ignea) .. '/'
                             .. tostring(self.attributes['focus'])
     local exp_str = 'Exp: ' .. tostring(self.exp) .. '/100'
+    local icon = function(i)
+        return self.icons[str_to_icon[self.skill_trees[i]['name']]]
+    end
     local learnedIn = function(tn)
         local tree = self.skill_trees[tn]['skills']
         return filter(function(s) return find(self.skills, s) end, tree)
@@ -426,45 +434,60 @@ function Sprite:buildAttributeBox()
 
     -- Build all elements
     return {
-        mkEle('text', self.name, HALF_MARGIN, line(1)),
-        mkEle('text', 'Attributes', attrib_x, line(1)),
-        mkEle('text', 'Skills Learned', skills_x, line(1)),
+        mkEle('text', {self.name}, HALF_MARGIN, line(1)),
+        mkEle('text', {'Attributes'}, attrib_x, line(1)),
+        mkEle('text', {'Skills Learned'}, skills_x, line(1)),
         mkEle('image', self.versions[self.version_name]['idle'].frames[1],
             sp_x, line(2) + 5, self.sheet),
-        mkEle('text', lvl_str,
+        mkEle('text', {lvl_str},
             sp_x - #lvl_str * CHAR_WIDTH / 2 + self.w / 2, line(4)),
-        mkEle('text', hp_str,
+        mkEle('text', {hp_str},
             sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
-        mkEle('text', ign_str,
+        mkEle('text', {ign_str},
             sp_x - #ign_str * CHAR_WIDTH / 2 + self.w / 2, line(6)),
-        mkEle('text', exp_str,
+        mkEle('text', {exp_str},
             sp_x - #exp_str * CHAR_WIDTH / 2 + self.w / 2, line(7)),
-        mkEle('text', 'Endurance',                 attrib_ind,       line(2)),
-        mkEle('text', 'Focus',                     attrib_ind,       line(4)),
-        mkEle('text', 'Force',                     attrib_ind,       line(6)),
-        mkEle('text', 'Affinity',                  attrib_ind + 100, line(2)),
-        mkEle('text', 'Reaction',                  attrib_ind + 100, line(4)),
-        mkEle('text', 'Agility',                   attrib_ind + 100, line(6)),
-        mkEle('text', self.skill_trees[1]['name'], skills_ind,       line(2)),
-        mkEle('text', self.skill_trees[2]['name'], skills_ind,       line(4)),
-        mkEle('text', self.skill_trees[3]['name'], skills_ind,       line(6)),
-        mkEle('text', tostring(self.attributes['endurance']),
+        mkEle('text', {'Endurance'},                 attrib_ind,       line(2)),
+        mkEle('text', {'Focus'},                     attrib_ind,       line(4)),
+        mkEle('text', {'Force'},                     attrib_ind,       line(6)),
+        mkEle('text', {'Affinity'},                  attrib_ind + 125, line(2)),
+        mkEle('text', {'Reaction'},                  attrib_ind + 125, line(4)),
+        mkEle('text', {'Agility'},                   attrib_ind + 125, line(6)),
+        mkEle('text', {self.skill_trees[1]['name']}, skills_ind,       line(2)),
+        mkEle('text', {self.skill_trees[2]['name']}, skills_ind,       line(4)),
+        mkEle('text', {self.skill_trees[3]['name']}, skills_ind,       line(6)),
+        mkEle('image', icon(1), skills_ind - 25,  line(2), self.itex),
+        mkEle('image', icon(2), skills_ind - 25,  line(4), self.itex),
+        mkEle('image', icon(3), skills_ind - 25,  line(6), self.itex),
+        mkEle('image', self.icons[str_to_icon['endurance']],
+            attrib_ind - 25,  line(2), self.itex),
+        mkEle('image', self.icons[str_to_icon['focus']],
+            attrib_ind - 25,  line(4), self.itex),
+        mkEle('image', self.icons[str_to_icon['force']],
+            attrib_ind - 25,  line(6), self.itex),
+        mkEle('image', self.icons[str_to_icon['affinity']],
+            attrib_ind + 100, line(2), self.itex),
+        mkEle('image', self.icons[str_to_icon['reaction']],
+            attrib_ind + 100, line(4), self.itex),
+        mkEle('image', self.icons[str_to_icon['agility']],
+            attrib_ind + 100, line(6), self.itex),
+        mkEle('text', {tostring(self.attributes['endurance'])},
             attrib_ind + indent2,       line(3)),
-        mkEle('text', tostring(self.attributes['focus']),
+        mkEle('text', {tostring(self.attributes['focus'])},
             attrib_ind + indent2,       line(5)),
-        mkEle('text', tostring(self.attributes['force']),
+        mkEle('text', {tostring(self.attributes['force'])},
             attrib_ind + indent2,       line(7)),
-        mkEle('text', tostring(self.attributes['affinity']),
+        mkEle('text', {tostring(self.attributes['affinity'])},
             attrib_ind + indent2 + 100, line(3)),
-        mkEle('text', tostring(self.attributes['reaction']),
+        mkEle('text', {tostring(self.attributes['reaction'])},
             attrib_ind + indent2 + 100, line(5)),
-        mkEle('text', tostring(self.attributes['agility']),
+        mkEle('text', {tostring(self.attributes['agility'])},
             attrib_ind + indent2 + 100, line(7)),
-        mkEle('text', tostring(#learnedIn(1)),
+        mkEle('text', {tostring(#learnedIn(1))},
             skills_ind + indent2,       line(3)),
-        mkEle('text', tostring(#learnedIn(2)),
+        mkEle('text', {tostring(#learnedIn(2))},
             skills_ind + indent2,       line(5)),
-        mkEle('text', tostring(#learnedIn(3)),
+        mkEle('text', {tostring(#learnedIn(3))},
             skills_ind + indent2,       line(7))
     }
 end

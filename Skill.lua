@@ -5,67 +5,172 @@ require 'Menu'
 
 Skill = Class{}
 
-function Skill:init(id, n, ti, st, tr, r, at, c, e, d)
+function Skill:init(id, n, ti, st, si, tr, r, at, t, c, e, d)
 
     -- Identifying info
-    self.id = id
-    self.name = n
-    self.tree_id = ti
-    self.type = st
-    self.desc = d
+    self.id           = id
+    self.name         = n
+    self.tree_id      = ti
+    self.type         = st
+    self.scaling_icon = si
+    self.desc         = d
 
     -- Requirements to learn
     self.reqs = tr
 
     -- Battle effects
-    self.range = r
-    self.aim = at
-    self.cost = c
-    self.effect = e
+    self.range  = r  -- Shape of ability (cursor is center of 2d table, for
+                     -- directional abilities, shape points north)
+    self.aim    = at -- directional (cursor on adjacent square),
+                     -- self_cast (cursor on self)
+                     -- free_aim(scale, target) (cursor on any target within
+                     -- diamond of size scale centered on caster)
+    self.target = t  -- Who does your cursor have to be on for this to succeed?
+    self.cost   = c  -- Ignea cost
+    self.effect = e  -- Function taking the caster and target as inputs
 end
 
-function Skill:toMenuItem()
-    local hbox = {}
+function Skill:toMenuItem(itex, icons)
+    local req_x = 410
+    local req_y = HALF_MARGIN
+    local desc_x = HALF_MARGIN * 3 + PORTRAIT_SIZE - 5
+    local range_x = BOX_MARGIN
+    local range_y = HALF_MARGIN + 6 + LINE_HEIGHT
+    local hbox = {
+        mkEle('text', {self.name}, HALF_MARGIN + 55, HALF_MARGIN),
+        mkEle('image', icons[self:treeToIcon()],
+            HALF_MARGIN, 7, itex),
+        mkEle('image', icons[self.type],
+            HALF_MARGIN + 25, 7, itex),
+        mkEle('image', icons[str_to_icon[self.reqs[1][1]]],
+            req_x, req_y, itex),
+        mkEle('image', icons[str_to_icon[self.reqs[2][1]]],
+            req_x + BOX_MARGIN * 2, req_y, itex),
+        mkEle('image', icons[str_to_icon[self.reqs[3][1]]],
+            req_x + BOX_MARGIN * 4, req_y, itex),
+        mkEle('text', {tostring(self.reqs[1][2])},
+            req_x + 8, req_y + LINE_HEIGHT + 2, itex),
+        mkEle('text', {tostring(self.reqs[2][2])},
+            req_x + BOX_MARGIN * 2 + 8, req_y + LINE_HEIGHT + 2, itex),
+        mkEle('text', {tostring(self.reqs[3][2])},
+            req_x + BOX_MARGIN * 4 + 8, req_y + LINE_HEIGHT + 2, itex),
+        mkEle('text', {'Requirements'},
+            req_x, req_y + LINE_HEIGHT * 2),
+        mkEle('text', {'  to learn  '},
+            req_x, req_y + LINE_HEIGHT * 3),
+        mkEle('text', splitByCharLimit(self.desc, 28),
+            desc_x, BOX_MARGIN + LINE_HEIGHT - 3),
+        mkEle('text', {'Cost: ' .. self.cost},
+            req_x + 5, req_y + LINE_HEIGHT * 4 + HALF_MARGIN),
+        mkEle('text', {'Scaling:'},
+            req_x + 5, req_y + LINE_HEIGHT * 5 + HALF_MARGIN + 5),
+        mkEle('image', icons[str_to_icon['focus']],
+            req_x + 10 + CHAR_WIDTH * 8,
+            req_y + LINE_HEIGHT * 4 + HALF_MARGIN - 2, itex),
+        mkEle('image', icons[self.scaling_icon],
+            req_x + 10 + CHAR_WIDTH * 8,
+            req_y + LINE_HEIGHT * 5 + HALF_MARGIN + 3, itex),
+        mkEle('range', { self.range, self.aim, self.type },
+            range_x, range_y)
+    }
     return MenuItem(self.name, {}, nil, hbox)
 end
 
+function Skill:treeToIcon()
+    return str_to_icon[self.tree_id]
+end
+
+function mkLine(n)
+    local size = n * 2 - 1
+    local shape = {}
+    for i = 1, size do
+        local row = {}
+        for j = 1, size do
+            if i <= n and j == n then
+                table.insert(row, T)
+            else
+                table.insert(row, F)
+            end
+        end
+        table.insert(shape, row)
+    end
+    return shape
+end
+
+str_to_icon = {
+    ['Demon'] = 1,
+    ['Champion'] = 2,
+    ['Executioner'] = 3,
+    ['Defender'] = 4,
+    ['Hero'] = 5,
+    ['Cleric'] = 6,
+    ['endurance'] = 10,
+    ['focus'] = 11,
+    ['force'] = 12,
+    ['affinity'] = 13,
+    ['reaction'] = 14,
+    ['agility'] = 15,
+    ['empty'] = 17
+}
+
 skills = {
-    ['cleave'] = Skill('cleave', 'Cleave',
-        'Executioner', WEAPON, {},
-        nil, nil, 0, nil,
-        "Slice across an enemy's body, cutting them open. Deals 17 \z
-         (Force) weapon damage to an enemy next to Abelon."
+    ['sever'] = Skill('sever', 'Sever',
+        'Executioner', WEAPON, str_to_icon['force'],
+        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
+        { { T } }, DIRECTIONAL_AIM, ENEMY,
+        0, nil,
+        "Slice at an adjacent enemy's exposed limbs, crippling them. Deals \z
+         (Force * 1.0) weapon damage to an enemy next to Abelon."
     ),
     ['conflagration'] = Skill('conflagration', 'Conflagration',
-        'Demon', SPELL, {},
-        nil, nil, 5, nil,
-        "Scour the battlefield with unholy fire. Deals 34 (Force * 2) spell \z
-         damage to all enemies in a line."
+        'Demon', SPELL, str_to_icon['force'],
+        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
+        mkLine(10), DIRECTIONAL_AIM, ALL,
+        5, nil,
+        "Scour the battlefield with unholy fire. Deals (Force * 2.0) spell \z
+         damage to all enemies in a line across the entire map."
     ),
     ['guard_blindspot'] = Skill('guard_blindspot', 'Guard Blindspot',
-        'Champion', ASSIST, {},
-        nil, nil, 0, nil,
-        "Protect an ally from wounds to the back. Adds 4 (Affinity) to \z
-         ally's Reaction."
+        'Champion', ASSIST, str_to_icon['affinity'],
+        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
+        { { T } }, DIRECTIONAL_AIM, ALLY,
+        0, nil,
+        "Protect an adjacent ally from wounds to the back. Adds \z
+         (Affinity * 1.0) to ally's Reaction."
     ),
     ['enrage'] = Skill('enrage', 'Enrage',
-        'Defender', SPELL, {},
-        nil, nil, 1, nil,
+        'Defender', SPELL, str_to_icon['empty'],
+        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, T, T, T, F, F },
+          { F, T, T, T, T, T, F },
+          { T, T, T, F, T, T, T },
+          { F, T, T, T, T, T, F },
+          { F, F, T, T, T, F, F },
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, ALL,
+        1, nil,
         "Confuse and enrage nearby enemies with a mist of activated ignea, so \z
          that their next actions will target Kath."
     ),
     ['sweep'] = Skill('sweep', 'Sweep',
-        'Hero', WEAPON, {},
-        nil, nil, 0, nil,
-        "Sweep in a wide arc with a lance before raising a shield. Deals 5 \z
-         (Force * 0.5) weapon damage to enemies in front of Kath, and grants \z
-         him 2 Reaction until his next turn."
+        'Hero', WEAPON, str_to_icon['force'],
+        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { F, F, F },
+          { T, T, T },
+          { F, F, F } }, DIRECTIONAL_AIM, ALL,
+        0, nil,
+        "Slash in a wide arc. Deals (Force * 0.5) weapon damage to enemies in \z
+         front of Kath, and grants 2 Reaction until his next turn."
     ),
     ['blessed_sky'] = Skill('blessed_sky', 'Blessed Sky',
-        'Cleric', ASSIST, {},
-        nil, nil, 1, nil,
-        "Infuse the nearby air with ignea so that it stitches wounds back \z
-         together. Allies who end their turn near Kath immediately recover 10 \z
-         (Affinity) health."
+        'Cleric', ASSIST, str_to_icon['affinity'],
+        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { T, T, T },
+          { T, T, T },
+          { T, T, T } }, FREE_AIM(3, ALL), ALL,
+        1, nil,
+        "Infuse the air to heal wounds. Assisted allies recover \z
+         (Affinity * 1.0) health. Can target a square within three spaces of \z
+         Kath."
     )
 }

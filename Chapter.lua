@@ -46,6 +46,12 @@ function Chapter:init(id, spriteesheet)
     self.sprites = {}
     self.player = nil
 
+    local icon_indices = {
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+    }
+    self.itex = love.graphics.newImage('graphics/icons.png')
+    self.icons = getSpriteQuads(icon_indices, self.itex, 22, 22, 0)
+
     -- Difficulty level
     self.difficulty = MASTER
 

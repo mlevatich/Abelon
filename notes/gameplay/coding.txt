@@ -1,14 +1,5 @@
-TODO list
+THE COMBAT ENGINE!
 
-#49
-hbox for skills, semantics for effects, range
-
-Kath walk animation
-Sam's software suggestion for music
-Forest theme to supercollider
-Use twilight of the gods for fight music
-
-COMBAT:
 #34
 #35
 #36
@@ -17,26 +8,66 @@ COMBAT:
 Enemy AI
 Enemy phase
 
+assists take affect when a character stops their movement. So they can benefit
+from two assists if they move into an assist, attack, and then move into a
+different assist (if an assist has a one-time effect, such as a heal, it can
+only proc once for the same character).
+
+When aiming an attack, there are two indicators: the (colored) cursor, and the
+light colored filled-squares zone indicator. The zone is given by the AOE shape,
+where the center of the shape table is the cursor location.
+For directional attacks, the cursor is always pointing in a direction away from
+the caster. For self casts, the cursor is always on the caster. For free aim
+the cursor can be on any space given by the FREE_AIM field (intersect a diamond
+of size "scale" with the targets given by "target").
+For attacks and spells, the zone and cursor are red. For assists, the zone and
+cursor are green.
+
 Title screen v0 (continue (if save file detected), new game -> choose difficulty)
 #15: Save state (rewrite sprite files to savedata, pull from there first if it
 exists unless new game)
-Battle game over
+parse helpers
+#28 Autosaves, restart chapter, battle game over
+exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
+healed, 0.5 of the value for assisters supporting any of these
+level up (+1 to all attributes, choice of extra attribute +1)
 
-v1 combat abilities for abelon and kath
-v1 skill trees for abelon and kath
-level up
-skill point spending
-attribute +1 at level up
+v1 skill trees for abelon and kath (change abelon's "champion" to "veteran")
+inspire: aoe long range assist for abelon
+trust: abelon triples his affinity for the turn
+pinpoint: find a weak spot. Very specific range required.
+assassinate: if pinpoint was used last turn, and you have at least 3 assists,
+ability instantly kills target. Otherwise it does nothing.
+judgement: abelon instantly kills an enemy anywhere on the map with 10% less HP
+crucible: abelon deals (insanely high damage) in a huge area around him, including
+to himself and allies. The ability cannot kill abelon
+forbearance: kath assist, kath takes all damage meant for an adjacent target
+guardian angel: an ally kath assists takes no damage until their next turn.
+observe: once per battle, elaine selects an ally. At the end of the battle,
+elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
+(she starts off very weak to compensate)
+hold the line: kath assist grants massive reaction to all allies in a line
 
-Combat assets: enemy wolves, wolf idle, attack animations, attack sfx, etc
-Basic beep and boop sfx
+
 
 Tune combat and difficulty levels around first battle until it is super fun.
 
-#18: Shopping and gold
+ASSET WORK!
 
+Kath walk animation
+Sam's software suggestion for music
+Forest theme to supercollider
+Use twilight of the gods for fight music
+More combat assets: enemy wolves, wolf idle, attack animations, attack sfx, etc
+Basic beep and boop sfx
+
+Split forest into three maps (west, south, north) with slightly different
+tilesets/lighting/coloring
+And flowers, logs, plants and such to forest
 Redo forest tileset
 Redo lighting engine
+
+CHAPTER 1 DESIGN & IMPLEMENTATION!
 
 Elaine scenario assets
 implement Elaine scenario
@@ -51,5 +82,8 @@ Lester, Shanti, Crystal Wolf, Generic knight assets
 Implement crystal wolf scenario
 Chapter 1 endcard
 
+POLISHING IT OFF!
+
+#18: Shopping and gold
 Tutorial
 Make executable

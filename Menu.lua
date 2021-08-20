@@ -226,6 +226,87 @@ function Menu:renderMenuItems(x, y, c)
     end
 end
 
+function Menu:renderRangeDiagram(x, y, skill_data)
+
+    -- Data
+    local shape = skill_data[1]
+    local aim = skill_data[2]
+    local type = skill_data[3]
+    local DIAGRAM_DIM = 105
+    local GRID_DIM = 7
+    local rect_dim = (DIAGRAM_DIM / GRID_DIM)
+
+    -- Render grid
+    for i = 0, GRID_DIM do
+        local factor = i * rect_dim
+        love.graphics.setColor(1, 1, 1, 0.8)
+        love.graphics.line(x + factor, y, x + factor, y + DIAGRAM_DIM)
+        love.graphics.line(x, y + factor, x + DIAGRAM_DIM, y + factor)
+    end
+
+    -- Render skill
+    local size = #shape
+    local shape_base = (size - GRID_DIM) / 2
+    for i = 1, GRID_DIM do
+        for j = 1, GRID_DIM do
+            local si = i + shape_base
+            local sj = j + shape_base
+            if si > 0 and si <= size and sj > 0 and sj <= size then
+
+                -- Render a square in the aoe zone
+                local x_tile = j - 1
+                local y_tile = i - 1
+                local x_offset = x_tile * rect_dim
+                local y_offset = y_tile * rect_dim
+                if shape[si][sj] then
+                    local clr = ite(type == ASSIST, {0, 0.6, 0, 0.5}, {0.6, 0, 0, 0.5})
+                    love.graphics.setColor(unpack(clr))
+                    love.graphics.rectangle('fill',
+                        x + x_offset + 1,
+                        y + y_offset + 1,
+                        rect_dim - 2,
+                        rect_dim - 2
+                    )
+                end
+
+                -- Render cursor on the center of the aoe
+                if i == (GRID_DIM + 1)/2 and j == (GRID_DIM + 1)/2 then
+
+                    -- If FREE and aim target = enemy, add enemy circle
+                    -- If FREE And aim target = ally, add ally circle
+
+                    local clr = ite(type == ASSIST, {0, 1, 0, 1}, {1, 0, 0, 1})
+                    love.graphics.setColor(unpack(clr))
+                    love.graphics.rectangle('line',
+                        x + x_offset + 1,
+                        y + y_offset + 1,
+                        rect_dim - 2,
+                        rect_dim - 2
+                    )
+                end
+            end
+        end
+    end
+
+    -- Render caster
+    local c_x_tile = (GRID_DIM - 1) / 2
+    local c_y_tile = (GRID_DIM - 1) / 2
+    if aim['type'] == DIRECTIONAL then
+        c_y_tile = c_y_tile + 1
+    elseif aim['type'] == FREE then
+        c_y_tile = c_y_tile + 2
+    end
+    local c_x = c_x_tile * rect_dim
+    local c_y = c_y_tile * rect_dim
+    love.graphics.setColor(0, 0, 1, 1)
+    love.graphics.ellipse('fill',
+        x + c_x + rect_dim/2,
+        y + c_y + rect_dim/2,
+        rect_dim/2 - 2,
+        rect_dim/2 - 2
+    )
+end
+
 function Menu:renderHoverBox(cam_x, cam_y, h_box)
 
     -- Hover box top left
@@ -241,7 +322,7 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
         local e = h_box[i]
         if e['type'] == 'text' then
             love.graphics.setColor(1, 1, 1, 1)
-            local msg = splitByCharLimit(h_box[i]['data'], HBOX_CHARS_PER_LINE)
+            local msg = e['data']
             for j = 1, #msg do
                 local cy = y + e['y'] + LINE_HEIGHT * (j-1)
                 for k = 1, #msg[j] do
@@ -258,6 +339,8 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
                 y + e['y'],
                 0, 1, 1, 0, 0
             )
+        elseif e['type'] == 'range' then
+            self:renderRangeDiagram(x + e['x'], y + e['y'], e['data'])
         end
     end
 end

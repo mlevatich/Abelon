@@ -1,3 +1,7 @@
+-- True false
+T = true
+F = false
+
 -- Dimensions of a tile
 TILE_WIDTH     = 32
 TILE_HEIGHT    = 32
@@ -56,9 +60,21 @@ ADEPT  = 2
 MASTER = 3
 
 -- Skill types
-WEAPON = 1
-SPELL  = 2
-ASSIST = 3
+ASSIST = 7
+WEAPON = 8
+SPELL  = 9
+
+-- Aim types/targets
+DIRECTIONAL = 1
+SELF_CAST   = 2
+FREE        = 3
+DIRECTIONAL_AIM = { ['type'] = DIRECTIONAL }
+SELF_CAST_AIM   = { ['type'] = SELF_CAST }
+FREE_AIM    = function(s, t)
+    return { ['type'] = FREE, ['scale'] = s, ['target'] = t } end
+ALL         = 3
+ALLY        = 4
+ENEMY       = 5
 
 -- Volume Levels
 OFF  = 0
