@@ -44,6 +44,15 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     return frames
 end
 
+function renderString(s, x, y, custom_pen)
+    if not custom_pen then
+        love.graphics.setColor(1, 1, 1, 1)
+    end
+    for i = 1, #s do
+        love.graphics.print(s:sub(i, i), x + CHAR_WIDTH * (i - 1), y)
+    end
+end
+
 function mkEle(t, data, x, y, extra)
     local ele = { ['type'] = t, ['data'] = data, ['x'] = x, ['y'] = y }
     if t == 'image' then ele['texture'] = extra end

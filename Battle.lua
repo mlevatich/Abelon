@@ -80,7 +80,11 @@ function Battle:init(battle_id, player, chapter)
     -- Battle menu
     self.battle_menu = nil
     self.cursor = { 1, 1, false }
+
+    -- Render timers
     self.pulse_timer = 0
+    self.shading = 0.2
+    self.shade_dir = 1
 
     -- Start the battle!
     self:begin()
@@ -95,9 +99,17 @@ function Battle:getCamera()
 end
 
 function Battle:begin()
+
+    -- Participants to battle behavior
     for i = 1, #self.allies  do  self.allies[i]:changeBehavior('battle') end
     for i = 1, #self.enemies do self.enemies[i]:changeBehavior('battle') end
     self.player:changeMode('battle')
+
+    -- Cursor to Abelon
+    local y, x = self:findSprite(self.player:getId())
+    self.cursor = { x, y, false }
+
+    -- Start menu open
     self:openStartMenu()
 end
 
@@ -131,20 +143,43 @@ function Battle:openStartMenu()
     self.battle_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
 end
 
-function Battle:openAttackMenu()
+function Battle:openAttackMenu(sp)
 
 end
 
-function Battle:openAssistMenu()
+function Battle:openAssistMenu(sp)
 
 end
 
-function Battle:openEnemyMenu()
+function Battle:openEnemyMenu(sp)
+    local attributes = MenuItem('Attributes', {}, nil, {
+        ['elements'] = sp:buildAttributeBox(),
+        ['w'] = 380
+    })
+    local readying = MenuItem('Next Attack', {}, nil, {
+        ['elements'] = self:buildReadyingBox(sp),
+        ['w'] = HBOX_WIDTH
+    })
+    -- TODO: For each skill, add targeting info
+    local skills = sp:mkSkillsMenu(false)
+    local opts = { attributes, readying, skills }
+    self.battle_menu = Menu(nil, opts, BOX_MARGIN, BOX_MARGIN)
+end
 
+function Battle:buildReadyingBox(sp)
+    -- TODO index on readying skill (not 1), and add targeting info
+    return sp.skills[1]:mkSkillBox(sp.itex, sp.icons, false)
 end
 
 function Battle:openOptionsMenu()
-
+    local die = function(c) love.event.quit(0) end
+    local restart = MenuItem('Restart battle', {}, nil, nil, pass,
+        "Start the battle over from the beginning?"
+    )
+    local quit = MenuItem('Save and quit', {}, nil, nil, die,
+        "Save battle state and close the game?")
+    local m = { restart, quit }
+    self.battle_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
 end
 
 function Battle:findSprite(sp_id)
@@ -167,12 +202,17 @@ function Battle:update(keys, dt)
 
     -- Navigate the battle menu if it is open
     if self.battle_menu then
+        local done = false
         if keys['d'] then
-            self.battle_menu:back()
+            done = self.battle_menu:back()
         elseif keys['f'] then
             self.battle_menu:forward(self.chapter)
         elseif keys['up'] ~= keys['down'] then
             self.battle_menu:hover(ite(keys['up'], UP, DOWN))
+        end
+
+        if done and self.phase ~= START then
+            self.battle_menu = nil
         end
     else
         -- Move cursor during the ally phase if no menu is open
@@ -195,6 +235,17 @@ function Battle:update(keys, dt)
                i + 1 <= self.grid_h and self.grid[i + 1][j] then
                 self.cursor[2] = self.cursor[2] + 1
             end
+
+            if keys['f'] then
+                local space = self.grid[i][j]
+                if not space.occupied then
+                    self:openOptionsMenu()
+                elseif self:isAlly(space.occupied) then
+                    pass()
+                else
+                    self:openEnemyMenu(space.occupied)
+                end
+            end
         end
     end
 
@@ -203,6 +254,15 @@ function Battle:update(keys, dt)
     while self.pulse_timer > PULSE do
         self.pulse_timer = self.pulse_timer - PULSE
         self.cursor[3] = not self.cursor[3]
+    end
+
+    self.shading = self.shading + self.shade_dir * dt / 3
+    if self.shading > 0.4 then
+        self.shading = 0.4
+        self.shade_dir = -1
+    elseif self.shading < 0.2 then
+        self.shading = 0.2
+        self.shade_dir = 1
     end
 end
 
@@ -229,6 +289,18 @@ function Battle:renderCursor()
     love.graphics.line(fx, fy, fx, fy - len)
 end
 
+function Battle:shadeSquare(i, j, clr)
+    if self.grid[i] and self.grid[i][j] then
+        local x = (self.origin_x + j - 1) * TILE_WIDTH
+        local y = (self.origin_y + i - 1) * TILE_HEIGHT
+        love.graphics.setColor(clr[1], clr[2], clr[3], self.shading)
+        love.graphics.rectangle('fill',
+            x + 2, y + 2,
+            TILE_WIDTH - 4, TILE_HEIGHT - 4
+        )
+    end
+end
+
 function Battle:renderGrid()
 
     -- Draw grid at fixed position
@@ -246,16 +318,80 @@ function Battle:renderGrid()
         end
     end
 
-    -- Draw cursor if not in a menu
-    if not self.battle_menu then
-        self:renderCursor()
+    -- Render movement range
+    local row = self.cursor[2]
+    local col = self.cursor[1]
+    local sp = self.grid[row][col].occupied
+    if sp then
+        local move = math.floor(sp.attributes['agility'] / 5)
+        local clr = { 0, 0, 1 }
+        self:shadeSquare(row, col, clr)
+        for i = 1, move do
+            self:shadeSquare(row + i, col, clr)
+            self:shadeSquare(row - i, col, clr)
+            self:shadeSquare(row, col + i, clr)
+            self:shadeSquare(row, col - i, clr)
+            for j = 1, move - i do
+                self:shadeSquare(row + i, col + j, clr)
+                self:shadeSquare(row - i, col + j, clr)
+                self:shadeSquare(row + i, col - j, clr)
+                self:shadeSquare(row - i, col - j, clr)
+            end
+        end
     end
+
+    -- Draw cursor always
+    self:renderCursor()
 end
 
 function Battle:renderOverlay(cam_x, cam_y)
 
+    -- Render battle hover box
+    local sp = self.grid[self.cursor[2]][self.cursor[1]].occupied
+    local str_size = 100
+    local box_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN * 2 - str_size
+    local box_y = cam_y + BOX_MARGIN
+    local box_w = str_size + BOX_MARGIN
+    local box_h = BOX_MARGIN + LINE_HEIGHT * 3 + 6
+    if sp then
+        local name_str = sp.name
+        local hp_str = sp.health .. "/" .. sp.attributes['endurance']
+        local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
+        if self:isAlly(sp) then
+            love.graphics.setColor(0, 0.1, 0, RECT_ALPHA)
+        else
+            love.graphics.setColor(0.1, 0, 0, RECT_ALPHA)
+        end
+        love.graphics.rectangle('fill', box_x, box_y, box_w, box_h)
+        renderString(name_str, box_x + HALF_MARGIN, box_y + HALF_MARGIN)
+        renderString(hp_str,
+            box_x + box_w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
+            box_y + HALF_MARGIN + LINE_HEIGHT + 3
+        )
+        renderString(ign_str,
+            box_x + box_w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
+            box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 9
+        )
+        love.graphics.draw(sp.itex, sp.icons[str_to_icon['endurance']],
+            box_x + HALF_MARGIN,
+            box_y + HALF_MARGIN + LINE_HEIGHT,
+            0, 1, 1, 0, 0
+        )
+        love.graphics.draw(sp.itex, sp.icons[str_to_icon['focus']],
+            box_x + HALF_MARGIN,
+            box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 6,
+            0, 1, 1, 0, 0
+        )
+    else
+        love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+        love.graphics.rectangle('fill', box_x, box_y, box_w,
+            BOX_MARGIN + LINE_HEIGHT
+        )
+        renderString('Empty', box_x + HALF_MARGIN, box_y + HALF_MARGIN)
+    end
+
+    -- Render battle menu
     if self.battle_menu then
         self.battle_menu:render(cam_x, cam_y, self.chapter)
     end
-    -- TODO: healthbars, ignea, status, etc.
 end

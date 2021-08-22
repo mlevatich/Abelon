@@ -169,17 +169,12 @@ function Menu:renderConfirmMessage(cam_x, cam_y)
     local cbox_y = cam_y + VIRTUAL_HEIGHT/2 - cbox_h/2 - HALF_MARGIN
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill', cbox_x, cbox_y, cbox_w, cbox_h)
-    love.graphics.setColor(1, 1, 1, 1)
     for i=1, #msg do
         local base_x = cam_x + VIRTUAL_WIDTH/2
                      - (#msg[i] * CHAR_WIDTH)/2
         local base_y = cbox_y + BOX_MARGIN
                      + LINE_HEIGHT * (i-1)
-        for j=1, #msg[i] do
-            local char = msg[i]:sub(j, j)
-            local cur_x = base_x + (j-1) * CHAR_WIDTH
-            love.graphics.print(char, cur_x, base_y)
-        end
+        renderString(msg[i], base_x, base_y)
     end
 end
 
@@ -193,11 +188,7 @@ function Menu:renderHoverDescription(cam_x, cam_y)
         local desc_x_base = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
                           - #desc * CHAR_WIDTH
         local desc_y_base = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
-        for i = 1, #desc do
-            local char = desc:sub(i, i)
-            local cur_x = desc_x_base + (i-1) * CHAR_WIDTH
-            love.graphics.print(char, cur_x, desc_y_base)
-        end
+        renderString(desc, desc_x_base, desc_y_base)
     end
 end
 
@@ -205,15 +196,11 @@ function Menu:renderMenuItems(x, y, c)
 
 
     for i=1, math.min(#self.menu_items, MAX_MENU_ITEMS) do
-        local cur_y = y + HALF_MARGIN + (i - 1)
-                    * LINE_HEIGHT
+        local base_x = 5 + x + BOX_MARGIN
+        local base_y = y + HALF_MARGIN + (i - 1) * LINE_HEIGHT
         local item = self.menu_items[i + self.base - 1]
         item.setPen(c)
-        for j=1, #item.name do
-            local char = item.name:sub(j,j)
-            local cur_x = 5 + x + BOX_MARGIN + (j-1) * CHAR_WIDTH
-            love.graphics.print(char, cur_x, cur_y)
-        end
+        renderString(item.name, base_x, base_y, true)
     end
 
     -- Render indicator of more content
@@ -259,7 +246,10 @@ function Menu:renderRangeDiagram(x, y, skill_data)
                 local x_offset = x_tile * rect_dim
                 local y_offset = y_tile * rect_dim
                 if shape[si][sj] then
-                    local clr = ite(type == ASSIST, {0, 0.6, 0, 0.5}, {0.6, 0, 0, 0.5})
+                    local clr = ite(type == ASSIST,
+                        {0, 0.6, 0, 0.5},
+                        {0.6, 0, 0, 0.5}
+                    )
                     love.graphics.setColor(unpack(clr))
                     love.graphics.rectangle('fill',
                         x + x_offset + 1,
@@ -309,13 +299,16 @@ end
 
 function Menu:renderHoverBox(cam_x, cam_y, h_box)
 
+    local w = h_box['w']
+    h_box = h_box['elements']
+
     -- Hover box top left
     local x = cam_x + BOX_MARGIN
     local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - HBOX_HEIGHT
 
     -- Draw hover box
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-    love.graphics.rectangle('fill', x, y, HBOX_WIDTH, HBOX_HEIGHT)
+    love.graphics.rectangle('fill', x, y, w, HBOX_HEIGHT)
 
     -- Draw elements in box relative to top left
     for i = 1, #h_box do
@@ -325,10 +318,7 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
             local msg = e['data']
             for j = 1, #msg do
                 local cy = y + e['y'] + LINE_HEIGHT * (j-1)
-                for k = 1, #msg[j] do
-                    local cx = x + e['x'] + CHAR_WIDTH * (k-1)
-                    love.graphics.print(msg[j]:sub(k, k), cx, cy)
-                end
+                renderString(msg[j], x + e['x'], cy)
             end
         elseif e['type'] == 'image' then
             love.graphics.setColor(1, 1, 1, 1)
@@ -346,9 +336,7 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
 end
 
 function Menu:renderSelectionArrow(x, y)
-    local arrow_y = y + HALF_MARGIN
-                  + LINE_HEIGHT
-                  * (self.hovering - 1)
+    local arrow_y = y + HALF_MARGIN + LINE_HEIGHT * (self.hovering - 1)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(">", x + 10, arrow_y)
 end

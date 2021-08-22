@@ -562,6 +562,22 @@ scripts = {
             ),
             choice({
                 {
+                    ['response'] = "Who are you?",
+                    ['events'] = {
+                        say(2, 2, false,
+                            "...What? Please tell me this is a jest, Abelon..."
+                        ),
+                        say(2, 3, false,
+                            "Whatever's happened to you here, it's of less \z
+                             importance than the battle at the gate. Come, we \z
+                             must reinforce our soldiers immediately!"
+                        )
+                    },
+                    ['result'] = {
+                        ['awareness'] = {0, 2}
+                    }
+                },
+                {
                     ['response'] = "No, I'm alone",
                     ['events'] = {
                         say(2, 2, false,
@@ -626,23 +642,6 @@ scripts = {
                         })
                     },
                     ['result'] = {}
-                },
-                {
-                    ['response'] = "Who are you?",
-                    ['events'] = {
-                        say(2, 2, false,
-                            "...What? Please tell me this is a jest, Abelon..."
-                        ),
-                        wait(1.5),
-                        say(2, 3, false,
-                            "Whatever's happened to you here, it's of less \z
-                             importance than the battle at the gate. Come, we \z
-                             must reinforce our soldiers immediately!"
-                        )
-                    },
-                    ['result'] = {
-                        ['awareness'] = {0, 2}
-                    }
                 }
             }),
             walk(2, 33, 73, 'walk'),
@@ -660,6 +659,19 @@ scripts = {
             waitForEvent('camera'),
             waitForEvent('walk'),
             choice({
+                {
+                    ['response'] = "Nothing we can't handle",
+                    ['events'] = {
+                        say(2, 1, false,
+                            "Now there's the grizzled old knight I remember! You \z
+                             had me worried for a moment. Let's finish them off \z
+                             quickly so we can reach the knights!"
+                        )
+                    },
+                    ['result'] = {
+                        ['impressions'] = {0, 1}
+                    }
+                },
                 {
                     ['response'] = "You shouldn't have come, then",
                     ['events'] = {
@@ -680,19 +692,6 @@ scripts = {
                     },
                     ['result'] = {
                         ['impressions'] = {0, -2}
-                    }
-                },
-                {
-                    ['response'] = "Nothing we can't handle",
-                    ['events'] = {
-                        say(2, 1, false,
-                            "Now there's the grizzled old knight I remember! You \z
-                             had me worried for a moment. Let's finish them off \z
-                             quickly so we can reach the knights!"
-                        )
-                    },
-                    ['result'] = {
-                        ['impressions'] = {0, 1}
                     }
                 }
             })

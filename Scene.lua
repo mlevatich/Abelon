@@ -106,7 +106,7 @@ function Scene:updateGroupY()
     get_y_center = function(sp)
         local x, y = sp:getPosition()
         local w, h = sp:getDimensions()
-        return y + h/2
+        return y + h / 2
     end
     self.group_y = avg(mapf(get_y_center, self.participants))
 end
@@ -142,9 +142,6 @@ function Scene:advance()
             if self.text_state['choices'] then
                 self:choose()
             end
-
-            -- Update participants approximate position to help with rendering
-            -- self.update_render = true
 
             -- Clear text state
             self.text_state = nil
@@ -244,12 +241,8 @@ function Scene:renderTextBox(x, y)
 
     -- Render black text box
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-    love.graphics.rectangle(
-        'fill',
-        x + BOX_MARGIN,
-        y + BOX_MARGIN,
-        BOX_WIDTH,
-        BOX_HEIGHT
+    love.graphics.rectangle('fill',
+        x + BOX_MARGIN, y + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT
     )
 end
 
@@ -259,20 +252,13 @@ function Scene:renderSpeaker(sp, pid, x, y)
 
         -- Render name of current speaker
         love.graphics.setColor(1, 1, 1, 1)
-        local n = sp:getName()
         local base_x = x + BOX_MARGIN * 2
         local base_y = y + BOX_MARGIN + TEXT_MARGIN_Y
-        for i=1, #n do
-            local char = n:sub(i, i)
-            local cur_x = base_x + (i - 1) * CHAR_WIDTH
-            love.graphics.print(char, cur_x, base_y)
-        end
+        renderString(sp:getName(), base_x, base_y)
 
         -- Render portrait of current speaker
         if sp.ptexture then
-            love.graphics.draw(
-                sp.ptexture,
-                sp.portraits[pid],
+            love.graphics.draw(sp.ptexture, sp.portraits[pid],
                 x + BOX_MARGIN * 1.5,
                 y + BOX_MARGIN * 2,
                 0, 1, 1, 0, 0
@@ -292,7 +278,7 @@ function Scene:renderText(text, base_x, base_y)
     -- Iterate over lines and characters in the text, printing one-by-one
     local line_num = 1
     local char_num = 1
-    for _=1, self.text_state['cnum'] do
+    for _ = 1, self.text_state['cnum'] do
 
         -- Position of current character
         local x = x_beginning + CHAR_WIDTH * (char_num - 1)
@@ -316,15 +302,10 @@ end
 function Scene:renderChoice(choices, base_x, base_y, flip)
 
     -- Get the length of the longest option
-    local longest = 0
-    for i=1, #choices do
-        if #choices[i] > longest then
-            longest = #choices[i]
-        end
-    end
+    local longest = max(mapf(string.len, choices))
 
     -- Compute width and height of choice box
-    local w = BOX_MARGIN * 2 + CHAR_WIDTH * (longest) + 10
+    local w = BOX_MARGIN * 2 + CHAR_WIDTH * (longest) + HALF_MARGIN
     local h = HALF_MARGIN + LINE_HEIGHT * (#choices)
 
     -- Compute coordinates of choice box
@@ -343,20 +324,9 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     -- Draw each option in choice box, character by character
     love.graphics.setColor(1, 1, 1, 1)
     for i=1, #choices do
-        for j=1, #choices[i] do
-
-            -- Get single character
-            local c = choices[i]:sub(j,j)
-
-            -- Get position of character
-            local x = rect_x + BOX_MARGIN
-                    + CHAR_WIDTH * (j + longest - #choices[i])
-            local y = rect_y + TEXT_MARGIN_Y + 2
-                    + LINE_HEIGHT * (i-1)
-
-            -- Draw character
-            love.graphics.print(c, x, y)
-        end
+        local x = rect_x + BOX_MARGIN + CHAR_WIDTH * (1 + longest - #choices[i])
+        local y = rect_y + TEXT_MARGIN_Y + 2 + LINE_HEIGHT * (i-1)
+        renderString(choices[i], x, y)
     end
 
     -- Render selection arrow on the selected option

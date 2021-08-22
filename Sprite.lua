@@ -217,7 +217,7 @@ function Sprite:toItem()
     end
 
     -- Initialize hover information
-    local hover_data = {
+    local hbox = {
         mkEle('text', {self.name}, HALF_MARGIN, HALF_MARGIN),
         mkEle('image', self.portraits[1],
             HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, self.ptexture),
@@ -226,7 +226,10 @@ function Sprite:toItem()
     }
 
     -- Create menu item
-    return MenuItem(self.name, children, 'See item options', hover_data)
+    return MenuItem(self.name, children, 'See item options', {
+        ['elements'] = hbox,
+        ['w'] = HBOX_WIDTH
+    })
 end
 
 function Sprite:mkUse()
@@ -302,43 +305,18 @@ end
 -- Sprite as a party member in a menu
 function Sprite:toPartyMember()
 
-    -- Make skills option
-    local learnedOf = function(t)
-        return filter(function(s) return s.type == t end, self.skills)
-    end
-    local skToMenu = function(s) return s:toMenuItem(self.itex, self.icons, self.skill_trees[1]['name']) end
-    local skills = MenuItem('Skills', {
-        MenuItem('Weapon', mapf(skToMenu, learnedOf(WEAPON)),
-                 'View ' .. self.name .. "'s weapon skills"),
-        MenuItem('Spell', mapf(skToMenu, learnedOf(SPELL)),
-                 'View ' .. self.name .. "'s spells"),
-        MenuItem('Assist', mapf(skToMenu, learnedOf(ASSIST)),
-                 'View ' .. self.name .. "'s assists")
-    }, 'View ' .. self.name .. "'s learned skills")
+    local skills = self:mkSkillsMenu(true)
 
-    -- Make skill trees option
-    local checkUnspent = function(c)
-        if self.skill_points > 0 then
-            love.graphics.setColor(unpack(HIGHLIGHT))
-        end
-    end
-    local mkLearn = function(s) return self:mkLearnable(s.id, s:toMenuItem(self.itex, self.icons, self.skill_trees[1]['name'])) end
-    local skt = self.skill_trees
-    local learn = MenuItem('Learn (' .. self.skill_points .. ')', {
-        MenuItem(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
-                 'View the ' .. skt[1]['name'] .. " tree"),
-        MenuItem(skt[2]['name'], mapf(mkLearn, skt[2]['skills']),
-                 'View the ' .. skt[2]['name'] .. " tree"),
-        MenuItem(skt[3]['name'], mapf(mkLearn, skt[3]['skills']),
-                 'View the ' .. skt[3]['name'] .. " tree")
-    }, 'Learn new skills', nil, nil, nil, checkUnspent)
+    local learn = self:mkLearnMenu()
 
-    -- Make hbox
     local hbox = self:buildAttributeBox()
 
     -- Put it all together!
     local opts = { skills, learn }
-    return MenuItem(self.name, opts, "See options for " .. self.name, hbox)
+    return MenuItem(self.name, opts, "See options for " .. self.name, {
+        ['elements'] = hbox,
+        ['w'] = HBOX_WIDTH
+    })
 end
 
 function Sprite:isLearnable(sk_id)
@@ -375,6 +353,57 @@ function Sprite:mkLearnable(sk_id, sk_item)
     return sk_item
 end
 
+function Sprite:mkSkillsMenu(with_skilltrees)
+
+    -- Helpers
+    local learnedOf = function(t)
+        return filter(function(s) return s.type == t end, self.skills)
+    end
+    local skToMenu = function(s)
+        return s:toMenuItem(self.itex, self.icons, with_skilltrees)
+    end
+
+    -- Weapon and attack skills
+    local skills = MenuItem('Skills', {
+        MenuItem('Weapon', mapf(skToMenu, learnedOf(WEAPON)),
+                 'View ' .. self.name .. "'s weapon skills"),
+        MenuItem('Spell', mapf(skToMenu, learnedOf(SPELL)),
+                 'View ' .. self.name .. "'s spells")
+    }, 'View ' .. self.name .. "'s learned skills")
+
+    -- Assists, if this sprite has them
+    if #learnedOf(ASSIST) > 0 then
+        table.insert(skills.children, MenuItem('Assist',
+            mapf(skToMenu, learnedOf(ASSIST)),
+            'View ' .. self.name .. "'s assists")
+        )
+    end
+
+    return skills
+end
+
+function Sprite:mkLearnMenu()
+    local checkUnspent = function(c)
+        if self.skill_points > 0 then
+            love.graphics.setColor(unpack(HIGHLIGHT))
+        end
+    end
+    local mkLearn = function(s)
+        return self:mkLearnable(s.id, s:toMenuItem(self.itex, self.icons, true))
+    end
+    local skt = self.skill_trees
+    local learn = MenuItem('Learn (' .. self.skill_points .. ')', {
+        MenuItem(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
+                 'View the ' .. skt[1]['name'] .. " tree"),
+        MenuItem(skt[2]['name'], mapf(mkLearn, skt[2]['skills']),
+                 'View the ' .. skt[2]['name'] .. " tree"),
+        MenuItem(skt[3]['name'], mapf(mkLearn, skt[3]['skills']),
+                 'View the ' .. skt[3]['name'] .. " tree")
+    }, 'Learn new skills', nil, nil, nil, checkUnspent)
+
+    return learn
+end
+
 function Sprite:buildAttributeBox()
 
     -- Constants
@@ -405,32 +434,21 @@ function Sprite:buildAttributeBox()
     end
 
     -- Build all elements
-    return {
+    local elements = {
         mkEle('text', {self.name}, HALF_MARGIN, line(1)),
         mkEle('text', {'Attributes'}, attrib_x, line(1)),
-        mkEle('text', {'Skills Learned'}, skills_x, line(1)),
         mkEle('image', self.versions[self.version_name]['idle'].frames[1],
             sp_x, line(2) + 5, self.sheet),
-        mkEle('text', {lvl_str},
-            sp_x - #lvl_str * CHAR_WIDTH / 2 + self.w / 2, line(4)),
         mkEle('text', {hp_str},
             sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
         mkEle('text', {ign_str},
             sp_x - #ign_str * CHAR_WIDTH / 2 + self.w / 2, line(6)),
-        mkEle('text', {exp_str},
-            sp_x - #exp_str * CHAR_WIDTH / 2 + self.w / 2, line(7)),
-        mkEle('text', {'Endurance'},                 attrib_ind,       line(2)),
-        mkEle('text', {'Focus'},                     attrib_ind,       line(4)),
-        mkEle('text', {'Force'},                     attrib_ind,       line(6)),
-        mkEle('text', {'Affinity'},                  attrib_ind + 125, line(2)),
-        mkEle('text', {'Reaction'},                  attrib_ind + 125, line(4)),
-        mkEle('text', {'Agility'},                   attrib_ind + 125, line(6)),
-        mkEle('text', {self.skill_trees[1]['name']}, skills_ind,       line(2)),
-        mkEle('text', {self.skill_trees[2]['name']}, skills_ind,       line(4)),
-        mkEle('text', {self.skill_trees[3]['name']}, skills_ind,       line(6)),
-        mkEle('image', icon(1), skills_ind - 25,  line(2), self.itex),
-        mkEle('image', icon(2), skills_ind - 25,  line(4), self.itex),
-        mkEle('image', icon(3), skills_ind - 25,  line(6), self.itex),
+        mkEle('text', {'Endurance'}, attrib_ind,       line(2)),
+        mkEle('text', {'Focus'},     attrib_ind,       line(4)),
+        mkEle('text', {'Force'},     attrib_ind,       line(6)),
+        mkEle('text', {'Affinity'},  attrib_ind + 125, line(2)),
+        mkEle('text', {'Reaction'},  attrib_ind + 125, line(4)),
+        mkEle('text', {'Agility'},   attrib_ind + 125, line(6)),
         mkEle('image', self.icons[str_to_icon['endurance']],
             attrib_ind - 25,  line(2), self.itex),
         mkEle('image', self.icons[str_to_icon['focus']],
@@ -454,14 +472,33 @@ function Sprite:buildAttributeBox()
         mkEle('text', {tostring(self.attributes['reaction'])},
             attrib_ind + indent2 + 100, line(5)),
         mkEle('text', {tostring(self.attributes['agility'])},
-            attrib_ind + indent2 + 100, line(7)),
-        mkEle('text', {tostring(#learnedIn(1))},
-            skills_ind + indent2,       line(3)),
-        mkEle('text', {tostring(#learnedIn(2))},
-            skills_ind + indent2,       line(5)),
-        mkEle('text', {tostring(#learnedIn(3))},
-            skills_ind + indent2,       line(7))
+            attrib_ind + indent2 + 100, line(7))
     }
+
+    -- Additional elements if sprite has skill trees
+    if next(self.skill_trees) ~= nil then
+        elements = concat(elements, {
+            mkEle('text', {lvl_str},
+                sp_x - #lvl_str * CHAR_WIDTH / 2 + self.w / 2, line(4)),
+            mkEle('text', {exp_str},
+                sp_x - #exp_str * CHAR_WIDTH / 2 + self.w / 2, line(7)),
+            mkEle('text', {'Skills Learned'}, skills_x, line(1)),
+            mkEle('text', {self.skill_trees[1]['name']}, skills_ind, line(2)),
+            mkEle('text', {self.skill_trees[2]['name']}, skills_ind, line(4)),
+            mkEle('text', {self.skill_trees[3]['name']}, skills_ind, line(6)),
+            mkEle('image', icon(1), skills_ind - 25, line(2), self.itex),
+            mkEle('image', icon(2), skills_ind - 25, line(4), self.itex),
+            mkEle('image', icon(3), skills_ind - 25, line(6), self.itex),
+            mkEle('text', {tostring(#learnedIn(1))},
+                skills_ind + indent2,       line(3)),
+            mkEle('text', {tostring(#learnedIn(2))},
+                skills_ind + indent2,       line(5)),
+            mkEle('text', {tostring(#learnedIn(3))},
+                skills_ind + indent2,       line(7))
+        })
+    end
+
+    return elements
 end
 
 -- Learn a new skill

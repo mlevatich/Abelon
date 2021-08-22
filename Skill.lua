@@ -30,7 +30,15 @@ function Skill:init(id, n, ti, st, si, tr, r, at, t, c, e, d)
     self.effect = e  -- Function taking the caster and target as inputs
 end
 
-function Skill:toMenuItem(itex, icons)
+function Skill:toMenuItem(itex, icons, with_skilltrees)
+    local hbox = self:mkSkillBox(itex, icons, with_skilltrees)
+    return MenuItem(self.name, {}, nil, {
+        ['elements'] = hbox,
+        ['w'] = HBOX_WIDTH
+    })
+end
+
+function Skill:mkSkillBox(itex, icons, with_skilltrees)
     local req_x = 410
     local req_y = HALF_MARGIN
     local desc_x = HALF_MARGIN * 3 + PORTRAIT_SIZE - 5
@@ -42,22 +50,6 @@ function Skill:toMenuItem(itex, icons)
             HALF_MARGIN, 7, itex),
         mkEle('image', icons[self.type],
             HALF_MARGIN + 25, 7, itex),
-        mkEle('image', icons[str_to_icon[self.reqs[1][1]]],
-            req_x, req_y, itex),
-        mkEle('image', icons[str_to_icon[self.reqs[2][1]]],
-            req_x + BOX_MARGIN * 2, req_y, itex),
-        mkEle('image', icons[str_to_icon[self.reqs[3][1]]],
-            req_x + BOX_MARGIN * 4, req_y, itex),
-        mkEle('text', {tostring(self.reqs[1][2])},
-            req_x + 8, req_y + LINE_HEIGHT + 2, itex),
-        mkEle('text', {tostring(self.reqs[2][2])},
-            req_x + BOX_MARGIN * 2 + 8, req_y + LINE_HEIGHT + 2, itex),
-        mkEle('text', {tostring(self.reqs[3][2])},
-            req_x + BOX_MARGIN * 4 + 8, req_y + LINE_HEIGHT + 2, itex),
-        mkEle('text', {'Requirements'},
-            req_x, req_y + LINE_HEIGHT * 2),
-        mkEle('text', {'  to learn  '},
-            req_x, req_y + LINE_HEIGHT * 3),
         mkEle('text', splitByCharLimit(self.desc, 28),
             desc_x, BOX_MARGIN + LINE_HEIGHT - 3),
         mkEle('text', {'Cost: ' .. self.cost},
@@ -73,7 +65,27 @@ function Skill:toMenuItem(itex, icons)
         mkEle('range', { self.range, self.aim, self.type },
             range_x, range_y)
     }
-    return MenuItem(self.name, {}, nil, hbox)
+    if with_skilltrees then
+        hbox = concat(hbox, {
+            mkEle('image', icons[str_to_icon[self.reqs[1][1]]],
+                req_x, req_y, itex),
+            mkEle('image', icons[str_to_icon[self.reqs[2][1]]],
+                req_x + BOX_MARGIN * 2, req_y, itex),
+            mkEle('image', icons[str_to_icon[self.reqs[3][1]]],
+                req_x + BOX_MARGIN * 4, req_y, itex),
+            mkEle('text', {tostring(self.reqs[1][2])},
+                req_x + 8, req_y + LINE_HEIGHT + 2, itex),
+            mkEle('text', {tostring(self.reqs[2][2])},
+                req_x + BOX_MARGIN * 2 + 8, req_y + LINE_HEIGHT + 2, itex),
+            mkEle('text', {tostring(self.reqs[3][2])},
+                req_x + BOX_MARGIN * 4 + 8, req_y + LINE_HEIGHT + 2, itex),
+            mkEle('text', {'Requirements'},
+                req_x, req_y + LINE_HEIGHT * 2),
+            mkEle('text', {'  to learn  '},
+                req_x, req_y + LINE_HEIGHT * 3)
+        })
+    end
+    return hbox
 end
 
 function Skill:treeToIcon()
@@ -96,22 +108,6 @@ function mkLine(n)
     end
     return shape
 end
-
-str_to_icon = {
-    ['Demon'] = 1,
-    ['Champion'] = 2,
-    ['Executioner'] = 3,
-    ['Defender'] = 4,
-    ['Hero'] = 5,
-    ['Cleric'] = 6,
-    ['endurance'] = 10,
-    ['focus'] = 11,
-    ['force'] = 12,
-    ['affinity'] = 13,
-    ['reaction'] = 14,
-    ['agility'] = 15,
-    ['empty'] = 17
-}
 
 skills = {
     ['sever'] = Skill('sever', 'Sever',
@@ -172,5 +168,13 @@ skills = {
         "Infuse the air to heal wounds. Assisted allies recover \z
          (Affinity * 1.0) health. Can target a square within three spaces of \z
          Kath."
-    )
+    ),
+    ['bite'] = Skill('bite', 'Bite',
+        'Enemy', WEAPON, str_to_icon['force'],
+        {},
+        { { T } }, DIRECTIONAL_AIM, ENEMY,
+        0, nil,
+        "Leap at an adjacent enemy and bite into them. Deals \z
+         (Force * 1.0) weapon damage to an enemy next to the user."
+    ),
 }

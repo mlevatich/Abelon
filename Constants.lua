@@ -67,6 +67,23 @@ ASSIST = 7
 WEAPON = 8
 SPELL  = 9
 
+str_to_icon = {
+    ['Demon'] = 1,
+    ['Champion'] = 2,
+    ['Executioner'] = 3,
+    ['Defender'] = 4,
+    ['Hero'] = 5,
+    ['Cleric'] = 6,
+    ['endurance'] = 10,
+    ['focus'] = 11,
+    ['force'] = 12,
+    ['affinity'] = 13,
+    ['reaction'] = 14,
+    ['agility'] = 15,
+    ['Enemy'] = 16,
+    ['empty'] = 18
+}
+
 -- Aim types/targets
 DIRECTIONAL = 1
 SELF_CAST   = 2

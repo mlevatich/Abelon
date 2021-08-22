@@ -1,12 +1,10 @@
 THE COMBAT ENGINE!
 
-#34
-#35
 #36
 #37
 #38
-Enemy AI
 Enemy phase
+Enemy AI
 
 v1 skill trees for abelon and kath (change abelon's "champion" to "veteran")
 inspire: aoe long range assist for abelon
