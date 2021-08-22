@@ -1,0 +1,22 @@
+// Sprite attributes
+
+Name: Wolf
+Width: 32
+Height: 32
+Depth: 5
+Sheet: 108
+Interactive: no
+Blocking: no
+Animations: idle:0 walking:1,2,3,4
+Versions: standard
+Resting: idle
+Portrait: no
+Impression: 0
+Awareness: 0
+Discard: no
+Present:
+Level: 5
+Attributes: endurance:21 focus:4 force:17 affinity:0 reaction:7 agility:10
+Skilltrees:
+Skills:
+Description: A wolf.

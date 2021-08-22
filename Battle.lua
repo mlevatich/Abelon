@@ -80,12 +80,16 @@ function Battle:openStartMenu()
     local die = function(c) love.event.quit(0) end
     local next = function(c) self:nextPhase() end
     local begin = MenuItem('Begin turn', {}, nil, nil, next)
-    local restart = MenuItem('Restart battle', {}, nil, nil, pass,
+    local restart1 = MenuItem('Restart battle', {}, nil, nil, pass,
         "Start the battle over from the beginning?"
+    )
+    local restart2 = MenuItem('Restart chapter', {}, nil, nil, pass,
+        "Are you SURE you want to restart the chapter? You will lose ALL \z
+         progress made during the chapter."
     )
     local quit = MenuItem('Save and quit', {}, nil, nil, die,
         "Save current progress and close the game?")
-    self.player:openMenu({ begin, restart, quit })
+    self.player:openMenu({ begin, restart1, restart2, quit }, true)
 end
 
 function Battle:openAttackMenu()
@@ -111,7 +115,7 @@ end
 function Battle:renderGrid()
 
     -- Draw grid at fixed position
-    love.graphics.setColor(1, 1, 1, 0.4)
+    love.graphics.setColor(0.3, 0.3, 0.3, 1)
     for i = 1, self.grid_h do
         for j = 1, self.grid_w do
             if self.grid[i][j] then

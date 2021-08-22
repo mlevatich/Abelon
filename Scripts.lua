@@ -88,7 +88,7 @@ function walkTo(p1, p2, label, first)
     return function(scene)
         local sp1 = scene.participants[p1]
         local sp2 = scene.participants[p2]
-        local map = sp2.chapter:getMap()
+        local map = scene.chapter:getMap()
         local x, y = sp2:getPosition()
         local sp2_tile = map:tileAtExact(x, y)
         local offset = ite(sp1.x > sp2.x, 1.2, -1.2)
@@ -109,8 +109,16 @@ function walkTo(p1, p2, label, first)
     end
 end
 
+function teleport(p1, tile_x, tile_y)
+    return function(scene)
+        local sp1 = scene.participants[p1]
+        local x, y = scene.chapter:getMap():tileToPixels(tile_x, tile_y)
+        sp1:resetPosition(x, y)
+    end
+end
+
 function choice(op)
-    return function (scene)
+    return function(scene)
         slect = function(s) return mapf(function(c) return c[s] end, op) end
         scene.text_state['choices'] = slect('response')
         scene.text_state['choice_result'] = slect('result')
@@ -510,7 +518,7 @@ scripts = {
     },
 
     ['meet_kath'] = {
-        ['ids'] = {'abelon', 'kath'},
+        ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2'},
         ['events'] = {
             lookAt(2, 1),
             focus(2, 200),
@@ -543,6 +551,10 @@ scripts = {
             walk(2, 28, 73, 'walk'),
             waitForEvent('walk'),
             lookAt(2, 1),
+            teleport(3, 41, 69),
+            teleport(4, 42, 73),
+            lookAt(3, 1),
+            lookAt(4, 1),
             say(2, 3, true,
                 "I'll have none of your usual protests about bandages and such, \z
                  that sword arm of yours is well worth my ignea. Did one of the \z

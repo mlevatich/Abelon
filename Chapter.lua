@@ -126,12 +126,14 @@ function Chapter:load()
 
             -- If the sprite is the player character, we make the current map
             -- into the chapter's starting map, and initialize a player object
-            if first_interaction == 'P' then
-                self.current_map = self.maps[current_map_name]
-                self.player = Player(new_sp)
-                self:updateCamera(100)
-            else
-                scripts[current_sp_id] = scripts[first_interaction]
+            if first_interaction then
+                if first_interaction == 'P' then
+                    self.current_map = self.maps[current_map_name]
+                    self.player = Player(new_sp)
+                    self:updateCamera(100)
+                else
+                    scripts[current_sp_id] = scripts[first_interaction]
+                end
             end
         end
     end

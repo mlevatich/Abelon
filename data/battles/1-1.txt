@@ -1,6 +1,6 @@
 // Battle stats
 
-TileOrigin: 30,71
+TileOrigin: 31,67
 Allies: abelon,kath
 Enemies: wolf1,wolf2
 Wincon: rout
@@ -8,8 +8,13 @@ Losscon: death
 
 // Battle grid
 
-Dimensions: 15,4
-TTTTTTTTTTTTTTT
-TTTTTTTTTTTTTTT
-TTTTTTTTTTTTTTT
-TTTTTTFFFFFFFFF
+Dimensions: 11,9
+FFFFFFFFTTT
+FFFTTTTTTTT
+TTTTTTTTTTT
+TTTTTTTTTTT
+TTTTTTTTTTT
+TTTTTTTTTTT
+TTTTTTTTTTT
+FFFTTTTTTFF
+FFFFFFTTFFF

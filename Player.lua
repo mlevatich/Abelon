@@ -39,13 +39,13 @@ function Player:init(sp)
     self.open_menu = nil
 end
 
-function Player:openMenu(m)
+function Player:openMenu(m, locked)
 
     -- Change control mode to menu-browsing
     self:changeMode('browse')
 
     -- Create and open menu
-    self.open_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
+    self.open_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN, nil, locked)
 end
 
 -- When player presses i to open the inventory, the inventory menu appears
@@ -321,7 +321,7 @@ function Player:browseMode(c)
         self.open_menu:hover(ite(up, UP, DOWN))
     end
 
-    if done then
+    if done and not self.open_menu.locked then
         self.open_menu:reset()
         self.open_menu = nil
         self:changeMode('free')
