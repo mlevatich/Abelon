@@ -12,9 +12,9 @@ function Music:init(name)
     -- Parse data file
     local data_file = 'Abelon/data/music/' .. self.name .. '.txt'
     local data = readLines(data_file)
-    self.end_intro = tonumber(readField(data[3]))
-    self.begin_fade = tonumber(readField(data[4]))
-    self.fade_duration = tonumber(readField(data[5]))
+    self.end_intro = readField(data[3], tonumber)
+    self.begin_fade = readField(data[4], tonumber)
+    self.fade_duration = readField(data[5], tonumber)
 
     -- Load audio source
     local audio_file = 'audio/music/' .. self.name .. '.wav'

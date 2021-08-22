@@ -412,7 +412,7 @@ scripts = {
                     },
                     ['result'] = {
                         ['do'] = function(c)
-                            local sp = c:dropSprite('medallion')
+                            local sp = c:getMap():dropSprite('medallion')
                             c.player:acquire(sp)
                         end
                     }
@@ -442,7 +442,7 @@ scripts = {
                         },
                         ['result'] = {
                             ['do'] = function(c)
-                                local sp = c:dropSprite('medallion')
+                                local sp = c:getMap():dropSprite('medallion')
                                 c.player:acquire(sp)
                             end
                         }
@@ -687,8 +687,9 @@ scripts = {
         },
         ['result'] = {
             ['do'] = function(c)
-                local kath = c.current_map:getSpriteById('kath')
+                local kath = c.current_map:getSprite('kath')
                 c.player:joinParty(kath)
+                c:launchBattle('1-1')
             end
         }
     }

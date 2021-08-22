@@ -8,10 +8,22 @@ THE COMBAT ENGINE!
 Enemy AI
 Enemy phase
 
-assists take affect when a character stops their movement. So they can benefit
-from two assists if they move into an assist, attack, and then move into a
-different assist (if an assist has a one-time effect, such as a heal, it can
-only proc once for the same character).
+v1 skill trees for abelon and kath (change abelon's "champion" to "veteran")
+inspire: aoe long range assist for abelon
+trust: abelon triples his affinity for the turn
+pinpoint: find a weak spot. Very specific range required.
+assassinate: if pinpoint was used last turn, and you have at least 3 assists,
+ability instantly kills target. Otherwise it does nothing.
+judgement: abelon instantly kills an enemy anywhere on the map with 10% less HP
+crucible: abelon deals (insanely high damage) in a huge area around him, including
+to himself and allies. The ability cannot kill abelon
+forbearance: kath assist, kath takes all damage meant for an adjacent target
+guardian angel: an ally kath assists takes no damage until their next turn.
+observe: once per battle, elaine selects an ally. At the end of the battle,
+elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
+(she starts off very weak to compensate)
+hold the line: kath assist grants massive reaction to all allies in a line
+in shadow: passive ability - if no assists, enemies wont target you
 
 When aiming an attack, there are two indicators: the (colored) cursor, and the
 light colored filled-squares zone indicator. The zone is given by the AOE shape,
@@ -31,24 +43,6 @@ parse helpers
 exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
 healed, 0.5 of the value for assisters supporting any of these
 level up (+1 to all attributes, choice of extra attribute +1)
-
-v1 skill trees for abelon and kath (change abelon's "champion" to "veteran")
-inspire: aoe long range assist for abelon
-trust: abelon triples his affinity for the turn
-pinpoint: find a weak spot. Very specific range required.
-assassinate: if pinpoint was used last turn, and you have at least 3 assists,
-ability instantly kills target. Otherwise it does nothing.
-judgement: abelon instantly kills an enemy anywhere on the map with 10% less HP
-crucible: abelon deals (insanely high damage) in a huge area around him, including
-to himself and allies. The ability cannot kill abelon
-forbearance: kath assist, kath takes all damage meant for an adjacent target
-guardian angel: an ally kath assists takes no damage until their next turn.
-observe: once per battle, elaine selects an ally. At the end of the battle,
-elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
-(she starts off very weak to compensate)
-hold the line: kath assist grants massive reaction to all allies in a line
-
-
 
 Tune combat and difficulty levels around first battle until it is super fun.
 

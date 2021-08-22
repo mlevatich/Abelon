@@ -11,7 +11,7 @@ local PAUSE_WEIGHT = 10
 local BREATHE_WEIGHT = 3
 
 -- Initialize a new dialogue
-function Scene:init(scene_id, map, player, chapter)
+function Scene:init(scene_id, player, chapter)
 
     -- Retrieve scene by id
     self.id = scene_id
@@ -19,14 +19,9 @@ function Scene:init(scene_id, map, player, chapter)
     self.chapter = chapter
 
     -- Retrieve scene participants from the map
+    local getSp = function(sp) return self.chapter:getSprite(sp) end
     self.player = player
-    self.participants = {}
-    local sps = concat(map:getSprites(), self.player.inventory)
-    for i=1, #self.script['ids'] do
-        sp_id = find(mapf(function(s) return s.id end, sps),
-                     self.script['ids'][i])
-        table.insert(self.participants, sps[sp_id])
-    end
+    self.participants = mapf(getSp, self.script['ids'])
     self.update_render = false
     self.flip = false
 
@@ -61,9 +56,6 @@ end
 -- End the scene
 function Scene:close()
 
-    -- Process scene results
-    self:processResult(self.script['result'])
-
     -- Return participants to resting behavior
     for i = 1, #self.participants do
         self.participants[i]:atEase()
@@ -71,6 +63,9 @@ function Scene:close()
 
     -- Give control back to the player
     self.player:changeMode('free')
+
+    -- Process scene results
+    self:processResult(self.script['result'])
 end
 
 function Scene:release(label)

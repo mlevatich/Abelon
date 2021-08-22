@@ -92,6 +92,16 @@ function Map:getSprites()
     return self.sprites
 end
 
+-- Get a sprite by its id
+function Map:getSprite(id)
+    for i = 1, #self.sprites do
+        if self.sprites[i]:getId() == id then
+            return self.sprites[i]
+        end
+    end
+    return nil
+end
+
 -- Populate the map with a sprite object
 function Map:addSprite(sp)
 
@@ -107,38 +117,17 @@ function Map:addSprite(sp)
     self.sprites[#self.sprites+1] = sp
 end
 
--- Remove a sprite object from this map
-function Map:dropSprite(sp)
+-- Remove a sprite from this map
+function Map:dropSprite(sp_id)
 
     -- Find and remove sprite
     for i = 1, #self.sprites do
-        if self.sprites[i] == sp then
+        local sp = self.sprites[i]
+        if sp.id == sp_id then
             table.remove(self.sprites, i)
-            return
+            return sp
         end
     end
-end
-
--- Remove all sprites satisfying filter 'f'
-function Map:dropSpriteWhere(f)
-
-    -- Find and remove all sprites
-    local i = 1
-    while i <= #self.sprites do
-        if f(self.sprites[i]) then
-            return table.remove(self.sprites, i)
-        end
-    end
-end
-
--- Get a sprite by its id
-function Map:getSpriteById(id)
-    for i = 1, #self.sprites do
-        if self.sprites[i]:getID() == id then
-            return self.sprites[i]
-        end
-    end
-    return nil
 end
 
 -- Return name of map
@@ -319,7 +308,7 @@ function Map:applyLighting()
 end
 
 -- Renders the map to the screen
-function Map:render(cam_x, cam_y)
+function Map:renderTiles()
 
     -- Render all non-empty tiles
     for y=1, self.height do
@@ -335,12 +324,17 @@ function Map:render(cam_x, cam_y)
             end
         end
     end
+end
+
+function Map:renderSprites(cam_x, cam_y)
 
     -- Render all of the sprites on the map
     for _, sp in pairs(self.sprites) do
         sp:render(cam_x, cam_y)
     end
+end
 
-    -- Apply lighting effects to map
+-- Apply lighting effects to map
+function Map:renderLighting()
     self:applyLighting()
 end

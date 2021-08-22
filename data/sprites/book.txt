@@ -19,5 +19,4 @@ Level: 0
 Attributes:
 Skilltrees:
 Skills:
-
-A strange book.
+Description: A strange book. EOS

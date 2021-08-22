@@ -7,6 +7,11 @@ to other allies. Assists affect a range of tiles like moves in chess. Could be
 an assist to close characters, far away characters, diagonal characters,
 characters in a straight line, characters around an enemy. etc.
 
+assists take affect when a character stops their movement. So they can benefit
+from two assists if they move into an assist, attack, and then move into a
+different assist (if an assist has a one-time effect, such as a heal, it can
+only proc once for the same character).
+
 Characters have weapon skills, spells, and assists, as well as passives (not
 many passives though). Spells and assists may cost ignea. These four types of
 abilities can be learned through a skill tree system. This, along with stats,

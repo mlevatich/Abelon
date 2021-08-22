@@ -8,6 +8,7 @@ require 'Scene'
 require 'Music'
 require 'Triggers'
 require 'Scripts'
+require 'Battle'
 
 Chapter = Class{}
 
@@ -63,6 +64,9 @@ function Chapter:init(id, spriteesheet)
     -- Tracking the scene the player is currently in
     self.current_scene = nil
     self.scene_inputs = {}
+
+    -- If the player is in a battle, it goes here
+    self.battle = nil
 
     -- Read into the above fields from chapter file
     self:load()
@@ -152,6 +156,10 @@ function Chapter:getActiveSprites()
     return self.current_map:getSprites()
 end
 
+function Chapter:getSprite(sp_id)
+    return self.sprites[sp_id]
+end
+
 -- Return the active map belonging to this chapter
 function Chapter:getMap()
     return self.current_map
@@ -159,18 +167,13 @@ end
 
 function Chapter:playerNearSprite(sp_id)
     local x, y = self.player.sp:getPosition()
-    local sp = self.current_map:getSpriteById(sp_id)
+    local sp = self.current_map:getSprite(sp_id)
     if sp then
         local kx, ky = sp:getPosition()
         return abs(x - kx) <= PRESENT_DISTANCE * TILE_WIDTH
            and abs(y - ky) <= PRESENT_DISTANCE * TILE_HEIGHT
     end
     return false
-end
-
-function Chapter:dropSprite(sp_id)
-    is_sp = function(s) return s.id == sp_id end
-    return self.current_map:dropSpriteWhere(is_sp)
 end
 
 function Chapter:setDifficulty(d)
@@ -200,16 +203,20 @@ function Chapter:setTextVolume(vol)
     self.text_volume = vol
 end
 
+function Chapter:launchBattle(b_id)
+    self.battle = Battle(b_id, self.player, self)
+end
+
 -- Start scene with the given scene id
 function Chapter:launchScene(s_id)
     self.player:changeMode('scene')
     self.player:changeBehavior('idle')
-    self.current_scene = Scene(s_id, self.current_map, self.player, self)
+    self.current_scene = Scene(s_id, self.player, self)
 end
 
 -- Begin an interaction with the target sprite
 function Chapter:interactWith(target)
-    self:launchScene(target:getID())
+    self:launchScene(target:getId())
 end
 
 -- Store player inputs to a scene, to be processed on update
@@ -260,7 +267,7 @@ function Chapter:performTransition()
     self.player:resetPosition(tr['x'], tr['y'])
 
     -- Move player from old map to new map
-    self.maps[old_map]:dropSprite(self.player)
+    self.maps[old_map]:dropSprite(self.player:getId())
     self.maps[new_map]:addSprite(self.player)
 
     -- If music is different for new map, stop old music and start new music
@@ -321,21 +328,31 @@ function Chapter:updateCamera(dt)
     local y_offset = 0
     local speed = self.camera_speed
 
-    -- Overwrite camera info from scene if it exists
-    if self.current_scene then
-        focus = self.current_scene.cam_lock
-        x_offset = self.current_scene.cam_offset_x
-        y_offset = self.current_scene.cam_offset_y
-        speed = self.current_scene.cam_speed
-    end
+    -- Target: where is the camera headed?
+    local x_target = 0
+    local y_target = 0
+    if not self.battle then
 
-    -- Compute camera target to move to
-    local x, y = focus:getPosition()
-    local w, h = focus:getDimensions()
-    local x_target = x + w/2 + x_offset - VIRTUAL_WIDTH / 2
-    local y_target = y + h/2 + y_offset - VIRTUAL_HEIGHT / 2
-    x_target = math.max(0, math.min(x_target, cam_max_x))
-    y_target = math.max(0, math.min(y_target, cam_max_y))
+        -- Overwrite camera info from scene if it exists
+        if self.current_scene then
+            focus = self.current_scene.cam_lock
+            x_offset = self.current_scene.cam_offset_x
+            y_offset = self.current_scene.cam_offset_y
+            speed = self.current_scene.cam_speed
+        end
+
+        -- Compute camera target to move to
+        local x, y = focus:getPosition()
+        local w, h = focus:getDimensions()
+        x_target = x + w/2 + x_offset - VIRTUAL_WIDTH / 2
+        y_target = y + h/2 + y_offset - VIRTUAL_HEIGHT / 2
+        x_target = math.max(0, math.min(x_target, cam_max_x))
+        y_target = math.max(0, math.min(y_target, cam_max_y))
+    else
+
+        -- If in a battle, follow battle cam!
+        x_target, y_target = self.battle:getCamera()
+    end
 
     -- Compute move in the direction of camera target based on dt
     local new_x = ite(self.camera_x < x_target,
@@ -378,6 +395,11 @@ function Chapter:update(dt)
     -- Update the chapter's active map and sprites
     local new_transition = self.current_map:update(dt, self.player)
 
+    -- Update current battle
+    if self.battle then
+        self.battle:update(dt)
+    end
+
     -- Update player character based on key-presses
     self.player:update(self)
 
@@ -410,9 +432,24 @@ function Chapter:render()
     -- Move to the camera position
     love.graphics.translate(-self.camera_x, -self.camera_y)
 
-    -- Render the map
+    -- Render the map tiles
     love.graphics.setColor(1, 1, 1, self.alpha)
-    self.current_map:render(self.camera_x, self.camera_y)
+    self.current_map:renderTiles()
+
+    -- Render battle grid
+    if self.battle then
+        self.battle:renderGrid()
+    end
+
+    -- Render sprites on map and lighting
+    love.graphics.setColor(1, 1, 1, self.alpha)
+    self.current_map:renderSprites(self.camera_x, self.camera_y)
+    self.current_map:renderLighting()
+
+    -- Render battle overlay
+    if self.battle then
+        self.battle:renderOverlay(self.camera_x, self.camera_y)
+    end
 
     -- Render player inventory
     self.player:render(self.camera_x, self.camera_y, self)

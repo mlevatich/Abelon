@@ -2,6 +2,10 @@
 T = true
 F = false
 
+-- Parsing variables
+VAL = 1
+ARR = 2
+
 -- Dimensions of a tile
 TILE_WIDTH     = 32
 TILE_HEIGHT    = 32
@@ -28,7 +32,6 @@ RECT_ALPHA     = 0.4
 HBOX_WIDTH     = 540
 DISABLE        = { 1, 1, 1, 0.5 }
 HIGHLIGHT      = { 0.7, 1, 1, 1 }
-
 
 -- Derived text variables
 LINE_HEIGHT = FONT_SIZE + TEXT_MARGIN_Y
@@ -70,11 +73,18 @@ SELF_CAST   = 2
 FREE        = 3
 DIRECTIONAL_AIM = { ['type'] = DIRECTIONAL }
 SELF_CAST_AIM   = { ['type'] = SELF_CAST }
-FREE_AIM    = function(s, t)
-    return { ['type'] = FREE, ['scale'] = s, ['target'] = t } end
-ALL         = 3
-ALLY        = 4
-ENEMY       = 5
+FREE_AIM        = function(s, t)
+                      return { ['type'] = FREE, ['scale'] = s, ['target'] = t }
+                  end
+ALL   = 4
+ALLY  = 5
+ENEMY = 6
+START = 7
+
+-- Win/lose conditions
+ROUT = function(b) return true end
+
+
 
 -- Volume Levels
 OFF  = 0

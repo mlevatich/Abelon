@@ -8,7 +8,7 @@ Sheet: 0
 Interactive: yes
 Blocking: yes
 Animations: idle:0 walking:1,2,3,4
-Versions: standard injured
+Versions: standard,injured
 Resting: idle
 Portrait: yes
 Impression: 50
@@ -19,5 +19,4 @@ Level: 6
 Attributes: endurance:22 focus:10 force:17 affinity:4 reaction:6 agility:11
 Skilltrees: Demon:conflagration Champion:guard_blindspot Executioner:sever
 Skills: sever,guard_blindspot
-
-The knight Abelon.
+Description: The knight Abelon. EOS

@@ -39,11 +39,19 @@ function Player:init(sp)
     self.open_menu = nil
 end
 
+function Player:openMenu(m)
+
+    -- Change control mode to menu-browsing
+    self:changeMode('browse')
+
+    -- Create and open menu
+    self.open_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
+end
+
 -- When player presses i to open the inventory, the inventory menu appears
 function Player:openInventory()
 
-    -- Change player behavior to menu-browsing
-    self:changeMode('browse')
+    -- Player character is idle while navigating the inventory
     self:changeBehavior('idle')
 
     -- Make menu
@@ -52,10 +60,9 @@ function Player:openInventory()
 
     local inv_m = MenuItem('Items', inv_ch, 'View possessions')
     local party_m = MenuItem('Party', party_ch, 'View traveling companions')
-    local menu = { inv_m, party_m, self:mkSettingsMenu(), self:mkQuitMenu() }
 
     -- Open inventory menu
-    self.open_menu = Menu(nil, menu, BOX_MARGIN, BOX_MARGIN)
+    self:openMenu({ inv_m, party_m, self:mkSettingsMenu(), self:mkQuitMenu() })
 end
 
 function Player:mkQuitMenu()
@@ -189,7 +196,7 @@ function Player:interact()
 
         -- If sprite is close, interactive, and not the player, it's valid
         if sp:isInteractive() and
-           sp:getID() ~= self:getID() and
+           sp:getId() ~= self:getId() and
            self:AABB(sp, 10) then
             target = sp
             break
@@ -336,7 +343,7 @@ function Player:render(cam_x, cam_y, c)
 end
 
 -- MOCK SUPERCLASS
-function Player:getID() return self.sp:getID() end
+function Player:getId() return self.sp:getId() end
 function Player:getName() return self.sp:getName() end
 function Player:getPosition() return self.sp:getPosition() end
 function Player:getDepth() return self.sp:getDepth() end

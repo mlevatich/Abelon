@@ -189,9 +189,77 @@ function splitSep(str, sep)
     return array
 end
 
--- Read the second value in a string split by whitespace
-function readField(str)
-    return split(str)[2]
+-- Read a field as a single string
+function readField(str, apply)
+    local val = split(str)[2]
+    if apply and val then
+        return apply(val)
+    else
+        return val
+    end
+end
+
+-- Read a field as an array
+function readArray(str, apply)
+    local arr_str = readField(str)
+    local arr = {}
+    if arr_str then
+        arr = splitSep(arr_str, ',')
+        if apply then
+            arr = mapf(apply, arr)
+        end
+    end
+    return arr
+end
+
+-- Read a field as a dictionary
+function readDict(str, kind, order, apply)
+    local pairs = split(str)
+    local dict = {}
+    for i = 2, #pairs do
+
+        -- Get key and value
+        local pair = splitSep(pairs[i],':')
+        local arr = splitSep(pair[2], ',')
+        if apply then
+            arr = mapf(apply, arr)
+        end
+
+        -- Parse value to array or val
+        local insert = arr
+        if kind == VAL then
+            insert = arr[1]
+        end
+
+        -- Ordered dict goes into table as pairs
+        if order then
+            table.insert(dict, { [order[1]] = pair[1], [order[2]] = insert })
+        else
+            dict[pair[1]] = insert
+        end
+    end
+    return dict
+end
+
+function readMultiline(data, line_id)
+
+    -- Break into individual words across multiple lines, end at EOS
+    local str = ''
+    for i = line_id, #data do
+        local word_id = ite(i == line_id, 2, 1)
+        local line = split(data[i])
+        for j = word_id, #line do
+            if line[j] == 'EOS' then break end
+            str = str .. line[j] .. ' '
+        end
+    end
+
+    -- Cut off trailing space character
+    if #str > 0 then
+        return str:sub(1, -1)
+    else
+        return ''
+    end
 end
 
 -- Read a file into a table of lines

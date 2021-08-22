@@ -19,5 +19,4 @@ Level: 5
 Attributes: endurance:23 focus:8 force:11 affinity:10 reaction:11 agility:10
 Skilltrees: Hero:sweep Defender:enrage Cleric:blessed_sky
 Skills: sweep,enrage
-
-The knight Kath.
+Description: The knight Kath. EOS

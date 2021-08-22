@@ -28,21 +28,23 @@ function Sprite:init(id, spritesheet, chapter)
     -- Unique identifier
     self.id = id
 
-    -- Parse data file
+    -- Parse data file and helpers
     local data_file = 'Abelon/data/sprites/' .. self.id .. '.txt'
     local data = readLines(data_file)
+    local tobool = function(s) return s == 'yes' end
+    local getSk = function(sk_id) return skills[sk_id] end
 
     -- In game displayed name
     self.name = string.sub(data[3], 7)
 
     -- Size
-    self.w = tonumber(readField(data[4]))
-    self.h = tonumber(readField(data[5]))
+    self.w = readField(data[4], tonumber)
+    self.h = readField(data[5], tonumber)
 
     -- Position
     self.x = 0
     self.y = 0
-    self.z = tonumber(readField(data[6])) -- Affects rendering order
+    self.z = readField(data[6], tonumber) -- Affects rendering order
 
     -- Anchor position for a wandering sprite
     self.leash_x = 0
@@ -55,7 +57,7 @@ function Sprite:init(id, spritesheet, chapter)
     -- Portrait texture, if the sprite has a portrait
     self.ptexture = nil
     self.portraits = nil
-    if readField(data[13]) == 'yes' then
+    if readField(data[13], tobool) then
         local portrait_file = 'graphics/portraits/' .. self.id .. '.png'
         self.ptexture = love.graphics.newImage(portrait_file)
         self.portraits = getSpriteQuads(
@@ -71,19 +73,13 @@ function Sprite:init(id, spritesheet, chapter)
     self.icons = chapter.icons
 
     -- y-position on spritesheet of first costume
-    local base_y = tonumber(readField(data[7]))
+    local base_y = readField(data[7], tonumber)
 
     -- Costume names
-    local version_names = split(data[11])
-    table.remove(version_names, 1)
+    local version_names = readArray(data[11])
 
     -- Number of frames in each named animation
-    local anim_strs = split(data[10])
-    local animations = {}
-    for i = 2, #anim_strs do
-        local pair = splitSep(anim_strs[i],':')
-        animations[pair[1]] = mapf(tonumber, splitSep(pair[2], ','))
-    end
+    local animations = readDict(data[10], ARR, nil, tonumber)
 
     -- The master sheet containing all versions of this sprite
     self.sheet = spritesheet
@@ -121,58 +117,34 @@ function Sprite:init(id, spritesheet, chapter)
     self.current_behavior = self.resting_behavior
     self.behaviors = {
         ['wander'] = function() self:_wanderBehavior() end,
+        ['battle'] = function() self:_battleBehavior() end,
         ['idle'] = function() self:_idleBehavior() end
     }
 
     -- Can the player interact with this sprite to start a scene?
-    self.interactive = (readField(data[8]) == 'yes')
+    self.interactive = readField(data[8], tobool)
 
     -- Can other sprites walk through/over this sprite?
-    self.blocking = (readField(data[9]) == 'yes')
+    self.blocking = readField(data[9], tobool)
 
     -- Sprite's opinions
-    self.impression = tonumber(readField(data[14]))
-    self.awareness = tonumber(readField(data[15]))
+    self.impression = readField(data[14], tonumber)
+    self.awareness = readField(data[15], tonumber)
 
     -- Info that allows this sprite to be treated as an item
-    self.can_discard = (readField(data[16]) == 'yes')
-    self.present_to = {}
-    local present_str = readField(data[17])
-    if present_str then
-        self.present_to = splitSep(present_str, ',')
-    end
-    local desc = ''
-    for i = 23, #data do
-        desc = desc .. data[i] .. ' '
-    end
-    self.description = desc:sub(1, -1)
+    self.can_discard = readField(data[16], tobool)
+    self.present_to = readArray(data[17])
+    self.description = readMultiline(data, 22)
 
     -- Info that allows this sprite to be treated as a party member
-    self.attributes = {}
-    local attribute_strs = split(data[19])
-    for i = 2, #attribute_strs do
-        local pair = splitSep(attribute_strs[i],':')
-        self.attributes[pair[1]] = tonumber(pair[2])
-    end
-    self.skill_trees = {}
-    local skilltree_strs = split(data[20])
-    local getSk = function(sk_id) return skills[sk_id] end
-    for i = 2, #skilltree_strs do
-        local p = splitSep(skilltree_strs[i],':')
-        self.skill_trees[i - 1] = { ['name'] = p[1], ['skills'] = {} }
-        if p[2] then
-            self.skill_trees[i - 1]['skills'] = mapf(getSk, splitSep(p[2], ','))
-        end
-    end
-    self.skills = {}
-    local skill_str = readField(data[21])
-    if skill_str then
-        self.skills = mapf(getSk, splitSep(skill_str, ','))
-    end
+    self.attributes = readDict(data[19], VAL, nil, tonumber)
+    self.skill_trees = readDict(data[20], ARR, {'name', 'skills'}, getSk)
+    self.skills = readArray(data[21], getSk)
     self.skill_points = 0
+
     self.health = self.attributes['endurance']
     self.ignea = self.attributes['focus']
-    self.level = readField(data[18])
+    self.level = readField(data[18], tonumber)
     self.exp = 0
 
     -- Current chapter inhabited by sprite
@@ -180,7 +152,7 @@ function Sprite:init(id, spritesheet, chapter)
 end
 
 -- Get sprite's ID
-function Sprite:getID()
+function Sprite:getId()
     return self.id
 end
 
@@ -766,6 +738,12 @@ end
 function Sprite:_idleBehavior(dt)
     self:stop()
     self:changeAnimation('idle')
+end
+
+-- Sprite idle behavior
+function Sprite:_battleBehavior(dt)
+    self:stop()
+    self:changeAnimation('walking')
 end
 
 -- Check whether a sprite is on a tile and return displacement
