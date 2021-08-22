@@ -23,13 +23,10 @@ end
 Menu = Class{}
 
 -- Initialize a new menu
-function Menu:init(parent, menu_items, x, y, confirm_msg, locked)
+function Menu:init(parent, menu_items, x, y, confirm_msg)
 
     -- What is the parent menu of this menu (nil if a top-level menu)
     self.parent = parent
-
-    -- Can this menu be closed by the player at will?
-    self.locked = locked
 
     -- What was the selection made at this menu?
     self.selected = nil

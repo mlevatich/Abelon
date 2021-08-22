@@ -25,7 +25,8 @@ function Player:init(sp)
         ['frozen'] = function() self:stillMode() end,
         ['free'] = function() self:freeMode() end,
         ['scene'] = function() self:sceneMode() end,
-        ['browse'] = function(c) self:browseMode(c) end
+        ['browse'] = function() self:browseMode() end,
+        ['battle'] = function() self:battleMode() end
     }
     self.mode = 'free'
 
@@ -39,13 +40,13 @@ function Player:init(sp)
     self.open_menu = nil
 end
 
-function Player:openMenu(m, locked)
+function Player:openMenu(m)
 
     -- Change control mode to menu-browsing
     self:changeMode('browse')
 
     -- Create and open menu
-    self.open_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN, nil, locked)
+    self.open_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
 end
 
 -- When player presses i to open the inventory, the inventory menu appears
@@ -99,7 +100,7 @@ function Player:mkSettingsMenu()
         end
     end
     local setD = function(d)
-        if self.sp.chapter.difficulty > d then
+        if self:getChapter().difficulty > d then
             return function(c)
                 c:setDifficulty(d)
                 c.player:changeMode('free')
@@ -300,7 +301,21 @@ function Player:sceneMode()
     self:getChapter():sceneInput(f, u, d)
 end
 
-function Player:browseMode(c)
+function Player:battleMode()
+
+    -- Read keypresses
+    local up = love.keyboard.wasPressed('up')
+    local down = love.keyboard.wasPressed('down')
+    local left = love.keyboard.wasPressed('left')
+    local right = love.keyboard.wasPressed('right')
+    local f = love.keyboard.wasPressed('f')
+    local d = love.keyboard.wasPressed('d')
+
+    -- Interface with battle based on keypresses
+    self:getChapter():battleInput(up, down, left, right, f, d)
+end
+
+function Player:browseMode()
 
     -- Read keypresses
     local up = love.keyboard.wasPressed('up')
@@ -316,12 +331,12 @@ function Player:browseMode(c)
     elseif d then
         done = self.open_menu:back()
     elseif f then
-        self.open_menu:forward(c)
+        self.open_menu:forward(self:getChapter())
     elseif up ~= down then
         self.open_menu:hover(ite(up, UP, DOWN))
     end
 
-    if done and not self.open_menu.locked then
+    if done then
         self.open_menu:reset()
         self.open_menu = nil
         self:changeMode('free')
@@ -329,8 +344,8 @@ function Player:browseMode(c)
 end
 
 -- Update player character based on key presses
-function Player:update(c)
-    self.modes[self.mode](c)
+function Player:update()
+    self.modes[self.mode]()
 end
 
 -- Render the player character's interactions

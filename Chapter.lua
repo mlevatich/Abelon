@@ -67,6 +67,7 @@ function Chapter:init(id, spriteesheet)
 
     -- If the player is in a battle, it goes here
     self.battle = nil
+    self.battle_inputs = {}
 
     -- Read into the above fields from chapter file
     self:load()
@@ -207,6 +208,18 @@ end
 
 function Chapter:launchBattle(b_id)
     self.battle = Battle(b_id, self.player, self)
+end
+
+-- Store player inputs to a scene, to be processed on update
+function Chapter:battleInput(up, down, left, right, f, d)
+    self.battle_inputs = {
+        ['up'] = up,
+        ['down'] = down,
+        ['left'] = left,
+        ['right'] = right,
+        ['f'] = f,
+        ['d'] = d,
+    }
 end
 
 -- Start scene with the given scene id
@@ -399,11 +412,12 @@ function Chapter:update(dt)
 
     -- Update current battle
     if self.battle then
-        self.battle:update(dt)
+        self.battle:update(self.battle_inputs, dt)
+        self.battle_inputs = {}
     end
 
     -- Update player character based on key-presses
-    self.player:update(self)
+    self.player:update()
 
     -- Update the currently active scene
     if self.current_scene then

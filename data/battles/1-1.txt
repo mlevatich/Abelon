@@ -1,8 +1,8 @@
 // Battle stats
 
 TileOrigin: 31,67
-Allies: abelon,kath
-Enemies: wolf1,wolf2
+Allies: abelon:1,5 kath:2,6
+Enemies: wolf1:10,2 wolf2:11,6
 Wincon: rout
 Losscon: death
 
@@ -16,5 +16,5 @@ TTTTTTTTTTT
 TTTTTTTTTTT
 TTTTTTTTTTT
 TTTTTTTTTTT
-FFFTTTTTTFF
+FFTTTTTTTFF
 FFFFFFTTFFF
