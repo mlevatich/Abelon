@@ -1,12 +1,99 @@
-THE COMBAT ENGINE!
+(please commit each paragraph separately for your own sanity)
 
-#36
-#37
-#38
-Enemy phase
-Enemy AI
+#29:
 
-v1 skill trees for abelon and kath (change abelon's "champion" to "veteran")
+Change from map music to battle music when in a battle. Map music resets. Use
+twilight of the gods for battle theme.
+
+#41:
+
+Sam's software suggestion for music, forest theme to chiptune.
+
+#37:
+
+For now, have the wolves start just in reach of Kath and Abelon so they're
+attackable.
+
+Video options, volume options, formulas, end turn, and check wincon should all
+be menu items in the battle options menu. Should be able to change difficulty
+from the battle start menu, but only on the first turn. Should be able to see
+wincon from this menu on any turn.
+
+Pulsing healthbars visible above sprites.
+
+Camera should follow behind cursor, not exactly, but enough that the cursor
+doesn't stray TOO far from center stage. Investigate how fire emblem does it?
+
+"turn stack" for a sprite in question stores at each entry:
+    render: list of rendering functions to call
+    location: where is the sprite?
+    stage: what part of the turn are we in? controls how inputs are received.
+    battle menu: if there is a battle menu, what is it?
+    cursor: what cursor are we controlling? where is it?
+When receiving input, the top of the stack controls how input is handled.
+Pressing D always pops the stack (if the menu is done). When rendering, cursors
+all the way up the stack are rendered at their locations, but only the top of
+the stack's 'render' field and battle_menu is used. For attacks and spells, the
+zone and cursor are red. For assists, the zone and cursor are green. For
+movement the zone and cursor are blue. The stages that go on the stack are
+documented below:
+Select ally. Blue cursor appears, sound effect plays, hover text changes.
+Can move blue cursor within movement range. Transparent ally sprite goes
+wherever you move blue cursor. All exists on a cursor stack. Pressing D pops
+it.
+
+Select a square to move to. Blue cursor and transparent sprite fixed in place.
+Hover text disappears. Sprite attack and spell (and "wait") menu opens, and
+can be navigated. Menu goes on stack, pressing D at root menu closes it.
+
+Select a spell or attack. Blue movement range disappears. Red cursor and
+red range squares appear. Hover text changes. Menu remains. Can move red cursor
+depending on attack type, also changing red square locations accordingly. Red
+cursor goes on stack, popping it returns to menu with movement range
+re-appearing. When aiming an attack, there are two indicators: the (colored)
+cursor, and the light colored filled-squares zone indicator. The zone is given
+by the AOE shape, where the center of the shape table is the cursor location.
+For directional attacks, the cursor is always pointing in a direction away from
+the caster. For self casts, the cursor is always on the caster. For free aim
+the cursor can be on any space given by the FREE_AIM field (intersect a diamond
+of size "scale" with the targets given by "target").
+
+Select a square to attack (or press wait on attack menu). Red movement range
+disappears, red cursor remains. Blue cursor appears, hover text changes, blue
+movement range appears. Can move blue cursor within movement range. NEW
+transparent ally sprite goes where blue cursor goes, leaving old one behind.
+Pressing D returns you to target selection (or menu if wait was selected).
+
+Select a square to move to. Blue cursor 2 and transparent sprite 2 fixed in
+place. Not duplicated if the player didn't move. Hover text disappears. Assist
+(and "wait") menu opens, and can be navigated. Menu goes on stack, pressing D
+at root menu closes it.
+
+Select an assist. Blue movement range disappears. Green cursor and Green range
+squares appear. Hover text changes. Menu remains. Can move green cursor
+depending on assist type, changing green square locations accordingly. Green
+cursor goes on stack, popping it returns to menu with movement range
+re-appearing. See "select a spell or attack" for how the cursor and range work.
+
+Select a square to to assist (or press wait on assist menu). All cursors, ranges,
+menus, and transparent sprites disappear. Actions end. Stack is animated in order,
+from bottom to top. Sprite goes gray and cannot be used again that turn. The
+effects of the actions on the stack should be reflected in the battle state, i.e.
+enemy hp changes, new assist squares on the map, new ally position. Turn
+will not "end" until #50, simply cant do anything after all allies are gray.
+
+Handle enemy death. Animation plays at 0 hp after an action, they are teleported
+elsewhere and removed from the enemies list.
+
+Assist green zone should persist after the action ends. The shade of green (but
+not the alpha) should change depending on the number of assists active on a
+square.
+
+Hovering a green square should display all assist effects active on that square.
+This can appear in a separate box from the sprite box, or same box, whatever
+looks better.
+
+Add more skills: (change abelon's "champion" to "veteran")
 inspire: aoe long range assist for abelon
 trust: abelon triples his affinity for the turn
 pinpoint: find a weak spot. Very specific range required.
@@ -23,59 +110,161 @@ elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
 hold the line: kath assist grants massive reaction to all allies in a line
 in shadow: passive ability - if no assists, enemies wont target you
 
-When aiming an attack, there are two indicators: the (colored) cursor, and the
-light colored filled-squares zone indicator. The zone is given by the AOE shape,
-where the center of the shape table is the cursor location.
-For directional attacks, the cursor is always pointing in a direction away from
-the caster. For self casts, the cursor is always on the caster. For free aim
-the cursor can be on any space given by the FREE_AIM field (intersect a diamond
-of size "scale" with the targets given by "target").
-For attacks and spells, the zone and cursor are red. For assists, the zone and
-cursor are green.
+#38:
+
+When end turn is selected (or turn auto-ends), enemy phase starts, and ends
+instantly with all enemies ending their turn without doing anything.
+
+Support scene triggers during combat at: select unit for the first time on ally
+phase, start new phase, end action. Triggers receive turn number, allies/enemies
+and their locations. Add the scenes from the chapter 1 script to the battle.
+
+Win and loss conditions checked on: end action, start new phase. Win and loss
+conditions accept allies/enemies and their locations, and turn number.
+
+Winning ends the battle and returns control to player (likely after launching
+a victory scene). Losing launches a defeat sceen and then simply closes the game
+(wait until #28 for game over).
+
+#50:
+
+enemy skill targeting info
+
+movement range of allies and enemies takes obstacles into account (run
+all-shortest-paths algorithm on the grid once, and store the result in a new
+pathing grid)
+
+Enemy AI: use targeting info to figure out which square to target. Move as close
+as possible to that square (but no farther than necessary to use the attack)
+by consulting the shortest paths grid. If in range to use attack, use it.
+
+Movement triggers: enemies stay still until a trigger (like ally proximity, or
+reinforcements arriving) activates them. Only then will they start moving and
+acting.
+
+#16:
 
 Title screen v0 (continue (if save file detected), new game -> choose difficulty)
-#15: Save state (rewrite sprite files to savedata, pull from there first if it
+
+#15:
+
+Refactor parsing, move to parsing utils file. Files should be parsed
+automatically into a dict, like JSON
+
+Save state (rewrite sprite files to savedata, pull from there first if it
 exists unless new game)
-parse helpers
-#28 Autosaves, restart chapter, battle game over
+
+#28:
+
+Autosave on game quit by ANY means (no rollbacks!), Autosave chapter start of
+current chapter and battle start of current battle. Implement restart chapter,
+restart battle, and battle game over options.
+
+NEW_ISSUE: levelups
+
 exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
 healed, 0.5 of the value for assisters supporting any of these
-level up (+1 to all attributes, choice of extra attribute +1)
+level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
 
-Tune combat and difficulty levels around first battle until it is super fun.
+NEW_ISSUE: difficulty
 
-ASSET WORK!
+Changing the difficulty level changes enemy attributes. Tune until it makes
+sense.
 
-Kath walk animation
-Sam's software suggestion for music
-Forest theme to supercollider
-Use twilight of the gods for fight music
-More combat assets: enemy wolves, wolf idle, attack animations, attack sfx, etc
-Basic beep and boop sfx
+NEW_ISSUE: sound engine
+
+Write sound effects engine, globally available.
+
+#4:
+
+Basic beep and boop sfx for all interactions (basically whenever F or D is
+pressed and does something).
+
+NEW_ISSUE: basic sprites and animations
+
+Abelon-idle
+Kath-idle
+
+Kath-walk
+
+Abelon-combat
+Kath-combat
+
+Two mostly identical wolf sprites.
+
+Wolf-combat (this doubles as Wolf-idle)
+
+Wolf-walk
+
+NEW_ISSUE: skill animations
+
+Implement single-fire animations in the animations engine. Simply
+change animation and provide a done-action to the animation object that
+changes their animation again once all frames are finished.
+
+Every skill has an associated single-fire animation, with render position
+determined by the cursor location of the cast. This has nothing to do with the
+sprite casting the skill. For some skills, the animation should play at every
+affected tile, for others, the animation should play centered on the cursor.
+This should be provided as an option.
+
+Insert appropriate hooks for skill animations to play at the right points in
+battle (fill in with a universal default).
+
+Skill animations for all basic skills.
+
+NEW_ISSUE: sprite combat animations
+
+Each sprite that battles has seven single-fire animations: one for weapon
+skills, one for spells, one for assists, one for being injured, one for dying,
+one for combat entry (bridges idle -> combat), and one for combat exit (this
+can just be the combat entry animation played in reverse). For hostile entities,
+their combat entry and exit are just their idle animations, because their idle
+animation is their combat animation. Hostile entities also have no assist
+animation, and in some cases, no spell animation (e.g. for wolves)
+
+Insert appropriate hooks for combat animations to play at the right points in
+battle (fill in with a universal default).
+
+Abelon-combat-entry-exit
+Abelon-weapon
+Abelon-spell
+Abelon-assist
+Abelon-injured
+Abelon-dead
+
+Kath-combat-entry-exit
+Kath-weapon
+Kath-spell
+Kath-assist
+Kath-injured
+Kath-dead
+
+Wolf-weapon
+Wolf-injured
+Wolf-dead
+
+NEW_ISSUE: combat sound effects
+
+Sound effect for: weapon skill, spell, assist, death.
+
+NEW_ISSUE: chapter 1 map and stickers
 
 Split forest into three maps (west, south, north) with slightly different
 tilesets/lighting/coloring
 And flowers, logs, plants and such to forest
-Redo forest tileset
+Redo forest tileset to use 2x2 trees
+
+#9:
+
 Redo lighting engine
 
-CHAPTER 1 DESIGN & IMPLEMENTATION!
-
-Elaine scenario assets
+FUTURE:
 implement Elaine scenario
-
-Ghoul scenario assets
 implement Ghoul scenario
-
-Deer scenario assets
 implement Deer scenario
-
-Lester, Shanti, Crystal Wolf, Generic knight assets
 Implement crystal wolf scenario
 Chapter 1 endcard
-
-POLISHING IT OFF!
-
-#18: Shopping and gold
+Shopping and gold
 Tutorial
 Make executable

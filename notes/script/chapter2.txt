@@ -10,16 +10,25 @@ NOTES
 
 Kath can act as a narrator in the first half when Abelon doesn't talk much.
 
-In castle town there's a gang of thieves – good for a fight, but don't kill them!
-
 Discover: Who the hell sabotaged the gates and risked the monsters getting in
 from the north and west? Find them and bring them to justice. Something to do
 with the plot to kill the king? Is Jericho behind it?
 
-Either reconcile with the Order of Watchers or fight with them in Chapter 1. Fighting is a fail state.
+The mystery leads you to this truth:
 
-The early choices involve the fishermen catching corrupted fish, Luci and Gaheris's research,
-the Order of Watchers hating you, and Kath and the King.
+Turns out it's just a group of kids behind it, who got the idea from their
+parents to sabotage the city after the killing of the cardinal. Luci knows these
+kids, says they're worthless and to kill them. Kath says that's overly harsh
+and Luci learned it from Abelon. The kids put up a fight when you crash their
+hideout. Injuring any of them ends the fight, as does killing one (Abelon
+one-shots them, kath doesn't). Kath will hate you if you kill one, but Abelon
+and Luci will respect the decision.
+
+Either reconcile with the Order of Watchers or fight with them in Chapter 1.
+Fighting is a fail state.
+
+The early choices involve the fishermen catching corrupted fish, Luci and
+Gaheris's research, the Order of Watchers hating you, and Kath and the King.
 
 Abelon doesn't appreciate you working with the Watchers or the Fisherman, or sparing the thieves.
 These are not things he would do, and others comment on it. Abelon likes you if you help Sinclair, work with Kath,

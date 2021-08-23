@@ -353,13 +353,16 @@ function Battle:renderOverlay(cam_x, cam_y)
     local box_y = cam_y + BOX_MARGIN
     local box_w = str_size + BOX_MARGIN
     local box_h = BOX_MARGIN + LINE_HEIGHT * 3 + 6
+    local hover_str = "View battle options"
     if sp then
         local name_str = sp.name
         local hp_str = sp.health .. "/" .. sp.attributes['endurance']
         local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
         if self:isAlly(sp) then
+            hover_str = "Move " .. sp.name
             love.graphics.setColor(0, 0.1, 0, RECT_ALPHA)
         else
+            hover_str = "Examine " .. sp.name
             love.graphics.setColor(0.1, 0, 0, RECT_ALPHA)
         end
         love.graphics.rectangle('fill', box_x, box_y, box_w, box_h)
@@ -390,8 +393,12 @@ function Battle:renderOverlay(cam_x, cam_y)
         renderString('Empty', box_x + HALF_MARGIN, box_y + HALF_MARGIN)
     end
 
-    -- Render battle menu
+    -- Render battle menu or battle text
     if self.battle_menu then
         self.battle_menu:render(cam_x, cam_y, self.chapter)
+    else
+        local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
+        local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
+        renderString(hover_str, x, y)
     end
 end
