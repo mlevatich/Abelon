@@ -2,6 +2,7 @@ require 'Util'
 require 'Constants'
 
 require 'Menu'
+require 'Music'
 
 Battle = Class{}
 
@@ -36,7 +37,7 @@ function Battle:init(battle_id, player, chapter)
     self.origin_y = tile_origin[2]
 
     -- Battle grid
-    local grid_index = 11
+    local grid_index = 12
     local grid_dim = readArray(data[grid_index], tonumber)
     self.grid_w = grid_dim[1]
     self.grid_h = grid_dim[2]
@@ -85,6 +86,13 @@ function Battle:init(battle_id, player, chapter)
     self.pulse_timer = 0
     self.shading = 0.2
     self.shade_dir = 1
+
+    -- Music
+    self.prev_music = self.chapter.current_music
+    if self.prev_music then
+        self.prev_music:stop()
+    end
+    self.chapter.current_music = Music(readField(data[8]))
 
     -- Start the battle!
     self:begin()

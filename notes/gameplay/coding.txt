@@ -56,7 +56,8 @@ by the AOE shape, where the center of the shape table is the cursor location.
 For directional attacks, the cursor is always pointing in a direction away from
 the caster. For self casts, the cursor is always on the caster. For free aim
 the cursor can be on any space given by the FREE_AIM field (intersect a diamond
-of size "scale" with the targets given by "target").
+of size "scale" with the targets given by "target"). The effect of the attack
+on whatever targets will be hit should be rendered in the top right.
 
 Select a square to attack (or press wait on attack menu). Red movement range
 disappears, red cursor remains. Blue cursor appears, hover text changes, blue
@@ -144,7 +145,11 @@ acting.
 
 #16:
 
-Title screen v0 (continue (if save file detected), new game -> choose difficulty)
+Title screen v0 (continue (if save file detected), new game ->
+choose difficulty)
+
+Implement game start scene, implement ??? for sprites whose names are not known
+to the player. Learning a name is a scene.
 
 #15:
 
@@ -160,27 +165,25 @@ Autosave on game quit by ANY means (no rollbacks!), Autosave chapter start of
 current chapter and battle start of current battle. Implement restart chapter,
 restart battle, and battle game over options.
 
-NEW_ISSUE: levelups
+#55:
 
 exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
 healed, 0.5 of the value for assisters supporting any of these
 level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
 
-NEW_ISSUE: difficulty
+#54:
 
 Changing the difficulty level changes enemy attributes. Tune until it makes
 sense.
 
-NEW_ISSUE: sound engine
+#4:
 
 Write sound effects engine, globally available.
-
-#4:
 
 Basic beep and boop sfx for all interactions (basically whenever F or D is
 pressed and does something).
 
-NEW_ISSUE: basic sprites and animations
+#51:
 
 Abelon-idle
 Kath-idle
@@ -196,7 +199,7 @@ Wolf-combat (this doubles as Wolf-idle)
 
 Wolf-walk
 
-NEW_ISSUE: skill animations
+#52:
 
 Implement single-fire animations in the animations engine. Simply
 change animation and provide a done-action to the animation object that
@@ -213,7 +216,7 @@ battle (fill in with a universal default).
 
 Skill animations for all basic skills.
 
-NEW_ISSUE: sprite combat animations
+#53:
 
 Each sprite that battles has seven single-fire animations: one for weapon
 skills, one for spells, one for assists, one for being injured, one for dying,
@@ -244,27 +247,44 @@ Wolf-weapon
 Wolf-injured
 Wolf-dead
 
-NEW_ISSUE: combat sound effects
+#56:
 
-Sound effect for: weapon skill, spell, assist, death.
+Sound effect for: weapon skill, spell, assist, death, defeat, victory.
 
-NEW_ISSUE: chapter 1 map and stickers
+#57:
 
 Split forest into three maps (west, south, north) with slightly different
 tilesets/lighting/coloring
+
 And flowers, logs, plants and such to forest
+
 Redo forest tileset to use 2x2 trees
 
 #9:
 
-Redo lighting engine
+Expand lighting engine
 
-FUTURE:
+Add point lights to the forest to test
+
+
+
+
+
+
+
+
+FUTURE: Most of these are not issues yet, but they will be once the above are
+done. They should all be individual issues.
+
+Finish script - Do this before even looking at the below scenarios! Because
+I might decide I want something different as I write the script.
 implement Elaine scenario
 implement Ghoul scenario
 implement Deer scenario
 Implement crystal wolf scenario
-Chapter 1 endcard
-Shopping and gold
-Tutorial
+Chapter 1 endcard, end scene teaser
+#18: Shopping and gold
+Formulas tab
+#48: Tutorial
+#33: Big refactor!
 Make executable
