@@ -1,13 +1,8 @@
 (please commit each paragraph separately for your own sanity)
 
-#29:
-
-Change from map music to battle music when in a battle. Map music resets. Use
-twilight of the gods for battle theme.
-
 #41:
 
-Sam's software suggestion for music, forest theme to chiptune.
+Exploration theme and combat theme
 
 #37:
 

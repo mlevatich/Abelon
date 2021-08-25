@@ -5,7 +5,7 @@ Allies: abelon:1,5 kath:2,6
 Enemies: wolf1:10,2 wolf2:11,6
 Wincon: rout
 Losscon: death
-Music: twilight_of_the_gods
+Music: A-Single-Shard-Of-Ignea
 
 // Battle grid
 

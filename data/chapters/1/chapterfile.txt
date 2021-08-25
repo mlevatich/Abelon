@@ -1,4 +1,4 @@
-~~forest standard twilight_of_the_gods
+~~forest standard Dying-Forest
 
 ~abelon 7 70 P
 ~kath 36 73 kath_interact_base
