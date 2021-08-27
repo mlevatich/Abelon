@@ -77,6 +77,7 @@ function Battle:init(battle_id, player, chapter)
                       + (self.grid_w * TILE_WIDTH - VIRTUAL_WIDTH) / 2
     self.battle_cam_y = (self.origin_y) * TILE_HEIGHT
                       + (self.grid_h * TILE_HEIGHT - VIRTUAL_HEIGHT) / 2
+    self.battle_cam_speed = 170
 
     -- Battle menu
     self.battle_menu = nil
@@ -103,7 +104,7 @@ function Battle:getId()
 end
 
 function Battle:getCamera()
-    return self.battle_cam_x, self.battle_cam_y
+    return self.battle_cam_x, self.battle_cam_y, self.battle_cam_speed
 end
 
 function Battle:begin()
@@ -273,13 +274,18 @@ function Battle:update(keys, dt)
         end
     end
 
+    -- Update battle camera position
+    self.battle_cam_x = (self.cursor[1] + self.origin_x)
+                      * TILE_WIDTH - VIRTUAL_WIDTH / 2
+    self.battle_cam_y = (self.cursor[2] + self.origin_y)
+                      * TILE_WIDTH - VIRTUAL_HEIGHT / 2
+
     -- Advance render timers
     self.pulse_timer = self.pulse_timer + dt
     while self.pulse_timer > PULSE do
         self.pulse_timer = self.pulse_timer - PULSE
         self.cursor[3] = not self.cursor[3]
     end
-
     self.shading = self.shading + self.shade_dir * dt / 3
     if self.shading > 0.4 then
         self.shading = 0.4

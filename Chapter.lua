@@ -366,7 +366,7 @@ function Chapter:updateCamera(dt)
     else
 
         -- If in a battle, follow battle cam!
-        x_target, y_target = self.battle:getCamera()
+        x_target, y_target, speed = self.battle:getCamera()
     end
 
     -- Compute move in the direction of camera target based on dt
