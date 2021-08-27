@@ -2,9 +2,9 @@
 
 #37:
 
-"turn stack" for a sprite in question stores at each entry:
+"stage stack" for a sprite in question stores at each entry:
     render: list of rendering functions to call
-    location: where is the sprite?
+    sp: if a sprite is taking an action, which sprite is it?
     stage: what part of the turn are we in? controls how inputs are received.
     battle menu: if there is a battle menu, what is it?
     cursor: what cursor are we controlling? where is it?

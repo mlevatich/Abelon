@@ -91,7 +91,7 @@ function Battle:init(battle_id, player, chapter)
     self.chapter.current_music = Music(readField(data[8]))
 
     -- Start the battle!
-    self.stack = {{ ['cursor'] = { 1, 1, false }, ['stage'] = STAGE_BEGIN }}
+    self.stack = {{ ['stage'] = STAGE_FREE, ['cursor'] = { 1, 1, false } }}
     self:begin()
 end
 
@@ -104,7 +104,13 @@ function Battle:getCamera()
 end
 
 function Battle:getCursor()
-    return self.stack[#self.stack]['cursor']
+    top = nil
+    for i = 1, #self.stack do
+        if self.stack[i]['cursor'] then
+            top = self.stack[i]['cursor']
+        end
+    end
+    return top
 end
 
 function Battle:getMenu()
@@ -112,16 +118,21 @@ function Battle:getMenu()
 end
 
 function Battle:moveCursor(x, y)
-    self.stack[#self.stack]['cursor'][1] = x
-    self.stack[#self.stack]['cursor'][2] = y
+    c = self:getCursor()
+    c[1] = x
+    c[2] = y
 end
 
 function Battle:openMenu(m)
+    self.stack[#self.stack + 1] = {}
     self.stack[#self.stack]['menu'] = m
+    self.stack[#self.stack]['stage'] = STAGE_MENU
 end
 
 function Battle:closeMenu()
-    self.stack[#self.stack]['menu'] = nil
+    if self.stack[#self.stack]['stage'] == STAGE_MENU then
+        table.remove(self.stack, #self.stack)
+    end
 end
 
 function Battle:getStage()
@@ -147,25 +158,9 @@ function Battle:begin()
     self:openStartMenu()
 end
 
-function Battle:nextPhase()
-    s = self:getStage()
-    local y, x = self:findSprite(self.player:getId())
-    if s == STAGE_BEGIN then
-        self:moveCursor(x, y)
-        self:closeMenu()
-        self:setStage(STAGE_FREE)
-    elseif s == STAGE_ENEMY then
-        self:moveCursor(x, y)
-        self:openStartMenu()
-        self:setStage(STAGE_BEGIN)
-    else
-        self:setStage(STAGE_ENEMY)
-    end
-end
-
 function Battle:openStartMenu()
     local die = function(c) love.event.quit(0) end
-    local next = function(c) self:nextPhase() end
+    local next = function(c) self:closeMenu() end
     local begin = MenuItem('Begin turn', {}, "Begin your turn", nil, next)
     local wincon = MenuItem('Objectives', {},
         'View victory and defeat conditions'
@@ -253,56 +248,60 @@ end
 
 function Battle:update(keys, dt)
 
-    -- Navigate the battle menu if it is open
-    local m = self:getMenu()
-    if m then
+    -- Control determined by stage
+    local s     = self:getStage()
+    local d     = keys['d']
+    local f     = keys['f']
+    local up    = keys['up']
+    local down  = keys['down']
+    local left  = keys['left']
+    local right = keys['right']
+
+    if s == STAGE_MENU then
+
+        -- Menu navigation
+        local m = self:getMenu()
         local done = false
-        if keys['d'] then
+        if d then
             done = m:back()
-        elseif keys['f'] then
+        elseif f then
             m:forward(self.chapter)
-        elseif keys['up'] ~= keys['down'] then
-            m:hover(ite(keys['up'], UP, DOWN))
+        elseif up ~= down then
+            m:hover(ite(up, UP, DOWN))
         end
 
-        if done and self:getStage() ~= STAGE_BEGIN then
-            self:closeMenu()
-        end
-    else
-        -- Move cursor during the ally phase if no menu is open
+        if done then self:closeMenu() end
+
+    elseif s == STAGE_FREE then
+
+        -- Free map navagation
         local c = self:getCursor()
         local i = c[2]
         local j = c[1]
         local x_move = 0
         local y_move = 0
-        if self:getStage() == STAGE_FREE then
-            if keys['left'] and not keys['right'] and
-               j - 1 >= 1 and self.grid[i][j - 1] then
-                x_move = -1
-            end
-            if keys['right'] and not keys['left'] and
-               j + 1 <= self.grid_w and self.grid[i][j + 1] then
-                x_move = 1
-            end
-            if keys['up'] and not keys['down'] and
-               i - 1 >= 1 and self.grid[i - 1][j] then
-                y_move = -1
-            end
-            if keys['down'] and not keys['up'] and
-               i + 1 <= self.grid_h and self.grid[i + 1][j] then
-                y_move = 1
-            end
-            self:moveCursor(j + x_move, i + y_move)
+        if left and not right and j - 1 >= 1 and self.grid[i][j - 1] then
+            x_move = -1
+        end
+        if right and not left and j + 1 <= self.grid_w and self.grid[i][j + 1] then
+            x_move = 1
+        end
+        if up and not down and i - 1 >= 1 and self.grid[i - 1][j] then
+            y_move = -1
+        end
+        if down and not up and i + 1 <= self.grid_h and self.grid[i + 1][j] then
+            y_move = 1
+        end
+        self:moveCursor(j + x_move, i + y_move)
 
-            if keys['f'] then
-                local space = self.grid[i][j]
-                if not space.occupied then
-                    self:openOptionsMenu()
-                elseif self:isAlly(space.occupied) then
-                    pass()
-                else
-                    self:openEnemyMenu(space.occupied)
-                end
+        if keys['f'] then
+            local space = self.grid[i][j]
+            if not space.occupied then
+                self:openOptionsMenu()
+            elseif self:isAlly(space.occupied) then
+                pass()
+            else
+                self:openEnemyMenu(space.occupied)
             end
         end
     end
@@ -478,9 +477,8 @@ function Battle:renderOverlay(cam_x, cam_y)
     end
 
     -- Render battle menu or battle text
-    local m = self:getMenu()
-    if m then
-        m:render(cam_x, cam_y, self.chapter)
+    if self:getStage() == STAGE_MENU then
+        self:getMenu():render(cam_x, cam_y, self.chapter)
     else
         local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
         local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
