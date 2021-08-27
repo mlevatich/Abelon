@@ -24,8 +24,7 @@ function Battle:init(battle_id, player, chapter)
 
     -- Tracking battle and chapter state
     self.turn = 1
-    self.phase = START
-    self.state = nil
+    self.state = {}
 
     -- Data file
     local data_file = 'Abelon/data/battles/' .. self.id .. '.txt'
@@ -92,7 +91,7 @@ function Battle:init(battle_id, player, chapter)
     self.chapter.current_music = Music(readField(data[8]))
 
     -- Start the battle!
-    self.stack = {{ ['cursor'] = { 1, 1, false } }}
+    self.stack = {{ ['cursor'] = { 1, 1, false }, ['stage'] = STAGE_BEGIN }}
     self:begin()
 end
 
@@ -125,6 +124,14 @@ function Battle:closeMenu()
     self.stack[#self.stack]['menu'] = nil
 end
 
+function Battle:getStage()
+    return self.stack[#self.stack]['stage']
+end
+
+function Battle:setStage(s)
+    self.stack[#self.stack]['stage'] = s
+end
+
 function Battle:begin()
 
     -- Participants to battle behavior
@@ -141,15 +148,18 @@ function Battle:begin()
 end
 
 function Battle:nextPhase()
-    if self.phase == START then
-        self.phase = ALLY
-        self:closeMenu()
-        local y, x = self:findSprite(self.player:getId())
+    s = self:getStage()
+    local y, x = self:findSprite(self.player:getId())
+    if s == STAGE_BEGIN then
         self:moveCursor(x, y)
-    elseif self.phase == ALLY then
-        self.phase = ENEMY
+        self:closeMenu()
+        self:setStage(STAGE_FREE)
+    elseif s == STAGE_ENEMY then
+        self:moveCursor(x, y)
+        self:openStartMenu()
+        self:setStage(STAGE_BEGIN)
     else
-        self.phase = START
+        self:setStage(STAGE_ENEMY)
     end
 end
 
@@ -255,7 +265,7 @@ function Battle:update(keys, dt)
             m:hover(ite(keys['up'], UP, DOWN))
         end
 
-        if done and self.phase ~= START then
+        if done and self:getStage() ~= STAGE_BEGIN then
             self:closeMenu()
         end
     else
@@ -265,7 +275,7 @@ function Battle:update(keys, dt)
         local j = c[1]
         local x_move = 0
         local y_move = 0
-        if self.phase == ALLY then
+        if self:getStage() == STAGE_FREE then
             if keys['left'] and not keys['right'] and
                j - 1 >= 1 and self.grid[i][j - 1] then
                 x_move = -1

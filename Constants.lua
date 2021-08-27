@@ -96,12 +96,13 @@ FREE_AIM        = function(s, t)
 ALL   = 4
 ALLY  = 5
 ENEMY = 6
-START = 7
+BEGIN = 7
 
 -- Win/lose conditions
 ROUT = function(b) return true end
 
 -- Battle stages
+STAGE_BEGIN         = 0
 STAGE_FREE          = 1
 STAGE_MOVE1         = 2
 STAGE_ATTACK_PICK   = 3
@@ -110,6 +111,7 @@ STAGE_MOVE2         = 5
 STAGE_ASSIST_PICK   = 6
 STAGE_ASSIST_TARGET = 7
 STAGE_CONFIRM       = 8
+STAGE_ENEMY         = 9
 
 -- Volume Levels
 OFF  = 0
