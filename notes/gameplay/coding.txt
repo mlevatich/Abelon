@@ -2,12 +2,6 @@
 
 #37:
 
-settings, end turn, and check wincon should
-all be menu items in the battle options menu. Should be able to see
-wincon (and losscon) from battle start menu as well.
-
-Pulsing healthbars visible above sprites.
-
 Camera should follow behind cursor, not exactly, but enough that the cursor
 doesn't stray TOO far from center stage. Investigate how fire emblem does it?
 

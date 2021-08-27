@@ -368,7 +368,23 @@ function Battle:renderGrid()
     self:renderCursor()
 end
 
+function Battle:renderHealthbar(sp)
+    local x, y = sp:getPosition()
+    local ratio = sp.health / sp.attributes['endurance']
+    y = y + sp.h + ite(self.cursor[3], 0, -1) - 1
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.rectangle('fill', x + 3, y, sp.w - 6, 3)
+    love.graphics.setColor(0.4, 0, 0.2, 1)
+    love.graphics.rectangle('fill', x + 3, y, (sp.w - 6) * ratio, 3)
+    love.graphics.setColor(0.3, 0.3, 0.3, 1)
+    love.graphics.rectangle('line', x + 3, y, sp.w - 6, 3)
+end
+
 function Battle:renderOverlay(cam_x, cam_y)
+
+    -- Render healthbars below each sprite
+    for i = 1, #self.allies do self:renderHealthbar(self.allies[i]) end
+    for i = 1, #self.enemies do self:renderHealthbar(self.enemies[i]) end
 
     -- Render battle hover box
     local sp = self.grid[self.cursor[2]][self.cursor[1]].occupied
