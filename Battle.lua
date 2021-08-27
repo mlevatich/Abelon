@@ -79,10 +79,6 @@ function Battle:init(battle_id, player, chapter)
                       + (self.grid_h * TILE_HEIGHT - VIRTUAL_HEIGHT) / 2
     self.battle_cam_speed = 170
 
-    -- Battle menu
-    self.battle_menu = nil
-    self.cursor = { 1, 1, false }
-
     -- Render timers
     self.pulse_timer = 0
     self.shading = 0.2
@@ -96,6 +92,7 @@ function Battle:init(battle_id, player, chapter)
     self.chapter.current_music = Music(readField(data[8]))
 
     -- Start the battle!
+    self.stack = {{ ['cursor'] = { 1, 1, false } }}
     self:begin()
 end
 
@@ -107,6 +104,27 @@ function Battle:getCamera()
     return self.battle_cam_x, self.battle_cam_y, self.battle_cam_speed
 end
 
+function Battle:getCursor()
+    return self.stack[#self.stack]['cursor']
+end
+
+function Battle:getMenu()
+    return self.stack[#self.stack]['menu']
+end
+
+function Battle:moveCursor(x, y)
+    self.stack[#self.stack]['cursor'][1] = x
+    self.stack[#self.stack]['cursor'][2] = y
+end
+
+function Battle:openMenu(m)
+    self.stack[#self.stack]['menu'] = m
+end
+
+function Battle:closeMenu()
+    self.stack[#self.stack]['menu'] = nil
+end
+
 function Battle:begin()
 
     -- Participants to battle behavior
@@ -116,7 +134,7 @@ function Battle:begin()
 
     -- Cursor to Abelon
     local y, x = self:findSprite(self.player:getId())
-    self.cursor = { x, y, false }
+    self:moveCursor(x, y)
 
     -- Start menu open
     self:openStartMenu()
@@ -125,9 +143,9 @@ end
 function Battle:nextPhase()
     if self.phase == START then
         self.phase = ALLY
-        self.battle_menu = nil
+        self:closeMenu()
         local y, x = self:findSprite(self.player:getId())
-        self.cursor = { x, y, false }
+        self:moveCursor(x, y)
     elseif self.phase == ALLY then
         self.phase = ENEMY
     else
@@ -155,7 +173,7 @@ function Battle:openStartMenu()
         "Save current progress and close the game?"
     )
     local m = { begin, wincon, restart1, restart2, quit }
-    self.battle_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN))
 end
 
 function Battle:openAttackMenu(sp)
@@ -178,7 +196,7 @@ function Battle:openEnemyMenu(sp)
     -- TODO: For each skill, add targeting info
     local skills = sp:mkSkillsMenu(false)
     local opts = { attributes, readying, skills }
-    self.battle_menu = Menu(nil, opts, BOX_MARGIN, BOX_MARGIN)
+    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN))
 end
 
 function Battle:buildReadyingBox(sp)
@@ -204,7 +222,7 @@ function Battle:openOptionsMenu()
         "Save battle state and close the game?"
     )
     local m = { wincon, end_turn, settings, restart, quit }
-    self.battle_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN))
 end
 
 function Battle:findSprite(sp_id)
@@ -226,40 +244,45 @@ end
 function Battle:update(keys, dt)
 
     -- Navigate the battle menu if it is open
-    if self.battle_menu then
+    local m = self:getMenu()
+    if m then
         local done = false
         if keys['d'] then
-            done = self.battle_menu:back()
+            done = m:back()
         elseif keys['f'] then
-            self.battle_menu:forward(self.chapter)
+            m:forward(self.chapter)
         elseif keys['up'] ~= keys['down'] then
-            self.battle_menu:hover(ite(keys['up'], UP, DOWN))
+            m:hover(ite(keys['up'], UP, DOWN))
         end
 
         if done and self.phase ~= START then
-            self.battle_menu = nil
+            self:closeMenu()
         end
     else
         -- Move cursor during the ally phase if no menu is open
-        local i = self.cursor[2]
-        local j = self.cursor[1]
+        local c = self:getCursor()
+        local i = c[2]
+        local j = c[1]
+        local x_move = 0
+        local y_move = 0
         if self.phase == ALLY then
             if keys['left'] and not keys['right'] and
                j - 1 >= 1 and self.grid[i][j - 1] then
-                self.cursor[1] = self.cursor[1] - 1
+                x_move = -1
             end
             if keys['right'] and not keys['left'] and
                j + 1 <= self.grid_w and self.grid[i][j + 1] then
-                self.cursor[1] = self.cursor[1] + 1
+                x_move = 1
             end
             if keys['up'] and not keys['down'] and
                i - 1 >= 1 and self.grid[i - 1][j] then
-                self.cursor[2] = self.cursor[2] - 1
+                y_move = -1
             end
             if keys['down'] and not keys['up'] and
                i + 1 <= self.grid_h and self.grid[i + 1][j] then
-                self.cursor[2] = self.cursor[2] + 1
+                y_move = 1
             end
+            self:moveCursor(j + x_move, i + y_move)
 
             if keys['f'] then
                 local space = self.grid[i][j]
@@ -275,16 +298,17 @@ function Battle:update(keys, dt)
     end
 
     -- Update battle camera position
-    self.battle_cam_x = (self.cursor[1] + self.origin_x)
+    local c = self:getCursor()
+    self.battle_cam_x = (c[1] + self.origin_x)
                       * TILE_WIDTH - VIRTUAL_WIDTH / 2
-    self.battle_cam_y = (self.cursor[2] + self.origin_y)
+    self.battle_cam_y = (c[2] + self.origin_y)
                       * TILE_WIDTH - VIRTUAL_HEIGHT / 2
 
     -- Advance render timers
     self.pulse_timer = self.pulse_timer + dt
     while self.pulse_timer > PULSE do
         self.pulse_timer = self.pulse_timer - PULSE
-        self.cursor[3] = not self.cursor[3]
+        c[3] = not c[3]
     end
     self.shading = self.shading + self.shade_dir * dt / 3
     if self.shading > 0.4 then
@@ -299,10 +323,11 @@ end
 function Battle:renderCursor()
 
     -- Cursor position
-    local x_tile = self.origin_x + self.cursor[1]
-    local y_tile = self.origin_y + self.cursor[2]
+    local c = self:getCursor()
+    local x_tile = self.origin_x + c[1]
+    local y_tile = self.origin_y + c[2]
     local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
-    local shift = ite(self.cursor[3], 2, 3)
+    local shift = ite(c[3], 2, 3)
     local fx = x + TILE_WIDTH - shift
     local fy = y + TILE_HEIGHT - shift
     x = x + shift
@@ -349,8 +374,9 @@ function Battle:renderGrid()
     end
 
     -- Render movement range
-    local row = self.cursor[2]
-    local col = self.cursor[1]
+    local c = self:getCursor()
+    local row = c[2]
+    local col = c[1]
     local sp = self.grid[row][col].occupied
     if sp then
         local move = math.floor(sp.attributes['agility'] / 5)
@@ -377,7 +403,8 @@ end
 function Battle:renderHealthbar(sp)
     local x, y = sp:getPosition()
     local ratio = sp.health / sp.attributes['endurance']
-    y = y + sp.h + ite(self.cursor[3], 0, -1) - 1
+    local c = self:getCursor()
+    y = y + sp.h + ite(c[3], 0, -1) - 1
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.rectangle('fill', x + 3, y, sp.w - 6, 3)
     love.graphics.setColor(0.4, 0, 0.2, 1)
@@ -393,7 +420,8 @@ function Battle:renderOverlay(cam_x, cam_y)
     for i = 1, #self.enemies do self:renderHealthbar(self.enemies[i]) end
 
     -- Render battle hover box
-    local sp = self.grid[self.cursor[2]][self.cursor[1]].occupied
+    local c = self:getCursor()
+    local sp = self.grid[c[2]][c[1]].occupied
     local str_size = 100
     local box_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN * 2 - str_size
     local box_y = cam_y + BOX_MARGIN
@@ -440,8 +468,9 @@ function Battle:renderOverlay(cam_x, cam_y)
     end
 
     -- Render battle menu or battle text
-    if self.battle_menu then
-        self.battle_menu:render(cam_x, cam_y, self.chapter)
+    local m = self:getMenu()
+    if m then
+        m:render(cam_x, cam_y, self.chapter)
     else
         local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
         local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE

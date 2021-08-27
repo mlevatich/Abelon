@@ -2,9 +2,6 @@
 
 #37:
 
-Camera should follow behind cursor, not exactly, but enough that the cursor
-doesn't stray TOO far from center stage. Investigate how fire emblem does it?
-
 "turn stack" for a sprite in question stores at each entry:
     render: list of rendering functions to call
     location: where is the sprite?
@@ -81,7 +78,7 @@ trust: abelon triples his affinity for the turn
 pinpoint: find a weak spot. Very specific range required.
 assassinate: if pinpoint was used last turn, and you have at least 3 assists,
 ability instantly kills target. Otherwise it does nothing.
-judgement: abelon instantly kills an enemy anywhere on the map with 10% less HP
+judgement: abelon instantly kills an enemy anywhere on the map with 10 HP or less
 crucible: abelon deals (insanely high damage) in a huge area around him, including
 to himself and allies. The ability cannot kill abelon
 forbearance: kath assist, kath takes all damage meant for an adjacent target
