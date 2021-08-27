@@ -79,6 +79,59 @@ function Player:mkQuitMenu()
     }, 'Save and quit, or restart the chapter')
 end
 
+function Player:mkDifficultyMenu()
+    local setD = function(d)
+        if self:getChapter().difficulty > d then
+            return function(c, m)
+                c:setDifficulty(d)
+
+                -- Stupid hack to get difficulty menu option to update
+                local nm = c.player:mkDifficultyMenu()
+                local location = m.parent.hovering + m.parent.base - 1
+                local hovering = m.hovering
+                local base = m.base
+                m.parent.menu_items[location] = nm
+                initSubmenu(nm, m.parent)
+                m:back()
+                m.parent:forward()
+                m.parent.selected.hovering = hovering
+                m.parent.selected.base = base
+            end
+        else
+            return nil
+        end
+    end
+    local isD = function(d)
+        return function(c)
+            if c.difficulty == d then
+                love.graphics.setColor(unpack(HIGHLIGHT))
+            else
+                love.graphics.setColor(1, 1, 1, 1)
+            end
+        end
+    end
+    return MenuItem('Difficulty', {
+        MenuItem('Normal', {}, "Switch to this difficulty", nil,
+            setD(NORMAL),
+            "Lower the difficulty to Normal? Difficulty can \z
+             be lowered but not raised.",
+            isD(NORMAL)
+        ),
+        MenuItem('Adept', {}, "Switch to this difficulty", nil,
+            setD(ADEPT),
+            "Lower the difficulty to Adept? Difficulty can \z
+             be lowered but not raised.",
+            isD(ADEPT)
+        ),
+        MenuItem('Master', {}, "Switch to this difficulty", nil,
+            setD(MASTER),
+            "Lower the difficulty to Master? Difficulty can \z
+             be lowered but not raised.",
+            isD(MASTER)
+        ),
+    }, 'View and lower difficulty level')
+end
+
 function Player:mkSettingsMenu()
     local sv = function(k, v)
         return function(c)
@@ -93,25 +146,6 @@ function Player:mkSettingsMenu()
             if (k == 'm' and c.music_volume == v) or
                (k == 's' and c.sfx_volume == v) or
                (k == 't' and c.text_volume == v) then
-                love.graphics.setColor(unpack(HIGHLIGHT))
-            else
-                love.graphics.setColor(1, 1, 1, 1)
-            end
-        end
-    end
-    local setD = function(d)
-        if self:getChapter().difficulty > d then
-            return function(c)
-                c:setDifficulty(d)
-                c.player:changeMode('free')
-            end
-        else
-            return nil
-        end
-    end
-    local isD = function(d)
-        return function(c)
-            if c.difficulty == d then
                 love.graphics.setColor(unpack(HIGHLIGHT))
             else
                 love.graphics.setColor(1, 1, 1, 1)
@@ -142,26 +176,7 @@ function Player:mkSettingsMenu()
                 MenuItem('High', {}, nil, nil, sv('t', HIGH), nil, iv('t', HIGH))
             }, 'Set text volume')
         }, 'Change audio settings'),
-        MenuItem('Difficulty', {
-            MenuItem('Normal', {}, "Switch to this difficulty", nil,
-                setD(NORMAL),
-                "Lower the difficulty to Normal? Difficulty can \z
-                 be lowered but not raised.",
-                isD(NORMAL)
-            ),
-            MenuItem('Adept', {}, "Switch to this difficulty", nil,
-                setD(ADEPT),
-                "Lower the difficulty to Adept? Difficulty can \z
-                 be lowered but not raised.",
-                isD(ADEPT)
-            ),
-            MenuItem('Master', {}, "Switch to this difficulty", nil,
-                setD(MASTER),
-                "Lower the difficulty to Master? Difficulty can \z
-                 be lowered but not raised.",
-                isD(MASTER)
-            ),
-        }, 'View and lower difficulty level'),
+        self:mkDifficultyMenu(),
         MenuItem('Formulas', {}, nil, nil)
     }, 'View settings and information')
 end

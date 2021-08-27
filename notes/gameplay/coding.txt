@@ -2,13 +2,9 @@
 
 #37:
 
-For now, have the wolves start just in reach of Kath and Abelon so they're
-attackable.
-
-Video options, volume options, formulas, end turn, and check wincon should all
-be menu items in the battle options menu. Should be able to change difficulty
-from the battle start menu, but only on the first turn. Should be able to see
-wincon from this menu on any turn.
+settings, end turn, and check wincon should
+all be menu items in the battle options menu. Should be able to see
+wincon (and losscon) from battle start menu as well.
 
 Pulsing healthbars visible above sprites.
 

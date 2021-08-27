@@ -137,17 +137,23 @@ end
 function Battle:openStartMenu()
     local die = function(c) love.event.quit(0) end
     local next = function(c) self:nextPhase() end
-    local begin = MenuItem('Begin turn', {}, nil, nil, next)
-    local restart1 = MenuItem('Restart battle', {}, nil, nil, pass,
+    local begin = MenuItem('Begin turn', {}, "Begin your turn", nil, next)
+    local wincon = MenuItem('Objectives', {},
+        'View victory and defeat conditions'
+    )
+    local restart1 = MenuItem('Restart battle', {}, 'Start the battle over',
+        nil, pass,
         "Start the battle over from the beginning?"
     )
-    local restart2 = MenuItem('Restart chapter', {}, nil, nil, pass,
+    local restart2 = MenuItem('Restart chapter', {}, 'Start the chapter over',
+        nil, pass,
         "Are you SURE you want to restart the chapter? You will lose ALL \z
          progress made during the chapter."
     )
-    local quit = MenuItem('Save and quit', {}, nil, nil, die,
-        "Save current progress and close the game?")
-    local m = { begin, restart1, restart2, quit }
+    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
+        "Save current progress and close the game?"
+    )
+    local m = { begin, wincon, restart1, restart2, quit }
     self.battle_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
 end
 
@@ -181,12 +187,22 @@ end
 
 function Battle:openOptionsMenu()
     local die = function(c) love.event.quit(0) end
-    local restart = MenuItem('Restart battle', {}, nil, nil, pass,
+    local wincon = MenuItem('Objectives', {},
+        'View victory and defeat conditions'
+    )
+    local end_turn = MenuItem('End turn', {},
+        'End your turn', nil, pass,
+        "End your turn early? Some of your allies can still act."
+    )
+    local settings = self.player:mkSettingsMenu()
+    local restart = MenuItem('Restart battle', {},
+        'Start the battle over', nil, pass,
         "Start the battle over from the beginning?"
     )
-    local quit = MenuItem('Save and quit', {}, nil, nil, die,
-        "Save battle state and close the game?")
-    local m = { restart, quit }
+    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
+        "Save battle state and close the game?"
+    )
+    local m = { wincon, end_turn, settings, restart, quit }
     self.battle_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN)
 end
 

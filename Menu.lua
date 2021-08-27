@@ -54,52 +54,55 @@ function Menu:init(parent, menu_items, x, y, confirm_msg)
     self:initSubmenus()
 end
 
+function initSubmenu(cur, parent)
+    if next(cur.children) ~= nil then
+
+        -- Calculate base position
+        local next_x = parent.rel_x + parent.width + BOX_MARGIN/4
+        local next_y = parent.rel_y
+
+        -- Init menu and open action
+        local submenu = Menu(parent, cur.children, next_x, next_y)
+        local old_action = cur.action
+        cur.action = function(c)
+            parent.selected = submenu
+            if old_action then old_action(c) end
+        end
+
+    elseif cur.confirm_msg and cur.action then
+
+        -- Base position of confirm message
+        local msg = cur.confirm_msg
+        local next_x = VIRTUAL_WIDTH/2
+                     - (CHAR_WIDTH * 3 + BOX_MARGIN*2)/2
+
+        -- Witchcraft
+        local next_y = (VIRTUAL_HEIGHT + TEXT_MARGIN_Y) / 2
+                     + (#msg/2 - 1) * LINE_HEIGHT
+                     - HALF_MARGIN
+
+        -- Menu item's action is forwarded to 'Yes' on the confirm screen,
+        -- which is another submenu
+        local n = MenuItem('No', {})
+        local y = MenuItem('Yes', {})
+        local submenu = Menu(parent, {n, y}, next_x, next_y, msg)
+        local inherited_action = cur.action
+        n.action = function(c) submenu:back() end
+        y.action = function(c, m)
+            submenu:back()
+            inherited_action(c, m)
+        end
+        cur.action = function(c)
+            parent.selected = submenu
+        end
+    end
+end
+
 function Menu:initSubmenus()
 
     -- Initialize all sub-menus
     for i=1, #self.menu_items do
-        local cur = self.menu_items[i]
-        if next(cur.children) ~= nil then
-
-            -- Calculate base position
-            local next_x = self.rel_x + self.width + BOX_MARGIN/4
-            local next_y = self.rel_y
-
-            -- Init menu and open action
-            local submenu = Menu(self, cur.children, next_x, next_y)
-            local old_action = cur.action
-            cur.action = function(c)
-                self.selected = submenu
-                if old_action then old_action(c) end
-            end
-
-        elseif cur.confirm_msg and cur.action then
-
-            -- Base position of confirm message
-            local msg = cur.confirm_msg
-            local next_x = VIRTUAL_WIDTH/2
-                         - (CHAR_WIDTH * 3 + BOX_MARGIN*2)/2
-
-            -- Witchcraft
-            local next_y = (VIRTUAL_HEIGHT + TEXT_MARGIN_Y) / 2
-                         + (#msg/2 - 1) * LINE_HEIGHT
-                         - HALF_MARGIN
-
-            -- Menu item's action is forwarded to 'Yes' on the confirm screen,
-            -- which is another submenu
-            local n = MenuItem('No', {})
-            local y = MenuItem('Yes', {})
-            local submenu = Menu(self, {n, y}, next_x, next_y, msg)
-            local inherited_action = cur.action
-            n.action = function(c) submenu:back() end
-            y.action = function(c)
-                submenu:back()
-                inherited_action(c)
-            end
-            cur.action = function(c)
-                self.selected = submenu
-            end
-        end
+        initSubmenu(self.menu_items[i], self)
     end
 end
 
@@ -117,7 +120,7 @@ function Menu:forward(c)
         self.selected:forward(c)
     else
         local action = self.menu_items[self.hovering + self.base - 1].action
-        if action then action(c) end
+        if action then action(c, self.parent) end
     end
 end
 
