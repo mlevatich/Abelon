@@ -1,9 +1,5 @@
 (please commit each paragraph separately for your own sanity)
 
-#41:
-
-Exploration theme and combat theme
-
 #37:
 
 For now, have the wolves start just in reach of Kath and Abelon so they're
@@ -273,6 +269,9 @@ done. They should all be individual issues.
 
 Finish script - Do this before even looking at the below scenarios! Because
 I might decide I want something different as I write the script.
+Better forest theme - more tense investigation, less funeral march
+Basic battle theme - for the three non-boss encounters
+Enemy approaches theme - for rising action before a fight!
 implement Elaine scenario
 implement Ghoul scenario
 implement Deer scenario
