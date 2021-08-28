@@ -191,6 +191,10 @@ function Sprite:getChapter()
     return self.chapter
 end
 
+function Sprite:getMovement()
+    return math.floor(self.attributes['agility'] / 5)
+end
+
 -- Is this sprite interactive?
 function Sprite:isInteractive()
     return self.interactive

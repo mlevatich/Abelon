@@ -91,7 +91,10 @@ function Battle:init(battle_id, player, chapter)
     self.chapter.current_music = Music(readField(data[8]))
 
     -- Start the battle!
-    self.stack = {{ ['stage'] = STAGE_FREE, ['cursor'] = { 1, 1, false } }}
+    self.stack = {{
+        ['stage'] = STAGE_FREE,
+        ['cursor'] = { 1, 1, false, { HIGHLIGHT } }
+    }}
     self:begin()
 end
 
@@ -101,6 +104,19 @@ end
 
 function Battle:getCamera()
     return self.battle_cam_x, self.battle_cam_y, self.battle_cam_speed
+end
+
+function Battle:push(e)
+    for i = 1, #self.stack do
+        if self.stack[i]['cursor'] then
+            self.stack[i]['cursor'][3] = false
+        end
+    end
+    self.stack[#self.stack + 1] = e
+end
+
+function Battle:pop()
+    table.remove(self.stack, #self.stack)
 end
 
 function Battle:getCursor()
@@ -117,6 +133,10 @@ function Battle:getMenu()
     return self.stack[#self.stack]['menu']
 end
 
+function Battle:getSprite()
+    return self.stack[#self.stack]['sp']
+end
+
 function Battle:moveCursor(x, y)
     c = self:getCursor()
     c[1] = x
@@ -124,14 +144,15 @@ function Battle:moveCursor(x, y)
 end
 
 function Battle:openMenu(m)
-    self.stack[#self.stack + 1] = {}
-    self.stack[#self.stack]['menu'] = m
-    self.stack[#self.stack]['stage'] = STAGE_MENU
+    self:push({
+        ['stage'] = STAGE_MENU,
+        ['menu'] = m
+    })
 end
 
 function Battle:closeMenu()
     if self.stack[#self.stack]['stage'] == STAGE_MENU then
-        table.remove(self.stack, #self.stack)
+        self:pop()
     end
 end
 
@@ -246,6 +267,36 @@ function Battle:isAlly(sp)
     return find(self.allies, sp)
 end
 
+function Battle:selectAlly(sp)
+    local c = self:getCursor()
+    self:push({
+        ['stage'] = STAGE_MOVE,
+        ['sp'] = sp,
+        ['cursor'] = { c[1], c[2], c[3], {0.4, 0.4, 1, 1} }
+    })
+end
+
+function Battle:newCursorPosition(up, down, left, right)
+    local c = self:getCursor()
+    local i = c[2]
+    local j = c[1]
+    local x_move = 0
+    local y_move = 0
+    if left and not right and j - 1 >= 1 and self.grid[i][j - 1] then
+        x_move = -1
+    end
+    if right and not left and j + 1 <= self.grid_w and self.grid[i][j + 1] then
+        x_move = 1
+    end
+    if up and not down and i - 1 >= 1 and self.grid[i - 1][j] then
+        y_move = -1
+    end
+    if down and not up and i + 1 <= self.grid_h and self.grid[i + 1][j] then
+        y_move = 1
+    end
+    return j + x_move, i + y_move
+end
+
 function Battle:update(keys, dt)
 
     -- Control determined by stage
@@ -275,34 +326,37 @@ function Battle:update(keys, dt)
     elseif s == STAGE_FREE then
 
         -- Free map navagation
-        local c = self:getCursor()
-        local i = c[2]
-        local j = c[1]
-        local x_move = 0
-        local y_move = 0
-        if left and not right and j - 1 >= 1 and self.grid[i][j - 1] then
-            x_move = -1
-        end
-        if right and not left and j + 1 <= self.grid_w and self.grid[i][j + 1] then
-            x_move = 1
-        end
-        if up and not down and i - 1 >= 1 and self.grid[i - 1][j] then
-            y_move = -1
-        end
-        if down and not up and i + 1 <= self.grid_h and self.grid[i + 1][j] then
-            y_move = 1
-        end
-        self:moveCursor(j + x_move, i + y_move)
+        local x, y = self:newCursorPosition(up, down, left, right)
+        self:moveCursor(x, y)
 
-        if keys['f'] then
-            local space = self.grid[i][j]
+        if f then
+            local space = self.grid[y][x]
             if not space.occupied then
                 self:openOptionsMenu()
             elseif self:isAlly(space.occupied) then
-                pass()
+                self:selectAlly(space.occupied)
             else
                 self:openEnemyMenu(space.occupied)
             end
+        end
+
+    elseif s == STAGE_MOVE then
+
+        if d then
+            self:pop()
+        else
+            -- Move a sprite to a new location
+            local sp = self:getSprite()
+            local y1, x1 = self:findSprite(sp:getId())
+            local x2, y2 = self:newCursorPosition(up, down, left, right)
+            if abs(x2 - x1) + abs(y2 - y1) <= sp:getMovement() then
+                self:moveCursor(x2, y2)
+            end
+        end
+
+        -- TODO
+        if f then
+            pass()
         end
     end
 
@@ -329,39 +383,61 @@ function Battle:update(keys, dt)
     end
 end
 
-function Battle:renderCursor()
-
-    -- Cursor position
-    local c = self:getCursor()
-    local x_tile = self.origin_x + c[1]
-    local y_tile = self.origin_y + c[2]
-    local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
-    local shift = ite(c[3], 2, 3)
-    local fx = x + TILE_WIDTH - shift
-    local fy = y + TILE_HEIGHT - shift
-    x = x + shift
-    y = y + shift
-    local len = 10 - shift
-    love.graphics.setColor(unpack(HIGHLIGHT))
-    love.graphics.line(x, y, x + len, y)
-    love.graphics.line(x, y, x, y + len)
-    love.graphics.line(fx, y, fx - len, y)
-    love.graphics.line(fx, y, fx, y + len)
-    love.graphics.line(x, fy, x, fy - len)
-    love.graphics.line(x, fy, x + len, fy)
-    love.graphics.line(fx, fy, fx - len, fy)
-    love.graphics.line(fx, fy, fx, fy - len)
+function Battle:renderCursors()
+    for i = 1, #self.stack do
+        local c = self.stack[i]['cursor']
+        if c then
+            local x_tile = self.origin_x + c[1]
+            local y_tile = self.origin_y + c[2]
+            local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
+            local shift = ite(c[3], 2, 3)
+            local fx = x + TILE_WIDTH - shift
+            local fy = y + TILE_HEIGHT - shift
+            x = x + shift
+            y = y + shift
+            local len = 10 - shift
+            love.graphics.setColor(unpack(c[4]))
+            love.graphics.line(x, y, x + len, y)
+            love.graphics.line(x, y, x, y + len)
+            love.graphics.line(fx, y, fx - len, y)
+            love.graphics.line(fx, y, fx, y + len)
+            love.graphics.line(x, fy, x, fy - len)
+            love.graphics.line(x, fy, x + len, fy)
+            love.graphics.line(fx, fy, fx - len, fy)
+            love.graphics.line(fx, fy, fx, fy - len)
+        end
+    end
 end
 
-function Battle:shadeSquare(i, j, clr)
+function Battle:shadeSquare(i, j, clr, full)
     if self.grid[i] and self.grid[i][j] then
         local x = (self.origin_x + j - 1) * TILE_WIDTH
         local y = (self.origin_y + i - 1) * TILE_HEIGHT
-        love.graphics.setColor(clr[1], clr[2], clr[3], self.shading)
+        local shade = ite(full, self.shading, self.shading / 3)
+        love.graphics.setColor(clr[1], clr[2], clr[3], shade)
         love.graphics.rectangle('fill',
             x + 2, y + 2,
             TILE_WIDTH - 4, TILE_HEIGHT - 4
         )
+    end
+end
+
+function Battle:renderMovement(sp, full)
+    local move = sp:getMovement()
+    local row, col = self:findSprite(sp:getId())
+    local clr = { 0, 0, 1 }
+    self:shadeSquare(row, col, clr)
+    for i = 1, move do
+        self:shadeSquare(row + i, col, clr, full)
+        self:shadeSquare(row - i, col, clr, full)
+        self:shadeSquare(row, col + i, clr, full)
+        self:shadeSquare(row, col - i, clr, full)
+        for j = 1, move - i do
+            self:shadeSquare(row + i, col + j, clr, full)
+            self:shadeSquare(row - i, col + j, clr, full)
+            self:shadeSquare(row + i, col - j, clr, full)
+            self:shadeSquare(row - i, col - j, clr, full)
+        end
     end
 end
 
@@ -382,31 +458,39 @@ function Battle:renderGrid()
         end
     end
 
-    -- Render movement range
-    local c = self:getCursor()
-    local row = c[2]
-    local col = c[1]
-    local sp = self.grid[row][col].occupied
-    if sp then
-        local move = math.floor(sp.attributes['agility'] / 5)
-        local clr = { 0, 0, 1 }
-        self:shadeSquare(row, col, clr)
-        for i = 1, move do
-            self:shadeSquare(row + i, col, clr)
-            self:shadeSquare(row - i, col, clr)
-            self:shadeSquare(row, col + i, clr)
-            self:shadeSquare(row, col - i, clr)
-            for j = 1, move - i do
-                self:shadeSquare(row + i, col + j, clr)
-                self:shadeSquare(row - i, col + j, clr)
-                self:shadeSquare(row + i, col - j, clr)
-                self:shadeSquare(row - i, col - j, clr)
-            end
-        end
+    local s = self:getStage()
+    if s == STAGE_FREE or s == STAGE_MENU then
+        local c = self:getCursor()
+        local sp = self.grid[c[2]][c[1]].occupied
+        if sp then self:renderMovement(sp, false) end
+    elseif s == STAGE_MOVE then
+        self:renderMovement(self:getSprite(), true)
     end
 
-    -- Draw cursor always
-    self:renderCursor()
+    -- Draw cursors always
+    self:renderCursors()
+
+    -- During the movement stage, render a transparent sprite at the cursor
+    -- location
+    if self:getStage() == STAGE_MOVE then
+        local c = self:getCursor()
+        local sp = self:getSprite()
+        local y, x = self:findSprite(sp:getId())
+        if c[1] ~= x or c[2] ~= y then
+            love.graphics.setColor(1, 1, 1, 0.5)
+            love.graphics.draw(
+                sp.sheet,
+                sp.on_frame,
+                TILE_WIDTH * (c[1] + self.origin_x - 1) + sp.w / 2,
+                TILE_HEIGHT * (c[2] + self.origin_y - 1) + sp.h / 2,
+                0,
+                sp.dir,
+                1,
+                sp.w / 2,
+                sp.h / 2
+            )
+        end
+    end
 end
 
 function Battle:renderHealthbar(sp)
@@ -477,7 +561,11 @@ function Battle:renderOverlay(cam_x, cam_y)
     end
 
     -- Render battle menu or battle text
-    if self:getStage() == STAGE_MENU then
+    local s = self:getStage()
+    if s == STAGE_MOVE then
+        hover_str = 'Select a space to move to'
+    end
+    if s == STAGE_MENU then
         self:getMenu():render(cam_x, cam_y, self.chapter)
     else
         local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH

@@ -2,24 +2,6 @@
 
 #37:
 
-"stage stack" for a sprite in question stores at each entry:
-    render: list of rendering functions to call
-    sp: if a sprite is taking an action, which sprite is it?
-    stage: what part of the turn are we in? controls how inputs are received.
-    battle menu: if there is a battle menu, what is it?
-    cursor: what cursor are we controlling? where is it?
-When receiving input, the top of the stack controls how input is handled.
-Pressing D always pops the stack (if the menu is done). When rendering, cursors
-all the way up the stack are rendered at their locations, but only the top of
-the stack's 'render' field and battle_menu is used. For attacks and spells, the
-zone and cursor are red. For assists, the zone and cursor are green. For
-movement the zone and cursor are blue. The stages that go on the stack are
-documented below:
-Select ally. Blue cursor appears, sound effect plays, hover text changes.
-Can move blue cursor within movement range. Transparent ally sprite goes
-wherever you move blue cursor. All exists on a cursor stack. Pressing D pops
-it.
-
 Select a square to move to. Blue cursor and transparent sprite fixed in place.
 Hover text disappears. Sprite attack and spell (and "wait") menu opens, and
 can be navigated. Menu goes on stack, pressing D at root menu closes it.
