@@ -35,7 +35,7 @@ function Skill:toMenuItem(itex, icons, with_skilltrees)
     return MenuItem(self.name, {}, nil, {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
-    })
+    }, nil, nil, nil, self.id)
 end
 
 function Skill:mkSkillBox(itex, icons, with_skilltrees)

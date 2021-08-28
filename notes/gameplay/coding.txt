@@ -2,9 +2,14 @@
 
 #37:
 
-Select a square to move to. Blue cursor and transparent sprite fixed in place.
-Hover text disappears. Sprite attack and spell (and "wait") menu opens, and
-can be navigated. Menu goes on stack, pressing D at root menu closes it.
+For the final action, need to track throughout:
+Where did they pick for Move 1?
+How much move is left?
+What attack are they using, on what tile?
+Where did they pick for move 2?
+What assist are they using, on what tile?
+^ this should suffice for during-action info storage. Can probably fit all this
+into the stack with a "result" field.
 
 Select a spell or attack. Blue movement range disappears. Red cursor and
 red range squares appear. Hover text changes. Menu remains. Can move red cursor

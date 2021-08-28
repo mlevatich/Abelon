@@ -3,7 +3,7 @@ require 'Constants'
 
 MenuItem = Class{}
 
-function MenuItem:init(name, children, h_desc, h_box, action, confirm, p)
+function MenuItem:init(name, children, h_desc, h_box, action, confirm, p, id)
 
     self.name = name
     self.children = children
@@ -18,6 +18,7 @@ function MenuItem:init(name, children, h_desc, h_box, action, confirm, p)
         self.confirm_msg = cm
     end
     self.setPen = ite(p, p, function(c) love.graphics.setColor(1, 1, 1, 1) end)
+    self.id = id
 end
 
 Menu = Class{}

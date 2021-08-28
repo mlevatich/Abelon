@@ -3,6 +3,7 @@ require 'Constants'
 
 require 'Menu'
 require 'Music'
+require 'Skill'
 
 Battle = Class{}
 
@@ -93,7 +94,10 @@ function Battle:init(battle_id, player, chapter)
     -- Start the battle!
     self.stack = {{
         ['stage'] = STAGE_FREE,
-        ['cursor'] = { 1, 1, false, { HIGHLIGHT } }
+        ['cursor'] = { 1, 1, false, { HIGHLIGHT } },
+        ['views'] = {
+            { BEFORE, TEMP, function() self:renderMovementHover() end }
+        }
     }}
     self:begin()
 end
@@ -134,7 +138,17 @@ function Battle:getMenu()
 end
 
 function Battle:getSprite()
-    return self.stack[#self.stack]['sp']
+    top = nil
+    for i = 1, #self.stack do
+        if self.stack[i]['sp'] then
+            top = self.stack[i]['sp']
+        end
+    end
+    return top
+end
+
+function Battle:getSkill()
+    return self.stack[#self.stack]['sk']
 end
 
 function Battle:moveCursor(x, y)
@@ -143,10 +157,11 @@ function Battle:moveCursor(x, y)
     c[2] = y
 end
 
-function Battle:openMenu(m)
+function Battle:openMenu(m, views)
     self:push({
         ['stage'] = STAGE_MENU,
-        ['menu'] = m
+        ['menu'] = m,
+        ['views'] = views
     })
 end
 
@@ -199,15 +214,46 @@ function Battle:openStartMenu()
         "Save current progress and close the game?"
     )
     local m = { begin, wincon, restart1, restart2, quit }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN))
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {{}})
+end
+
+function Battle:mkUsable(sp, sk_menu)
+    local sk = skills[sk_menu.id]
+    sk_menu.hover_desc = 'Use ' .. sk_menu.name
+    if sp.ignea >= sk.cost then
+        sk_menu.setPen = function(c) love.graphics.setColor(1, 1, 1, 1) end
+        sk_menu.action = function(c)
+            local c = self:getCursor()
+            self:push({
+                ['stage'] = STAGE_TARGET,
+                ['cursor'] =  { c[1] + 1, c[2], c[3], {1, 0.4, 0.4, 1} },
+                ['sp'] = sp,
+                ['sk'] = sk,
+                ['views'] = {{}}
+            })
+        end
+    else
+        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
+    end
 end
 
 function Battle:openAttackMenu(sp)
-
-end
-
-function Battle:openAssistMenu(sp)
-
+    local attributes = MenuItem('Attributes', {}, nil, {
+        ['elements'] = sp:buildAttributeBox(),
+        ['w'] = HBOX_WIDTH
+    })
+    local wait = MenuItem('Skip', {},
+        'Skip ' .. sp.name .. "'s attack", nil, pass
+    )
+    local skills_menu = sp:mkSkillsMenu()
+    local weapon = skills_menu.children[1]
+    local spell = skills_menu.children[2]
+    for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
+    for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
+    local opts = { attributes, weapon, spell, wait }
+    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
+        { BEFORE, TEMP, function() self:renderMovementActive() end }
+    })
 end
 
 function Battle:openEnemyMenu(sp)
@@ -222,7 +268,9 @@ function Battle:openEnemyMenu(sp)
     -- TODO: For each skill, add targeting info
     local skills = sp:mkSkillsMenu(false)
     local opts = { attributes, readying, skills }
-    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN))
+    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
+        { BEFORE, TEMP, function() self:renderMovementHover() end }
+    })
 end
 
 function Battle:buildReadyingBox(sp)
@@ -248,7 +296,7 @@ function Battle:openOptionsMenu()
         "Save battle state and close the game?"
     )
     local m = { wincon, end_turn, settings, restart, quit }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN))
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {{}})
 end
 
 function Battle:findSprite(sp_id)
@@ -269,10 +317,19 @@ end
 
 function Battle:selectAlly(sp)
     local c = self:getCursor()
+    local new_c = { c[1], c[2], c[3], {0.4, 0.4, 1, 1} }
     self:push({
         ['stage'] = STAGE_MOVE,
         ['sp'] = sp,
-        ['cursor'] = { c[1], c[2], c[3], {0.4, 0.4, 1, 1} }
+        ['cursor'] = new_c,
+        ['views'] = {
+            { BEFORE, TEMP, function() self:renderMovementActive() end },
+            { AFTER, PERSIST, function()
+                self:findSprite(sp:getId())
+                local y, x = self:findSprite(sp:getId())
+                self:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
+            end }
+        }
     })
 end
 
@@ -342,11 +399,11 @@ function Battle:update(keys, dt)
 
     elseif s == STAGE_MOVE then
 
+        local sp = self:getSprite()
         if d then
             self:pop()
         else
             -- Move a sprite to a new location
-            local sp = self:getSprite()
             local y1, x1 = self:findSprite(sp:getId())
             local x2, y2 = self:newCursorPosition(up, down, left, right)
             if abs(x2 - x1) + abs(y2 - y1) <= sp:getMovement() then
@@ -354,9 +411,23 @@ function Battle:update(keys, dt)
             end
         end
 
-        -- TODO
         if f then
-            pass()
+            self:openAttackMenu(sp)
+        end
+
+    elseif s == STAGE_TARGET then
+        local sp = self:getSprite()
+        local sk = self:getSkill()
+        if d then
+            self:pop()
+        else
+            -- TODO: properly select a target for the skill
+            local x, y = self:newCursorPosition(up, down, left, right)
+            self:moveCursor(x, y)
+        end
+
+        if f then
+            -- TODO: move
         end
     end
 
@@ -441,6 +512,45 @@ function Battle:renderMovement(sp, full)
     end
 end
 
+function Battle:renderSpriteImage(cx, cy, x, y, sp)
+    if cx ~= x or cy ~= y then
+        love.graphics.setColor(1, 1, 1, 0.5)
+        love.graphics.draw(
+            sp.sheet,
+            sp.on_frame,
+            TILE_WIDTH * (cx + self.origin_x - 1) + sp.w / 2,
+            TILE_HEIGHT * (cy + self.origin_y - 1) + sp.h / 2,
+            0,
+            sp.dir,
+            1,
+            sp.w / 2,
+            sp.h / 2
+        )
+    end
+end
+
+function Battle:renderMovementHover()
+    local c = self:getCursor()
+    local sp = self.grid[c[2]][c[1]].occupied
+    if sp then self:renderMovement(sp, false) end
+end
+
+function Battle:renderMovementActive()
+    self:renderMovement(self:getSprite(), true)
+end
+
+function Battle:renderViews(depth)
+    for i = 1, #self.stack do
+        local views = self.stack[i]['views']
+        for j = 1, #views do
+            if views[j][1] == depth
+            and (views[j][2] == PERSIST or i == #self.stack) then
+                views[j][3]()
+            end
+        end
+    end
+end
+
 function Battle:renderGrid()
 
     -- Draw grid at fixed position
@@ -458,39 +568,14 @@ function Battle:renderGrid()
         end
     end
 
-    local s = self:getStage()
-    if s == STAGE_FREE or s == STAGE_MENU then
-        local c = self:getCursor()
-        local sp = self.grid[c[2]][c[1]].occupied
-        if sp then self:renderMovement(sp, false) end
-    elseif s == STAGE_MOVE then
-        self:renderMovement(self:getSprite(), true)
-    end
+    -- Render active views below the cursor, in stack order
+    self:renderViews(BEFORE)
 
     -- Draw cursors always
     self:renderCursors()
 
-    -- During the movement stage, render a transparent sprite at the cursor
-    -- location
-    if self:getStage() == STAGE_MOVE then
-        local c = self:getCursor()
-        local sp = self:getSprite()
-        local y, x = self:findSprite(sp:getId())
-        if c[1] ~= x or c[2] ~= y then
-            love.graphics.setColor(1, 1, 1, 0.5)
-            love.graphics.draw(
-                sp.sheet,
-                sp.on_frame,
-                TILE_WIDTH * (c[1] + self.origin_x - 1) + sp.w / 2,
-                TILE_HEIGHT * (c[2] + self.origin_y - 1) + sp.h / 2,
-                0,
-                sp.dir,
-                1,
-                sp.w / 2,
-                sp.h / 2
-            )
-        end
-    end
+    -- Render active views above the cursor, in stack order
+    self:renderViews(AFTER)
 end
 
 function Battle:renderHealthbar(sp)
@@ -564,6 +649,8 @@ function Battle:renderOverlay(cam_x, cam_y)
     local s = self:getStage()
     if s == STAGE_MOVE then
         hover_str = 'Select a space to move to'
+    elseif s == STAGE_TARGET then
+        hover_str = 'Select a target for ' .. self:getSkill().name
     end
     if s == STAGE_MENU then
         self:getMenu():render(cam_x, cam_y, self.chapter)

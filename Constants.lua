@@ -102,12 +102,17 @@ BEGIN = 7
 ROUT = function(b) return true end
 
 -- Battle stages
-STAGE_BEGIN  = 0
 STAGE_FREE   = 1
 STAGE_MOVE   = 2
 STAGE_MENU   = 3
 STAGE_TARGET = 4
 STAGE_WATCH  = 5
+
+-- View options
+BEFORE  = 1
+AFTER   = 2
+PERSIST = 1
+TEMP    = 2
 
 -- Volume Levels
 OFF  = 0
