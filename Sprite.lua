@@ -627,7 +627,21 @@ function Sprite:addBehaviors(new_behaviors)
     end
 end
 
-function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, label, first)
+function Sprite:behaviorSequence(mkBehaviors, doneAction)
+    local behaviors = {}
+    for i = 1, #mkBehaviors do
+        local idx = #mkBehaviors - i + 1
+        local startNext = ite(i == 1, doneAction, function()
+            self:addBehaviors({ ['seq'] = behaviors[idx + 1] })
+            self:changeBehavior('seq')
+        end)
+        behaviors[idx] = mkBehaviors[idx](startNext)
+    end
+    self:addBehaviors({ ['seq'] = behaviors[1] })
+    self:changeBehavior('seq')
+end
+
+function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, first)
     local map = self.chapter:getMap()
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
     local path = self:pathTo(x_dst, y_dst, first)
@@ -656,13 +670,13 @@ function Sprite:walkToBehaviorGeneric(scene, tile_x, tile_y, label, first)
             self.y = y_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
-            scene:release(label)
+            doneAction()
         elseif (path[2] == LEFT and y == y_dst and x <= x_dst) or
                (path[2] == RIGHT and y == y_dst and x >= x_dst) then
             self.x = x_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
-            scene:release(label)
+            doneAction()
         else
             self:changeAnimation('walking')
             if path[1] == UP then

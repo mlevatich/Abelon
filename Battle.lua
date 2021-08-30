@@ -23,9 +23,8 @@ function Battle:init(battle_id, player, chapter)
     self.id = battle_id
     self.chapter = chapter
 
-    -- Tracking battle and chapter state
+    -- Tracking state
     self.turn = 1
-    self.state = {}
 
     -- Data file
     local data_file = 'Abelon/data/battles/' .. self.id .. '.txt'
@@ -92,6 +91,7 @@ function Battle:init(battle_id, player, chapter)
     self.pulse_timer = 0
     self.shading = 0.2
     self.shade_dir = 1
+    self.action_in_progress = nil
 
     -- Music
     self.prev_music = self.chapter.current_music
@@ -181,6 +181,13 @@ function Battle:moveCursor(x, y)
     end
 end
 
+function Battle:moveSprite(sp, x, y)
+    local old_y, old_x = self:findSprite(sp:getId())
+    self.status[sp:getId()]['location'] = { x, y }
+    self.grid[y][x].occupied = sp
+    self.grid[old_y][old_x].occupied = nil
+end
+
 function Battle:openMenu(m, views)
     self:push({
         ['stage'] = STAGE_MENU,
@@ -203,18 +210,118 @@ function Battle:setStage(s)
     self.stack[#self.stack]['stage'] = s
 end
 
-function Battle:clearStack()
-    self.stack = { self.stack[1] }
+function Battle:playAction()
+
+    -- Skills used
+    local sp     = self:getSprite()
+    local attack = self.stack[4]['sk']
+    local assist = self.stack[7]['sk']
+
+    -- Cursor locations
+    local c_sp     = self.stack[1]['cursor']
+    local c_move1  = self.stack[2]['cursor']
+    local c_attack = self.stack[4]['cursor']
+    local c_move2  = self.stack[5]['cursor']
+    local c_assist = self.stack[7]['cursor']
+
+    -- Derive directions from cursor locations
+    local computeDir = function(c1, c2)
+        if     c1[1] - c2[1] ==  1 then return RIGHT
+        elseif c1[1] - c2[1] == -1 then return LEFT
+        elseif c1[2] - c2[2] ==  1 then return DOWN
+        else                            return UP
+        end
+    end
+    local attack_dir = UP
+    if attack and attack.aim == DIRECTIONAL_AIM then
+        attack_dir = computeDir(c_attack, c_move1)
+    end
+    local assist_dir = UP
+    if assist and assist.aim == DIRECTIONAL_AIM then
+        assist_dir = computeDir(c_assist, c_move2)
+    end
+
+    -- Register behavior sequence with sprite
+    sp:behaviorSequence({
+        function(d)
+            return sp:walkToBehaviorGeneric(
+                function()
+                    self:moveSprite(sp, c_move1[1], c_move1[2])
+                    d()
+                end,
+                self.origin_x + c_move1[1],
+                self.origin_y + c_move1[2]
+            )
+        end,
+        -- If attack
+        --     Sprite receives the benefits of the assists on their tile.
+        --     Sprite performs attack animation, skill animation fires.
+        --     All enemies who were hit play hurt animation.
+        --     Any enemies who died play their death animation.
+        -- else
+        --     Sprite receives the benefits of the assists on their tile.
+        --     Pause for a moment
+        function(d)
+            return sp:walkToBehaviorGeneric(
+                function()
+                    self:moveSprite(sp, c_move2[1], c_move2[2])
+                    d()
+                end,
+                self.origin_x + c_move2[1],
+                self.origin_y + c_move2[2])
+        end
+        -- If assist
+        --     Sprite receives the benefits of the assists on their tile.
+        --     Sprite performs assist animation, skill animation fires.
+        -- else
+        --     Sprite receives the benefits of the assists on their tile.
+        --     Pause for a moment
+    }, function() self.action_in_progress = nil end)
+
+    -- Process battle results of actions
+    c_sp[1] = c_move2[1]
+    c_sp[2] = c_move2[2]
+
+    -- Force player to watch the action
+    self.action_in_progress = sp
+    self:push({
+        ['stage'] = STAGE_WATCH,
+        ['sp'] = sp,
+        ['views'] = {{}}
+    })
+
+    -- (print debug info)
+    -- local dirStr = function(d)
+    --     return ite(d == UP, 'UP',
+    --                ite(d == DOWN, 'DOWN',
+    --                    ite(d == RIGHT, 'RIGHT', 'LEFT')))
+    -- end
+    -- print("Sprite action of: " .. sp.name)
+    -- print("Start at: (" .. c_sp[1] .. ", " .. c_sp[2] .. ")")
+    -- print("Move to: (" .. c_move1[1] .. ", " .. c_move1[2] .. ")")
+    -- if c_attack then
+    --     print("Cast " .. attack.name ..
+    --           " at (" .. c_attack[1] .. ", " .. c_attack[2] ..
+    --           ") with direction " .. dirStr(attack_dir))
+    -- else
+    --     print("Skip attack")
+    -- end
+    -- print("Move to: (" .. c_move2[1] .. ", " .. c_move2[2] .. ")")
+    -- if c_assist then
+    --     print("Cast " .. assist.name ..
+    --           " at (" .. c_assist[1] .. ", " .. c_assist[2] ..
+    --           ") with direction " .. dirStr(assist_dir))
+    -- else
+    --     print("Skip assist")
+    -- end
+    -- print("Action ends")
 end
 
 function Battle:endAction()
     local sp = self:getSprite()
     local end_menu = MenuItem('Confirm end', {},
         "Confirm " .. sp.name .. "'s actions this turn", nil,
-        function(c)
-            self.status[sp:getId()]['acted'] = true
-            self:clearStack()
-        end
+        function(c) self:playAction() end
     )
     self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN), {
         { BEFORE, TEMP, function()
@@ -402,7 +509,7 @@ end
 
 function Battle:selectAlly(sp)
     local c = self:getCursor()
-    local new_c = { c[1], c[2], c[3], {0.4, 0.4, 1, 1} }
+    local new_c = { c[1], c[2], c[3], { 0.4, 0.4, 1, 1 } }
     self:push({
         ['stage'] = STAGE_MOVE,
         ['sp'] = sp,
@@ -420,7 +527,7 @@ end
 function Battle:selectTarget()
     local sp = self:getSprite()
     local c = self:getCursor(2)
-    local nc = { c[1], c[2], c[3], c[4] }
+    local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
     self:push({
         ['stage'] = STAGE_MOVE,
         ['sp'] = sp,
@@ -533,7 +640,8 @@ function Battle:update(keys, dt)
         end
 
         c_cur = self:getCursor()
-        if f and not self.grid[c_cur[2]][c_cur[1]].occupied then
+        space = self.grid[c_cur[2]][c_cur[1]].occupied
+        if f and not (space and space ~= sp) then
             if not c then
                 self:openAttackMenu(sp)
             else
@@ -542,6 +650,7 @@ function Battle:update(keys, dt)
         end
 
     elseif s == STAGE_TARGET then
+
         local sp = self:getSprite()
         local sk = self:getSkill()
         if d then
@@ -576,14 +685,30 @@ function Battle:update(keys, dt)
                 self:endAction()
             end
         end
+    elseif s == STAGE_WATCH then
+
+        -- Clean up after actions are performed
+        if not self.action_in_progress then
+            local sp = self:getSprite()
+            self.status[sp:getId()]['acted'] = true
+            self.stack = { self.stack[1] }
+        end
     end
 
     -- Update battle camera position
-    local c = self:getCursor()
-    self.battle_cam_x = (c[1] + self.origin_x)
-                      * TILE_WIDTH - VIRTUAL_WIDTH / 2
-    self.battle_cam_y = (c[2] + self.origin_y)
-                      * TILE_WIDTH - VIRTUAL_HEIGHT / 2
+    local focus = self.action_in_progress
+    if focus then
+        local x, y = focus:getPosition()
+        local w, h = focus:getDimensions()
+        self.battle_cam_x = x + w/2 - VIRTUAL_WIDTH / 2
+        self.battle_cam_y = y + h/2 - VIRTUAL_HEIGHT / 2
+    else
+        local c = self:getCursor()
+        self.battle_cam_x = (c[1] + self.origin_x)
+                          * TILE_WIDTH - VIRTUAL_WIDTH / 2
+        self.battle_cam_y = (c[2] + self.origin_y)
+                          * TILE_WIDTH - VIRTUAL_HEIGHT / 2
+    end
 
     -- Advance render timers
     self.pulse_timer = self.pulse_timer + dt
@@ -724,7 +849,7 @@ end
 function Battle:renderMovementHover()
     local c = self:getCursor()
     local sp = self.grid[c[2]][c[1]].occupied
-    if sp then
+    if sp and not self.status[sp:getId()]['acted'] then
         local y, x = self:findSprite(sp:getId())
         self:renderMovement(x, y, sp, false)
     end
@@ -769,14 +894,18 @@ function Battle:renderGrid()
         end
     end
 
-    -- Render active views below the cursor, in stack order
-    self:renderViews(BEFORE)
+    -- Render views over grid if we aren't watching a scene
+    if self:getStage() ~= STAGE_WATCH then
 
-    -- Draw cursors always
-    self:renderCursors()
+        -- Render active views below the cursor, in stack order
+        self:renderViews(BEFORE)
 
-    -- Render active views above the cursor, in stack order
-    self:renderViews(AFTER)
+        -- Draw cursors always
+        self:renderCursors()
+
+        -- Render active views above the cursor, in stack order
+        self:renderViews(AFTER)
+    end
 end
 
 function Battle:renderHealthbar(sp)
@@ -799,6 +928,7 @@ function Battle:renderOverlay(cam_x, cam_y)
     for i = 1, #self.enemies do self:renderHealthbar(self.enemies[i]) end
 
     -- Render battle hover box
+    local s = self:getStage()
     local c = self:getCursor()
     local sp = self.grid[c[2]][c[1]].occupied
     local str_size = 100
@@ -807,47 +937,48 @@ function Battle:renderOverlay(cam_x, cam_y)
     local box_w = str_size + BOX_MARGIN
     local box_h = BOX_MARGIN + LINE_HEIGHT * 3 + 6
     local hover_str = "View battle options"
-    if sp then
-        local name_str = sp.name
-        local hp_str = sp.health .. "/" .. sp.attributes['endurance']
-        local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
-        if self:isAlly(sp) then
-            hover_str = "Move " .. sp.name
-            love.graphics.setColor(0, 0.1, 0, RECT_ALPHA)
+    if s ~= STAGE_WATCH then
+        if sp then
+            local name_str = sp.name
+            local hp_str = sp.health .. "/" .. sp.attributes['endurance']
+            local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
+            if self:isAlly(sp) then
+                hover_str = "Move " .. sp.name
+                love.graphics.setColor(0, 0.1, 0, RECT_ALPHA)
+            else
+                hover_str = "Examine " .. sp.name
+                love.graphics.setColor(0.1, 0, 0, RECT_ALPHA)
+            end
+            love.graphics.rectangle('fill', box_x, box_y, box_w, box_h)
+            renderString(name_str, box_x + HALF_MARGIN, box_y + HALF_MARGIN)
+            renderString(hp_str,
+                box_x + box_w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
+                box_y + HALF_MARGIN + LINE_HEIGHT + 3
+            )
+            renderString(ign_str,
+                box_x + box_w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
+                box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 9
+            )
+            love.graphics.draw(sp.itex, sp.icons[str_to_icon['endurance']],
+                box_x + HALF_MARGIN,
+                box_y + HALF_MARGIN + LINE_HEIGHT,
+                0, 1, 1, 0, 0
+            )
+            love.graphics.draw(sp.itex, sp.icons[str_to_icon['focus']],
+                box_x + HALF_MARGIN,
+                box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 6,
+                0, 1, 1, 0, 0
+            )
         else
-            hover_str = "Examine " .. sp.name
-            love.graphics.setColor(0.1, 0, 0, RECT_ALPHA)
+            love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+            love.graphics.rectangle('fill', box_x, box_y, box_w,
+                BOX_MARGIN + LINE_HEIGHT
+            )
+            renderString('Empty', box_x + HALF_MARGIN, box_y + HALF_MARGIN)
         end
-        love.graphics.rectangle('fill', box_x, box_y, box_w, box_h)
-        renderString(name_str, box_x + HALF_MARGIN, box_y + HALF_MARGIN)
-        renderString(hp_str,
-            box_x + box_w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
-            box_y + HALF_MARGIN + LINE_HEIGHT + 3
-        )
-        renderString(ign_str,
-            box_x + box_w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
-            box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 9
-        )
-        love.graphics.draw(sp.itex, sp.icons[str_to_icon['endurance']],
-            box_x + HALF_MARGIN,
-            box_y + HALF_MARGIN + LINE_HEIGHT,
-            0, 1, 1, 0, 0
-        )
-        love.graphics.draw(sp.itex, sp.icons[str_to_icon['focus']],
-            box_x + HALF_MARGIN,
-            box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 6,
-            0, 1, 1, 0, 0
-        )
-    else
-        love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-        love.graphics.rectangle('fill', box_x, box_y, box_w,
-            BOX_MARGIN + LINE_HEIGHT
-        )
-        renderString('Empty', box_x + HALF_MARGIN, box_y + HALF_MARGIN)
     end
 
     -- Render battle menu or battle text
-    local s = self:getStage()
     if s == STAGE_MOVE then
         hover_str = 'Select a space to move to'
     elseif s == STAGE_TARGET then
@@ -855,7 +986,7 @@ function Battle:renderOverlay(cam_x, cam_y)
     end
     if s == STAGE_MENU then
         self:getMenu():render(cam_x, cam_y, self.chapter)
-    else
+    elseif s ~= STAGE_WATCH then
         local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
         local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
         renderString(hover_str, x, y)

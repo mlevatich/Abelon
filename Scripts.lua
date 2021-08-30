@@ -67,20 +67,13 @@ function focus(p1, speed)
     end
 end
 
-function walk(p1, tile_x, tile_y, label, first)
+function walk(p1, tx, ty, label, first)
     return function(scene)
         scene.active_events[label] = true
         local sp = scene.participants[p1]
-        sp:addBehaviors({
-            ['walkTo'] = sp:walkToBehaviorGeneric(
-                scene,
-                tile_x,
-                tile_y,
-                label,
-                first
-            )
-        })
-        sp:changeBehavior('walkTo')
+        sp:behaviorSequence({
+            function(d) return sp:walkToBehaviorGeneric(d, tx, ty, first) end
+        }, function() scene:release(label) end)
     end
 end
 
@@ -92,20 +85,13 @@ function walkTo(p1, p2, label, first)
         local x, y = sp2:getPosition()
         local sp2_tile = map:tileAtExact(x, y)
         local offset = ite(sp1.x > sp2.x, 1.2, -1.2)
-        local tile_x = sp2_tile['x'] + offset
-        local tile_y = sp2_tile['y']
+        local tx = sp2_tile['x'] + offset
+        local ty = sp2_tile['y']
 
         scene.active_events[label] = true
-        sp1:addBehaviors({
-            ['walkTo'] = sp1:walkToBehaviorGeneric(
-                scene,
-                tile_x,
-                tile_y,
-                label,
-                first
-            )
-        })
-        sp1:changeBehavior('walkTo')
+        sp1:behaviorSequence({
+            function(d) return sp1:walkToBehaviorGeneric(d, tx, ty, first) end
+        }, function() scene:release(label) end)
     end
 end
 

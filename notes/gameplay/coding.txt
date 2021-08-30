@@ -193,6 +193,9 @@ And flowers, logs, plants and such to forest
 
 Redo forest tileset to use 2x2 trees
 
+Fix screen tearing - each map has a background color instead of black that
+blends in well with the tiles.
+
 #9:
 
 Expand lighting engine
