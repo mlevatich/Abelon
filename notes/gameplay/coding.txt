@@ -2,27 +2,11 @@
 
 #37:
 
-For the final action, need to track throughout:
-Where did they pick for Move 1?
-How much move is left?
-What attack are they using, on what tile?
-Where did they pick for move 2?
-What assist are they using, on what tile?
-^ this should suffice for during-action info storage. Can probably fit all this
-into the stack with a "result" field.
+For free aim, the cursor can be on any space given by the FREE_AIM field
+(intersect a diamond of size "scale" with the targets given by "target").
 
-Select a spell or attack. Blue movement range disappears. Red cursor and
-red range squares appear. Hover text changes. Menu remains. Can move red cursor
-depending on attack type, also changing red square locations accordingly. Red
-cursor goes on stack, popping it returns to menu with movement range
-re-appearing. When aiming an attack, there are two indicators: the (colored)
-cursor, and the light colored filled-squares zone indicator. The zone is given
-by the AOE shape, where the center of the shape table is the cursor location.
-For directional attacks, the cursor is always pointing in a direction away from
-the caster. For self casts, the cursor is always on the caster. For free aim
-the cursor can be on any space given by the FREE_AIM field (intersect a diamond
-of size "scale" with the targets given by "target"). The effect of the attack
-on whatever targets will be hit should be rendered in the top right.
+The effect of the attack on whatever targets will be hit should be rendered in
+the top right.
 
 Select a square to attack (or press wait on attack menu). Red movement range
 disappears, red cursor remains. Blue cursor appears, hover text changes, blue
@@ -39,7 +23,7 @@ Select an assist. Blue movement range disappears. Green cursor and Green range
 squares appear. Hover text changes. Menu remains. Can move green cursor
 depending on assist type, changing green square locations accordingly. Green
 cursor goes on stack, popping it returns to menu with movement range
-re-appearing. See "select a spell or attack" for how the cursor and range work.
+re-appearing.
 
 Select a square to to assist (or press wait on assist menu). All cursors, ranges,
 menus, and transparent sprites disappear. Actions end. Stack is animated in order,
@@ -47,6 +31,14 @@ from bottom to top. Sprite goes gray and cannot be used again that turn. The
 effects of the actions on the stack should be reflected in the battle state, i.e.
 enemy hp changes, new assist squares on the map, new ally position. Turn
 will not "end" until #50, simply cant do anything after all allies are gray.
+(For the final action, need to track throughout:
+Where did they pick for Move 1?
+How much move is left?
+What attack are they using, on what tile?
+Where did they pick for move 2?
+What assist are they using, on what tile?
+^ this should suffice for during-action info storage. Can probably fit all this
+into the stack with a "result" field.)
 
 Handle enemy death. Animation plays at 0 hp after an action, they are teleported
 elsewhere and removed from the enemies list.
@@ -65,9 +57,8 @@ trust: abelon triples his affinity for the turn
 pinpoint: find a weak spot. Very specific range required.
 assassinate: if pinpoint was used last turn, and you have at least 3 assists,
 ability instantly kills target. Otherwise it does nothing.
-judgement: abelon instantly kills an enemy anywhere on the map with 10 HP or less
-crucible: abelon deals (insanely high damage) in a huge area around him, including
-to himself and allies. The ability cannot kill abelon
+crucible: abelon deals (insanely high damage) in a huge area around him,
+including to himself. The ability cannot kill abelon.
 forbearance: kath assist, kath takes all damage meant for an adjacent target
 guardian angel: an ally kath assists takes no damage until their next turn.
 observe: once per battle, elaine selects an ally. At the end of the battle,

@@ -134,6 +134,14 @@ skills = {
         "Protect an adjacent ally from wounds to the back. Adds \z
          (Affinity * 1.0) to ally's Reaction."
     ),
+    ['judgement'] = Skill('judgement', 'Judgement',
+        'Executioner', SPELL, str_to_icon['empty'],
+        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 1 } },
+        { { T } }, FREE_AIM(100, ENEMY), ENEMY,
+        2, nil,
+        "Instantly kill an enemy anywhere on the field with less than 10 \z
+         health remaining."
+    ),
     ['enrage'] = Skill('enrage', 'Enrage',
         'Defender', SPELL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },

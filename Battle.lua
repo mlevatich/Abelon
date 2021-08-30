@@ -133,6 +133,20 @@ function Battle:getCursor()
     return top
 end
 
+function Battle:getPrevCursor()
+    prev = nil
+    found = 0
+    for i = 1, #self.stack do
+        if self.stack[#self.stack - i + 1]['cursor'] then
+            prev = self.stack[#self.stack - i + 1]['cursor']
+            found = found + 1
+            if found == 2 then
+                return prev
+            end
+        end
+    end
+end
+
 function Battle:getMenu()
     return self.stack[#self.stack]['menu']
 end
@@ -152,7 +166,7 @@ function Battle:getSkill()
 end
 
 function Battle:moveCursor(x, y)
-    c = self:getCursor()
+    local c = self:getCursor()
     c[1] = x
     c[2] = y
 end
@@ -224,12 +238,30 @@ function Battle:mkUsable(sp, sk_menu)
         sk_menu.setPen = function(c) love.graphics.setColor(1, 1, 1, 1) end
         sk_menu.action = function(c)
             local c = self:getCursor()
+            local cx = c[1]
+            local cy = c[2]
+            if sk.aim['type'] ~= SELF_CAST then
+                if self.grid[cy][cx + 1] then
+                    cx = cx + 1
+                elseif self.grid[cy][cx - 1] then
+                    cx = cx - 1
+                elseif self.grid[cy + 1][cx] then
+                    cy = cy + 1
+                else
+                    cy = cy - 1
+                end
+            end
+            local new_c = { cx, cy, c[3], {1, 0.4, 0.4, 1} }
             self:push({
                 ['stage'] = STAGE_TARGET,
-                ['cursor'] =  { c[1] + 1, c[2], c[3], {1, 0.4, 0.4, 1} },
+                ['cursor'] =  new_c,
                 ['sp'] = sp,
                 ['sk'] = sk,
-                ['views'] = {{}}
+                ['views'] = {
+                    { BEFORE, TEMP, function()
+                        self:renderAttackRange()
+                    end }
+                }
             })
         end
     else
@@ -333,7 +365,7 @@ function Battle:selectAlly(sp)
     })
 end
 
-function Battle:newCursorPosition(up, down, left, right)
+function Battle:newCursorMove(up, down, left, right)
     local c = self:getCursor()
     local i = c[2]
     local j = c[1]
@@ -351,6 +383,14 @@ function Battle:newCursorPosition(up, down, left, right)
     if down and not up and i + 1 <= self.grid_h and self.grid[i + 1][j] then
         y_move = 1
     end
+    return x_move, y_move
+end
+
+function Battle:newCursorPosition(up, down, left, right)
+    local x_move, y_move = self:newCursorMove(up, down, left, right)
+    local c = self:getCursor()
+    local i = c[2]
+    local j = c[1]
     return j + x_move, i + y_move
 end
 
@@ -421,13 +461,30 @@ function Battle:update(keys, dt)
         if d then
             self:pop()
         else
-            -- TODO: properly select a target for the skill
-            local x, y = self:newCursorPosition(up, down, left, right)
-            self:moveCursor(x, y)
+            local c = self:getPrevCursor()
+            local x_move, y_move = self:newCursorMove(up, down, left, right)
+            if sk.aim['type'] == DIRECTIONAL then
+                if x_move == 1 then
+                    self:moveCursor(c[1] + 1, c[2])
+                elseif x_move == -1 then
+                    self:moveCursor(c[1] - 1, c[2])
+                elseif y_move == 1 then
+                    self:moveCursor(c[1], c[2] + 1)
+                elseif y_move == -1 then
+                    self:moveCursor(c[1], c[2] - 1)
+                end
+            elseif sk.aim['type'] == FREE then
+                local scale = sk.aim['scale']
+                local c_cur = self:getCursor()
+                if abs(c_cur[1] + x_move - c[1]) +
+                   abs(c_cur[2] + y_move - c[2]) <= scale then
+                    self:moveCursor(c_cur[1] + x_move, c_cur[2] + y_move)
+                end
+            end
         end
 
         if f then
-            -- TODO: move
+            -- TODO: move2
         end
     end
 
@@ -490,6 +547,52 @@ function Battle:shadeSquare(i, j, clr, full)
             x + 2, y + 2,
             TILE_WIDTH - 4, TILE_HEIGHT - 4
         )
+    end
+end
+
+function Battle:renderAttackRange()
+
+    -- Get skill and cursor info
+    local c = self:getCursor()
+    local sk = self:getSkill()
+    local scale = #sk.range
+    local clr = { 1, 0, 0 }
+    local dir = UP
+
+    -- Get direction to point the skill
+    if sk.aim == DIRECTIONAL_AIM then
+        local o = self:getPrevCursor()
+        dir = ite(c[1] > o[1], RIGHT,
+                  ite(c[1] < o[1], LEFT,
+                      ite(c[2] > o[2], DOWN, UP)))
+    end
+
+    -- Render red squares based on direction
+    for i = 1, scale do
+        for j = 1, scale do
+            local toGrid = function(x, k, flip)
+                local g = c[k] - (scale + 1) / 2 + x
+                if flip then
+                    g = c[k] + (scale + 1) / 2 - x
+                end
+                return g
+            end
+            local gi = toGrid(i, 2, false)
+            local gj = toGrid(j, 1, false)
+            if dir == DOWN then
+                gi = toGrid(i, 2, true)
+                gj = toGrid(j, 1, false)
+            elseif dir == LEFT then
+                gi = toGrid(j, 2, false)
+                gj = toGrid(i, 1, false)
+            elseif dir == RIGHT then
+                gi = toGrid(j, 2, false)
+                gj = toGrid(i, 1, true)
+            end
+            if sk.range[i][j] and self.grid[gi] and self.grid[gi][gj] then
+                self:shadeSquare(gi, gj, clr, true)
+            end
+        end
     end
 end
 
