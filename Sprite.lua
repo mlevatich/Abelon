@@ -550,6 +550,12 @@ function Sprite:changeAwareness(value)
     self.awareness = self.awareness + value
 end
 
+-- Play an animation once, followed by a doneAction
+function Sprite:fireAnimation(animation_name, doneAction)
+    self:changeAnimation(animation_name)
+    self.current_animation:setDoneAction(doneAction)
+end
+
 -- Change the animation the sprite is performing
 function Sprite:changeAnimation(new_animation_name)
 
@@ -627,18 +633,55 @@ function Sprite:addBehaviors(new_behaviors)
     end
 end
 
-function Sprite:behaviorSequence(mkBehaviors, doneAction)
-    local behaviors = {}
-    for i = 1, #mkBehaviors do
-        local idx = #mkBehaviors - i + 1
-        local startNext = ite(i == 1, doneAction, function()
-            self:addBehaviors({ ['seq'] = behaviors[idx + 1] })
-            self:changeBehavior('seq')
-        end)
-        behaviors[idx] = mkBehaviors[idx](startNext)
+function Sprite:_behaviorSequence(i, behaviors, doneAction)
+    if i == #behaviors then
+        return behaviors[i](doneAction)
     end
-    self:addBehaviors({ ['seq'] = behaviors[1] })
+    return behaviors[i](function()
+        self:addBehaviors({
+            ['seq'] = self:_behaviorSequence(i + 1, behaviors, doneAction)
+        })
+        self:changeBehavior('seq')
+    end)
+end
+
+function Sprite:behaviorSequence(mkBehaviors, doneAction)
+    self:addBehaviors({
+        ['seq'] = self:_behaviorSequence(1, mkBehaviors, doneAction)
+    })
     self:changeBehavior('seq')
+end
+
+function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
+    local anim_type = ite(sk.type == WEAPON, 'weapon',
+                          ite(sk.type == SPELL, 'spell', 'assist'))
+    local skill_anim_done = false
+    local skill_anim_fired = false
+    local fired = false
+    return function(dt)
+        if not skill_anim_fired then
+            self:fireAnimation(anim_type, function()
+                self:changeAnimation('combat')
+                skill_anim_done = true
+                doneAction()
+            end)
+            skill_anim_fired = true
+        end
+        local frame = self.current_animation.current_frame
+        if not fired and (frame >= 4 or skill_anim_done) then
+            -- TODO: fire skill animation
+            fired = true
+        end
+    end
+end
+
+function Sprite:waitBehaviorGeneric(doneAction, waitAnimation, s)
+    local timer = s
+    self:changeAnimation(waitAnimation)
+    return function(dt)
+        timer = timer - dt
+        if timer < 0 then doneAction() end
+    end
 end
 
 function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, first)
@@ -795,10 +838,10 @@ function Sprite:_idleBehavior(dt)
     self:changeAnimation('idle')
 end
 
--- Sprite idle behavior
+-- Sprite battle behavior
 function Sprite:_battleBehavior(dt)
     self:stop()
-    self:changeAnimation('walking')
+    self:changeAnimation('combat')
 end
 
 -- Check whether a sprite is on a tile and return displacement
@@ -1008,6 +1051,8 @@ function Sprite:render(cam_x, cam_y)
 
     if mono then
         love.graphics.setColor(0.4, 0.4, 0.4, 1)
+    else
+        love.graphics.setColor(1, 1, 1, 1)
     end
 
     -- Draw sprite's current animation frame, at its current position,

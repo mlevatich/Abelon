@@ -27,7 +27,8 @@ function Skill:init(id, n, ti, st, si, tr, r, at, t, c, e, d)
                      -- diamond of size scale centered on caster)
     self.target = t  -- Who does your cursor have to be on for this to succeed?
     self.cost   = c  -- Ignea cost
-    self.effect = e  -- Function taking the caster and target as inputs
+    self.use    = e  -- Function taking the caster and target as inputs
+                     -- returns targets hurt and targets dead
 end
 
 function Skill:toMenuItem(itex, icons, with_skilltrees)
@@ -113,32 +114,65 @@ skills = {
     ['sever'] = Skill('sever', 'Sever',
         'Executioner', WEAPON, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
-        { { T } }, DIRECTIONAL_AIM, ENEMY,
-        0, nil,
+        { { T } }, DIRECTIONAL_AIM, ENEMY, 0,
+        function(sp, assists, ts, ts_assists, status)
+            local atk = sp.attributes['force'] * 1
+            local hurt = {}
+            local dead = {}
+            for i = 1, #ts do
+                local def = math.floor(ts[i].attributes['reaction'] / 2)
+                ts[i].health = math.max(0,
+                    ts[i].health - math.max(0, (atk - def)))
+                table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
+            end
+            return hurt, dead
+        end,
         "Slice at an adjacent enemy's exposed limbs, crippling them. Deals \z
          (Force * 1.0) weapon damage to an enemy next to Abelon."
     ),
     ['conflagration'] = Skill('conflagration', 'Conflagration',
         'Demon', SPELL, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
-        mkLine(10), DIRECTIONAL_AIM, ALL,
-        5, nil,
+        mkLine(10), DIRECTIONAL_AIM, ALL, 5,
+        function(sp, assists, ts, ts_assists, status)
+            local atk = sp.attributes['force'] * 2
+            local hurt = {}
+            local dead = {}
+            for i = 1, #ts do
+                ts[i].health = math.max(0, ts[i].health - atk)
+                table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
+            end
+            sp.ignea = sp.ignea - 5
+            return hurt, dead
+        end,
         "Scour the battlefield with unholy fire. Deals (Force * 2.0) spell \z
          damage to all enemies in a line across the entire map."
     ),
     ['guard_blindspot'] = Skill('guard_blindspot', 'Guard Blindspot',
         'Champion', ASSIST, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
-        { { T } }, DIRECTIONAL_AIM, ALLY,
-        0, nil,
+        { { T } }, DIRECTIONAL_AIM, ALLY, 0,
+        function(attributes)
+            return
+        end,
         "Protect an adjacent ally from wounds to the back. Adds \z
          (Affinity * 1.0) to ally's Reaction."
     ),
     ['judgement'] = Skill('judgement', 'Judgement',
         'Executioner', SPELL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 1 } },
-        { { T } }, FREE_AIM(100, ENEMY), ENEMY,
-        2, nil,
+        { { T } }, FREE_AIM(100, ENEMY), ENEMY, 2,
+        function(sp, assists, ts, ts_assists, status)
+            local dead = {}
+            for i = 1, #ts do
+                if ts[i].health <= 10 then
+                    ts[i].health = 0
+                    table.insert(dead, ts[i])
+                end
+            end
+            sp.ignea = sp.ignea - 2
+            return {}, dead
+        end,
         "Instantly kill an enemy anywhere on the field with less than 10 \z
          health remaining."
     ),
@@ -151,8 +185,10 @@ skills = {
           { T, T, T, F, T, T, T },
           { F, T, T, T, T, T, F },
           { F, F, T, T, T, F, F },
-          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, ALL,
-        1, nil,
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, ALL, 1,
+        function(sp, assists, ts, ts_assists, status)
+            return {}, {}
+        end,
         "Confuse and enrage nearby enemies with a mist of activated ignea, so \z
          that their next actions will target Kath."
     ),
@@ -161,8 +197,19 @@ skills = {
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
-          { F, F, F } }, DIRECTIONAL_AIM, ALL,
-        0, nil,
+          { F, F, F } }, DIRECTIONAL_AIM, ALL, 0,
+        function(sp, assists, ts, ts_assists, status)
+            local atk = sp.attributes['force'] * 1
+            local hurt = {}
+            local dead = {}
+            for i = 1, #ts do
+                local def = math.floor(ts[i].attributes['reaction'] / 2)
+                ts[i].health = math.max(0,
+                    ts[i].health - math.max(0, math.max(0, (atk - def))))
+                table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
+            end
+            return hurt, dead
+        end,
         "Slash in a wide arc. Deals (Force * 0.5) weapon damage to enemies in \z
          front of Kath, and grants 2 Reaction until his next turn."
     ),
@@ -171,8 +218,10 @@ skills = {
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
           { T, T, T },
-          { T, T, T } }, FREE_AIM(3, ALL), ALL,
-        1, nil,
+          { T, T, T } }, FREE_AIM(3, ALL), ALL, 1,
+        function(attributes)
+            return
+        end,
         "Infuse the air to heal wounds. Assisted allies recover \z
          (Affinity * 1.0) health. Can target a square within three spaces of \z
          Kath."
@@ -180,8 +229,19 @@ skills = {
     ['bite'] = Skill('bite', 'Bite',
         'Enemy', WEAPON, str_to_icon['force'],
         {},
-        { { T } }, DIRECTIONAL_AIM, ENEMY,
-        0, nil,
+        { { T } }, DIRECTIONAL_AIM, ENEMY, 0,
+        function(sp, assists, ts, ts_assists, status)
+            local atk = sp.attributes['force'] * 1
+            local hurt = {}
+            local dead = {}
+            for i = 1, #ts do
+                local def = math.floor(ts[i].attributes['reaction'] / 2)
+                ts[i].health = math.max(0,
+                    ts[i].health - math.max(0, (atk - def)))
+                table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
+            end
+            return hurt, dead
+        end,
         "Leap at an adjacent enemy and bite into them. Deals \z
          (Force * 1.0) weapon damage to an enemy next to the user."
     ),

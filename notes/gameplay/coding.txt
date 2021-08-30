@@ -2,16 +2,13 @@
 
 #37:
 
-Before going grey and clearing stack, "play out" stack: events animated in
-order, and effects are propagated: enemy damage taken, status effects, new
-ally position, new assist squares, etc.
-
-Handle enemy death. Animation plays at 0 hp after an action, they are teleported
-elsewhere and removed from the enemies list.
+Sprite should face the direction they are attacking or assisting.
 
 Assist green zone should persist after the action ends. The shade of green (but
 not the alpha) should change depending on the number of assists active on a
-square.
+square. Implement this as a temp view in the bottom of the stack
+
+Assist and status effect implementation
 
 Hovering a green square should display all assist effects active on that square.
 Same box as the sprite box. Hover overlay for a sprite should show status
@@ -50,13 +47,13 @@ phase starts, and ends instantly with all enemies doing nothing.
 
 Support scene triggers during combat at: select unit for the first time on ally
 phase, start new phase, end action. Triggers receive turn number, allies/enemies
-and their locations. Add the scenes from the chapter 1 script to the battle.
+and their statuses. Add the scenes from the chapter 1 script to the battle.
 
 Win and loss conditions checked on: end action, start new phase. Win and loss
 conditions accept allies/enemies and their locations, and turn number.
 
 Winning ends the battle and returns control to player (likely after launching
-a victory scene). Losing launches a defeat sceen and then simply closes the game
+a victory scene). Losing launches a defeat scene and then simply closes the game
 (wait until #28 for game over).
 
 #50:
@@ -166,19 +163,19 @@ Abelon-combat-entry-exit
 Abelon-weapon
 Abelon-spell
 Abelon-assist
-Abelon-injured
-Abelon-dead
+Abelon-hurt
+Abelon-death
 
 Kath-combat-entry-exit
 Kath-weapon
 Kath-spell
 Kath-assist
-Kath-injured
-Kath-dead
+Kath-hurt
+Kath-death
 
 Wolf-weapon
-Wolf-injured
-Wolf-dead
+Wolf-hurt
+Wolf-death
 
 #56:
 

@@ -16,6 +16,8 @@ function Animation:init(frames)
     -- Images corresponding to each frame, index into frames
     self.frames = frames
     self.current_frame = 1
+
+    self.doneAction = nil
 end
 
 -- Return the current quad to render
@@ -45,6 +47,18 @@ function Animation:update(dt)
     while self.timer > self.interval do
         self.timer = self.timer - self.interval
         self.current_frame = (self.current_frame + 1) % (#self.frames + 1)
-        if self.current_frame == 0 then self.current_frame = 1 end
+        if self.current_frame == 0 then
+            self.current_frame = 1
+            if self.doneAction then
+                local action = self.doneAction
+                self.doneAction = nil
+                action()
+                return
+            end
+        end
     end
+end
+
+function Animation:setDoneAction(doneAction)
+    self.doneAction = doneAction
 end

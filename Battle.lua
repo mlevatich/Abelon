@@ -16,6 +16,7 @@ function GridSpace:init(sp)
     if sp then
         self.occupied = sp
     end
+    self.assists = {}
 end
 
 function Battle:init(battle_id, player, chapter)
@@ -57,10 +58,11 @@ function Battle:init(battle_id, player, chapter)
             table.insert(t, sp)
             self.grid[v[2]][v[1]] = GridSpace(sp)
             self.status[sp:getId()] = {
-                ['acted'] = false,
+                ['team']     = ite(idx == 4, ALLY, ENEMY),
+                ['alive']    = true,
+                ['acted']    = false,
                 ['location'] = { v[1], v[2] },
-                ['effects'] = {},
-                ['assists'] = {}
+                ['effects']  = {}
             }
             local x_tile = self.origin_x + v[1]
             local y_tile = self.origin_y + v[2]
@@ -73,8 +75,7 @@ function Battle:init(battle_id, player, chapter)
     -- Participants and statuses
     self.player = player
     self.status = {}
-    self.allies = readEntities(4)
-    self.enemies = readEntities(5)
+    self.participants = concat(readEntities(4), readEntities(5))
 
     -- Win conditions and loss conditions
     self.wincon = function(b) return true end
@@ -184,8 +185,8 @@ end
 function Battle:moveSprite(sp, x, y)
     local old_y, old_x = self:findSprite(sp:getId())
     self.status[sp:getId()]['location'] = { x, y }
-    self.grid[y][x].occupied = sp
     self.grid[old_y][old_x].occupied = nil
+    self.grid[y][x].occupied = sp
 end
 
 function Battle:openMenu(m, views)
@@ -253,14 +254,52 @@ function Battle:playAction()
                 self.origin_y + c_move1[2]
             )
         end,
-        -- If attack
-        --     Sprite receives the benefits of the assists on their tile.
-        --     Sprite performs attack animation, skill animation fires.
-        --     All enemies who were hit play hurt animation.
-        --     Any enemies who died play their death animation.
-        -- else
-        --     Sprite receives the benefits of the assists on their tile.
-        --     Pause for a moment
+        function(d)
+            if attack then
+                return sp:skillBehaviorGeneric(
+                    function()
+                        local hurt, dead = self:useAttack(sp,
+                            attack, attack_dir, c_attack
+                        )
+                        for i = 1, #hurt do
+                            if hurt[i] ~= sp then
+                                hurt[i]:behaviorSequence({
+                                    function(d)
+                                        hurt[i]:fireAnimation('hurt',
+                                            function()
+                                                hurt[i]:changeBehavior('battle')
+                                            end
+                                        )
+                                        return pass
+                                    end
+                                }, pass)
+                            end
+                        end
+                        for i = 1, #dead do
+                            dead[i]:behaviorSequence({
+                                function(d)
+                                    dead[i]:fireAnimation('death',
+                                        function()
+                                            dead[i]:resetPosition(0, 0)
+                                            dead[i]:changeBehavior('battle')
+                                        end
+                                    )
+                                    return pass
+                                end
+                            }, pass)
+                            self:kill(dead[i])
+                        end
+                        d()
+                    end,
+                    attack,
+                    attack_dir,
+                    c_attack[1] + self.origin_x,
+                    c_attack[2] + self.origin_y
+                )
+            else
+                return sp:waitBehaviorGeneric(d, 'combat', 1)
+            end
+        end,
         function(d)
             return sp:walkToBehaviorGeneric(
                 function()
@@ -269,16 +308,35 @@ function Battle:playAction()
                 end,
                 self.origin_x + c_move2[1],
                 self.origin_y + c_move2[2])
+        end,
+        function(d)
+            if assist then
+                return sp:skillBehaviorGeneric(
+                    function()
+                        local t = self:skillRange(assist,
+                            assist_dir, c_assist)
+                        for i = 1, #t do
+                            local as = self.grid[t[i][1]][t[i][2]].assists
+                            table.insert(as, assist)
+                        end
+                        d()
+                    end,
+                    assist,
+                    assist_dir,
+                    c_assist[1] + self.origin_x,
+                    c_assist[2] + self.origin_y
+                )
+            else
+                return sp:waitBehaviorGeneric(d, 'combat', 1)
+            end
         end
-        -- If assist
-        --     Sprite receives the benefits of the assists on their tile.
-        --     Sprite performs assist animation, skill animation fires.
-        -- else
-        --     Sprite receives the benefits of the assists on their tile.
-        --     Pause for a moment
-    }, function() self.action_in_progress = nil end)
+    },  function()
+            self.action_in_progress = nil
+            sp:changeBehavior('battle')
+        end
+    )
 
-    -- Process battle results of actions
+    -- Process other battle results of actions
     c_sp[1] = c_move2[1]
     c_sp[2] = c_move2[2]
 
@@ -287,7 +345,7 @@ function Battle:playAction()
     self:push({
         ['stage'] = STAGE_WATCH,
         ['sp'] = sp,
-        ['views'] = {{}}
+        ['views'] = {}
     })
 
     -- (print debug info)
@@ -317,24 +375,27 @@ function Battle:playAction()
     -- print("Action ends")
 end
 
-function Battle:endAction()
+function Battle:endAction(used_assist)
     local sp = self:getSprite()
     local end_menu = MenuItem('Confirm end', {},
         "Confirm " .. sp.name .. "'s actions this turn", nil,
         function(c) self:playAction() end
     )
-    self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN), {
-        { BEFORE, TEMP, function()
+    local views = {}
+    if used_assist then
+        views = {{ BEFORE, TEMP, function()
             self:renderSkillRange({ 0, 1, 0 })
-        end }
-    })
+        end }}
+    end
+    self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN), views)
 end
 
 function Battle:begin()
 
     -- Participants to battle behavior
-    for i = 1, #self.allies  do  self.allies[i]:changeBehavior('battle') end
-    for i = 1, #self.enemies do self.enemies[i]:changeBehavior('battle') end
+    for i = 1, #self.participants do
+        self.participants[i]:changeBehavior('battle')
+    end
     self.player:changeMode('battle')
 
     -- Cursor to Abelon
@@ -419,7 +480,7 @@ function Battle:openAttackMenu(sp)
             self:push({
                 ['stage'] = STAGE_BUBBLE,
                 ['cursor'] = { 1, 1, false, { 0, 0, 0, 0 }},
-                ['views'] = {{}}
+                ['views'] = {}
             })
             self:selectTarget()
         end
@@ -442,7 +503,7 @@ function Battle:openAssistMenu(sp)
     })
     local wait = MenuItem('Skip', {},
         'Skip ' .. sp.name .. "'s assist", nil, function(c)
-            self:endAction()
+            self:endAction(false)
         end
     )
     local skills_menu = sp:mkSkillsMenu(true)
@@ -504,7 +565,7 @@ function Battle:findSprite(sp_id)
 end
 
 function Battle:isAlly(sp)
-    return find(self.allies, sp)
+    return self.status[sp:getId()]['team'] == ALLY
 end
 
 function Battle:selectAlly(sp)
@@ -541,6 +602,61 @@ function Battle:selectTarget()
             end }
         }
     })
+end
+
+function Battle:useAttack(sp, attack, attack_dir, c_attack)
+    local i, j = self:findSprite(sp:getId())
+    local sp_a = self.grid[i][j].assists
+    local t = self:skillRange(attack, attack_dir, c_attack)
+    local ts = {}
+    local ts_a = {}
+    for i = 1, #t do
+        local space = self.grid[t[i][1]][t[i][2]]
+        local target = space.occupied
+        if target then
+            table.insert(ts, target)
+            table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
+        end
+    end
+    return attack.use(sp, sp_a, ts, ts_a, self.status)
+end
+
+function Battle:kill(sp)
+    local i, j = self:findSprite(sp:getId())
+    self.grid[i][j].occupied = nil
+    self.status[sp:getId()]['alive'] = false
+end
+
+function Battle:skillRange(sk, dir, c)
+    local scale = #sk.range
+    local tiles = {}
+    for i = 1, scale do
+        for j = 1, scale do
+            local toGrid = function(x, k, flip)
+                local g = c[k] - (scale + 1) / 2 + x
+                if flip then
+                    g = c[k] + (scale + 1) / 2 - x
+                end
+                return g
+            end
+            local gi = toGrid(i, 2, false)
+            local gj = toGrid(j, 1, false)
+            if dir == DOWN then
+                gi = toGrid(i, 2, true)
+                gj = toGrid(j, 1, false)
+            elseif dir == LEFT then
+                gi = toGrid(j, 2, false)
+                gj = toGrid(i, 1, false)
+            elseif dir == RIGHT then
+                gi = toGrid(j, 2, false)
+                gj = toGrid(i, 1, true)
+            end
+            if sk.range[i][j] and self.grid[gi] and self.grid[gi][gj] then
+                table.insert(tiles, {gi, gj})
+            end
+        end
+    end
+    return tiles
 end
 
 function Battle:newCursorMove(up, down, left, right)
@@ -682,7 +798,7 @@ function Battle:update(keys, dt)
             if sk.type ~= ASSIST then
                 self:selectTarget()
             else
-                self:endAction()
+                self:endAction(true)
             end
         end
     elseif s == STAGE_WATCH then
@@ -705,9 +821,9 @@ function Battle:update(keys, dt)
     else
         local c = self:getCursor()
         self.battle_cam_x = (c[1] + self.origin_x)
-                          * TILE_WIDTH - VIRTUAL_WIDTH / 2
+                          * TILE_WIDTH - VIRTUAL_WIDTH / 2 - TILE_WIDTH / 2
         self.battle_cam_y = (c[2] + self.origin_y)
-                          * TILE_WIDTH - VIRTUAL_HEIGHT / 2
+                          * TILE_HEIGHT - VIRTUAL_HEIGHT / 2 - TILE_HEIGHT / 2
     end
 
     -- Advance render timers
@@ -770,10 +886,9 @@ function Battle:renderSkillRange(clr)
     -- Get skill and cursor info
     local c = self:getCursor()
     local sk = self:getSkill()
-    local scale = #sk.range
-    local dir = UP
 
     -- Get direction to point the skill
+    local dir = UP
     if sk.aim == DIRECTIONAL_AIM then
         local o = self:getCursor(2)
         dir = ite(c[1] > o[1], RIGHT,
@@ -781,32 +896,10 @@ function Battle:renderSkillRange(clr)
                       ite(c[2] > o[2], DOWN, UP)))
     end
 
-    -- Render red squares based on direction
-    for i = 1, scale do
-        for j = 1, scale do
-            local toGrid = function(x, k, flip)
-                local g = c[k] - (scale + 1) / 2 + x
-                if flip then
-                    g = c[k] + (scale + 1) / 2 - x
-                end
-                return g
-            end
-            local gi = toGrid(i, 2, false)
-            local gj = toGrid(j, 1, false)
-            if dir == DOWN then
-                gi = toGrid(i, 2, true)
-                gj = toGrid(j, 1, false)
-            elseif dir == LEFT then
-                gi = toGrid(j, 2, false)
-                gj = toGrid(i, 1, false)
-            elseif dir == RIGHT then
-                gi = toGrid(j, 2, false)
-                gj = toGrid(i, 1, true)
-            end
-            if sk.range[i][j] and self.grid[gi] and self.grid[gi][gj] then
-                self:shadeSquare(gi, gj, clr, true)
-            end
-        end
+    -- Render red squares given by the skill range
+    local tiles = self:skillRange(sk, dir, c)
+    for i = 1, #tiles do
+        self:shadeSquare(tiles[i][1], tiles[i][2], clr, true)
     end
 end
 
@@ -924,8 +1017,9 @@ end
 function Battle:renderOverlay(cam_x, cam_y)
 
     -- Render healthbars below each sprite
-    for i = 1, #self.allies do self:renderHealthbar(self.allies[i]) end
-    for i = 1, #self.enemies do self:renderHealthbar(self.enemies[i]) end
+    for i = 1, #self.participants do
+        self:renderHealthbar(self.participants[i])
+    end
 
     -- Render battle hover box
     local s = self:getStage()
