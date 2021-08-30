@@ -989,6 +989,13 @@ end
 -- Render a sprite to the screen
 function Sprite:render(cam_x, cam_y)
 
+    local b = self.chapter.battle
+    local mono = b and b.status[self.id] and b.status[self.id]['acted']
+
+    if mono then
+        love.graphics.setColor(0.4, 0.4, 0.4, 1)
+    end
+
     -- Draw sprite's current animation frame, at its current position,
     -- in its current direction
     love.graphics.draw(

@@ -50,13 +50,19 @@ function Battle:init(battle_id, player, chapter)
         end
     end
 
-    -- Battle participants
+    -- Put participants on grid
     local readEntities = function(idx)
         local t = {}
         for k,v in pairs(readDict(data[idx], ARR, nil, tonumber)) do
             local sp = self.chapter:getSprite(k)
             table.insert(t, sp)
             self.grid[v[2]][v[1]] = GridSpace(sp)
+            self.status[sp:getId()] = {
+                ['acted'] = false,
+                ['location'] = { v[1], v[2] },
+                ['effects'] = {},
+                ['assists'] = {}
+            }
             local x_tile = self.origin_x + v[1]
             local y_tile = self.origin_y + v[2]
             local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
@@ -64,7 +70,10 @@ function Battle:init(battle_id, player, chapter)
         end
         return t
     end
+
+    -- Participants and statuses
     self.player = player
+    self.status = {}
     self.allies = readEntities(4)
     self.enemies = readEntities(5)
 
@@ -157,7 +166,11 @@ function Battle:getSprite()
 end
 
 function Battle:getSkill()
-    return self.stack[#self.stack]['sk']
+    for i = 1, #self.stack do
+        if self.stack[#self.stack - i + 1]['sk'] then
+            return self.stack[#self.stack - i + 1]['sk']
+        end
+    end
 end
 
 function Battle:moveCursor(x, y)
@@ -188,6 +201,26 @@ end
 
 function Battle:setStage(s)
     self.stack[#self.stack]['stage'] = s
+end
+
+function Battle:clearStack()
+    self.stack = { self.stack[1] }
+end
+
+function Battle:endAction()
+    local sp = self:getSprite()
+    local end_menu = MenuItem('Confirm end', {},
+        "Confirm " .. sp.name .. "'s actions this turn", nil,
+        function(c)
+            self.status[sp:getId()]['acted'] = true
+            self:clearStack()
+        end
+    )
+    self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN), {
+        { BEFORE, TEMP, function()
+            self:renderSkillRange({ 0, 1, 0 })
+        end }
+    })
 end
 
 function Battle:begin()
@@ -301,7 +334,9 @@ function Battle:openAssistMenu(sp)
         ['w'] = HBOX_WIDTH
     })
     local wait = MenuItem('Skip', {},
-        'Skip ' .. sp.name .. "'s assist", nil, pass
+        'Skip ' .. sp.name .. "'s assist", nil, function(c)
+            self:endAction()
+        end
     )
     local skills_menu = sp:mkSkillsMenu(true)
     local assist = skills_menu.children[3]
@@ -357,15 +392,8 @@ function Battle:openOptionsMenu()
 end
 
 function Battle:findSprite(sp_id)
-    for i = 1, self.grid_h do
-        for j = 1, self.grid_w do
-            if self.grid[i][j] and
-               self.grid[i][j].occupied and
-               self.grid[i][j].occupied:getId() == sp_id then
-                return i, j
-            end
-        end
-    end
+    local loc = self.status[sp_id]['location']
+    return loc[2], loc[1]
 end
 
 function Battle:isAlly(sp)
@@ -471,12 +499,15 @@ function Battle:update(keys, dt)
 
         if f then
             local space = self.grid[y][x]
-            if not space.occupied then
+            local o = space.occupied
+            if not o then
                 self:openOptionsMenu()
-            elseif self:isAlly(space.occupied) then
-                self:selectAlly(space.occupied)
+            elseif self:isAlly(o) then
+                if not self.status[o:getId()]['acted'] then
+                    self:selectAlly(o)
+                end
             else
-                self:openEnemyMenu(space.occupied)
+                self:openEnemyMenu(o)
             end
         end
 
@@ -541,6 +572,8 @@ function Battle:update(keys, dt)
         if f then
             if sk.type ~= ASSIST then
                 self:selectTarget()
+            else
+                self:endAction()
             end
         end
     end
