@@ -2,28 +2,8 @@
 
 #37:
 
-For free aim, the cursor can be on any space given by the FREE_AIM field
-(intersect a diamond of size "scale" with the targets given by "target").
-
-The effect of the attack on whatever targets will be hit should be rendered in
-the top right.
-
-Select a square to attack (or press wait on attack menu). Red movement range
-disappears, red cursor remains. Blue cursor appears, hover text changes, blue
-movement range appears. Can move blue cursor within movement range. NEW
-transparent ally sprite goes where blue cursor goes, leaving old one behind.
-Pressing D returns you to target selection (or menu if wait was selected).
-
-Select a square to move to. Blue cursor 2 and transparent sprite 2 fixed in
-place. Not duplicated if the player didn't move. Hover text disappears. Assist
-(and "wait") menu opens, and can be navigated. Menu goes on stack, pressing D
-at root menu closes it.
-
-Select an assist. Blue movement range disappears. Green cursor and Green range
-squares appear. Hover text changes. Menu remains. Can move green cursor
-depending on assist type, changing green square locations accordingly. Green
-cursor goes on stack, popping it returns to menu with movement range
-re-appearing.
+FIX: sprites cant move to an occupied position!
+COMMIT
 
 Select a square to to assist (or press wait on assist menu). All cursors, ranges,
 menus, and transparent sprites disappear. Actions end. Stack is animated in order,
@@ -48,8 +28,19 @@ not the alpha) should change depending on the number of assists active on a
 square.
 
 Hovering a green square should display all assist effects active on that square.
-This can appear in a separate box from the sprite box, or same box, whatever
-looks better.
+Same box as the sprite box. Hover overlay for a sprite should show status
+effects on the sprite, and assists active.
+
+The effect of an attack on whatever targets will be hit should be rendered in
+the top right. Instead of the normal hover overlay, render rows starting from
+the top right of the screen, where each row is two hover overlays: the before
+-> after of the sprite's status and assists. Max this out by line number so
+there's no overflow.
+
+For free aim, the cursor can be on any space given by the FREE_AIM field
+(intersect a diamond of size "scale" with the targets given by "target").
+
+FREE_AIM moves should render an outline of the move's range
 
 Add more skills: (change abelon's "champion" to "veteran")
 inspire: aoe long range assist for abelon

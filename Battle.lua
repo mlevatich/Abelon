@@ -121,30 +121,25 @@ end
 
 function Battle:pop()
     table.remove(self.stack, #self.stack)
-end
-
-function Battle:getCursor()
-    top = nil
-    for i = 1, #self.stack do
-        if self.stack[i]['cursor'] then
-            top = self.stack[i]['cursor']
-        end
+    while self.stack[#self.stack]['stage'] == STAGE_BUBBLE do
+        table.remove(self.stack, #self.stack)
     end
-    return top
 end
 
-function Battle:getPrevCursor()
-    prev = nil
+function Battle:getCursor(n)
+    c = nil
     found = 0
+    n = ite(n, n, 1)
     for i = 1, #self.stack do
         if self.stack[#self.stack - i + 1]['cursor'] then
-            prev = self.stack[#self.stack - i + 1]['cursor']
+            c = self.stack[#self.stack - i + 1]['cursor']
             found = found + 1
-            if found == 2 then
-                return prev
+            if found == n then
+                return c
             end
         end
     end
+    return nil
 end
 
 function Battle:getMenu()
@@ -167,8 +162,10 @@ end
 
 function Battle:moveCursor(x, y)
     local c = self:getCursor()
-    c[1] = x
-    c[2] = y
+    if self.grid[y] and self.grid[y][x] then
+        c[1] = x
+        c[2] = y
+    end
 end
 
 function Battle:openMenu(m, views)
@@ -251,7 +248,10 @@ function Battle:mkUsable(sp, sk_menu)
                     cy = cy - 1
                 end
             end
-            local new_c = { cx, cy, c[3], {1, 0.4, 0.4, 1} }
+            local cclr = ite(sk.type == ASSIST, { 0.4, 1, 0.4, 1 },
+                                                { 1, 0.4, 0.4, 1 })
+            local new_c = { cx, cy, c[3], cclr }
+            local zclr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
             self:push({
                 ['stage'] = STAGE_TARGET,
                 ['cursor'] =  new_c,
@@ -259,7 +259,7 @@ function Battle:mkUsable(sp, sk_menu)
                 ['sk'] = sk,
                 ['views'] = {
                     { BEFORE, TEMP, function()
-                        self:renderAttackRange()
+                        self:renderSkillRange(zclr)
                     end }
                 }
             })
@@ -275,16 +275,41 @@ function Battle:openAttackMenu(sp)
         ['w'] = HBOX_WIDTH
     })
     local wait = MenuItem('Skip', {},
-        'Skip ' .. sp.name .. "'s attack", nil, pass
+        'Skip ' .. sp.name .. "'s attack", nil, function(c)
+            self:push({
+                ['stage'] = STAGE_BUBBLE,
+                ['cursor'] = { 1, 1, false, { 0, 0, 0, 0 }},
+                ['views'] = {{}}
+            })
+            self:selectTarget()
+        end
     )
-    local skills_menu = sp:mkSkillsMenu()
+    local skills_menu = sp:mkSkillsMenu(true)
     local weapon = skills_menu.children[1]
     local spell = skills_menu.children[2]
     for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
     for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
     local opts = { attributes, weapon, spell, wait }
     self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
-        { BEFORE, TEMP, function() self:renderMovementActive() end }
+        { BEFORE, TEMP, function() self:renderMovementFrom() end }
+    })
+end
+
+function Battle:openAssistMenu(sp)
+    local attributes = MenuItem('Attributes', {}, nil, {
+        ['elements'] = sp:buildAttributeBox(),
+        ['w'] = HBOX_WIDTH
+    })
+    local wait = MenuItem('Skip', {},
+        'Skip ' .. sp.name .. "'s assist", nil, pass
+    )
+    local skills_menu = sp:mkSkillsMenu(true)
+    local assist = skills_menu.children[3]
+    for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
+    local opts = { attributes, assist, wait }
+    local c = self:getCursor(3)
+    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
+        { BEFORE, TEMP, function() self:renderMovementFrom(c[1], c[2]) end }
     })
 end
 
@@ -355,11 +380,29 @@ function Battle:selectAlly(sp)
         ['sp'] = sp,
         ['cursor'] = new_c,
         ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovementActive() end },
+            { BEFORE, TEMP, function() self:renderMovementFrom() end },
             { AFTER, PERSIST, function()
-                self:findSprite(sp:getId())
                 local y, x = self:findSprite(sp:getId())
                 self:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
+            end }
+        }
+    })
+end
+
+function Battle:selectTarget()
+    local sp = self:getSprite()
+    local c = self:getCursor(2)
+    local nc = { c[1], c[2], c[3], c[4] }
+    self:push({
+        ['stage'] = STAGE_MOVE,
+        ['sp'] = sp,
+        ['cursor'] = nc,
+        ['views'] = {
+            { BEFORE, TEMP, function()
+                self:renderMovementFrom(c[1], c[2])
+            end },
+            { AFTER, PERSIST, function()
+                self:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
             end }
         }
     })
@@ -440,19 +483,31 @@ function Battle:update(keys, dt)
     elseif s == STAGE_MOVE then
 
         local sp = self:getSprite()
+        local c = self:getCursor(3)
         if d then
             self:pop()
         else
             -- Move a sprite to a new location
             local y1, x1 = self:findSprite(sp:getId())
+            local movement = sp:getMovement()
+            if c then
+                movement = movement - abs(c[1] - x1) - abs(c[2] - y1)
+                x1 = c[1]
+                y1 = c[2]
+            end
             local x2, y2 = self:newCursorPosition(up, down, left, right)
-            if abs(x2 - x1) + abs(y2 - y1) <= sp:getMovement() then
+            if abs(x2 - x1) + abs(y2 - y1) <= movement then
                 self:moveCursor(x2, y2)
             end
         end
 
-        if f then
-            self:openAttackMenu(sp)
+        c_cur = self:getCursor()
+        if f and not self.grid[c_cur[2]][c_cur[1]].occupied then
+            if not c then
+                self:openAttackMenu(sp)
+            else
+                self:openAssistMenu(sp)
+            end
         end
 
     elseif s == STAGE_TARGET then
@@ -461,7 +516,7 @@ function Battle:update(keys, dt)
         if d then
             self:pop()
         else
-            local c = self:getPrevCursor()
+            local c = self:getCursor(2)
             local x_move, y_move = self:newCursorMove(up, down, left, right)
             if sk.aim['type'] == DIRECTIONAL then
                 if x_move == 1 then
@@ -484,7 +539,9 @@ function Battle:update(keys, dt)
         end
 
         if f then
-            -- TODO: move2
+            if sk.type ~= ASSIST then
+                self:selectTarget()
+            end
         end
     end
 
@@ -550,18 +607,17 @@ function Battle:shadeSquare(i, j, clr, full)
     end
 end
 
-function Battle:renderAttackRange()
+function Battle:renderSkillRange(clr)
 
     -- Get skill and cursor info
     local c = self:getCursor()
     local sk = self:getSkill()
     local scale = #sk.range
-    local clr = { 1, 0, 0 }
     local dir = UP
 
     -- Get direction to point the skill
     if sk.aim == DIRECTIONAL_AIM then
-        local o = self:getPrevCursor()
+        local o = self:getCursor(2)
         dir = ite(c[1] > o[1], RIGHT,
                   ite(c[1] < o[1], LEFT,
                       ite(c[2] > o[2], DOWN, UP)))
@@ -596,25 +652,6 @@ function Battle:renderAttackRange()
     end
 end
 
-function Battle:renderMovement(sp, full)
-    local move = sp:getMovement()
-    local row, col = self:findSprite(sp:getId())
-    local clr = { 0, 0, 1 }
-    self:shadeSquare(row, col, clr)
-    for i = 1, move do
-        self:shadeSquare(row + i, col, clr, full)
-        self:shadeSquare(row - i, col, clr, full)
-        self:shadeSquare(row, col + i, clr, full)
-        self:shadeSquare(row, col - i, clr, full)
-        for j = 1, move - i do
-            self:shadeSquare(row + i, col + j, clr, full)
-            self:shadeSquare(row - i, col + j, clr, full)
-            self:shadeSquare(row + i, col - j, clr, full)
-            self:shadeSquare(row - i, col - j, clr, full)
-        end
-    end
-end
-
 function Battle:renderSpriteImage(cx, cy, x, y, sp)
     if cx ~= x or cy ~= y then
         love.graphics.setColor(1, 1, 1, 0.5)
@@ -632,14 +669,42 @@ function Battle:renderSpriteImage(cx, cy, x, y, sp)
     end
 end
 
+function Battle:renderMovement(x, y, sp, full)
+    local row, col = self:findSprite(sp:getId())
+    local move = sp:getMovement() - abs(col - x) - abs(row - y)
+    local clr = { 0, 0, 1 }
+    self:shadeSquare(y, x, clr, full)
+    for i = 1, move do
+        self:shadeSquare(y + i, x, clr, full)
+        self:shadeSquare(y - i, x, clr, full)
+        self:shadeSquare(y, x + i, clr, full)
+        self:shadeSquare(y, x - i, clr, full)
+        for j = 1, move - i do
+            self:shadeSquare(y + i, x + j, clr, full)
+            self:shadeSquare(y - i, x + j, clr, full)
+            self:shadeSquare(y + i, x - j, clr, full)
+            self:shadeSquare(y - i, x - j, clr, full)
+        end
+    end
+end
+
 function Battle:renderMovementHover()
     local c = self:getCursor()
     local sp = self.grid[c[2]][c[1]].occupied
-    if sp then self:renderMovement(sp, false) end
+    if sp then
+        local y, x = self:findSprite(sp:getId())
+        self:renderMovement(x, y, sp, false)
+    end
 end
 
-function Battle:renderMovementActive()
-    self:renderMovement(self:getSprite(), true)
+function Battle:renderMovementFrom(x, y)
+    local sp = self:getSprite()
+    if x and y then
+        self:renderMovement(x, y, sp, true)
+    else
+        local sp_y, sp_x = self:findSprite(sp:getId())
+        self:renderMovement(sp_x, sp_y, sp, true)
+    end
 end
 
 function Battle:renderViews(depth)
