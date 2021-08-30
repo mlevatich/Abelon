@@ -658,6 +658,9 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
     local skill_anim_done = false
     local skill_anim_fired = false
     local fired = false
+    if abs((x - 1) * TILE_WIDTH - self.x) > TILE_WIDTH / 2 then
+        self.dir = ite((x - 1) * TILE_WIDTH > self.x, RIGHT, LEFT)
+    end
     return function(dt)
         if not skill_anim_fired then
             self:fireAnimation(anim_type, function()

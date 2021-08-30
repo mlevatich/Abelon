@@ -120,6 +120,9 @@ skills = {
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
+                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
+                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
+                end
                 local def = math.floor(ts[i].attributes['reaction'] / 2)
                 ts[i].health = math.max(0,
                     ts[i].health - math.max(0, (atk - def)))
@@ -139,6 +142,9 @@ skills = {
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
+                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
+                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
+                end
                 ts[i].health = math.max(0, ts[i].health - atk)
                 table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
             end
@@ -187,6 +193,11 @@ skills = {
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, ALL, 1,
         function(sp, assists, ts, ts_assists, status)
+            for i = 1, #ts do
+                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
+                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
+                end
+            end
             return {}, {}
         end,
         "Confuse and enrage nearby enemies with a mist of activated ignea, so \z
@@ -203,6 +214,9 @@ skills = {
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
+                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
+                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
+                end
                 local def = math.floor(ts[i].attributes['reaction'] / 2)
                 ts[i].health = math.max(0,
                     ts[i].health - math.max(0, math.max(0, (atk - def))))
@@ -235,6 +249,9 @@ skills = {
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
+                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
+                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
+                end
                 local def = math.floor(ts[i].attributes['reaction'] / 2)
                 ts[i].health = math.max(0,
                     ts[i].health - math.max(0, (atk - def)))
