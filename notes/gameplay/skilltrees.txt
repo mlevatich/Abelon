@@ -1,5 +1,5 @@
 Every character has three skill "paths" to choose from, named by nouns
-(e.g. Abelon has Champion, Demon, and Executioner), with an associated icon and
+(e.g. Abelon has Veteran, Demon, and Executioner), with an associated icon and
 color.
 
 A skill in path X grants a point in path X, but may require a threshold of

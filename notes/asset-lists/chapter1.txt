@@ -103,7 +103,7 @@ ICONS
 *****
 
 DONE Ability Types - Physical, Magic, Support/Healing, Positioning, Assist
-DONE Abelon - Skilltree Icons - Champion, Demon, Executioner
+DONE Abelon - Skilltree Icons - Veteran, Demon, Executioner
 DONE Kath - Skilltree Icons - Defender, Hero, Cleric
 
 *****

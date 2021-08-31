@@ -69,7 +69,7 @@ SPELL  = 9
 
 str_to_icon = {
     ['Demon'] = 1,
-    ['Champion'] = 2,
+    ['Veteran'] = 2,
     ['Executioner'] = 3,
     ['Defender'] = 4,
     ['Hero'] = 5,

@@ -113,7 +113,7 @@ end
 skills = {
     ['sever'] = Skill('sever', 'Sever',
         'Executioner', WEAPON, str_to_icon['force'],
-        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, ENEMY, 0,
         function(sp, assists, ts, ts_assists, status)
             local atk = sp.attributes['force'] * 1
@@ -135,7 +135,7 @@ skills = {
     ),
     ['conflagration'] = Skill('conflagration', 'Conflagration',
         'Demon', SPELL, str_to_icon['force'],
-        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, ALL, 5,
         function(sp, assists, ts, ts_assists, status)
             local atk = sp.attributes['force'] * 2
@@ -155,8 +155,8 @@ skills = {
          damage to all enemies in a line across the entire map."
     ),
     ['guard_blindspot'] = Skill('guard_blindspot', 'Guard Blindspot',
-        'Champion', ASSIST, str_to_icon['affinity'],
-        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 0 } },
+        'Veteran', ASSIST, str_to_icon['affinity'],
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, ALLY, 0,
         function(attributes)
             return
@@ -166,7 +166,7 @@ skills = {
     ),
     ['judgement'] = Skill('judgement', 'Judgement',
         'Executioner', SPELL, str_to_icon['empty'],
-        { { 'Demon', 0 }, { 'Champion', 0 }, { 'Executioner', 1 } },
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { T } }, FREE_AIM(100, ENEMY), ENEMY, 2,
         function(sp, assists, ts, ts_assists, status)
             local dead = {}
