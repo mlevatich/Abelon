@@ -106,7 +106,8 @@ function Battle:init(battle_id, player, chapter)
         ['stage'] = STAGE_FREE,
         ['cursor'] = { 1, 1, false, { HIGHLIGHT } },
         ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovementHover() end }
+            { BEFORE, TEMP, function() self:renderMovementHover() end },
+            { BEFORE, PERSIST, function() self:renderAssistSpaces() end }
         }
     }}
     self:begin()
@@ -868,16 +869,53 @@ function Battle:renderCursors()
     end
 end
 
-function Battle:shadeSquare(i, j, clr, full)
+function Battle:renderSpriteImage(cx, cy, x, y, sp)
+    if cx ~= x or cy ~= y then
+        love.graphics.setColor(1, 1, 1, 0.5)
+        love.graphics.draw(
+            sp.sheet,
+            sp.on_frame,
+            TILE_WIDTH * (cx + self.origin_x - 1) + sp.w / 2,
+            TILE_HEIGHT * (cy + self.origin_y - 1) + sp.h / 2,
+            0,
+            sp.dir,
+            1,
+            sp.w / 2,
+            sp.h / 2
+        )
+    end
+end
+
+function Battle:shadeSquare(i, j, clr, alpha)
     if self.grid[i] and self.grid[i][j] then
         local x = (self.origin_x + j - 1) * TILE_WIDTH
         local y = (self.origin_y + i - 1) * TILE_HEIGHT
-        local shade = ite(full, self.shading, self.shading / 3)
-        love.graphics.setColor(clr[1], clr[2], clr[3], shade)
+        love.graphics.setColor(clr[1], clr[2], clr[3], self.shading * alpha)
         love.graphics.rectangle('fill',
             x + 2, y + 2,
             TILE_WIDTH - 4, TILE_HEIGHT - 4
         )
+    end
+end
+
+function Battle:renderAssistSpaces()
+    for i = 1, self.grid_h do
+        for j = 1, self.grid_w do
+            if self.grid[i][j] then
+                local n = #self.grid[i][j].assists
+                if n > 0 then
+                    local clr = { 0, 1, 0 }
+                    if n == 1 then
+                        clr = { 0.7, 1, 0.7 }
+                    elseif n == 2 then
+                        clr = { 0.4, 1, 0.4 }
+                    elseif n == 3 then
+                        clr = { 0.2, 1, 0.2}
+                    end
+                    self:shadeSquare(i, j, clr, 0.75)
+                end
+            end
+        end
     end
 end
 
@@ -899,24 +937,7 @@ function Battle:renderSkillRange(clr)
     -- Render red squares given by the skill range
     local tiles = self:skillRange(sk, dir, c)
     for i = 1, #tiles do
-        self:shadeSquare(tiles[i][1], tiles[i][2], clr, true)
-    end
-end
-
-function Battle:renderSpriteImage(cx, cy, x, y, sp)
-    if cx ~= x or cy ~= y then
-        love.graphics.setColor(1, 1, 1, 0.5)
-        love.graphics.draw(
-            sp.sheet,
-            sp.on_frame,
-            TILE_WIDTH * (cx + self.origin_x - 1) + sp.w / 2,
-            TILE_HEIGHT * (cy + self.origin_y - 1) + sp.h / 2,
-            0,
-            sp.dir,
-            1,
-            sp.w / 2,
-            sp.h / 2
-        )
+        self:shadeSquare(tiles[i][1], tiles[i][2], clr, 1)
     end
 end
 
@@ -944,17 +965,17 @@ function Battle:renderMovementHover()
     local sp = self.grid[c[2]][c[1]].occupied
     if sp and not self.status[sp:getId()]['acted'] then
         local y, x = self:findSprite(sp:getId())
-        self:renderMovement(x, y, sp, false)
+        self:renderMovement(x, y, sp, 0.5)
     end
 end
 
 function Battle:renderMovementFrom(x, y)
     local sp = self:getSprite()
     if x and y then
-        self:renderMovement(x, y, sp, true)
+        self:renderMovement(x, y, sp, 1)
     else
         local sp_y, sp_x = self:findSprite(sp:getId())
-        self:renderMovement(sp_x, sp_y, sp, true)
+        self:renderMovement(sp_x, sp_y, sp, 1)
     end
 end
 

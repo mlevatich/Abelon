@@ -2,12 +2,6 @@
 
 #37:
 
-In attack effects (not assists), targets turn to face sp
-
-Assist green zone should persist after the action ends. The shade of green (but
-not the alpha) should change depending on the number of assists active on a
-square. Implement this as a temp view in the bottom of the stack
-
 Assist and status effect implementation
 
 Tapping a greyed out sprite gives an attribute menu
