@@ -116,13 +116,10 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, ENEMY, 0,
         function(sp, assists, ts, ts_assists, status)
-            local atk = sp.attributes['force'] * 1
+            local atk = math.floor(sp.attributes['force'] * 1)
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
-                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
-                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
-                end
                 local def = math.floor(ts[i].attributes['reaction'] / 2)
                 ts[i].health = math.max(0,
                     ts[i].health - math.max(0, (atk - def)))
@@ -134,24 +131,20 @@ skills = {
          (Force * 1.0) weapon damage to an enemy next to Abelon."
     ),
     ['conflagration'] = Skill('conflagration', 'Conflagration',
-        'Demon', SPELL, str_to_icon['force'],
+        'Demon', SPELL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, ALL, 5,
         function(sp, assists, ts, ts_assists, status)
-            local atk = sp.attributes['force'] * 2
+            local atk = math.floor(sp.attributes['force'] * 2)
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
-                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
-                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
-                end
                 ts[i].health = math.max(0, ts[i].health - atk)
                 table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
             end
-            sp.ignea = sp.ignea - 5
             return hurt, dead
         end,
-        "Scour the battlefield with unholy fire. Deals (Force * 2.0) spell \z
+        "Scour the battlefield with unholy fire. Deals 30 spell \z
          damage to all enemies in a line across the entire map."
     ),
     ['guard_blindspot'] = Skill('guard_blindspot', 'Guard Blindspot',
@@ -176,7 +169,6 @@ skills = {
                     table.insert(dead, ts[i])
                 end
             end
-            sp.ignea = sp.ignea - 2
             return {}, dead
         end,
         "Instantly kill an enemy anywhere on the field with less than 10 \z
@@ -210,7 +202,7 @@ skills = {
     ),
     ['crucible'] = Skill('crucible', 'Crucible',
         'Demon', SPELL, str_to_icon['force'],
-        { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
+        { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
           { F, T, T, T, T, T, F },
@@ -219,22 +211,32 @@ skills = {
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, ALL, 8,
           function(sp, assists, ts, ts_assists, status)
-              local atk = sp.attributes['force'] * 3
+              local atk = math.floor(sp.attributes['force'] * 3)
               local hurt = {}
               local dead = {}
               for i = 1, #ts do
-                  if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
-                      ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
-                  end
                   local remain = ite(ts[i] == sp, 1, 0)
                   ts[i].health = math.max(remain, ts[i].health - atk)
                   table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
               end
-              sp.ignea = sp.ignea - 8
               return hurt, dead
           end,
           "Unleash a scorching miasma. Abelon and nearby enemies suffer \z
-          (Force * 3.0) spell damage (cannot kill Abelon)."
+          (Force * 2.0) spell damage (cannot kill Abelon)."
+    ),
+    ['contempt'] = Skill('contempt', 'Contempt',
+        'Demon', SPELL, str_to_icon['focus'],
+        { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
+        { { F, T, F, T, F },
+          { F, F, T, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, ENEMY, 2,
+          function(sp, assists, ts, ts_assists, status)
+              return {}, {}
+          end,
+          "Glare with an evil eye lit by ignea, reducing the Reaction of \z
+           affected enemies by (Focus * 1.0)."
     ),
     ['enrage'] = Skill('enrage', 'Enrage',
         'Defender', SPELL, str_to_icon['empty'],
@@ -247,11 +249,6 @@ skills = {
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, ALL, 1,
         function(sp, assists, ts, ts_assists, status)
-            for i = 1, #ts do
-                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
-                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
-                end
-            end
             return {}, {}
         end,
         "Confuse and enrage nearby enemies with a mist of activated ignea, so \z
@@ -264,13 +261,10 @@ skills = {
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, ALL, 0,
         function(sp, assists, ts, ts_assists, status)
-            local atk = sp.attributes['force'] * 1
+            local atk = math.floor(sp.attributes['force'] * 0.5)
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
-                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
-                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
-                end
                 local def = math.floor(ts[i].attributes['reaction'] / 2)
                 ts[i].health = math.max(0,
                     ts[i].health - math.max(0, math.max(0, (atk - def))))
@@ -280,6 +274,16 @@ skills = {
         end,
         "Slash in a wide arc. Deals (Force * 0.5) weapon damage to enemies in \z
          front of Kath, and grants 2 Reaction until his next turn."
+    ),
+    ['stun'] = Skill('stun', 'Stun',
+        'Defender', WEAPON, str_to_icon['reaction'],
+        { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { T } }, DIRECTIONAL_AIM, ENEMY, 1,
+        function(sp, assists, ts, ts_assists, status)
+            return {}, {}
+        end,
+        "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
+         higher than his foe's, they are unable to act until the next turn."
     ),
     ['blessed_sky'] = Skill('blessed_sky', 'Blessed Sky',
         'Cleric', ASSIST, str_to_icon['affinity'],
@@ -294,6 +298,27 @@ skills = {
          (Affinity * 1.0) health. Can target a square within three spaces of \z
          Kath."
     ),
+    ['javelin'] = Skill('javelin', 'Javelin',
+        'Hero', WEAPON, str_to_icon['force'],
+        { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 0 } },
+        { { F, T, F },
+          { F, F, F },
+          { F, F, F } }, DIRECTIONAL_AIM, ENEMY, 0,
+          function(sp, assists, ts, ts_assists, status)
+              local atk = math.floor(sp.attributes['force'] * 1.5)
+              local hurt = {}
+              local dead = {}
+              for i = 1, #ts do
+                  local def = math.floor(ts[i].attributes['reaction'] / 2)
+                  ts[i].health = math.max(0,
+                      ts[i].health - math.max(0, math.max(0, (atk - def))))
+                  table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
+              end
+              return hurt, dead
+          end,
+          "Kath hurls a javelin at an enemy, dealing (Force * 1.5) weapon \z
+           damage."
+    ),
     ['forbearance'] = Skill('forbearance', 'Forbearance',
         'Defender', ASSIST, str_to_icon['affinity'],
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
@@ -301,12 +326,24 @@ skills = {
         function(attributes)
             return
         end,
-        "Kath gains (Affinity * 0.5) Reaction and receives all damage meant \z
-         for an adjacent ally."
+        "Kath receives all damage meant for an adjacent ally."
+    ),
+    ['haste'] = Skill('haste', 'Haste',
+        'Cleric', SPELL, str_to_icon['empty'],
+        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 1 } },
+        { { F, F, T, F, F },
+          { F, F, T, F, F },
+          { T, T, F, T, T },
+          { F, F, T, F, F },
+          { F, F, T, F, F } }, SELF_CAST_AIM, ALLY, 2,
+          function(sp, assists, ts, ts_assists, status)
+              return {}, {}
+          end,
+          "Kath raises the agility of allies around him by 10."
     ),
     ['guardian_angel'] = Skill('guardian_angel', 'Guardian Angel',
         'Cleric', ASSIST, str_to_icon['empty'],
-        { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 1 } },
+        { { 'Defender', 2 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { F, F, T, T, T, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -335,13 +372,10 @@ skills = {
         {},
         { { T } }, DIRECTIONAL_AIM, ENEMY, 0,
         function(sp, assists, ts, ts_assists, status)
-            local atk = sp.attributes['force'] * 1
+            local atk = math.floor(sp.attributes['force'] * 1)
             local hurt = {}
             local dead = {}
             for i = 1, #ts do
-                if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
-                    ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
-                end
                 local def = math.floor(ts[i].attributes['reaction'] / 2)
                 ts[i].health = math.max(0,
                     ts[i].health - math.max(0, (atk - def)))

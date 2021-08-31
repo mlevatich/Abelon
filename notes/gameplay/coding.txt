@@ -2,9 +2,9 @@
 
 #37:
 
-Assist and status effect implementation (remember: assists need to also cost ignea!)
+Assist and status effect implementation
 
-Tapping a greyed out sprite gives an attribute menu
+Tapping a greyed out sprite opens their attribute menu
 
 Hovering a green square should display all assist effects active on that square.
 Same box as the sprite box. Hover overlay for a sprite should show status
@@ -23,7 +23,8 @@ FREE_AIM moves should render an outline of the move's range
 #38:
 
 When end turn is selected (or turn auto-ends when all allies go grey), enemy
-phase starts, and ends instantly with all enemies doing nothing.
+phase starts, and ends instantly with all enemies doing nothing. Assists are
+cleared and statuses are updated with the new turn.
 
 Support scene triggers during combat at: select unit for the first time on ally
 phase, start new phase, end action. Triggers receive turn number, allies/enemies

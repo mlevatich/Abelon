@@ -17,6 +17,6 @@ Discard: no
 Present:
 Level: 5
 Attributes: endurance:23 focus:8 force:11 affinity:10 reaction:11 agility:15
-Skilltrees: Hero:sweep,hold_the_line Defender:enrage,forbearance Cleric:blessed_sky,guardian_angel
-Skills: sweep,enrage,blessed_sky,forbearance
+Skilltrees: Hero:sweep,javelin,hold_the_line Defender:enrage,stun,forbearance Cleric:blessed_sky,haste,guardian_angel
+Skills: sweep,enrage,blessed_sky,haste,javelin,stun
 Description: The knight Kath. EOS

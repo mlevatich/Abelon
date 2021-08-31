@@ -262,6 +262,7 @@ function Battle:playAction()
                         local hurt, dead = self:useAttack(sp,
                             attack, attack_dir, c_attack
                         )
+                        sp.ignea = sp.ignea - attack.cost
                         for i = 1, #hurt do
                             if hurt[i] ~= sp then
                                 hurt[i]:behaviorSequence({
@@ -314,6 +315,7 @@ function Battle:playAction()
             if assist then
                 return sp:skillBehaviorGeneric(
                     function()
+                        sp.ignea = sp.ignea - assist.cost
                         local t = self:skillRange(assist,
                             assist_dir, c_assist)
                         for i = 1, #t do
@@ -617,6 +619,9 @@ function Battle:useAttack(sp, attack, attack_dir, c_attack)
         if target then
             table.insert(ts, target)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
+            if abs(target.x - sp.x) > TILE_WIDTH / 2 then
+                target.dir = ite(target.x > sp.x, LEFT, RIGHT)
+            end
         end
     end
     return attack.use(sp, sp_a, ts, ts_a, self.status)
