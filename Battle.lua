@@ -435,7 +435,10 @@ end
 function Battle:mkUsable(sp, sk_menu)
     local sk = skills[sk_menu.id]
     sk_menu.hover_desc = 'Use ' .. sk_menu.name
-    if sp.ignea >= sk.cost then
+    local ignea_spent = sk.cost
+    local sk2 = self:getSkill()
+    if sk2 then ignea_spent = ignea_spent + sk2.cost end
+    if sp.ignea >= ignea_spent then
         sk_menu.setPen = function(c) love.graphics.setColor(1, 1, 1, 1) end
         sk_menu.action = function(c)
             local c = self:getCursor()
@@ -517,6 +520,15 @@ function Battle:openAssistMenu(sp)
     self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
         { BEFORE, TEMP, function() self:renderMovementFrom(c[1], c[2]) end }
     })
+end
+
+function Battle:openAllyMenu(sp)
+    local attributes = MenuItem('Attributes', {}, nil, {
+        ['elements'] = sp:buildAttributeBox(),
+        ['w'] = HBOX_WIDTH
+    })
+    local skills = sp:mkSkillsMenu(true)
+    self:openMenu(Menu(nil, { attributes, skills }, BOX_MARGIN, BOX_MARGIN), {})
 end
 
 function Battle:openEnemyMenu(sp)
@@ -734,6 +746,8 @@ function Battle:update(keys, dt)
             elseif self:isAlly(o) then
                 if not self.status[o:getId()]['acted'] then
                     self:selectAlly(o)
+                else
+                    self:openAllyMenu(o)
                 end
             else
                 self:openEnemyMenu(o)
@@ -1063,7 +1077,11 @@ function Battle:renderOverlay(cam_x, cam_y)
             local hp_str = sp.health .. "/" .. sp.attributes['endurance']
             local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
             if self:isAlly(sp) then
-                hover_str = "Move " .. sp.name
+                if self.status[sp:getId()]['acted'] then
+                    hover_str = "Examine " .. sp.name
+                else
+                    hover_str = "Move " .. sp.name
+                end
                 love.graphics.setColor(0, 0.1, 0, RECT_ALPHA)
             else
                 hover_str = "Examine " .. sp.name
