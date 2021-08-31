@@ -182,6 +182,60 @@ skills = {
         "Instantly kill an enemy anywhere on the field with less than 10 \z
          health remaining."
     ),
+    ['inspire'] = Skill('inspire', 'Inspire',
+        'Veteran', ASSIST, str_to_icon['affinity'],
+        { { 'Demon', 1 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, ALLY, 0,
+        function(attributes)
+            return
+        end,
+        "Inspire a distant ally with a courageous cry. Adds (Affinity * 1.0) \z
+         to ally's Force, Reaction, and Affinity."
+    ),
+    ['trust'] = Skill('trust', 'Trust',
+        'Veteran', WEAPON, str_to_icon['affinity'],
+        { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
+        { { T } }, SELF_CAST_AIM, ALL, 0,
+        function(sp, assists, ts, ts_assists, status)
+            return
+        end,
+        "Place your faith in your comrades. Triples Abelon's Affinity for the \z
+         rest of the turn."
+    ),
+    ['crucible'] = Skill('crucible', 'Crucible',
+        'Demon', SPELL, str_to_icon['force'],
+        { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, T, T, T, F, F },
+          { F, T, T, T, T, T, F },
+          { T, T, T, T, T, T, T },
+          { F, T, T, T, T, T, F },
+          { F, F, T, T, T, F, F },
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, ALL, 8,
+          function(sp, assists, ts, ts_assists, status)
+              local atk = sp.attributes['force'] * 3
+              local hurt = {}
+              local dead = {}
+              for i = 1, #ts do
+                  if abs(ts[i].x - sp.x) > TILE_WIDTH / 2 then
+                      ts[i].dir = ite(ts[i].x > sp.x, LEFT, RIGHT)
+                  end
+                  local remain = ite(ts[i] == sp, 1, 0)
+                  ts[i].health = math.max(remain, ts[i].health - atk)
+                  table.insert(ite(ts[i].health == 0, dead, hurt), ts[i])
+              end
+              sp.ignea = sp.ignea - 8
+              return hurt, dead
+          end,
+          "Unleash a scorching miasma. Abelon and nearby enemies suffer \z
+          (Force * 3.0) spell damage (cannot kill Abelon)."
+    ),
     ['enrage'] = Skill('enrage', 'Enrage',
         'Defender', SPELL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
@@ -239,6 +293,42 @@ skills = {
         "Infuse the air to heal wounds. Assisted allies recover \z
          (Affinity * 1.0) health. Can target a square within three spaces of \z
          Kath."
+    ),
+    ['forbearance'] = Skill('forbearance', 'Forbearance',
+        'Defender', ASSIST, str_to_icon['affinity'],
+        { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
+        { { T } }, DIRECTIONAL_AIM, ALLY, 0,
+        function(attributes)
+            return
+        end,
+        "Kath gains (Affinity * 0.5) Reaction and receives all damage meant \z
+         for an adjacent ally."
+    ),
+    ['guardian_angel'] = Skill('guardian_angel', 'Guardian Angel',
+        'Cleric', ASSIST, str_to_icon['empty'],
+        { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 1 } },
+        { { F, F, T, T, T, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, ALLY, 5,
+          function(attributes)
+              return
+          end,
+          "Kath casts a powerful protective spell. Assisted allies cannot \z
+           receive damage until the next turn."
+    ),
+    ['hold_the_line'] = Skill('hold_the_line', 'Hold the Line',
+        'Hero', ASSIST, str_to_icon['force'],
+        { { 'Defender', 1 }, { 'Hero', 2 }, { 'Cleric', 0 } },
+        mkLine(10), DIRECTIONAL_AIM, ALLY, 0,
+        function(attributes)
+            return
+        end,
+        "Kath forms a wall with his allies, raising the Reaction of assisted \z
+         allies by (Force * 0.5)"
     ),
     ['bite'] = Skill('bite', 'Bite',
         'Enemy', WEAPON, str_to_icon['force'],

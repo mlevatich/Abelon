@@ -2,7 +2,7 @@
 
 #37:
 
-Assist and status effect implementation
+Assist and status effect implementation (remember: assists need to also cost ignea!)
 
 Tapping a greyed out sprite gives an attribute menu
 
@@ -19,22 +19,6 @@ there's no overflow.
 For free aim, the cursor can be on any space given by the FREE_AIM field
 (intersect a diamond of size "scale" with the targets given by "target").
 FREE_AIM moves should render an outline of the move's range
-
-Add more skills: (change abelon's "champion" to "veteran")
-inspire: aoe long range assist for abelon
-trust: abelon triples his affinity for the turn
-pinpoint: find a weak spot. Very specific range required.
-assassinate: if pinpoint was used last turn, and you have at least 3 assists,
-ability instantly kills target. Otherwise it does nothing.
-crucible: abelon deals (insanely high damage) in a huge area around him,
-including to himself. The ability cannot kill abelon.
-forbearance: kath assist, kath takes all damage meant for an adjacent target
-guardian angel: an ally kath assists takes no damage until their next turn.
-observe: once per battle, elaine selects an ally. At the end of the battle,
-elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
-(she starts off very weak to compensate)
-hold the line: kath assist grants massive reaction to all allies in a line
-in shadow: passive ability - if no assists, enemies wont target you
 
 #38:
 
@@ -220,3 +204,12 @@ Formulas tab
 #48: Tutorial
 #33: Big refactor!
 Make executable
+
+skill ideas:
+in shadow: passive ability - if no assists, enemies wont target you
+pinpoint: find a weak spot. Very specific range required.
+assassinate: if pinpoint was used last turn, and you have at least 3 assists,
+ability instantly kills target. Otherwise it does nothing.
+observe: once per battle, elaine selects an ally. At the end of the battle,
+elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
+(she starts off very weak to compensate)
