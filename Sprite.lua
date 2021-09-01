@@ -408,7 +408,10 @@ function Sprite:mkLearnMenu()
     return learn
 end
 
-function Sprite:buildAttributeBox()
+function Sprite:buildAttributeBox(tmp_attrs)
+
+    -- If temp attributes were provided, use those
+    local att = ite(tmp_attrs, tmp_attrs, self.attributes)
 
     -- Constants
     local attrib_x = BOX_MARGIN + 110
@@ -436,6 +439,10 @@ function Sprite:buildAttributeBox()
         local tree = self.skill_trees[tn]['skills']
         return filter(function(s) return find(self.skills, s) end, tree)
     end
+    local aC = function(s)
+        local old = self.attributes
+        return ite(att[s] > old[s], GREEN, ite(att[s] < old[s], RED, WHITE))
+    end
 
     -- Build all elements
     local elements = {
@@ -447,12 +454,12 @@ function Sprite:buildAttributeBox()
             sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
         mkEle('text', {ign_str},
             sp_x - #ign_str * CHAR_WIDTH / 2 + self.w / 2, line(6)),
-        mkEle('text', {'Endurance'}, attrib_ind,       line(2)),
-        mkEle('text', {'Focus'},     attrib_ind,       line(4)),
-        mkEle('text', {'Force'},     attrib_ind,       line(6)),
-        mkEle('text', {'Affinity'},  attrib_ind + 125, line(2)),
-        mkEle('text', {'Reaction'},  attrib_ind + 125, line(4)),
-        mkEle('text', {'Agility'},   attrib_ind + 125, line(6)),
+        mkEle('text', {'Endurance'}, attrib_ind,      line(2), aC('endurance')),
+        mkEle('text', {'Focus'},     attrib_ind,      line(4), aC('focus')),
+        mkEle('text', {'Force'},     attrib_ind,      line(6), aC('force')),
+        mkEle('text', {'Affinity'}, attrib_ind + 125, line(2), aC('affinity')),
+        mkEle('text', {'Reaction'}, attrib_ind + 125, line(4), aC('reaction')),
+        mkEle('text', {'Agility'},  attrib_ind + 125, line(6), aC('agility')),
         mkEle('image', self.icons[str_to_icon['endurance']],
             attrib_ind - 25,  line(2), self.itex),
         mkEle('image', self.icons[str_to_icon['focus']],
@@ -465,18 +472,18 @@ function Sprite:buildAttributeBox()
             attrib_ind + 100, line(4), self.itex),
         mkEle('image', self.icons[str_to_icon['agility']],
             attrib_ind + 100, line(6), self.itex),
-        mkEle('text', {tostring(self.attributes['endurance'])},
-            attrib_ind + indent2,       line(3)),
-        mkEle('text', {tostring(self.attributes['focus'])},
-            attrib_ind + indent2,       line(5)),
-        mkEle('text', {tostring(self.attributes['force'])},
-            attrib_ind + indent2,       line(7)),
-        mkEle('text', {tostring(self.attributes['affinity'])},
-            attrib_ind + indent2 + 100, line(3)),
-        mkEle('text', {tostring(self.attributes['reaction'])},
-            attrib_ind + indent2 + 100, line(5)),
-        mkEle('text', {tostring(self.attributes['agility'])},
-            attrib_ind + indent2 + 100, line(7))
+        mkEle('text', {tostring(att['endurance'])},
+            attrib_ind + indent2,       line(3), aC('endurance')),
+        mkEle('text', {tostring(att['focus'])},
+            attrib_ind + indent2,       line(5), aC('focus')),
+        mkEle('text', {tostring(att['force'])},
+            attrib_ind + indent2,       line(7), aC('force')),
+        mkEle('text', {tostring(att['affinity'])},
+            attrib_ind + indent2 + 100, line(3), aC('affinity')),
+        mkEle('text', {tostring(att['reaction'])},
+            attrib_ind + indent2 + 100, line(5), aC('reaction')),
+        mkEle('text', {tostring(att['agility'])},
+            attrib_ind + indent2 + 100, line(7), aC('agility'))
     }
 
     -- Additional elements if sprite has skill trees
@@ -1055,7 +1062,7 @@ function Sprite:render(cam_x, cam_y)
     if mono then
         love.graphics.setColor(0.4, 0.4, 0.4, 1)
     else
-        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.setColor(unpack(WHITE))
     end
 
     -- Draw sprite's current animation frame, at its current position,

@@ -251,7 +251,7 @@ function Scene:renderSpeaker(sp, pid, x, y)
     if sp then
 
         -- Render name of current speaker
-        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.setColor(unpack(WHITE))
         local base_x = x + BOX_MARGIN * 2
         local base_y = y + BOX_MARGIN + TEXT_MARGIN_Y
         renderString(sp:getName(), base_x, base_y)
@@ -271,7 +271,7 @@ end
 function Scene:renderText(text, base_x, base_y)
 
     -- Determine starting location of text
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(unpack(WHITE))
     local x_beginning = base_x + BOX_MARGIN*2 + PORTRAIT_SIZE
     local y_beginning = base_y + BOX_MARGIN + TEXT_MARGIN_Y + 20
 
@@ -322,7 +322,7 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     love.graphics.rectangle('fill', rect_x, rect_y, w, h)
 
     -- Draw each option in choice box, character by character
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(unpack(WHITE))
     for i=1, #choices do
         local x = rect_x + BOX_MARGIN + CHAR_WIDTH * (1 + longest - #choices[i])
         local y = rect_y + TEXT_MARGIN_Y + 2 + LINE_HEIGHT * (i-1)
@@ -339,7 +339,7 @@ end
 function Scene:renderAdvanceIndicator(x, y)
     local indicator_x = x + BOX_MARGIN + BOX_WIDTH - 7
     local indicator_y = y + BOX_MARGIN + BOX_HEIGHT - 7
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(unpack(WHITE))
     love.graphics.print("^", indicator_x, indicator_y, math.pi)
 end
 

@@ -30,8 +30,6 @@ TEXT_INTERVAL  = 0.03
 MAX_MENU_ITEMS = 5
 RECT_ALPHA     = 0.4
 HBOX_WIDTH     = 540
-DISABLE        = { 1, 1, 1, 0.5 }
-HIGHLIGHT      = { 0.7, 1, 1, 1 }
 
 -- Derived text variables
 LINE_HEIGHT = FONT_SIZE + TEXT_MARGIN_Y
@@ -50,6 +48,12 @@ BOX_HEIGHT = TEXT_MARGIN_Y * (LINES_PER_PAGE + 3)
            + FONT_SIZE * LINES_PER_PAGE
            + BOX_MARGIN
 
+-- Text colors
+DISABLE   = { 1,     1,   1, 0.5 }
+HIGHLIGHT = { 0.7,   1,   1,   1 }
+RED       = { 1,   0.7, 0.7,   1 }
+GREEN     = { 0.7,   1, 0.7,   1 }
+WHITE     = {   1,   1,   1,   1 }
 
 -- Direction enum
 LEFT  = -1

@@ -17,7 +17,7 @@ function MenuItem:init(name, children, h_desc, h_box, action, confirm, p, id)
         local cm, _ = splitByCharLimit(confirm, CBOX_CHARS_PER_LINE)
         self.confirm_msg = cm
     end
-    self.setPen = ite(p, p, function(c) love.graphics.setColor(1, 1, 1, 1) end)
+    self.setPen = ite(p, p, function(c) love.graphics.setColor(unpack(WHITE)) end)
     self.id = id
 end
 
@@ -184,7 +184,7 @@ end
 
 function Menu:renderHoverDescription(cam_x, cam_y)
 
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(unpack(WHITE))
     local selection = self.menu_items[self.base + self.hovering - 1]
     if selection.hover_desc then
         local desc = selection.hover_desc
@@ -208,7 +208,7 @@ function Menu:renderMenuItems(x, y, c)
     end
 
     -- Render indicator of more content
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(unpack(WHITE))
     if self.base > 1 then
         love.graphics.print("^", x + self.width - 11, y + 6)
     end
@@ -318,14 +318,15 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
     for i = 1, #h_box do
         local e = h_box[i]
         if e['type'] == 'text' then
-            love.graphics.setColor(1, 1, 1, 1)
+            local clr = ite(e['color'], e['color'], WHITE)
+            love.graphics.setColor(unpack(clr))
             local msg = e['data']
             for j = 1, #msg do
                 local cy = y + e['y'] + LINE_HEIGHT * (j-1)
-                renderString(msg[j], x + e['x'], cy)
+                renderString(msg[j], x + e['x'], cy, true)
             end
         elseif e['type'] == 'image' then
-            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.setColor(unpack(WHITE))
             love.graphics.draw(
                 e['texture'],
                 e['data'],
@@ -341,7 +342,7 @@ end
 
 function Menu:renderSelectionArrow(x, y)
     local arrow_y = y + HALF_MARGIN + LINE_HEIGHT * (self.hovering - 1)
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(unpack(WHITE))
     love.graphics.print(">", x + 10, arrow_y)
 end
 

@@ -428,7 +428,7 @@ function Battle:mkUsable(sp, sk_menu)
     local sk2 = self:getSkill()
     if sk2 then ignea_spent = ignea_spent + sk2.cost end
     if sp.ignea >= ignea_spent then
-        sk_menu.setPen = function(c) love.graphics.setColor(1, 1, 1, 1) end
+        sk_menu.setPen = function(c) love.graphics.setColor(unpack(WHITE)) end
         sk_menu.action = function(c)
             local c = self:getCursor()
             local cx = c[1]
@@ -466,8 +466,9 @@ function Battle:mkUsable(sp, sk_menu)
 end
 
 function Battle:openAttackMenu(sp)
-    local attributes = MenuItem('Attributes', {}, nil, {
-        ['elements'] = sp:buildAttributeBox(),
+    local attributes = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = HBOX_WIDTH
     })
     local wait = MenuItem('Skip', {},
@@ -492,8 +493,9 @@ function Battle:openAttackMenu(sp)
 end
 
 function Battle:openAssistMenu(sp)
-    local attributes = MenuItem('Attributes', {}, nil, {
-        ['elements'] = sp:buildAttributeBox(),
+    local attributes = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = HBOX_WIDTH
     })
     local wait = MenuItem('Skip', {},
@@ -512,8 +514,9 @@ function Battle:openAssistMenu(sp)
 end
 
 function Battle:openAllyMenu(sp)
-    local attributes = MenuItem('Attributes', {}, nil, {
-        ['elements'] = sp:buildAttributeBox(),
+    local attributes = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = HBOX_WIDTH
     })
     local skills = sp:mkSkillsMenu(true)
@@ -521,11 +524,13 @@ function Battle:openAllyMenu(sp)
 end
 
 function Battle:openEnemyMenu(sp)
-    local attributes = MenuItem('Attributes', {}, nil, {
-        ['elements'] = sp:buildAttributeBox(),
+    local attributes = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = 380
     })
-    local readying = MenuItem('Next Attack', {}, nil, {
+    local readying = MenuItem('Next Attack', {},
+        'Skill this enemy will use next', {
         ['elements'] = self:buildReadyingBox(sp),
         ['w'] = HBOX_WIDTH
     })
@@ -1081,108 +1086,218 @@ function Battle:renderStatus(sp)
     local y_off = ite(c[3], 0, 1)
     if buffed then
         love.graphics.draw(self.status_tex, self.status_icons[1],
-            x + TILE_WIDTH - 8,
-            y + y_off,
-            0, 1, 1, 0, 0
+            x + TILE_WIDTH - 8, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if debuffed then
         love.graphics.draw(self.status_tex, self.status_icons[2],
-            x + TILE_WIDTH - 16,
-            y + y_off,
-            0, 1, 1, 0, 0
+            x + TILE_WIDTH - 16, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if augmented then
         love.graphics.draw(self.status_tex, self.status_icons[4],
-            x + 8,
-            y + y_off,
-            0, 1, 1, 0, 0
+            x + 8, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if impaired then
         love.graphics.draw(self.status_tex, self.status_icons[3],
-            x,
-            y + y_off,
-            0, 1, 1, 0, 0
+            x, y + y_off, 0, 1, 1, 0, 0
         )
     end
 end
 
+function Battle:mkOuterHoverBox(inner_w, inner_h)
+    return {}, inner_w, inner_h
+end
+
+function Battle:mkInnerHoverBox()
+
+    -- Check for a sprite
+    local c = self:getCursor()
+    local sp = self.grid[c[2]][c[1]].occupied
+    local w = 100 + BOX_MARGIN
+    if sp then
+
+        -- Box contains sprite's name and status
+        local name_str = sp.name
+        local hp_str = sp.health .. "/" .. sp.attributes['endurance']
+        local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
+
+        -- Compute box width from longest status
+        local statuses = self.status[sp:getId()]['effects']
+        local longest_status = 0
+        for i = 1, #statuses do
+
+            -- Space (in characters) between two strings in hover box
+            local buf = 3
+
+            -- Length of duration string
+            local d = statuses[i].duration
+            local dlen = ite(d < 2, 6, ite(d < 10, 7, 8))
+
+            -- Length of buff string
+            local b = statuses[i].buff
+            local n = b.val
+            local blen = 0
+            if b.attr == 'special' then
+                blen = #EFFECT_NAMES[n]
+            else
+                blen = #(ite(n > 0, '+', '-') .. abs(n) .. ' ' .. b.attr)
+            end
+
+            -- Combine them all to get character size
+            longest_status = math.max(longest_status, dlen + blen + buf)
+        end
+        w = math.max(w, longest_status * CHAR_WIDTH + BOX_MARGIN)
+
+        -- Add sprite basic info
+        local sp_eles = {
+            mkEle('text', sp.name, HALF_MARGIN, HALF_MARGIN),
+            mkEle('text', hp_str, w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
+                  HALF_MARGIN + LINE_HEIGHT + 3),
+            mkEle('text', ign_str, w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
+                  HALF_MARGIN + LINE_HEIGHT * 2 + 9),
+            mkEle('image', sp.icons[str_to_icon['endurance']],
+                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, sp.itex),
+            mkEle('image', sp.icons[str_to_icon['focus']],
+                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2 + 6, sp.itex)
+        }
+
+        -- Add sprite statuses
+        local stat_eles = {}
+        local y = HALF_MARGIN + LINE_HEIGHT * 3 + BOX_MARGIN
+        for i = 1, #statuses do
+            local cy = y + LINE_HEIGHT * (i - 1)
+            local b = statuses[i].buff
+            local d = statuses[i].duration
+            local dur = d .. ite(d > 1, ' turns', ' turn')
+            table.insert(stat_eles, mkEle('text', dur,
+                w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
+            ))
+            if b.attr == 'special' then
+                local str = EFFECT_NAMES[b.val]
+                table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+            else
+                local a = b.attr:sub(1,1):upper() .. b.attr:sub(2)
+                local str = ite(b.val > 0, '+', '-') .. abs(b.val) .. ' ' .. a
+                table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+            end
+        end
+
+        -- Concat info with statuses
+        local h = BOX_MARGIN + HALF_MARGIN + LINE_HEIGHT
+                * (#sp_eles - 2 + #stat_eles / 2)
+        if next(statuses) ~= nil then
+            h = h + HALF_MARGIN
+        end
+        local clr = ite(self:isAlly(sp), { 0, 0.1, 0 }, { 0.1, 0, 0 })
+        return concat(sp_eles, stat_eles), w, h, clr
+    else
+
+        -- Box contains 'Empty'
+        local h = BOX_MARGIN + LINE_HEIGHT
+        local clr = { 0, 0, 0 }
+        return { mkEle('text', 'Empty', HALF_MARGIN, HALF_MARGIN) }, w, h, clr
+    end
+end
+
+function Battle:renderBoxElements(box, base_x, base_y)
+    for i = 1, #box do
+        local e = box[i]
+        if e['type'] == 'text' then
+            local clr = ite(e['color'], e['color'], WHITE)
+            love.graphics.setColor(unpack(clr))
+            renderString(e['data'], base_x + e['x'], base_y + e['y'], true)
+        else
+            love.graphics.setColor(unpack(WHITE))
+            love.graphics.draw(
+                e['texture'],
+                e['data'],
+                base_x + e['x'],
+                base_y + e['y'],
+                0, 1, 1, 0, 0
+            )
+        end
+    end
+end
+
+function Battle:renderHoverBoxes(x, y, ibox, iw, ih, obox, ow, oh, clr)
+
+    -- Base coordinates for both boxes
+    local outer_x = x + VIRTUAL_WIDTH - HALF_MARGIN - ow
+    local outer_y = y + HALF_MARGIN
+    local inner_x = x + VIRTUAL_WIDTH - (HALF_MARGIN * 2) - iw
+    local inner_y = outer_y + HALF_MARGIN / 2
+
+    -- If there are assists
+    if next(obox) ~= nil then
+
+        -- Draw outer box
+        love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+        love.graphics.rectangle('fill', outer_x, outer_y, ow, oh)
+
+        -- Draw outer box elements
+        self:renderBoxElements(obox, outer_x, outer_y)
+    end
+
+    -- Draw inner box
+    table.insert(clr, RECT_ALPHA)
+    love.graphics.setColor(unpack(clr))
+    love.graphics.rectangle('fill', inner_x, inner_y, iw, ih)
+
+    -- Draw inner box elements
+    self:renderBoxElements(ibox, inner_x, inner_y)
+end
+
+function Battle:renderBattleText(cam_x, cam_y)
+
+    -- Variables needed off stack
+    local s = self:getStage()
+    local c = self:getCursor()
+    local sp = self.grid[c[2]][c[1]].occupied
+
+    -- Compute hover string
+    local hover_str = 'View battle options'
+    if s == STAGE_MOVE then
+        hover_str = 'Select a space to move to'
+    elseif s == STAGE_TARGET then
+        hover_str = 'Select a target for ' .. self:getSkill().name
+    elseif sp then
+        if self:isAlly(sp) and not self.status[sp:getId()]['acted'] then
+            hover_str = "Move " .. sp.name
+        else
+            hover_str = "Examine " .. sp.name
+        end
+    end
+
+    -- Render hover string in the lower right
+    local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
+    local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
+    renderString(hover_str, x, y)
+end
+
 function Battle:renderOverlay(cam_x, cam_y)
 
-    -- Render healthbars below each sprite
+    -- Render healthbars below each sprite, and status markers above
     for i = 1, #self.participants do
         self:renderHealthbar(self.participants[i])
         self:renderStatus(self.participants[i])
     end
 
-    -- Render battle hover box
+    -- Dont render any other overlays while watching an action
     local s = self:getStage()
-    local c = self:getCursor()
-    local sp = self.grid[c[2]][c[1]].occupied
-    local str_size = 100
-    local box_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN * 2 - str_size
-    local box_y = cam_y + BOX_MARGIN
-    local box_w = str_size + BOX_MARGIN
-    local box_h = BOX_MARGIN + LINE_HEIGHT * 3 + 6
-    local hover_str = "View battle options"
     if s ~= STAGE_WATCH then
-        if sp then
-            local name_str = sp.name
-            local hp_str = sp.health .. "/" .. sp.attributes['endurance']
-            local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
-            if self:isAlly(sp) then
-                if self.status[sp:getId()]['acted'] then
-                    hover_str = "Examine " .. sp.name
-                else
-                    hover_str = "Move " .. sp.name
-                end
-                love.graphics.setColor(0, 0.1, 0, RECT_ALPHA)
-            else
-                hover_str = "Examine " .. sp.name
-                love.graphics.setColor(0.1, 0, 0, RECT_ALPHA)
-            end
-            love.graphics.rectangle('fill', box_x, box_y, box_w, box_h)
-            renderString(name_str, box_x + HALF_MARGIN, box_y + HALF_MARGIN)
-            renderString(hp_str,
-                box_x + box_w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
-                box_y + HALF_MARGIN + LINE_HEIGHT + 3
-            )
-            renderString(ign_str,
-                box_x + box_w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
-                box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 9
-            )
-            love.graphics.draw(sp.itex, sp.icons[str_to_icon['endurance']],
-                box_x + HALF_MARGIN,
-                box_y + HALF_MARGIN + LINE_HEIGHT,
-                0, 1, 1, 0, 0
-            )
-            love.graphics.draw(sp.itex, sp.icons[str_to_icon['focus']],
-                box_x + HALF_MARGIN,
-                box_y + HALF_MARGIN + LINE_HEIGHT * 2 + 6,
-                0, 1, 1, 0, 0
-            )
-        else
-            love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-            love.graphics.rectangle('fill', box_x, box_y, box_w,
-                BOX_MARGIN + LINE_HEIGHT
-            )
-            renderString('Empty', box_x + HALF_MARGIN, box_y + HALF_MARGIN)
-        end
-    end
 
-    -- Render battle menu or battle text
-    if s == STAGE_MOVE then
-        hover_str = 'Select a space to move to'
-    elseif s == STAGE_TARGET then
-        hover_str = 'Select a target for ' .. self:getSkill().name
-    end
-    if s == STAGE_MENU then
-        self:getMenu():render(cam_x, cam_y, self.chapter)
-    elseif s ~= STAGE_WATCH then
-        local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
-        local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
-        renderString(hover_str, x, y)
+        -- Make and render hover boxes
+        local ibox, iw, ih, clr = self:mkInnerHoverBox()
+        local obox, ow, oh = self:mkOuterHoverBox(iw, ih)
+        self:renderHoverBoxes(cam_x, cam_y, ibox, iw, ih, obox, ow, oh, clr)
+
+        -- Render menu if there is one, otherwise battle text in the lower right
+        if s == STAGE_MENU then
+            self:getMenu():render(cam_x, cam_y, self.chapter)
+        else
+            self:renderBattleText(cam_x, cam_y)
+        end
     end
 end

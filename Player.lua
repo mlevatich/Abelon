@@ -106,7 +106,7 @@ function Player:mkDifficultyMenu()
             if c.difficulty == d then
                 love.graphics.setColor(unpack(HIGHLIGHT))
             else
-                love.graphics.setColor(1, 1, 1, 1)
+                love.graphics.setColor(unpack(WHITE))
             end
         end
     end
@@ -148,7 +148,7 @@ function Player:mkSettingsMenu()
                (k == 't' and c.text_volume == v) then
                 love.graphics.setColor(unpack(HIGHLIGHT))
             else
-                love.graphics.setColor(1, 1, 1, 1)
+                love.graphics.setColor(unpack(WHITE))
             end
         end
     end

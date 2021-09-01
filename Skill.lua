@@ -97,11 +97,11 @@ function Skill:mkSkillBox(itex, icons, with_skilltrees)
             mkEle('image', icons[str_to_icon[self.reqs[3][1]]],
                 req_x + BOX_MARGIN * 4, req_y, itex),
             mkEle('text', {tostring(self.reqs[1][2])},
-                req_x + 8, req_y + LINE_HEIGHT + 2, itex),
+                req_x + 8, req_y + LINE_HEIGHT + 2),
             mkEle('text', {tostring(self.reqs[2][2])},
-                req_x + BOX_MARGIN * 2 + 8, req_y + LINE_HEIGHT + 2, itex),
+                req_x + BOX_MARGIN * 2 + 8, req_y + LINE_HEIGHT + 2),
             mkEle('text', {tostring(self.reqs[3][2])},
-                req_x + BOX_MARGIN * 4 + 8, req_y + LINE_HEIGHT + 2, itex),
+                req_x + BOX_MARGIN * 4 + 8, req_y + LINE_HEIGHT + 2),
             mkEle('text', {'Requirements'},
                 req_x, req_y + LINE_HEIGHT * 2),
             mkEle('text', {'  to learn  '},
@@ -162,6 +162,25 @@ function mkBuff(attrs, template)
         local tp = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF)
         return Buff(template[1], s.base + math.floor(attrs[s.attr] * s.mul), tp)
     end
+end
+
+-- Add effect to a sprite's status effects, maintaining rendering order
+function addStatus(stat, eff)
+    local spc = function(e) return e.buff.attr == 'special' end
+    local dur = function(e) return e.duration               end
+    local f = false
+    for i = 1, #stat do
+        local st = stat[i]
+        if spc(eff) and not spc(st) then                              f = true
+        elseif spc(eff) and spc(st) and dur(eff) >= dur(st) then      f = true
+        elseif not (spc(eff) or spc(st)) and dur(eff) >= dur(st) then f = true
+        end
+        if f then
+            table.insert(stat, i, eff)
+            return
+        end
+    end
+    table.insert(stat, eff)
 end
 
 -- Determine whether the status effects on a character include a given special
@@ -269,7 +288,7 @@ function genericAttack(dmg_type, affects, scaling,
                 -- Apply status effects to target
                 for j = 1, #ts_buffs do
                     local b = mkBuff(sp_tmp_attrs, ts_buffs[j])
-                    table.insert(t_stat, Effect(b, ts_buff_turns))
+                    addStatus(t_stat, Effect(b, ts_buff_turns))
                 end
 
                 -- Target turns to face the caster
@@ -282,7 +301,7 @@ function genericAttack(dmg_type, affects, scaling,
         -- Affect caster
         for j = 1, #sp_buffs do
             local b = mkBuff(sp_tmp_attrs, sp_buffs[j])
-            table.insert(sp_stat, Effect(b, sp_buff_turns))
+            addStatus(sp_stat, Effect(b, sp_buff_turns))
         end
 
         -- Return which targets were hurt/killed
@@ -397,7 +416,7 @@ skills = {
         genericAttack(
             SPELL, ENEMY, nil,
             nil, nil,
-            { { 'reaction', Scaling(0, 'focus', -1.0) } }, 1
+            { { 'reaction', Scaling(0, 'focus', -1.0) } }, 2
         ),
         "Glare with an evil eye lit by ignea, reducing the Reaction of \z
          affected enemies by (Focus * 1.0) for one turn."

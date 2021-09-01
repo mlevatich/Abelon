@@ -46,7 +46,7 @@ end
 
 function renderString(s, x, y, custom_pen)
     if not custom_pen then
-        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.setColor(unpack(WHITE))
     end
     for i = 1, #s do
         love.graphics.print(s:sub(i, i), x + CHAR_WIDTH * (i - 1), y)
@@ -55,7 +55,7 @@ end
 
 function mkEle(t, data, x, y, extra)
     local ele = { ['type'] = t, ['data'] = data, ['x'] = x, ['y'] = y }
-    if t == 'image' then ele['texture'] = extra end
+    ele[ite(t == 'image', 'texture', 'color')] = extra
     return ele
 end
 

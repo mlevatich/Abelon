@@ -2,16 +2,11 @@
 
 #37:
 
-Sprites should have an overlay above them, like the healthbar, that shows
-whether they've been buffed, debuffed, or afflicted with a positive or
-negative status. Just check the status effects for buffs and debuffs of type
-attr or special
-
 Hovering a green square should display all assist effects active on that square,
-in the sprite box. Hover overlay for a sprite should show status effects on the
-sprite, and assists active. Maybe a box-within-a-box approach? If there are
-assists, they form an outer box around the inner box, which is either empty or
-contains the sprite and all of its status effects.
+in the sprite box. Hover overlay for a sprite should show and assists active.
+Maybe a box-within-a-box approach? If there are assists, they form an outer
+box around the inner box, which is either empty or contains the sprite and all
+of its status effects.
 
 The effect of an assist on the squares that it will activate should be rendered
 in the top right. See below
