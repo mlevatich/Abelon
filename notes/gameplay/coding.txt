@@ -22,6 +22,10 @@ the top right of the screen, where each row is two hover overlays: the before
 -> after of the sprite's status and assists. Max this out by line number so
 there's no overflow.
 
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. While a sprite's action is playing out, what
+they're doing should render in the top right. Just the ability name and icons.
+
 For free aim, the cursor can be on any space given by the FREE_AIM field
 (intersect a diamond of size "scale" with the targets given by "target").
 FREE_AIM moves should render an outline of the move's range

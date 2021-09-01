@@ -159,7 +159,7 @@ function mkBuff(attrs, template)
         return Buff(unpack(template))
     else
         local s = template[2]
-        local tp = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), DEBUFF, BUFF)
+        local tp = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF)
         return Buff(template[1], s.base + math.floor(attrs[s.attr] * s.mul), tp)
     end
 end
@@ -415,7 +415,7 @@ skills = {
         genericAttack(
             SPELL, ENEMY, nil,
             nil, nil,
-            { { 'special', 'enrage' } }, 1
+            { { 'special', 'enrage', DEBUFF } }, 1
         ),
         "Confuse and enrage nearby enemies with a mist of activated ignea, so \z
          that their next actions will target Kath."
@@ -440,7 +440,7 @@ skills = {
         genericAttack(
             WEAPON, ENEMY, nil,
             nil, nil,
-            { { 'special', 'stun' } }, 1,
+            { { 'special', 'stun', DEBUFF } }, 1,
             { ['br'] = function(a, b) return a['reaction'] > b['reaction'] end }
         ),
         "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
@@ -476,7 +476,7 @@ skills = {
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAssist({
-            { 'special', 'forbearance' }
+            { 'special', 'forbearance', BUFF }
         }),
         "Kath receives all attacks meant for an adjacent ally."
     ),
@@ -506,7 +506,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
         genericAssist({
-            { 'special', 'guardian_angel' }
+            { 'special', 'guardian_angel', BUFF }
         }),
         "Kath casts a powerful protective spell. Assisted allies cannot \z
          drop below 1 health for the remainder of the turn."

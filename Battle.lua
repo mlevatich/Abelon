@@ -103,6 +103,10 @@ function Battle:init(battle_id, player, chapter)
     end
     self.chapter.current_music = Music(readField(data[8]))
 
+    -- Graphics
+    self.status_tex = self.chapter.itex
+    self.status_icons = getSpriteQuads({0, 1, 2, 3}, self.status_tex, 8, 8, 23)
+
     -- Start the battle!
     self.stack = {{
         ['stage'] = STAGE_FREE,
@@ -357,7 +361,9 @@ function Battle:playAction()
     self:push({
         ['stage'] = STAGE_WATCH,
         ['sp'] = sp,
-        ['views'] = {}
+        ['views'] = {
+            { BEFORE, TEMP, function() self:renderAssistSpaces() end }
+        }
     })
 end
 
@@ -1029,6 +1035,9 @@ function Battle:renderGrid()
 
         -- Render active views above the cursor, in stack order
         self:renderViews(AFTER)
+    else
+        local views = self.stack[#self.stack]['views']
+        for i = 1, #views do views[i][3]() end
     end
 end
 
@@ -1045,11 +1054,67 @@ function Battle:renderHealthbar(sp)
     love.graphics.rectangle('line', x + 3, y, sp.w - 6, 3)
 end
 
+function Battle:renderStatus(sp)
+
+    -- Get statuses
+    local x, y = sp:getPosition()
+    local statuses = self.status[sp:getId()]['effects']
+
+    -- Collect what icons need to be rendered
+    local buffed    = false
+    local debuffed  = false
+    local augmented = false
+    local impaired  = false
+    for i = 1, #statuses do
+        local b = statuses[i].buff
+        if b.attr == 'special' then
+            if b.type == BUFF   then augmented = true end
+            if b.type == DEBUFF then impaired  = true end
+        else
+            if b.type == BUFF   then buffed   = true end
+            if b.type == DEBUFF then debuffed = true end
+        end
+    end
+
+    -- Render icons
+    local c = self:getCursor()
+    local y_off = ite(c[3], 0, 1)
+    if buffed then
+        love.graphics.draw(self.status_tex, self.status_icons[1],
+            x + TILE_WIDTH - 8,
+            y + y_off,
+            0, 1, 1, 0, 0
+        )
+    end
+    if debuffed then
+        love.graphics.draw(self.status_tex, self.status_icons[2],
+            x + TILE_WIDTH - 16,
+            y + y_off,
+            0, 1, 1, 0, 0
+        )
+    end
+    if augmented then
+        love.graphics.draw(self.status_tex, self.status_icons[4],
+            x + 8,
+            y + y_off,
+            0, 1, 1, 0, 0
+        )
+    end
+    if impaired then
+        love.graphics.draw(self.status_tex, self.status_icons[3],
+            x,
+            y + y_off,
+            0, 1, 1, 0, 0
+        )
+    end
+end
+
 function Battle:renderOverlay(cam_x, cam_y)
 
     -- Render healthbars below each sprite
     for i = 1, #self.participants do
         self:renderHealthbar(self.participants[i])
+        self:renderStatus(self.participants[i])
     end
 
     -- Render battle hover box
