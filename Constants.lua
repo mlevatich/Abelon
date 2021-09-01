@@ -30,6 +30,7 @@ TEXT_INTERVAL  = 0.03
 MAX_MENU_ITEMS = 5
 RECT_ALPHA     = 0.4
 HBOX_WIDTH     = 540
+MAX_WORD       = 14
 
 -- Derived text variables
 LINE_HEIGHT = FONT_SIZE + TEXT_MARGIN_Y
@@ -89,10 +90,10 @@ str_to_icon = {
 }
 
 EFFECT_NAMES = {
-    ['guardian_angel'] = "Resists Death",
-    ['forbearance'] = "Kath's Protection",
-    ['enrage'] = "Targeting Kath",
-    ['stun'] = "Stunned"
+    ['guardian_angel'] = "Resist Death",
+    ['forbearance']    = "Kath's Shield",
+    ['enrage']         = "Targeting Kath",
+    ['stun']           = "Stunned"
 }
 
 -- Aim types/targets

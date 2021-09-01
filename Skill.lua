@@ -19,6 +19,14 @@ function Buff:init(attr, val, type)
     self.type = type
 end
 
+function Buff:toStr()
+    if self.attr == 'special' then
+        return EFFECT_NAMES[self.val]
+    end
+    local attr = self.attr:sub(1,1):upper() .. self.attr:sub(2)
+    return ite(self.val > 0, '+', '-') .. abs(self.val) .. ' ' .. self.attr
+end
+
 Effect = Class{}
 
 function Effect:init(buff, dur)
@@ -419,7 +427,7 @@ skills = {
             { { 'reaction', Scaling(0, 'focus', -1.0) } }, 2
         ),
         "Glare with an evil eye lit by ignea, reducing the Reaction of \z
-         affected enemies by (Focus * 1.0) for one turn."
+         affected enemies by (Focus * 1.0) for two turns."
     ),
     ['enrage'] = Skill('enrage', 'Enrage',
         'Defender', SPELL, str_to_icon['empty'],

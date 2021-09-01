@@ -332,7 +332,9 @@ function Battle:playAction()
 
                             -- Put the buffs on the grid
                             local g = self.grid[t[i][1]][t[i][2]]
-                            table.insert(g.assists, buffs)
+                            for j = 1, #buffs do
+                                table.insert(g.assists, buffs[j])
+                            end
                             g.n_assists = g.n_assists + 1
                         end
                         d()
@@ -1106,8 +1108,25 @@ function Battle:renderStatus(sp)
     end
 end
 
-function Battle:mkOuterHoverBox(inner_w, inner_h)
-    return {}, inner_w, inner_h
+function Battle:mkOuterHoverBox(w)
+
+    -- Check for an ally sprite or empty space
+    local c = self:getCursor()
+    local g = self.grid[c[2]][c[1]]
+    local sp = g.occupied
+    if ((not sp) or self:isAlly(sp)) and g.n_assists > 0 then
+
+        -- Make an element for each assist
+        local eles = { mkEle('text', 'Assists', HALF_MARGIN, HALF_MARGIN) }
+        for i = 1, #g.assists do
+            local str = g.assists[i]:toStr()
+            table.insert(eles, mkEle('text', str,
+                w - #str * CHAR_WIDTH - HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * i
+            ))
+        end
+        return eles, LINE_HEIGHT * (#eles) + BOX_MARGIN
+    end
+    return {}, 0
 end
 
 function Battle:mkInnerHoverBox()
@@ -1115,7 +1134,7 @@ function Battle:mkInnerHoverBox()
     -- Check for a sprite
     local c = self:getCursor()
     local sp = self.grid[c[2]][c[1]].occupied
-    local w = 100 + BOX_MARGIN
+    local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
     if sp then
 
         -- Box contains sprite's name and status
@@ -1137,13 +1156,7 @@ function Battle:mkInnerHoverBox()
 
             -- Length of buff string
             local b = statuses[i].buff
-            local n = b.val
-            local blen = 0
-            if b.attr == 'special' then
-                blen = #EFFECT_NAMES[n]
-            else
-                blen = #(ite(n > 0, '+', '-') .. abs(n) .. ' ' .. b.attr)
-            end
+            local blen = #b:toStr()
 
             -- Combine them all to get character size
             longest_status = math.max(longest_status, dlen + blen + buf)
@@ -1174,14 +1187,8 @@ function Battle:mkInnerHoverBox()
             table.insert(stat_eles, mkEle('text', dur,
                 w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
             ))
-            if b.attr == 'special' then
-                local str = EFFECT_NAMES[b.val]
-                table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
-            else
-                local a = b.attr:sub(1,1):upper() .. b.attr:sub(2)
-                local str = ite(b.val > 0, '+', '-') .. abs(b.val) .. ' ' .. a
-                table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
-            end
+            local str = b:toStr()
+            table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
         end
 
         -- Concat info with statuses
@@ -1190,7 +1197,7 @@ function Battle:mkInnerHoverBox()
         if next(statuses) ~= nil then
             h = h + HALF_MARGIN
         end
-        local clr = ite(self:isAlly(sp), { 0, 0.1, 0 }, { 0.1, 0, 0 })
+        local clr = ite(self:isAlly(sp), { 0, 0.1, 0.1 }, { 0.1, 0, 0 })
         return concat(sp_eles, stat_eles), w, h, clr
     else
 
@@ -1221,20 +1228,21 @@ function Battle:renderBoxElements(box, base_x, base_y)
     end
 end
 
-function Battle:renderHoverBoxes(x, y, ibox, iw, ih, obox, ow, oh, clr)
+function Battle:renderHoverBoxes(x, y, ibox, w, ih, obox, oh, clr)
 
     -- Base coordinates for both boxes
-    local outer_x = x + VIRTUAL_WIDTH - HALF_MARGIN - ow
-    local outer_y = y + HALF_MARGIN
-    local inner_x = x + VIRTUAL_WIDTH - (HALF_MARGIN * 2) - iw
-    local inner_y = outer_y + HALF_MARGIN / 2
+    local outer_x = x + VIRTUAL_WIDTH - HALF_MARGIN - w
+    local inner_x = outer_x
+    local inner_y = y + HALF_MARGIN
+    local outer_y = inner_y + ih
+
 
     -- If there are assists
     if next(obox) ~= nil then
 
         -- Draw outer box
-        love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-        love.graphics.rectangle('fill', outer_x, outer_y, ow, oh)
+        love.graphics.setColor(0.05, 0.15, 0.05, RECT_ALPHA)
+        love.graphics.rectangle('fill', outer_x, outer_y, w, oh)
 
         -- Draw outer box elements
         self:renderBoxElements(obox, outer_x, outer_y)
@@ -1243,7 +1251,7 @@ function Battle:renderHoverBoxes(x, y, ibox, iw, ih, obox, ow, oh, clr)
     -- Draw inner box
     table.insert(clr, RECT_ALPHA)
     love.graphics.setColor(unpack(clr))
-    love.graphics.rectangle('fill', inner_x, inner_y, iw, ih)
+    love.graphics.rectangle('fill', inner_x, inner_y, w, ih)
 
     -- Draw inner box elements
     self:renderBoxElements(ibox, inner_x, inner_y)
@@ -1289,9 +1297,9 @@ function Battle:renderOverlay(cam_x, cam_y)
     if s ~= STAGE_WATCH then
 
         -- Make and render hover boxes
-        local ibox, iw, ih, clr = self:mkInnerHoverBox()
-        local obox, ow, oh = self:mkOuterHoverBox(iw, ih)
-        self:renderHoverBoxes(cam_x, cam_y, ibox, iw, ih, obox, ow, oh, clr)
+        local ibox, w, ih, clr = self:mkInnerHoverBox()
+        local obox, oh = self:mkOuterHoverBox(w)
+        self:renderHoverBoxes(cam_x, cam_y, ibox, w, ih, obox, oh, clr)
 
         -- Render menu if there is one, otherwise battle text in the lower right
         if s == STAGE_MENU then
