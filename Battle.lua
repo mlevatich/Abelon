@@ -1231,9 +1231,9 @@ end
 function Battle:renderHoverBoxes(x, y, ibox, w, ih, obox, oh, clr)
 
     -- Base coordinates for both boxes
-    local outer_x = x + VIRTUAL_WIDTH - HALF_MARGIN - w
+    local outer_x = x + VIRTUAL_WIDTH - BOX_MARGIN - w
     local inner_x = outer_x
-    local inner_y = y + HALF_MARGIN
+    local inner_y = y + BOX_MARGIN
     local outer_y = inner_y + ih
 
 

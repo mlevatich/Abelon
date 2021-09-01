@@ -1,3 +1,25 @@
+Abelon: Demon, Veteran, Executioner
+Kath: Defender, Hero, Cleric
+Elaine: Huntress, Apprentice, Sniper
+Shanti: Sorceress, Enchanter, Lanternier
+Lester: Martyr, Watcher, Assassin
+Mona: Healer, Hellshun, Saint
+Lucille: Warlock, Ranger, Trickster
+Opal: Commander, Brawler, Duellist
+Uther: Miner, Shadow, Rogue
+Gaheris: Elementalist, Scholar, Empath
+
+skill ideas:
+in shadow: passive ability - if no assists, enemies wont target you
+pinpoint: find a weak spot. Very specific range required.
+assassinate: if pinpoint was used last turn, and you have at least 3 assists,
+ability instantly kills target. Otherwise it does nothing.
+observe: once per battle, elaine selects an ally. At the end of the battle,
+elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
+(she starts off very weak to compensate)
+cover fire:
+one in a million: fire a shot all the way across the map dealing a lotta damage.
+
 Every character has three skill "paths" to choose from, named by nouns
 (e.g. Abelon has Veteran, Demon, and Executioner), with an associated icon and
 color.

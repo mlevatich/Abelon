@@ -1,24 +1,5 @@
 (please commit each paragraph separately for your own sanity)
 
-#37:
-
-The effect of an assist on the squares that it will activate should be rendered
-in the top right. See below
-
-The effect of an attack on whatever targets will be hit should be rendered in
-the top right. Instead of the normal hover overlay, render rows starting from
-the top right of the screen, where each row is two hover overlays: the before
--> after of the sprite's status and assists. Max this out by line number so
-there's no overflow.
-
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. While a sprite's action is playing out, what
-they're doing should render in the top right. Just the ability name and icons.
-
-For free aim, the cursor can be on any space given by the FREE_AIM field
-(intersect a diamond of size "scale" with the targets given by "target").
-FREE_AIM moves should render an outline of the move's range
-
 #38:
 
 When end turn is selected (or turn auto-ends when all allies go grey), enemy
@@ -114,10 +95,6 @@ Wolf-walk
 
 #52:
 
-Implement single-fire animations in the animations engine. Simply
-change animation and provide a done-action to the animation object that
-changes their animation again once all frames are finished.
-
 Every skill has an associated single-fire animation, with render position
 determined by the cursor location of the cast. This has nothing to do with the
 sprite casting the skill. For some skills, the animation should play at every
@@ -164,6 +141,25 @@ Wolf-death
 
 Sound effect for: weapon skill, spell, assist, death, defeat, victory.
 
+NEW ISSUE: combat QoL
+
+The effect of an assist on the squares that it will activate should be rendered
+in the top right. See below
+
+The effect of an attack on whatever targets will be hit should be rendered in
+the top right. Instead of the normal hover overlay, render rows starting from
+the top right of the screen, where each row is two hover overlays: the before
+-> after of the sprite's status and assists. Max this out by line number so
+there's no overflow.
+
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. While a sprite's action is playing out, what
+they're doing should render in the top right. Just the ability name and icons.
+
+For free aim, the cursor can be on any space given by the FREE_AIM field
+(intersect a diamond of size "scale" with the targets given by "target").
+FREE_AIM moves should render an outline of the move's range
+
 #57:
 
 Split forest into three maps (west, south, north) with slightly different
@@ -196,7 +192,8 @@ Finish script - Do this before even looking at the below scenarios! Because
 I might decide I want something different as I write the script.
 Better forest theme - more tense investigation, less funeral march
 Basic battle theme - for the three non-boss encounters
-Enemy approaches theme - for rising action before a fight!
+Enemy approaches theme - for rising action before a fight! This should play for
+most of the forest.
 implement Elaine scenario
 implement Ghoul scenario
 implement Deer scenario
@@ -209,12 +206,3 @@ Chapter 1 endcard, end scene teaser
     both of these replace "formulas"
 #33: Big refactor!
 Make executable
-
-skill ideas:
-in shadow: passive ability - if no assists, enemies wont target you
-pinpoint: find a weak spot. Very specific range required.
-assassinate: if pinpoint was used last turn, and you have at least 3 assists,
-ability instantly kills target. Otherwise it does nothing.
-observe: once per battle, elaine selects an ally. At the end of the battle,
-elaine will gain 1 attribute point in that ally's highest (non-endurance) stat.
-(she starts off very weak to compensate)
