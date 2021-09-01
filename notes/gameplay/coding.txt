@@ -2,13 +2,19 @@
 
 #37:
 
-Assist and status effect implementation
+Sprites should have an overlay above them, like the healthbar, that shows
+whether they've been buffed, debuffed, or afflicted with a positive or
+negative status. Just check the status effects for buffs and debuffs of type
+attr or special
 
-Tapping a greyed out sprite opens their attribute menu
+Hovering a green square should display all assist effects active on that square,
+in the sprite box. Hover overlay for a sprite should show status effects on the
+sprite, and assists active. Maybe a box-within-a-box approach? If there are
+assists, they form an outer box around the inner box, which is either empty or
+contains the sprite and all of its status effects.
 
-Hovering a green square should display all assist effects active on that square.
-Same box as the sprite box. Hover overlay for a sprite should show status
-effects on the sprite, and assists active.
+The effect of an assist on the squares that it will activate should be rendered
+in the top right. See below
 
 The effect of an attack on whatever targets will be hit should be rendered in
 the top right. Instead of the normal hover overlay, render rows starting from
@@ -48,6 +54,9 @@ pathing grid)
 Enemy AI: use targeting info to figure out which square to target. Move as close
 as possible to that square (but no farther than necessary to use the attack)
 by consulting the shortest paths grid. If in range to use attack, use it.
+
+Make sure enemies cannot benefit from assists.
+Implement stun
 
 Movement triggers: enemies stay still until a trigger (like ally proximity, or
 reinforcements arriving) activates them. Only then will they start moving and
@@ -201,8 +210,10 @@ implement Deer scenario
 Implement crystal wolf scenario
 Chapter 1 endcard, end scene teaser
 #18: Shopping and gold
-Formulas tab
-#48: Tutorial
+#48: Tutorial:
+    game guide shows up immediately on loading in, accessible from inventory
+    combat guide accessible from battle begin menu or options
+    both of these replace "formulas"
 #33: Big refactor!
 Make executable
 

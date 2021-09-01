@@ -84,6 +84,13 @@ str_to_icon = {
     ['empty'] = 18
 }
 
+EFFECT_NAMES = {
+    ['guardian_angel'] = "Resists Death",
+    ['forbearance'] = "Kath's Protection",
+    ['enrage'] = "Targeting Kath",
+    ['stun'] = "Stunned"
+}
+
 -- Aim types/targets
 DIRECTIONAL = 1
 SELF_CAST   = 2
@@ -97,6 +104,10 @@ ALL   = 4
 ALLY  = 5
 ENEMY = 6
 BEGIN = 7
+
+-- Buff or debuff?
+BUFF   = 1
+DEBUFF = 2
 
 -- Win/lose conditions
 ROUT = function(b) return true end

@@ -17,6 +17,7 @@ function GridSpace:init(sp)
         self.occupied = sp
     end
     self.assists = {}
+    self.n_assists = 0
 end
 
 function Battle:init(battle_id, player, chapter)
@@ -58,6 +59,7 @@ function Battle:init(battle_id, player, chapter)
             table.insert(t, sp)
             self.grid[v[2]][v[1]] = GridSpace(sp)
             self.status[sp:getId()] = {
+                ['sp']       = sp,
                 ['team']     = ite(idx == 4, ALLY, ENEMY),
                 ['alive']    = true,
                 ['acted']    = false,
@@ -319,8 +321,15 @@ function Battle:playAction()
                         local t = self:skillRange(assist,
                             assist_dir, c_assist)
                         for i = 1, #t do
-                            local as = self.grid[t[i][1]][t[i][2]].assists
-                            table.insert(as, assist)
+
+                            -- Get the buffs this assist will confer, based on
+                            -- the sprite's attributes
+                            local buffs = assist.use(self:getTmpAttributes(sp))
+
+                            -- Put the buffs on the grid
+                            local g = self.grid[t[i][1]][t[i][2]]
+                            table.insert(g.assists, buffs)
+                            g.n_assists = g.n_assists + 1
                         end
                         d()
                     end,
@@ -350,32 +359,6 @@ function Battle:playAction()
         ['sp'] = sp,
         ['views'] = {}
     })
-
-    -- (print debug info)
-    -- local dirStr = function(d)
-    --     return ite(d == UP, 'UP',
-    --                ite(d == DOWN, 'DOWN',
-    --                    ite(d == RIGHT, 'RIGHT', 'LEFT')))
-    -- end
-    -- print("Sprite action of: " .. sp.name)
-    -- print("Start at: (" .. c_sp[1] .. ", " .. c_sp[2] .. ")")
-    -- print("Move to: (" .. c_move1[1] .. ", " .. c_move1[2] .. ")")
-    -- if c_attack then
-    --     print("Cast " .. attack.name ..
-    --           " at (" .. c_attack[1] .. ", " .. c_attack[2] ..
-    --           ") with direction " .. dirStr(attack_dir))
-    -- else
-    --     print("Skip attack")
-    -- end
-    -- print("Move to: (" .. c_move2[1] .. ", " .. c_move2[2] .. ")")
-    -- if c_assist then
-    --     print("Cast " .. assist.name ..
-    --           " at (" .. c_assist[1] .. ", " .. c_assist[2] ..
-    --           ") with direction " .. dirStr(assist_dir))
-    -- else
-    --     print("Skip assist")
-    -- end
-    -- print("Action ends")
 end
 
 function Battle:endAction(used_assist)
@@ -583,6 +566,15 @@ function Battle:isAlly(sp)
     return self.status[sp:getId()]['team'] == ALLY
 end
 
+function Battle:getTmpAttributes(sp)
+    local y, x = self:findSprite(sp:getId())
+    return mkTmpAttrs(
+        sp.attributes,
+        self.status[sp:getId()]['effects'],
+        self.grid[y][x].assists
+    )
+end
+
 function Battle:selectAlly(sp)
     local c = self:getCursor()
     local new_c = { c[1], c[2], c[3], { 0.4, 0.4, 1, 1 } }
@@ -631,12 +623,9 @@ function Battle:useAttack(sp, attack, attack_dir, c_attack)
         if target then
             table.insert(ts, target)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
-            if abs(target.x - sp.x) > TILE_WIDTH / 2 then
-                target.dir = ite(target.x > sp.x, LEFT, RIGHT)
-            end
         end
     end
-    return attack.use(sp, sp_a, ts, ts_a, self.status)
+    return attack.use(sp, sp_a, ts, ts_a, self.status, self.grid)
 end
 
 function Battle:kill(sp)
@@ -763,7 +752,8 @@ function Battle:update(keys, dt)
         else
             -- Move a sprite to a new location
             local y1, x1 = self:findSprite(sp:getId())
-            local movement = sp:getMovement()
+            local attrs = self:getTmpAttributes(sp)
+            local movement = math.floor(attrs['agility'] / 5)
             if c then
                 movement = movement - abs(c[1] - x1) - abs(c[2] - y1)
                 x1 = c[1]
@@ -921,7 +911,7 @@ function Battle:renderAssistSpaces()
     for i = 1, self.grid_h do
         for j = 1, self.grid_w do
             if self.grid[i][j] then
-                local n = #self.grid[i][j].assists
+                local n = self.grid[i][j].n_assists
                 if n > 0 then
                     local clr = { 0, 1, 0 }
                     if n == 1 then
@@ -962,7 +952,8 @@ end
 
 function Battle:renderMovement(x, y, sp, full)
     local row, col = self:findSprite(sp:getId())
-    local move = sp:getMovement() - abs(col - x) - abs(row - y)
+    local attrs = self:getTmpAttributes(sp)
+    local move = math.floor(attrs['agility'] / 5) - abs(col - x) - abs(row - y)
     local clr = { 0, 0, 1 }
     self:shadeSquare(y, x, clr, full)
     for i = 1, move do
