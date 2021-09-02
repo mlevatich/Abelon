@@ -2,14 +2,6 @@
 
 #38:
 
-assists clear and statuses decrement duration on begin turn
-
-Need turn number to appear somewhere in overlay
-
-last actor of player/enemy phase must grey-out briefly
-
-COMMIT: end turn
-
 Win and loss conditions checked on: end action, start new phase. Win and loss
 conditions accept allies/enemies and their locations, and turn number.
 

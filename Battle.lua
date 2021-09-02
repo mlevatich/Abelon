@@ -165,7 +165,8 @@ function Battle:getCursor(n)
 end
 
 function Battle:getMenu()
-    return self.stack[#self.stack]['menu']
+    local st = self.stack[#self.stack]
+    return st['menu'], st['forced']
 end
 
 function Battle:getSprite()
@@ -201,11 +202,12 @@ function Battle:moveSprite(sp, x, y)
     self.grid[y][x].occupied = sp
 end
 
-function Battle:openMenu(m, views)
+function Battle:openMenu(m, views, forced)
     self:push({
         ['stage'] = STAGE_MENU,
         ['menu'] = m,
-        ['views'] = views
+        ['views'] = views,
+        ['forced'] = forced
     })
 end
 
@@ -392,6 +394,30 @@ function Battle:endAction(used_assist)
     self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN), views)
 end
 
+function Battle:endTurn()
+
+    -- Allies have their actions refreshed
+    for i = 1, #self.participants do
+        local sp = self.participants[i]
+        if self:isAlly(sp) then
+            self.status[sp:getId()]['acted'] = false
+        end
+    end
+
+    -- Construct a queue of stacks. One stack per enemy,
+    -- representing that enemy's action
+    self:planEnemyPhase()
+
+    -- Let the first enemy go, if one exists
+    if next(self.enemy_queue) then
+        self.stack = table.remove(self.enemy_queue)
+        self:playAction()
+    else
+        -- If there are no enemies, it's immediately the ally phase
+        self:beginTurn()
+    end
+end
+
 function Battle:begin()
 
     -- Participants to battle behavior
@@ -433,11 +459,6 @@ function Battle:beginTurn()
         end
     end
 
-    -- Everyone gets their action refreshed
-    for i = 1, #self.participants do
-        self.status[self.participants[i]:getId()]['acted'] = false
-    end
-
     -- Cursor to Abelon
     local y, x = self:findSprite(self.player:getId())
     self:moveCursor(x, y)
@@ -448,7 +469,15 @@ end
 
 function Battle:openStartMenu()
     local die = function(c) love.event.quit(0) end
-    local next = function(c) self:closeMenu() end
+    local refresh = function()
+        for i = 1, #self.participants do
+            self.status[self.participants[i]:getId()]['acted'] = false
+        end
+    end
+    local next = function(c)
+        refresh()
+        self:closeMenu()
+    end
     local begin = MenuItem('Begin turn', {}, "Begin your turn", nil, next)
     local wincon = MenuItem('Objectives', {},
         'View victory and defeat conditions'
@@ -466,7 +495,18 @@ function Battle:openStartMenu()
         "Save current progress and close the game?"
     )
     local m = { begin, wincon, restart1, restart2, quit }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {{}})
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {}, true)
+end
+
+function Battle:openEndTurnMenu()
+    self:openMenu(Menu(nil, {
+        MenuItem('End turn', {}, 'End your turn', nil,
+            function(c)
+                self:closeMenu()
+                self:endTurn()
+            end
+        )
+    }, BOX_MARGIN, BOX_MARGIN), {}, true)
 end
 
 function Battle:mkUsable(sp, sk_menu)
@@ -597,11 +637,15 @@ end
 
 function Battle:openOptionsMenu()
     local die = function(c) love.event.quit(0) end
+    local endfxn = function(c)
+        self:closeMenu()
+        self:endTurn()
+    end
     local wincon = MenuItem('Objectives', {},
         'View victory and defeat conditions'
     )
     local end_turn = MenuItem('End turn', {},
-        'End your turn', nil, pass,
+        'End your turn', nil, endfxn,
         "End your turn early? Some of your allies can still act."
     )
     local settings = self.player:mkSettingsMenu()
@@ -613,7 +657,7 @@ function Battle:openOptionsMenu()
         "Save battle state and close the game?"
     )
     local m = { wincon, end_turn, settings, restart, quit }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {{}})
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {})
 end
 
 function Battle:findSprite(sp_id)
@@ -768,7 +812,7 @@ function Battle:update(keys, dt)
     if s == STAGE_MENU then
 
         -- Menu navigation
-        local m = self:getMenu()
+        local m, forced = self:getMenu()
         local done = false
         if d then
             done = m:back()
@@ -778,7 +822,7 @@ function Battle:update(keys, dt)
             m:hover(ite(up, UP, DOWN))
         end
 
-        if done then self:closeMenu() end
+        if done and not forced then self:closeMenu() end
 
     elseif s == STAGE_FREE then
 
@@ -894,29 +938,8 @@ function Battle:update(keys, dt)
                     ally_phase_over = false
                 end
             end
-
             if ally_phase_over then
-
-                -- Allies have their actions refreshed
-                for i = 1, #self.participants do
-                    local sp = self.participants[i]
-                    if self:isAlly(sp) then
-                        self.status[sp:getId()]['acted'] = false
-                    end
-                end
-
-                -- Construct a queue of stacks. One stack per enemy,
-                -- representing that enemy's action
-                self:planEnemyPhase()
-
-                -- Let the first enemy go, if one exists
-                if next(self.enemy_queue) then
-                    self.stack = table.remove(self.enemy_queue)
-                    self:playAction()
-                else
-                    -- If there are no enemies, it's immediately the ally phase
-                    self:beginTurn()
-                end
+                self:openEndTurnMenu()
             else
 
                 -- If all enemies have acted, it's time for the next turn
@@ -1431,9 +1454,15 @@ function Battle:renderOverlay(cam_x, cam_y)
 
         -- Render menu if there is one, otherwise battle text in the lower right
         if s == STAGE_MENU then
-            self:getMenu():render(cam_x, cam_y, self.chapter)
+            local m, _ = self:getMenu()
+            m:render(cam_x, cam_y, self.chapter)
         else
             self:renderBattleText(cam_x, cam_y)
         end
+        local turn_str = 'Turn ' .. self.turn
+        renderString(turn_str,
+            cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
+            cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
+        )
     end
 end
