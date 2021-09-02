@@ -6,7 +6,7 @@ require 'Scripts'
 Scene = Class{}
 
 local PAUSE_CHARS = {'. ', '! ', '? ', '.', '!', '?'}
-local BREATHE_CHARS = {', ', ','}
+local BREATHE_CHARS = {', ', ',', '* ', '*'}
 local PAUSE_WEIGHT = 10
 local BREATHE_WEIGHT = 3
 

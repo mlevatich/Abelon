@@ -20,6 +20,32 @@ function GridSpace:init(sp)
     self.n_assists = 0
 end
 
+wincons = {
+    ['rout'] = { "Defeat all enemies.",
+        function(b)
+            for _,v in pairs(b.status) do
+                if v['team'] == ENEMY and v['alive'] then
+                    return false
+                end
+            end
+            return true
+        end
+    }
+}
+
+losscons = {
+    ['death'] = { "Any ally dies.",
+        function(b)
+            for k,v in pairs(b.status) do
+                if v['team'] == ALLY and not v['alive'] then
+                    return k
+                end
+            end
+            return false
+        end
+    }
+}
+
 function Battle:init(battle_id, player, chapter)
 
     self.id = battle_id
@@ -81,8 +107,8 @@ function Battle:init(battle_id, player, chapter)
     self.enemy_queue = {}
 
     -- Win conditions and loss conditions
-    self.wincon = function(b) return true end
-    self.losscon = function(b) return false end
+    self.win  = readArray(data[6], function(s) return wincons[s]  end)
+    self.lose = readArray(data[7], function(s) return losscons[s] end)
 
     -- Battle cam starting location
     self.battle_cam_x = (self.origin_x) * TILE_WIDTH
@@ -459,12 +485,37 @@ function Battle:beginTurn()
         end
     end
 
+    -- Check win and loss
+    local battle_over = self:checkWinLose()
+    if battle_over then return end
+
     -- Cursor to Abelon
     local y, x = self:findSprite(self.player:getId())
     self:moveCursor(x, y)
 
     -- Start menu open
     self:openStartMenu()
+end
+
+function Battle:checkWinLose()
+    for i = 1, #self.lose do
+        local defeat_scene = self.lose[i][2](self)
+        if defeat_scene then
+            -- TODO: Change to defeat music
+            -- Play defeat scene (still in battle mode)
+            -- Offer restart battle or restart chapter as a battle menu,
+            -- Both just run love.event.quit(0) for now until autosaves work
+            love.event.quit(0)
+        end
+    end
+    for i = 1, #self.win do
+        if self.win[i][2](self) then
+            self.chapter.battle = nil
+            self.chapter:launchScene(self.id .. '-victory')
+            return true
+        end
+    end
+    return false
 end
 
 function Battle:openStartMenu()
@@ -923,6 +974,10 @@ function Battle:update(keys, dt)
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
+
+            -- Check win and loss
+            local battle_over = self:checkWinLose()
+            if battle_over then return end
 
             -- If there are enemies that need to go next, have them go.
             if next(self.enemy_queue) ~= nil then

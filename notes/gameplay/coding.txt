@@ -2,16 +2,16 @@
 
 #38:
 
-Win and loss conditions checked on: end action, start new phase. Win and loss
-conditions accept allies/enemies and their locations, and turn number.
-
-Support scene triggers during combat at: select unit for the first time on ally
-phase, start new phase, end action. Triggers receive turn number, allies/enemies
-and their statuses. Add the scenes from the chapter 1 script to the battle.
+Defeat scenes and battle/chapter restart
+Objectives menu
 
 Winning ends the battle and returns control to player (likely after launching
 a victory scene). Losing launches a defeat scene and then simply closes the game
 (wait until #28 for game over).
+
+Support scene triggers during combat at: select unit for the first time on ally
+phase, start new phase, end action. Triggers receive turn number, allies/enemies
+and their statuses. Add the scenes from the chapter 1 script to the battle.
 
 #50:
 
@@ -37,6 +37,44 @@ Movement triggers: enemies stay still until a trigger (like ally proximity, or
 reinforcements arriving) activates them. Only then will they start moving and
 acting.
 
+#54:
+
+Changing the difficulty level changes enemy attributes. Tune until it makes
+sense.
+
+#55:
+
+exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
+healed, 0.5 of the value for assisters supporting any of these
+
+level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
+
+#4:
+
+Write sound effects engine, globally available.
+
+Basic beep and boop sfx for all interactions (basically whenever F or D is
+pressed and does something).
+
+Scene text sound effects
+
+#56:
+
+Sound effect for: weapon skill, spell, assist, death, defeat, victory.
+
+#52:
+
+Every skill has an associated single-fire animation, with render position
+determined by the cursor location of the cast. This has nothing to do with the
+sprite casting the skill. For some skills, the animation should play at every
+affected tile, for others, the animation should play centered on the cursor.
+This should be provided as an option.
+
+Insert appropriate hooks for skill animations to play at the right points in
+battle (fill in with a universal default).
+
+Skill animations for all basic skills.
+
 #16:
 
 Title screen v0 (continue (if save file detected), new game ->
@@ -59,25 +97,6 @@ Autosave on game quit by ANY means (no rollbacks!), Autosave chapter start of
 current chapter and battle start of current battle. Implement restart chapter,
 restart battle, and battle game over options.
 
-#55:
-
-exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
-healed, 0.5 of the value for assisters supporting any of these
-
-level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
-
-#54:
-
-Changing the difficulty level changes enemy attributes. Tune until it makes
-sense.
-
-#4:
-
-Write sound effects engine, globally available.
-
-Basic beep and boop sfx for all interactions (basically whenever F or D is
-pressed and does something).
-
 #51:
 
 Abelon-idle
@@ -95,19 +114,6 @@ Two mostly identical wolf sprites.
 
 Wolf-combat (this doubles as Wolf-idle)
 Wolf-walk (this doubles as Wolf-combat-run)
-
-#52:
-
-Every skill has an associated single-fire animation, with render position
-determined by the cursor location of the cast. This has nothing to do with the
-sprite casting the skill. For some skills, the animation should play at every
-affected tile, for others, the animation should play centered on the cursor.
-This should be provided as an option.
-
-Insert appropriate hooks for skill animations to play at the right points in
-battle (fill in with a universal default).
-
-Skill animations for all basic skills.
 
 #53:
 
@@ -140,29 +146,6 @@ Wolf-weapon
 Wolf-hurt
 Wolf-death
 
-#56:
-
-Sound effect for: weapon skill, spell, assist, death, defeat, victory.
-
-NEW ISSUE: combat QoL
-
-The effect of an assist on the squares that it will activate should be rendered
-in the top right. See below
-
-The effect of an attack on whatever targets will be hit should be rendered in
-the top right. Instead of the normal hover overlay, render rows starting from
-the top right of the screen, where each row is two hover overlays: the before
--> after of the sprite's status and assists. Max this out by line number so
-there's no overflow.
-
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. While a sprite's action is playing out, what
-they're doing should render in the top right. Just the ability name and icons.
-
-For free aim, the cursor can be on any space given by the FREE_AIM field
-(intersect a diamond of size "scale" with the targets given by "target").
-FREE_AIM moves should render an outline of the move's range
-
 #57:
 
 Split forest into three maps (west, south, north) with slightly different
@@ -181,8 +164,44 @@ Expand lighting engine
 
 Add point lights to the forest to test
 
+#48: Tutorial:
 
+Game guide shows up immediately on loading in, accessible from inventory
 
+Combat guide accessible from battle begin menu or options, both of these
+replace "formulas".
+
+NEW ISSUE: combat QoL
+
+Try to minimize the amount of text. Replace text with pictures as much as
+possible?
+
+The effect of an assist on the squares that it will activate should be rendered
+in the top right. See below
+
+The effect of an attack on whatever targets will be hit should be rendered in
+the top right. Instead of the normal hover overlay, render rows starting from
+the top right of the screen, where each row is two hover overlays: the before
+-> after of the sprite's status and assists. Max this out by line number so
+there's no overflow.
+
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. While a sprite's action is playing out, what
+they're doing should render in the top right. Just the ability name and icons.
+
+For free aim, the cursor can be on any space given by the FREE_AIM field
+(intersect a diamond of size "scale" with the targets given by "target").
+FREE_AIM moves should render an outline of the move's range
+
+Should move2 be auto-generated if the unit has no movement points left?
+
+#18:
+
+Shopping and gold
+
+#33:
+
+Big refactor!
 
 
 
@@ -202,10 +221,4 @@ implement Ghoul scenario
 implement Deer scenario
 Implement crystal wolf scenario
 Chapter 1 endcard, end scene teaser
-#18: Shopping and gold
-#48: Tutorial:
-    game guide shows up immediately on loading in, accessible from inventory
-    combat guide accessible from battle begin menu or options
-    both of these replace "formulas"
-#33: Big refactor!
 Make executable

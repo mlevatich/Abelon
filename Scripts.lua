@@ -11,15 +11,9 @@ function addEvents(scene, e, at)
     end
 end
 
-function br(test, args, t_events, f_events)
+function br(test, t_events, f_events)
     return function(scene)
-        local vars = {}
-        getI = function(p) return scene.participants[p]:getImpression() end
-        getA = function(p) return scene.participants[p]:getAwareness() end
-        for i = 1, #args do
-            vars[i] = ite(args[i][2] == 'i', getI(args[i][1]), getA(args[i][1]))
-        end
-        local events = ite(test(unpack(vars)), t_events, f_events)
+        local events = ite(test(scene.chapter), t_events, f_events)
         addEvents(scene, events, scene.event + 1)
     end
 end
@@ -160,6 +154,89 @@ end
 
 scripts = {
 
+    ['1-1-victory'] = {
+        ['ids'] = {'abelon', 'kath'},
+        ['events'] = {
+            wait(1),
+            face(1, 2),
+            focus(2, 100),
+            say(2, 1, true,
+                "*huff* *huff* Ach, they aren't so tough when it's just a \z
+                 couple of the bastards."
+            ),
+            choice({
+                {
+                    ['response'] = "Nice bladework",
+                    ['events'] = {
+                        say(2, 1, false,
+                            "Why, a compliment? From you? I must have really \z
+                             outdone myself this time, or else you took a \z
+                             blow to the head."
+                        )
+                    },
+                    ['result'] = {
+                        ['awareness'] = {0, 1},
+                        ['impressions'] = {0, 1}
+                    }
+                },
+                {
+                    ['response'] = "They didn't stand a chance",
+                    ['events'] = {
+                        say(2, 3, false,
+                            "No indeed, they didn't. I don't envy anyone or \z
+                             anything at the wrong end of your sword."
+                        )
+                    },
+                    ['result'] = {}
+                }
+            }),
+            br(function(c)
+                local abelon = c.sprites['abelon']
+                return abelon.health == abelon.attributes['endurance']
+            end, {
+                say(2, 1, false,
+                    "And not a scratch on you! Your skills never fail to \z
+                     impress, truly."
+                ),
+                wait(0.5)
+            },
+            {
+                say(2, 3, false,
+                    "Let me see your wounds."
+                ),
+                walkTo(2, 1, 'walk'),
+                waitForEvent('walk'),
+                wait(1)
+            }),
+            say(2, 1, false,
+                "Now then, thankfully you didn't wander off too far from the \z
+                 fighting. The north gate is just ahead to the east, first \z
+                 right turn on this path."
+            ),
+            walk(2, 41, 69, 'walk', RIGHT),
+            say(2, 3, false,
+                "We'll have to keep an eye out for more wolves - I'll follow \z
+                 behind you and watch our back."
+            ),
+            waitForEvent('walk'),
+            wait(1),
+            lookDir(2, RIGHT),
+            say(2, 3, false,
+                "But look here. This trail of blood came dribbling from that \z
+                 wolf's mouth... he must have gotten to something before he \z
+                 found us."
+            ),
+            say(2, 3, false,
+                "It could be someone wounded and in need of help, but \z
+                 following it will lead us away from Ebonach and lose us \z
+                 time... damn!"
+            ),
+            focus(1, 100),
+            waitForEvent('camera')
+        },
+        ['result'] = {}
+    },
+
     ['medallion_use'] = {
         ['ids'] = {'medallion'},
         ['events'] = {
@@ -269,7 +346,7 @@ scripts = {
                     }
                 }
             }),
-            br(function(i) return i > 50 end, {{2, 'i'}}, {
+            br(function(c) return c.sprites['kath']:getImpression() > 50 end, {
                 say(2, 1, false,
                     "I trust you, Abelon."
                 ),
@@ -690,7 +767,7 @@ scripts = {
         },
         ['result'] = {
             ['do'] = function(c)
-                local kath = c.current_map:getSprite('kath')
+                local kath = c.sprites['kath']
                 c.player:joinParty(kath)
                 c:launchBattle('1-1')
             end
