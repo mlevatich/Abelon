@@ -26,7 +26,7 @@ function Battle:init(battle_id, player, chapter)
     self.chapter = chapter
 
     -- Tracking state
-    self.turn = 1
+    self.turn = 0
 
     -- Data file
     local data_file = 'Abelon/data/battles/' .. self.id .. '.txt'
@@ -78,6 +78,7 @@ function Battle:init(battle_id, player, chapter)
     self.player = player
     self.status = {}
     self.participants = concat(readEntities(4), readEntities(5))
+    self.enemy_queue = {}
 
     -- Win conditions and loss conditions
     self.wincon = function(b) return true end
@@ -108,14 +109,7 @@ function Battle:init(battle_id, player, chapter)
     self.status_icons = getSpriteQuads({0, 1, 2, 3}, self.status_tex, 8, 8, 23)
 
     -- Start the battle!
-    self.stack = {{
-        ['stage'] = STAGE_FREE,
-        ['cursor'] = { 1, 1, false, { HIGHLIGHT } },
-        ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovementHover() end },
-            { BEFORE, PERSIST, function() self:renderAssistSpaces() end }
-        }
-    }}
+    self.stack = { self:stackBase() }
     self:begin()
 end
 
@@ -141,6 +135,17 @@ function Battle:pop()
     while self.stack[#self.stack]['stage'] == STAGE_BUBBLE do
         table.remove(self.stack, #self.stack)
     end
+end
+
+function Battle:stackBase()
+    return {
+        ['stage'] = STAGE_FREE,
+        ['cursor'] = { 1, 1, false, { HIGHLIGHT } },
+        ['views'] = {
+            { BEFORE, TEMP, function() self:renderMovementHover() end },
+            { BEFORE, PERSIST, function() self:renderAssistSpaces() end }
+        }
+    }
 end
 
 function Battle:getCursor(n)
@@ -258,7 +263,8 @@ function Battle:playAction()
                     d()
                 end,
                 self.origin_x + c_move1[1],
-                self.origin_y + c_move1[2]
+                self.origin_y + c_move1[2],
+                true
             )
         end,
         function(d)
@@ -305,7 +311,7 @@ function Battle:playAction()
                     c_attack[2] + self.origin_y
                 )
             else
-                return sp:waitBehaviorGeneric(d, 'combat', 1)
+                return sp:waitBehaviorGeneric(d, 'combat', 0.2)
             end
         end,
         function(d)
@@ -315,7 +321,9 @@ function Battle:playAction()
                     d()
                 end,
                 self.origin_x + c_move2[1],
-                self.origin_y + c_move2[2])
+                self.origin_y + c_move2[2],
+                true
+            )
         end,
         function(d)
             if assist then
@@ -345,7 +353,7 @@ function Battle:playAction()
                     c_assist[2] + self.origin_y
                 )
             else
-                return sp:waitBehaviorGeneric(d, 'combat', 1)
+                return sp:waitBehaviorGeneric(d, 'combat', 0.2)
             end
         end
     },  function()
@@ -391,6 +399,44 @@ function Battle:begin()
         self.participants[i]:changeBehavior('battle')
     end
     self.player:changeMode('battle')
+
+    -- Start the first turn
+    self:beginTurn()
+end
+
+function Battle:beginTurn()
+
+    -- Increment turn count
+    self.turn = self.turn + 1
+
+    -- Decrement/clear statuses
+    for _, v in pairs(self.status) do
+        local es = v['effects']
+        local i = 1
+        while i <= #es do
+            if es[i].duration > 1 then
+                es[i].duration = es[i].duration - 1
+                i = i + 1
+            else
+                table.remove(es, i)
+            end
+        end
+    end
+
+    -- Clear all assists from the field
+    for i = 1, #self.grid do
+        for j = 1, #self.grid[i] do
+            if self.grid[i][j] then
+                self.grid[i][j].assists = {}
+                self.grid[i][j].n_assists = 0
+            end
+        end
+    end
+
+    -- Everyone gets their action refreshed
+    for i = 1, #self.participants do
+        self.status[self.participants[i]:getId()]['acted'] = false
+    end
 
     -- Cursor to Abelon
     local y, x = self:findSprite(self.player:getId())
@@ -828,11 +874,69 @@ function Battle:update(keys, dt)
 
         -- Clean up after actions are performed
         if not self.action_in_progress then
+
+            -- Say this sprite acted and reset stack
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
 
+            -- If there are enemies that need to go next, have them go.
+            if next(self.enemy_queue) ~= nil then
+                self.stack = table.remove(self.enemy_queue)
+                self:playAction()
+            end
+
             -- If all allies have acted, switch to enemy phase
+            local ally_phase_over = true
+            for i = 1, #self.participants do
+                local sp = self.participants[i]
+                if self:isAlly(sp) and not self.status[sp:getId()]['acted'] then
+                    ally_phase_over = false
+                end
+            end
+
+            if ally_phase_over then
+
+                -- Allies have their actions refreshed
+                for i = 1, #self.participants do
+                    local sp = self.participants[i]
+                    if self:isAlly(sp) then
+                        self.status[sp:getId()]['acted'] = false
+                    end
+                end
+
+                -- Construct a queue of stacks. One stack per enemy,
+                -- representing that enemy's action
+                self:planEnemyPhase()
+
+                -- Let the first enemy go, if one exists
+                if next(self.enemy_queue) then
+                    self.stack = table.remove(self.enemy_queue)
+                    self:playAction()
+                else
+                    -- If there are no enemies, it's immediately the ally phase
+                    self:beginTurn()
+                end
+            else
+
+                -- If all enemies have acted, it's time for the next turn
+                local all_enemies_acted = true
+                local enemies_alive = false
+                for i = 1, #self.participants do
+                    local sp = self.participants[i]
+                    local sp_stat = self.status[sp:getId()]
+                    if not self:isAlly(sp) and sp_stat['alive'] then
+                        enemies_alive = true
+                        if not sp_stat['acted'] then
+                            all_enemies_acted = false
+                        end
+                    end
+                end
+
+                if all_enemies_acted and enemies_alive then
+                    self:beginTurn()
+                end
+            end
         end
     end
 
@@ -864,6 +968,28 @@ function Battle:update(keys, dt)
     elseif self.shading < 0.2 then
         self.shading = 0.2
         self.shade_dir = 1
+    end
+end
+
+-- Construct a queue of stacks. One stack per enemy,
+-- representing that enemy's action
+function Battle:planEnemyPhase()
+
+    -- TODO: properly plan movement
+    for i = 1, #self.participants do
+        local sp = self.participants[i]
+        if not self:isAlly(sp) and self.status[sp:getId()]['alive'] then
+            local y, x = self:findSprite(sp:getId())
+            table.insert(self.enemy_queue, {
+                self:stackBase(),
+                { ['cursor'] = { x, y } },
+                {},
+                {}, -- TODO: attack goes here
+                { ['cursor'] = { x, y }, ['sp'] = sp },
+                {},
+                {}
+            })
+        end
     end
 end
 

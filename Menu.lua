@@ -143,22 +143,28 @@ function Menu:hover(dir)
         self.selected:hover(dir)
     else
         -- self.hovering determines where the selection arrow is rendered
+        local window_height = math.min(MAX_MENU_ITEMS, #self.menu_items)
+        local base_max = #self.menu_items - window_height + 1
         if dir == UP then
-            if self.hovering == 1 then
-                self.base = math.max(1, self.base - 1)
+            if self.hovering == 1 and self.base == 1 then
+                self.hovering = window_height
+                self.base = base_max
+            else
+                if self.hovering == 1 then
+                    self.base = math.max(1, self.base - 1)
+                end
+                self.hovering = math.max(1, self.hovering - 1)
             end
-            self.hovering = math.max(1, self.hovering - 1)
         elseif dir == DOWN then
-            if self.hovering == MAX_MENU_ITEMS then
-                self.base = math.min(
-                    #self.menu_items - MAX_MENU_ITEMS + 1,
-                    self.base + 1
-                )
+            if self.hovering == window_height and self.base == base_max then
+                self.hovering = 1
+                self.base = 1
+            else
+                if self.hovering == MAX_MENU_ITEMS then
+                    self.base = math.min(base_max, self.base + 1)
+                end
+                self.hovering = math.min(window_height, self.hovering + 1)
             end
-            self.hovering = math.min(
-                math.min(MAX_MENU_ITEMS, #self.menu_items),
-                self.hovering + 1
-            )
         end
     end
 end

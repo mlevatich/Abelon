@@ -1,4 +1,4 @@
-// Battle stats (Enemies: wolf1:10,2 wolf2:11,6)
+// Battle stats
 
 TileOrigin: 31,67
 Allies: abelon:1,5 kath:2,6

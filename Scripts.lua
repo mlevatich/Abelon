@@ -72,7 +72,9 @@ function walk(p1, tx, ty, label, first)
         scene.active_events[label] = true
         local sp = scene.participants[p1]
         sp:behaviorSequence({
-            function(d) return sp:walkToBehaviorGeneric(d, tx, ty, first) end
+            function(d)
+                return sp:walkToBehaviorGeneric(d, tx, ty, false, first)
+            end
         }, function() scene:release(label) end)
     end
 end
@@ -90,7 +92,9 @@ function walkTo(p1, p2, label, first)
 
         scene.active_events[label] = true
         sp1:behaviorSequence({
-            function(d) return sp1:walkToBehaviorGeneric(d, tx, ty, first) end
+            function(d)
+                return sp1:walkToBehaviorGeneric(d, tx, ty, false, first)
+            end
         }, function() scene:release(label) end)
     end
 end

@@ -694,7 +694,8 @@ function Sprite:waitBehaviorGeneric(doneAction, waitAnimation, s)
     end
 end
 
-function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, first)
+function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run, first)
+    local speed = ite(run, WANDER_SPEED * 2, WANDER_SPEED)
     local map = self.chapter:getMap()
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
     local path = self:pathTo(x_dst, y_dst, first)
@@ -736,42 +737,42 @@ function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, first)
                 if y <= y_dst then
                     self.y = y_dst
                     self.dy = 0
-                    self.dx = WANDER_SPEED * path[2]
+                    self.dx = speed * path[2]
                     self.dir = path[2]
                 else
                     self.dx = 0
-                    self.dy = -WANDER_SPEED
+                    self.dy = -speed
                     self.dir = path[2]
                 end
             elseif path[1] == DOWN then
                 if y >= y_dst then
                     self.y = y_dst
                     self.dy = 0
-                    self.dx = WANDER_SPEED * path[2]
+                    self.dx = speed * path[2]
                     self.dir = path[2]
                 else
                     self.dx = 0
-                    self.dy = WANDER_SPEED
+                    self.dy = speed
                     self.dir = path[2]
                 end
             elseif path[1] == LEFT then
                 if x <= x_dst then
                     self.x = x_dst
                     self.dx = 0
-                    self.dy = WANDER_SPEED * ite(path[2] == DOWN, 1, -1)
+                    self.dy = speed * ite(path[2] == DOWN, 1, -1)
                 else
                     self.dy = 0
-                    self.dx = -WANDER_SPEED
+                    self.dx = -speed
                     self.dir = LEFT
                 end
             elseif path[1] == RIGHT then
                 if x >= x_dst then
                     self.x = x_dst
                     self.dx = 0
-                    self.dy = WANDER_SPEED * ite(path[2] == DOWN, 1, -1)
+                    self.dy = speed * ite(path[2] == DOWN, 1, -1)
                 else
                     self.dy = 0
-                    self.dx = WANDER_SPEED
+                    self.dx = speed
                     self.dir = RIGHT
                 end
             end

@@ -2,16 +2,20 @@
 
 #38:
 
-When end turn is selected (or turn auto-ends when all allies go grey), enemy
-phase starts, and ends instantly with all enemies doing nothing. Assists are
-cleared and statuses are updated with the new turn.
+assists clear and statuses decrement duration on begin turn
+
+Need turn number to appear somewhere in overlay
+
+last actor of player/enemy phase must grey-out briefly
+
+COMMIT: end turn
+
+Win and loss conditions checked on: end action, start new phase. Win and loss
+conditions accept allies/enemies and their locations, and turn number.
 
 Support scene triggers during combat at: select unit for the first time on ally
 phase, start new phase, end action. Triggers receive turn number, allies/enemies
 and their statuses. Add the scenes from the chapter 1 script to the battle.
-
-Win and loss conditions checked on: end action, start new phase. Win and loss
-conditions accept allies/enemies and their locations, and turn number.
 
 Winning ends the battle and returns control to player (likely after launching
 a victory scene). Losing launches a defeat scene and then simply closes the game
@@ -92,11 +96,13 @@ Kath-walk
 Abelon-combat
 Kath-combat
 
+Abelon-combat-run
+Kath-combat-run
+
 Two mostly identical wolf sprites.
 
 Wolf-combat (this doubles as Wolf-idle)
-
-Wolf-walk
+Wolf-walk (this doubles as Wolf-combat-run)
 
 #52:
 
