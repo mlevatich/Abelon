@@ -6,3 +6,4 @@
 ~medallion 13 70 medallion_interact_base
 ~wolf1 1 1
 ~wolf2 1 1
+~wolf3 1 1

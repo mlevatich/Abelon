@@ -831,6 +831,8 @@ function Battle:update(keys, dt)
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
+
+            -- If all allies have acted, switch to enemy phase
         end
     end
 

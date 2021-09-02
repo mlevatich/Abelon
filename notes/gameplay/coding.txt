@@ -29,6 +29,11 @@ Enemy AI: use targeting info to figure out which square to target. Move as close
 as possible to that square (but no farther than necessary to use the attack)
 by consulting the shortest paths grid. If in range to use attack, use it.
 
+If there are multiple squares that get an enemy within range to attack, pick
+the square that can be reached by the fewest other enemies, to leave them room.
+
+Attacks should be planned all at once before any enemy moves.
+
 Make sure enemies cannot benefit from assists.
 Implement stun
 

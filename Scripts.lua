@@ -504,7 +504,7 @@ scripts = {
     },
 
     ['meet_kath'] = {
-        ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2'},
+        ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3'},
         ['events'] = {
             lookAt(2, 1),
             focus(2, 200),
@@ -539,8 +539,10 @@ scripts = {
             lookAt(2, 1),
             teleport(3, 41, 69),
             teleport(4, 42, 73),
+            teleport(5, 40, 72),
             lookAt(3, 1),
             lookAt(4, 1),
+            lookAt(5, 1),
             say(2, 3, true,
                 "I'll have none of your usual protests about bandages and such, \z
                  that sword arm of yours is well worth my ignea. Did one of the \z

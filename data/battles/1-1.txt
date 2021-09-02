@@ -2,7 +2,7 @@
 
 TileOrigin: 31,67
 Allies: abelon:1,5 kath:2,6
-Enemies: wolf1:4,5 wolf2:5,6
+Enemies: wolf1:10,2 wolf2:11,6, wolf3:9,5
 Wincon: rout
 Losscon: death
 Music: A-Single-Shard-Of-Ignea
