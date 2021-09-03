@@ -351,7 +351,7 @@ function Player:browseMode()
         self.open_menu:hover(ite(up, UP, DOWN))
     end
 
-    if done then
+    if done and not self.open_menu.forced then
         self.open_menu:reset()
         self.open_menu = nil
         self:changeMode('free')

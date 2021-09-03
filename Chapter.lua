@@ -154,6 +154,21 @@ function Chapter:endChapter()
     -- save Abelon's inventory
 end
 
+function Chapter:failState()
+    local restart1 = MenuItem('Restart battle', {}, 'Start the battle over',
+        nil, function(c) love.event.quit(0) end,
+        "Start the battle over from the beginning?"
+    )
+    local restart2 = MenuItem('Restart chapter', {}, 'Start the chapter over',
+        nil, function(c) love.event.quit(0) end,
+        "Are you SURE you want to restart the chapter? You will lose ALL \z
+         progress made during the chapter."
+    )
+
+    self.player:openMenu({ restart1, restart2 })
+    self.player.open_menu.forced = true
+end
+
 -- Return all sprite objects belonging to the chapter's active map
 function Chapter:getActiveSprites()
     return self.current_map:getSprites()
@@ -223,10 +238,12 @@ function Chapter:battleInput(up, down, left, right, f, d)
 end
 
 -- Start scene with the given scene id
-function Chapter:launchScene(s_id)
+function Chapter:launchScene(s_id, returnToBattle)
     self.player:changeMode('scene')
-    self.player:changeBehavior('idle')
-    self.current_scene = Scene(s_id, self.player, self)
+    if not returnToBattle then
+        self.player:changeBehavior('idle')
+    end
+    self.current_scene = Scene(s_id, self.player, self, returnToBattle)
 end
 
 -- Begin an interaction with the target sprite
@@ -411,7 +428,7 @@ function Chapter:update(dt)
     local new_transition = self.current_map:update(dt, self.player)
 
     -- Update current battle
-    if self.battle then
+    if self.battle and not self.current_scene then
         self.battle:update(self.battle_inputs, dt)
         self.battle_inputs = {}
     end

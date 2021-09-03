@@ -18,6 +18,7 @@ function Animation:init(frames)
     self.current_frame = 1
 
     self.doneAction = nil
+    self.firedDoneAction = false
 end
 
 -- Return the current quad to render
@@ -29,6 +30,8 @@ end
 function Animation:restart()
     self.timer = 0
     self.current_frame = 1
+    self.doneAction = nil
+    self.firedDoneAction = false
 end
 
 -- Sync this animation with a different animation
@@ -40,6 +43,9 @@ end
 -- Increment time and move to the appropriate frame
 function Animation:update(dt)
 
+    -- Freeze if doneAction was fired
+    if self.firedDoneAction then return end
+
     -- Update time passed
     self.timer = self.timer + dt
 
@@ -50,8 +56,9 @@ function Animation:update(dt)
         if self.current_frame == 0 then
             self.current_frame = 1
             if self.doneAction then
+                self.current_frame = #self.frames
                 local action = self.doneAction
-                self.doneAction = nil
+                self.firedDoneAction = true
                 action()
                 return
             end

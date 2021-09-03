@@ -192,7 +192,7 @@ end
 
 function Battle:getMenu()
     local st = self.stack[#self.stack]
-    return st['menu'], st['forced']
+    return st['menu']
 end
 
 function Battle:getSprite()
@@ -229,11 +229,11 @@ function Battle:moveSprite(sp, x, y)
 end
 
 function Battle:openMenu(m, views, forced)
+    if forced then m.forced = true end
     self:push({
         ['stage'] = STAGE_MENU,
         ['menu'] = m,
-        ['views'] = views,
-        ['forced'] = forced
+        ['views'] = views
     })
 end
 
@@ -322,8 +322,12 @@ function Battle:playAction()
                                 function(d)
                                     dead[i]:fireAnimation('death',
                                         function()
-                                            dead[i]:resetPosition(0, 0)
-                                            dead[i]:changeBehavior('battle')
+                                            local did = dead[i]:getId()
+                                            local stat = self.status[did]
+                                            if stat['team'] == ENEMY then
+                                                dead[i]:resetPosition(0, 0)
+                                                dead[i]:changeBehavior('battle')
+                                            end
                                         end
                                     )
                                     return pass
@@ -502,10 +506,10 @@ function Battle:checkWinLose()
         local defeat_scene = self.lose[i][2](self)
         if defeat_scene then
             -- TODO: Change to defeat music
-            -- Play defeat scene (still in battle mode)
-            -- Offer restart battle or restart chapter as a battle menu,
-            -- Both just run love.event.quit(0) for now until autosaves work
-            love.event.quit(0)
+            self.chapter.battle = nil
+            local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
+            self.chapter:launchScene(scene_id, pass)
+            return true
         end
     end
     for i = 1, #self.win do
@@ -876,7 +880,7 @@ function Battle:update(keys, dt)
     if s == STAGE_MENU then
 
         -- Menu navigation
-        local m, forced = self:getMenu()
+        local m = self:getMenu()
         local done = false
         if d then
             done = m:back()
@@ -886,7 +890,7 @@ function Battle:update(keys, dt)
             m:hover(ite(up, UP, DOWN))
         end
 
-        if done and not forced then self:closeMenu() end
+        if done and not m.forced then self:closeMenu() end
 
     elseif s == STAGE_FREE then
 
@@ -1522,7 +1526,7 @@ function Battle:renderOverlay(cam_x, cam_y)
 
         -- Render menu if there is one, otherwise battle text in the lower right
         if s == STAGE_MENU then
-            local m, _ = self:getMenu()
+            local m = self:getMenu()
             m:render(cam_x, cam_y, self.chapter)
         else
             self:renderBattleText(cam_x, cam_y)

@@ -184,7 +184,7 @@ A: Nothing we can't handle (Kath +1 impression)
 
 *Kath dies*
 
-    Kath: "Urgh. Damn, hurts........But I refuse...to........"
+    Kath: "Urgh. Damn, hurts........ But I refuse... to........"
 
     FAIL STATE
 

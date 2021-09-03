@@ -2,8 +2,6 @@
 
 #38:
 
-Defeat scenes and battle/chapter restart (to test, allow crucible to kill self)
-
 Objectives menu, custom
 
 Support scene triggers during combat at: select unit for the first time on ally
@@ -176,6 +174,7 @@ possible?
 victory fanfare, centered "VICTORY \n press f to end battle"
 defeat fanfare, centered "DEFEAT" menu wit restart battle and restart chapter
 options
+turn auto-end fanfare
 
 The effect of an assist on the squares that it will activate should be rendered
 in the top right. See below

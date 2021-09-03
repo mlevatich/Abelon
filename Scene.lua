@@ -11,12 +11,13 @@ local PAUSE_WEIGHT = 10
 local BREATHE_WEIGHT = 3
 
 -- Initialize a new dialogue
-function Scene:init(scene_id, player, chapter)
+function Scene:init(scene_id, player, chapter, returnToBattle)
 
     -- Retrieve scene by id
     self.id = scene_id
     self.script = deepcopy(scripts[scene_id])
     self.chapter = chapter
+    self.returnToBattle = returnToBattle
 
     -- Retrieve scene participants from the map
     local getSp = function(sp) return self.chapter:getSprite(sp) end
@@ -57,8 +58,10 @@ end
 function Scene:close()
 
     -- Return participants to resting behavior
-    for i = 1, #self.participants do
-        self.participants[i]:atEase()
+    if not self.returnToBattle then
+        for i = 1, #self.participants do
+            self.participants[i]:atEase()
+        end
     end
 
     -- Give control back to the player
@@ -66,6 +69,11 @@ function Scene:close()
 
     -- Process scene results
     self:processResult(self.script['result'])
+
+    -- Fire action that returns us to the battle
+    if self.returnToBattle then
+        self.returnToBattle()
+    end
 end
 
 function Scene:release(label)

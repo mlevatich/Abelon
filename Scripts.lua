@@ -154,6 +154,36 @@ end
 
 scripts = {
 
+    ['1-1-kath-defeat'] = {
+        ['ids'] = {'kath', 'abelon'},
+        ['events'] = {
+            wait(0.5),
+            focus(1, 100),
+            lookAt(2, 1),
+            say(1, 2, false,
+                "Urgh. Damn, hurts........ But I refuse... to........"
+            )
+        },
+        ['result'] = {
+            ['do'] = function(c) c:failState() end
+        }
+    },
+
+    ['1-1-abelon-defeat'] = {
+        ['ids'] = {'kath', 'abelon'},
+        ['events'] = {
+            wait(0.5),
+            focus(1, 100),
+            lookAt(1, 2),
+            say(1, 2, false,
+                "Abelon, no! NO!"
+            )
+        },
+        ['result'] = {
+            ['do'] = function(c) c:failState() end
+        }
+    },
+
     ['1-1-victory'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
