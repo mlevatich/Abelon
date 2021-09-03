@@ -2,11 +2,23 @@
 
 #38:
 
-Objectives menu, custom
+Suspend and restore functions for battle. Suspend moves stack to tmp storage
+and clears current stack, launches scene. Restore brings the stack back, changes
+behavior back to battle.
 
-Support scene triggers during combat at: select unit for the first time on ally
-phase, start new phase, end action. Triggers receive battle object. Add the
-scenes from the chapter 1 script to the battle.
+Support orphaned confirm menus.
+
+For victory, an orphaned confirm menu is opened in the battle, on an empty
+stack, and pressing F cleans up the battle and launches the victory scene.
+
+For defeat, the defeat scene plays first (using suspend and restore), and
+afterwards, the defeat confirm menu is opened by battle.lua. Selecting either
+option quits the game (for now).
+
+Add in chapter 1 script scenes via suspend and restore, where the suspend is
+fired by battle_triggers, a dict of triggers that accept the battle state.
+Triggers are checked at: select unit for the first time on ally phase, start
+new phase, end action. Triggers receive battle object.
 
 #50:
 
@@ -141,6 +153,36 @@ Wolf-weapon
 Wolf-hurt
 Wolf-death
 
+NEW ISSUE: combat QoL
+
+Try to minimize the amount of text. Replace text with pictures as much as
+possible?
+
+victory fanfare, centered "VICTORY \n press f to end battle"
+defeat fanfare, centered "DEFEAT" menu wit restart battle and restart chapter
+options
+turn begin fanfare
+turn end fanfare
+
+The effect of an assist on the squares that it will activate should be rendered
+in the top right. See below
+
+The effect of an attack on whatever targets will be hit should be rendered in
+the top right. Instead of the normal hover overlay, render rows starting from
+the top right of the screen, where each row is two hover overlays: the before
+-> after of the sprite's status and assists. Max this out by line number so
+there's no overflow.
+
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. While a sprite's action is playing out, what
+they're doing should render in the top right. Just the ability name and icons.
+
+When sprites gain exp, render exp splash.
+
+For free aim, the cursor can be on any space given by the FREE_AIM field
+(intersect a diamond of size "scale" with the targets given by "target").
+FREE_AIM moves should render an outline of the move's range
+
 #57:
 
 Split forest into three maps (west, south, north) with slightly different
@@ -166,35 +208,6 @@ Game guide shows up immediately on loading in, accessible from inventory
 Combat guide accessible from battle begin menu or options, both of these
 replace "formulas".
 
-NEW ISSUE: combat QoL
-
-Try to minimize the amount of text. Replace text with pictures as much as
-possible?
-
-victory fanfare, centered "VICTORY \n press f to end battle"
-defeat fanfare, centered "DEFEAT" menu wit restart battle and restart chapter
-options
-turn auto-end fanfare
-
-The effect of an assist on the squares that it will activate should be rendered
-in the top right. See below
-
-The effect of an attack on whatever targets will be hit should be rendered in
-the top right. Instead of the normal hover overlay, render rows starting from
-the top right of the screen, where each row is two hover overlays: the before
--> after of the sprite's status and assists. Max this out by line number so
-there's no overflow.
-
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. While a sprite's action is playing out, what
-they're doing should render in the top right. Just the ability name and icons.
-
-When sprites gain exp, render exp splash.
-
-For free aim, the cursor can be on any space given by the FREE_AIM field
-(intersect a diamond of size "scale" with the targets given by "target").
-FREE_AIM moves should render an outline of the move's range
-
 #18:
 
 Shopping and gold
@@ -217,8 +230,9 @@ Basic battle theme - for the three non-boss encounters
 Enemy approaches theme - for rising action before a fight! This should play for
 most of the forest.
 implement Elaine scenario
-implement Ghoul scenario
+implement Ghoul scenario (objective is rout or escape)
 implement Deer scenario
-Implement crystal wolf scenario
+Implement crystal wolf scenario (objective is rout and defend)
 Chapter 1 endcard, end scene teaser
 Make executable
+Become the knight Abelon and take on the world

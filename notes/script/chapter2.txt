@@ -14,7 +14,10 @@ Discover: Who the hell sabotaged the gates and risked the monsters getting in
 from the north and west? Find them and bring them to justice. Something to do
 with the plot to kill the king? Is Jericho behind it?
 
-The mystery leads you to this truth:
+Following the various leads of this investigation is the central activity of
+Chapter 1. You consult adults in all districts (receiving sidequests from them
+in the process), knights in the barracks, Gaheris, Mona, a school instructor,
+the watchers, etc. The mystery leads you to this truth:
 
 Turns out it's just a group of kids behind it, who got the idea from their
 parents to sabotage the city after the killing of the cardinal. Luci knows these
@@ -24,40 +27,66 @@ hideout. Injuring any of them ends the fight, as does killing one (Abelon
 one-shots them, kath doesn't). Kath will hate you if you kill one, but Abelon
 and Luci will respect the decision.
 
-Either reconcile with the Order of Watchers or fight with them in Chapter 1.
-Fighting is a fail state.
+The kids' parents are Hellshuns. So is Mona? Basically Hellshuns don't believe
+that you go to hell after you die, you go to heaven. Because life is so hard,
+at the onset of the Despair the Cardinal (though it pained her) started
+preaching that everyone goes to hell, to encourage people to fight through the
+hard times and not give up. Older folks who remember the old doctrine sometimes
+reject this belief and instead continue believing in heaven - they are
+Hellshuns. They are viewed as dangerous people these days, because they may
+kill themselves or others in order to "save" people from life's suffering and
+bring them to heaven. It's acknowledged that most Hellshuns don't actually
+think like this, of course, but it DID happen once in the past, and everyone
+has been on edge since then. So in the investigation, the Hellshuns are the
+first suspects of the knights for the gate sabotage. This leads them to Mona,
+but this is ultimately a red herring. In the end, the culprits are the parents
+of the children, who were just talking about things abstractly in the aftermath
+of the cardinal's death. The children, overhearing, foolishly took matters into
+their own hands and sabotaged the gate.
+
+There's a plot to kill the king afoot. You can't outright find out about it, but
+you can discover hints which only make sense after hearing the full story later.
 
 The early choices involve the fishermen catching corrupted fish, Luci and
 Gaheris's research, the Order of Watchers hating you, and Kath and the King.
 
-Abelon doesn't appreciate you working with the Watchers or the Fisherman, or sparing the thieves.
-These are not things he would do, and others comment on it. Abelon likes you if you help Sinclair, work with Kath,
-hang out in the barracks, and focus on killing monsters and protecting the city.
+Abelon doesn't appreciate you working with the Watchers or the Fisherman, or
+sparing the thieves. These are not things he would do, and others comment on it.
+Abelon likes you if you help Sinclair, work with Kath, hang out in the barracks,
+and focus on killing monsters and protecting the city.
 
-Jericho is the royal tactician, a smart and ruthless commander who is nevertheless consumed with guilt at the costs
-of victory. He was appointed at the beginning of the Despair due to the need to escape encounters with fewer casualties.
-In chapter 2 we learn that he defended the west gate from attacking wolves and ghouls, and made a desperation play to
-bring down part of the ramparts on top of the enemy, killing some of the knights in order to win the day. He feels guilty
-about this, but everyone knows it was the only way to win.
+Jericho is the royal tactician, a smart and ruthless commander who is
+nevertheless consumed with guilt at the costs of victory. He was appointed at
+the beginning of the Despair due to the need to escape encounters with fewer
+casualties. In chapter 2 we learn that he defended the west gate from attacking
+wolves and ghouls, and made a desperation play to bring down part of the
+ramparts on top of the enemy, killing some of the knights in order to win the
+day. He feels guilty about this, but everyone knows it was the only way to win.
 
 Mona is around. Perhaps she's with the watchers? She's looking for her daughter.
 
-Shanti hates Jericho for getting her brother Jonathan killed. She is filled with anger and unwilling to compromise, but
-is skilled and intelligent.
+Shanti hates Jericho for getting her brother Jonathan killed. She is filled with
+anger and unwilling to compromise, but is skilled and intelligent. She's one of
+Abelon's knights.
 
-Lester, a young prankster knight, acts like a sibling to Luci orphaned in the barracks, and has a big heart for others,
-but is careless with regard to his own safety.
+Lester, a young prankster knight, acts like a sibling to Luci orphaned in the
+barracks, and has a big heart for others, but is careless with regard to his
+own safety. He's one of Kath's knights. He's a Hellshun.
 
-If you saved Elaine and told her about the deer, she teaches her younger sister to hunt and decides to join the knights.
-She is kind but inexperienced, emotion-driven, and afraid of combat.
+If you saved Elaine and told her about the deer, she teaches her younger
+sister to hunt and decides to join the knights. She is kind but inexperienced,
+emotion-driven, and afraid of combat.
 
 Luci acts as a red herring for Mona's daughter in chapters 2 and 3.
 
-Late in the chapter, you decide who to bring with you, between Shanti, Lester (if he's alive), and Elaine (if she's alive).
+Late in the chapter, you decide who to bring with you, between Shanti, Lester
+(if he's alive), and Elaine (if she's alive).
 
-Learn: Abelon is the oldest and most experienced commander, which is why the others take orders from you.
+Learn: Abelon is the oldest and most experienced commander, which is why the
+others take orders from you.
 
-Learn: Some of the archives were moved to the castle library after the dragon attack.
+Learn: Some of the archives were moved to the castle library after the dragon
+attack.
 
 Learn: What did Abelon do? (he executed the Cardinal)
 
@@ -68,10 +97,12 @@ The tailor
 The castle chef
 The servants
 The thieves
-The orphans (children under the care of the knights at the barracks, until someone else is willing to take them in)
+The orphans (children under the care of the knights at the barracks, until
+someone else is willing to take them in)
 The healer (Sinclair's brother – a greedy fool who overcharges his patients)
 The knights
-The gatekeepers (they have a grim responsibility – to communicate a warning of monster attack at all costs)
+The gatekeepers (they have a grim responsibility – to communicate a warning of
+monster attack at all costs)
 The Order of Watchers (a secretive organization)
 The fishermen (they've been pulling some strange corruption...)
 

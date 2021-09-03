@@ -147,7 +147,7 @@ end
 function Chapter:endChapter()
 
     -- Stop music
-    self:stopMapMusic()
+    self:stopMusic()
 
     -- retire all sprites and write them to save file
     -- save relevant quest state info as well
@@ -202,7 +202,7 @@ function Chapter:startMapMusic()
     self.current_music = self.map_to_music[self.current_map:getName()]
 end
 
-function Chapter:stopMapMusic()
+function Chapter:stopMusic()
     if self.current_music then
         self.current_music:stop()
     end
@@ -308,7 +308,7 @@ function Chapter:performTransition()
     local track_change = old_music ~= new_music
 
     -- Switch current map to new map
-    if track_change then self:stopMapMusic() end
+    if track_change then self:stopMusic() end
     self.current_map = self.maps[new_map]
     if track_change then self:startMapMusic() end
     self.in_transition = nil

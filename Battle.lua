@@ -21,7 +21,7 @@ function GridSpace:init(sp)
 end
 
 wincons = {
-    ['rout'] = { "Defeat all enemies",
+    ['rout'] = { "defeat all enemies",
         function(b)
             for _,v in pairs(b.status) do
                 if v['team'] == ENEMY and v['alive'] then
@@ -30,11 +30,16 @@ wincons = {
             end
             return true
         end
+    },
+    ['escape'] = { "escape the battlefield",
+        function(b)
+             return false
+        end
     }
 }
 
 losscons = {
-    ['death'] = { "Any ally dies",
+    ['death'] = { "any ally dies",
         function(b)
             for k,v in pairs(b.status) do
                 if v['team'] == ALLY and not v['alive'] then
@@ -42,6 +47,11 @@ losscons = {
                 end
             end
             return false
+        end
+    },
+    ['defend'] = { "any enemy breaches the defended area",
+        function(b)
+             return false
         end
     }
 }
@@ -124,10 +134,7 @@ function Battle:init(battle_id, player, chapter)
     self.action_in_progress = nil
 
     -- Music
-    self.prev_music = self.chapter.current_music
-    if self.prev_music then
-        self.prev_music:stop()
-    end
+    self.chapter:stopMusic()
     self.chapter.current_music = Music(readField(data[8]))
 
     -- Graphics
@@ -515,6 +522,8 @@ function Battle:checkWinLose()
     for i = 1, #self.win do
         if self.win[i][2](self) then
             self.chapter.battle = nil
+            self.chapter:stopMusic()
+            self.chapter:startMapMusic()
             self.chapter:launchScene(self.id .. '-victory')
             return true
         end
@@ -535,7 +544,7 @@ function Battle:openStartMenu()
     end
     local begin = MenuItem('Begin turn', {}, "Begin your turn", nil, next)
     local wincon = MenuItem('Objectives', {},
-        'View victory and defeat conditions'
+        'View victory and defeat conditions', self:buildObjectivesBox()
     )
     local restart1 = MenuItem('Restart battle', {}, 'Start the battle over',
         nil, pass,
@@ -551,61 +560,6 @@ function Battle:openStartMenu()
     )
     local m = { begin, wincon, restart1, restart2, quit }
     self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {}, true)
-end
-
-function Battle:openEndTurnMenu()
-    self:openMenu(Menu(nil, {
-        MenuItem('End turn', {}, 'End your turn', nil,
-            function(c)
-                self:closeMenu()
-                self:endTurn()
-            end
-        )
-    }, BOX_MARGIN, BOX_MARGIN), {}, true)
-end
-
-function Battle:mkUsable(sp, sk_menu)
-    local sk = skills[sk_menu.id]
-    sk_menu.hover_desc = 'Use ' .. sk_menu.name
-    local ignea_spent = sk.cost
-    local sk2 = self:getSkill()
-    if sk2 then ignea_spent = ignea_spent + sk2.cost end
-    if sp.ignea >= ignea_spent then
-        sk_menu.setPen = function(c) love.graphics.setColor(unpack(WHITE)) end
-        sk_menu.action = function(c)
-            local c = self:getCursor()
-            local cx = c[1]
-            local cy = c[2]
-            if sk.aim['type'] ~= SELF_CAST then
-                if self.grid[cy][cx + 1] then
-                    cx = cx + 1
-                elseif self.grid[cy][cx - 1] then
-                    cx = cx - 1
-                elseif self.grid[cy + 1][cx] then
-                    cy = cy + 1
-                else
-                    cy = cy - 1
-                end
-            end
-            local cclr = ite(sk.type == ASSIST, { 0.4, 1, 0.4, 1 },
-                                                { 1, 0.4, 0.4, 1 })
-            local new_c = { cx, cy, c[3], cclr }
-            local zclr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
-            self:push({
-                ['stage'] = STAGE_TARGET,
-                ['cursor'] =  new_c,
-                ['sp'] = sp,
-                ['sk'] = sk,
-                ['views'] = {
-                    { BEFORE, TEMP, function()
-                        self:renderSkillRange(zclr)
-                    end }
-                }
-            })
-        end
-    else
-        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
-    end
 end
 
 function Battle:openAttackMenu(sp)
@@ -685,11 +639,6 @@ function Battle:openEnemyMenu(sp)
     })
 end
 
-function Battle:buildReadyingBox(sp)
-    -- TODO index on readying skill (not 1), and add targeting info
-    return sp.skills[1]:mkSkillBox(sp.itex, sp.icons, false)
-end
-
 function Battle:openOptionsMenu()
     local die = function(c) love.event.quit(0) end
     local endfxn = function(c)
@@ -697,7 +646,7 @@ function Battle:openOptionsMenu()
         self:endTurn()
     end
     local wincon = MenuItem('Objectives', {},
-        'View victory and defeat conditions'
+        'View victory and defeat conditions', self:buildObjectivesBox()
     )
     local end_turn = MenuItem('End turn', {},
         'End your turn', nil, endfxn,
@@ -713,6 +662,101 @@ function Battle:openOptionsMenu()
     )
     local m = { wincon, settings, restart, quit, end_turn }
     self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {})
+end
+
+
+function Battle:openEndTurnMenu()
+    self:openMenu(Menu(nil, {
+        MenuItem('End turn', {}, 'End your turn', nil,
+            function(c)
+                self:closeMenu()
+                self:endTurn()
+            end
+        )
+    }, BOX_MARGIN, BOX_MARGIN), {}, true)
+end
+
+function Battle:buildReadyingBox(sp)
+    -- TODO index on readying skill (not 1), and add targeting info
+    return sp.skills[1]:mkSkillBox(sp.itex, sp.icons, false)
+end
+
+function Battle:buildObjectivesBox()
+    local joinOr = function(d)
+        local res = ''
+        for i = 1, #d do
+            local s = d[i][1]
+            res = res .. s
+            if i < #d then
+                res = res .. ' or '
+            else
+                res = res .. '.'
+            end
+        end
+        return res:sub(1,1):upper() .. res:sub(2)
+    end
+    local idt     = 30
+    local wstr, _ = splitByCharLimit(joinOr(self.win), HBOX_CHARS_PER_LINE)
+    local lstr, _ = splitByCharLimit(joinOr(self.lose), HBOX_CHARS_PER_LINE)
+    local longest = max(mapf(string.len, concat(wstr, lstr)))
+    local w       = BOX_MARGIN + idt + longest * CHAR_WIDTH + BOX_MARGIN
+    return {
+        ['elements'] = {
+            mkEle('text', {'Victory'},
+                BOX_MARGIN, BOX_MARGIN, GREEN),
+            mkEle('text', wstr,
+                idt + BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT),
+            mkEle('text', {'Defeat'},
+                BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT * 3, RED),
+            mkEle('text', lstr,
+                idt + BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT * 4)
+        },
+        ['w'] = w
+    }
+end
+
+function Battle:mkUsable(sp, sk_menu)
+    local sk = skills[sk_menu.id]
+    sk_menu.hover_desc = 'Use ' .. sk_menu.name
+    local ignea_spent = sk.cost
+    local sk2 = self:getSkill()
+    if sk2 then ignea_spent = ignea_spent + sk2.cost end
+    if sp.ignea >= ignea_spent then
+        sk_menu.setPen = function(c) love.graphics.setColor(unpack(WHITE)) end
+        sk_menu.action = function(c)
+            local c = self:getCursor()
+            local cx = c[1]
+            local cy = c[2]
+            if sk.aim['type'] ~= SELF_CAST then
+                if self.grid[cy][cx + 1] then
+                    cx = cx + 1
+                elseif self.grid[cy][cx - 1] then
+                    cx = cx - 1
+                elseif self.grid[cy + 1][cx] then
+                    cy = cy + 1
+                else
+                    cy = cy - 1
+                end
+            end
+            local cclr = ite(sk.type == ASSIST, { 0.4, 1, 0.4, 1 },
+                                                { 1, 0.4, 0.4, 1 })
+            local new_c = { cx, cy, c[3], cclr }
+            local zclr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
+            self:push({
+                ['stage'] = STAGE_TARGET,
+                ['cursor'] =  new_c,
+                ['sp'] = sp,
+                ['sk'] = sk,
+                ['views'] = {
+                    { BEFORE, TEMP, function()
+                        self:renderSkillRange(zclr)
+                    end }
+                }
+            })
+        end
+    else
+        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
+    end
 end
 
 function Battle:findSprite(sp_id)

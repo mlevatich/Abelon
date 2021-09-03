@@ -328,7 +328,7 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
             love.graphics.setColor(unpack(clr))
             local msg = e['data']
             for j = 1, #msg do
-                local cy = y + e['y'] + LINE_HEIGHT * (j-1)
+                local cy = y + e['y'] + LINE_HEIGHT * (j - 1)
                 renderString(msg[j], x + e['x'], cy, true)
             end
         elseif e['type'] == 'image' then
