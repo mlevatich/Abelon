@@ -2,16 +2,13 @@
 
 #38:
 
-Defeat scenes and battle/chapter restart
-Objectives menu
+Defeat scenes and battle/chapter restart (to test, allow crucible to kill self)
 
-Winning ends the battle and returns control to player (likely after launching
-a victory scene). Losing launches a defeat scene and then simply closes the game
-(wait until #28 for game over).
+Objectives menu, custom
 
 Support scene triggers during combat at: select unit for the first time on ally
-phase, start new phase, end action. Triggers receive turn number, allies/enemies
-and their statuses. Add the scenes from the chapter 1 script to the battle.
+phase, start new phase, end action. Triggers receive battle object. Add the
+scenes from the chapter 1 script to the battle.
 
 #50:
 
@@ -40,7 +37,7 @@ acting.
 #54:
 
 Changing the difficulty level changes enemy attributes. Tune until it makes
-sense.
+sense. +4/-4 seems like a good place to start.
 
 #55:
 
@@ -176,6 +173,10 @@ NEW ISSUE: combat QoL
 Try to minimize the amount of text. Replace text with pictures as much as
 possible?
 
+victory fanfare, centered "VICTORY \n press f to end battle"
+defeat fanfare, centered "DEFEAT" menu wit restart battle and restart chapter
+options
+
 The effect of an assist on the squares that it will activate should be rendered
 in the top right. See below
 
@@ -189,11 +190,11 @@ When sprites take damage, a damage splash should be rendered. When they heal,
 a heal splash should be rendered. While a sprite's action is playing out, what
 they're doing should render in the top right. Just the ability name and icons.
 
+When sprites gain exp, render exp splash.
+
 For free aim, the cursor can be on any space given by the FREE_AIM field
 (intersect a diamond of size "scale" with the targets given by "target").
 FREE_AIM moves should render an outline of the move's range
-
-Should move2 be auto-generated if the unit has no movement points left?
 
 #18:
 

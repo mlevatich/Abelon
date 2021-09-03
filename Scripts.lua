@@ -206,6 +206,7 @@ scripts = {
                 ),
                 walkTo(2, 1, 'walk'),
                 waitForEvent('walk'),
+                face(1, 2),
                 wait(1)
             }),
             say(2, 1, false,

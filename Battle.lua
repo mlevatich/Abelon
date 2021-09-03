@@ -21,7 +21,7 @@ function GridSpace:init(sp)
 end
 
 wincons = {
-    ['rout'] = { "Defeat all enemies.",
+    ['rout'] = { "Defeat all enemies",
         function(b)
             for _,v in pairs(b.status) do
                 if v['team'] == ENEMY and v['alive'] then
@@ -34,7 +34,7 @@ wincons = {
 }
 
 losscons = {
-    ['death'] = { "Any ally dies.",
+    ['death'] = { "Any ally dies",
         function(b)
             for k,v in pairs(b.status) do
                 if v['team'] == ALLY and not v['alive'] then
@@ -707,7 +707,7 @@ function Battle:openOptionsMenu()
     local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
         "Save battle state and close the game?"
     )
-    local m = { wincon, end_turn, settings, restart, quit }
+    local m = { wincon, settings, restart, quit, end_turn }
     self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {})
 end
 
@@ -749,20 +749,33 @@ end
 function Battle:selectTarget()
     local sp = self:getSprite()
     local c = self:getCursor(2)
-    local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
-    self:push({
-        ['stage'] = STAGE_MOVE,
-        ['sp'] = sp,
-        ['cursor'] = nc,
-        ['views'] = {
-            { BEFORE, TEMP, function()
-                self:renderMovementFrom(c[1], c[2])
-            end },
-            { AFTER, PERSIST, function()
-                self:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
-            end }
-        }
-    })
+    local row, col = self:findSprite(sp:getId())
+    local attrs = self:getTmpAttributes(sp)
+    local move = math.floor(attrs['agility'] / 5)
+               - abs(col - c[1]) - abs(row - c[2])
+    if move == 0 then
+        self:push({
+            ['stage'] = STAGE_BUBBLE,
+            ['cursor'] = { c[1], c[2], false, { 0, 0, 0, 0 }},
+            ['views'] = {}
+        })
+        self:openAssistMenu(sp)
+    else
+        local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
+        self:push({
+            ['stage'] = STAGE_MOVE,
+            ['sp'] = sp,
+            ['cursor'] = nc,
+            ['views'] = {
+                { BEFORE, TEMP, function()
+                    self:renderMovementFrom(c[1], c[2])
+                end },
+                { AFTER, PERSIST, function()
+                    self:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
+                end }
+            }
+        })
+    end
 end
 
 function Battle:useAttack(sp, attack, attack_dir, c_attack)
