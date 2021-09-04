@@ -254,7 +254,7 @@ function genericAttack(dmg_type, affects, scaling,
 
             -- Only hit targets passing the team filter
             local team = ite(status[t:getId()]['team'] == ALLY, ENEMY, ALLY)
-            local valid = true -- (team ~= affects or (t == sp and modifiers['self']))
+            local valid = (team ~= affects or (t == sp and modifiers['self']))
             valid = valid and (not modifiers['br'] or
                                modifiers['br'](sp_tmp_attrs, t_tmp_attrs))
             if valid then
