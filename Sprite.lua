@@ -1058,7 +1058,10 @@ end
 function Sprite:render(cam_x, cam_y)
 
     local b = self.chapter.battle
-    local mono = b and b.status[self.id] and b.status[self.id]['acted']
+    local s = self.chapter.current_scene
+    local mono = not s and b
+                       and b.status[self.id]
+                       and b.status[self.id]['acted']
 
     if mono then
         love.graphics.setColor(0.4, 0.4, 0.4, 1)

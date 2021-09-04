@@ -57,23 +57,20 @@ end
 -- End the scene
 function Scene:close()
 
-    -- Return participants to resting behavior
-    if not self.returnToBattle then
+    -- Fire action that returns us to the battle
+    -- or give control back to the player if there is no battle
+    if self.returnToBattle then
+        self.player:changeMode('battle')
+        self.returnToBattle()
+    else
         for i = 1, #self.participants do
             self.participants[i]:atEase()
         end
+        self.player:changeMode('free')
     end
-
-    -- Give control back to the player
-    self.player:changeMode('free')
 
     -- Process scene results
     self:processResult(self.script['result'])
-
-    -- Fire action that returns us to the battle
-    if self.returnToBattle then
-        self.returnToBattle()
-    end
 end
 
 function Scene:release(label)

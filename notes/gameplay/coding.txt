@@ -2,19 +2,6 @@
 
 #38:
 
-Suspend and restore functions for battle. Suspend moves stack to tmp storage
-and clears current stack, launches scene. Restore brings the stack back, changes
-behavior back to battle.
-
-Support orphaned confirm menus.
-
-For victory, an orphaned confirm menu is opened in the battle, on an empty
-stack, and pressing F cleans up the battle and launches the victory scene.
-
-For defeat, the defeat scene plays first (using suspend and restore), and
-afterwards, the defeat confirm menu is opened by battle.lua. Selecting either
-option quits the game (for now).
-
 Add in chapter 1 script scenes via suspend and restore, where the suspend is
 fired by battle_triggers, a dict of triggers that accept the battle state.
 Triggers are checked at: select unit for the first time on ally phase, start
@@ -67,7 +54,7 @@ Scene text sound effects
 
 #56:
 
-Sound effect for: weapon skill, spell, assist, death, defeat, victory.
+Sound effect for: weapon skill, spell, assist, death, victory.
 
 #52:
 
@@ -81,6 +68,8 @@ Insert appropriate hooks for skill animations to play at the right points in
 battle (fill in with a universal default).
 
 Skill animations for all basic skills.
+
+Sound effects for all skills.
 
 #16:
 
@@ -158,12 +147,6 @@ NEW ISSUE: combat QoL
 Try to minimize the amount of text. Replace text with pictures as much as
 possible?
 
-victory fanfare, centered "VICTORY \n press f to end battle"
-defeat fanfare, centered "DEFEAT" menu wit restart battle and restart chapter
-options
-turn begin fanfare
-turn end fanfare
-
 The effect of an assist on the squares that it will activate should be rendered
 in the top right. See below
 
@@ -229,6 +212,7 @@ Better forest theme - more tense investigation, less funeral march
 Basic battle theme - for the three non-boss encounters
 Enemy approaches theme - for rising action before a fight! This should play for
 most of the forest.
+Defeat theme - Short theme that plays during the battle lose scene.
 implement Elaine scenario
 implement Ghoul scenario (objective is rout or escape)
 implement Deer scenario

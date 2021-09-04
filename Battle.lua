@@ -121,14 +121,13 @@ function Battle:init(battle_id, player, chapter)
     self.lose = readArray(data[7], function(s) return losscons[s] end)
 
     -- Battle cam starting location
-    self.battle_cam_x = (self.origin_x) * TILE_WIDTH
-                      + (self.grid_w * TILE_WIDTH - VIRTUAL_WIDTH) / 2
-    self.battle_cam_y = (self.origin_y) * TILE_HEIGHT
-                      + (self.grid_h * TILE_HEIGHT - VIRTUAL_HEIGHT) / 2
+    self.battle_cam_x = self.chapter.camera_x
+    self.battle_cam_y = self.chapter.camera_y
     self.battle_cam_speed = 170
 
     -- Render timers
     self.pulse_timer = 0
+    self.pulse = false
     self.shading = 0.2
     self.shade_dir = 1
     self.action_in_progress = nil
@@ -141,9 +140,18 @@ function Battle:init(battle_id, player, chapter)
     self.status_tex = self.chapter.itex
     self.status_icons = getSpriteQuads({0, 1, 2, 3}, self.status_tex, 8, 8, 23)
 
-    -- Start the battle!
-    self.stack = { self:stackBase() }
-    self:begin()
+    -- Action stack
+    self.suspend_stack = {}
+    self.stack = {}
+
+    -- Participants to battle behavior
+    for i = 1, #self.participants do
+        self.participants[i]:changeBehavior('battle')
+    end
+    self.player:changeMode('battle')
+
+    -- Start the first turn
+    self:openBattleStartMenu()
 end
 
 function Battle:getId()
@@ -164,9 +172,10 @@ function Battle:push(e)
 end
 
 function Battle:pop()
-    table.remove(self.stack, #self.stack)
-    while self.stack[#self.stack]['stage'] == STAGE_BUBBLE do
-        table.remove(self.stack, #self.stack)
+    local st = self.stack
+    table.remove(st, #st)
+    while next(st) and st[#st]['stage'] == STAGE_BUBBLE do
+        table.remove(st, #st)
     end
 end
 
@@ -178,6 +187,20 @@ function Battle:stackBase()
             { BEFORE, TEMP, function() self:renderMovementHover() end },
             { BEFORE, PERSIST, function() self:renderAssistSpaces() end }
         }
+    }
+end
+
+function Battle:stackBubble(c)
+    local x = 1
+    local y = 1
+    if c then
+        x = c[1]
+        y = c[2]
+    end
+    return {
+        ['stage'] = STAGE_BUBBLE,
+        ['cursor'] = { x, y, false, { 0, 0, 0, 0 } },
+        ['views'] = {}
     }
 end
 
@@ -212,6 +235,11 @@ function Battle:getSprite()
     return top
 end
 
+function Battle:findSprite(sp_id)
+    local loc = self.status[sp_id]['location']
+    return loc[2], loc[1]
+end
+
 function Battle:getSkill()
     for i = 1, #self.stack do
         if self.stack[#self.stack - i + 1]['sk'] then
@@ -235,8 +263,32 @@ function Battle:moveSprite(sp, x, y)
     self.grid[y][x].occupied = sp
 end
 
-function Battle:openMenu(m, views, forced)
-    if forced then m.forced = true end
+
+function Battle:isAlly(sp)
+    return self.status[sp:getId()]['team'] == ALLY
+end
+
+function Battle:getTmpAttributes(sp)
+    local y, x = self:findSprite(sp:getId())
+    return mkTmpAttrs(
+        sp.attributes,
+        self.status[sp:getId()]['effects'],
+        self.grid[y][x].assists
+    )
+end
+
+function Battle:getStage()
+    if next(self.stack) ~= nil then
+        return self.stack[#self.stack]['stage']
+    end
+    return nil
+end
+
+function Battle:setStage(s)
+    self.stack[#self.stack]['stage'] = s
+end
+
+function Battle:openMenu(m, views)
     self:push({
         ['stage'] = STAGE_MENU,
         ['menu'] = m,
@@ -250,12 +302,440 @@ function Battle:closeMenu()
     end
 end
 
-function Battle:getStage()
-    return self.stack[#self.stack]['stage']
+function Battle:endTurn()
+
+    -- Allies have their actions refreshed
+    for i = 1, #self.participants do
+        local sp = self.participants[i]
+        if self:isAlly(sp) then
+            self.status[sp:getId()]['acted'] = false
+        end
+    end
+
+    -- Construct a queue of stacks. One stack per enemy,
+    -- representing that enemy's action
+    self:planEnemyPhase()
+
+    -- Let the first enemy go, if one exists
+    if next(self.enemy_queue) then
+        self.stack = table.remove(self.enemy_queue)
+        self:playAction()
+    else
+        -- If there are no enemies, it's immediately the ally phase
+        self:beginTurn()
+    end
 end
 
-function Battle:setStage(s)
-    self.stack[#self.stack]['stage'] = s
+function Battle:beginTurn()
+
+    -- Increment turn count
+    self.turn = self.turn + 1
+
+    -- Decrement/clear statuses
+    for _, v in pairs(self.status) do
+        local es = v['effects']
+        local i = 1
+        while i <= #es do
+            if es[i].duration > 1 then
+                es[i].duration = es[i].duration - 1
+                i = i + 1
+            else
+                table.remove(es, i)
+            end
+        end
+    end
+
+    -- Clear all assists from the field
+    for i = 1, #self.grid do
+        for j = 1, #self.grid[i] do
+            if self.grid[i][j] then
+                self.grid[i][j].assists = {}
+                self.grid[i][j].n_assists = 0
+            end
+        end
+    end
+
+    -- Check win and loss
+    local battle_over = self:checkWinLose()
+    if battle_over then return end
+
+    -- Start menu open
+    self:openBeginTurnMenu()
+end
+
+function Battle:suspend(scene_id, effects)
+    self.suspend_stack = self.stack
+    self.stack = {}
+    local doneAction = function()
+        self:restore()
+        if effects then effects() end
+    end
+    self.chapter:launchScene(scene_id, doneAction)
+end
+
+function Battle:restore()
+    self.stack = self.suspend_stack
+    self.suspend_stack = {}
+end
+
+function Battle:checkWinLose()
+    for i = 1, #self.lose do
+        local defeat_scene = self.lose[i][2](self)
+        if defeat_scene then
+            -- TODO: Change to defeat music
+            local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
+            self:suspend(scene_id, function()
+                self.stack = {}
+                self:openDefeatMenu()
+            end)
+            return true
+        end
+    end
+    for i = 1, #self.win do
+        if self.win[i][2](self) then
+            self.chapter:stopMusic()
+            -- TODO: play victory sound effect
+            self.stack = {}
+            self:openVictoryMenu()
+            return true
+        end
+    end
+    return false
+end
+
+function Battle:openBattleStartMenu()
+    local die = function(c) love.event.quit(0) end
+    local next = function(c)
+        self:closeMenu()
+        self:beginTurn()
+    end
+    local begin = MenuItem('Begin battle', {}, "Begin the battle", nil, next)
+    local wincon = MenuItem('Objectives', {},
+        'View victory and defeat conditions', self:buildObjectivesBox()
+    )
+    local settings = self.player:mkSettingsMenu()
+    local restart = MenuItem('Restart chapter', {}, 'Start the chapter over',
+        nil, die,
+        "Are you SURE you want to restart the chapter? You will lose ALL \z
+         progress made during the chapter."
+    )
+    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
+        "Save current progress and close the game?"
+    )
+    local m = { wincon, settings, restart, quit, begin }
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN, true), {})
+end
+
+function Battle:openVictoryMenu()
+    local m = { MenuItem('Continue', {}, 'Finish the battle', nil,
+        function(c)
+            self.chapter:launchScene(self.id .. '-victory')
+            self.chapter:startMapMusic()
+            self.chapter.battle = nil
+        end
+    )}
+    local v = { "     V I C T O R Y     " }
+    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN), {})
+end
+
+function Battle:openDefeatMenu()
+    local m = { MenuItem('Restart battle', {}, 'Start the battle over', nil,
+        function(c) love.event.quit(0) end
+    )}
+    local d = { "     D E F E A T     " }
+    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED), {
+        { AFTER, TEMP, function() self:renderLens({ 0.5, 0, 0 }) end }
+    })
+end
+
+function Battle:openEndTurnMenu()
+    self.stack = {}
+    local m = { MenuItem('End turn', {}, nil, nil,
+        function(c)
+            self:closeMenu()
+            self:endTurn()
+        end
+    )}
+    local e = { "   E N E M Y   P H A S E   " }
+    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED), {})
+end
+
+function Battle:openBeginTurnMenu()
+    self.stack = {}
+    local m = { MenuItem('Begin turn', {}, nil, nil,
+        function(c)
+            self:closeMenu()
+            for i = 1, #self.participants do
+                self.status[self.participants[i]:getId()]['acted'] = false
+            end
+            self.stack = { self:stackBase() }
+            local y, x = self:findSprite(self.player:getId())
+            self:moveCursor(x, y)
+        end
+    )}
+    local e = { "   A L L Y   P H A S E   " }
+    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, HIGHLIGHT), {})
+end
+
+function Battle:openAttackMenu(sp)
+    local attributes = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
+        ['w'] = HBOX_WIDTH
+    })
+    local wait = MenuItem('Skip', {},
+        'Skip ' .. sp.name .. "'s attack", nil, function(c)
+            self:push(self:stackBubble())
+            self:selectTarget()
+        end
+    )
+    local skills_menu = sp:mkSkillsMenu(true)
+    local weapon = skills_menu.children[1]
+    local spell = skills_menu.children[2]
+    for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
+    for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
+    local opts = { attributes, weapon, spell, wait }
+    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
+        { BEFORE, TEMP, function() self:renderMovementFrom() end }
+    })
+end
+
+function Battle:openAssistMenu(sp)
+    local attributes = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
+        ['w'] = HBOX_WIDTH
+    })
+    local wait = MenuItem('Skip', {},
+        'Skip ' .. sp.name .. "'s assist", nil, function(c)
+            self:endAction(false)
+        end
+    )
+    local skills_menu = sp:mkSkillsMenu(true)
+    local assist = skills_menu.children[3]
+    for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
+    local opts = { attributes, assist, wait }
+    local c = self:getCursor(3)
+    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
+        { BEFORE, TEMP, function() self:renderMovementFrom(c[1], c[2]) end }
+    })
+end
+
+function Battle:openAllyMenu(sp)
+    local attrs = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
+        ['w'] = HBOX_WIDTH
+    })
+    local sks = sp:mkSkillsMenu(true)
+    self:openMenu(Menu(nil, { attrs, sks }, BOX_MARGIN, BOX_MARGIN, false), {})
+end
+
+function Battle:openEnemyMenu(sp)
+    local attributes = MenuItem('Attributes', {},
+        'View ' .. sp.name .. "'s attributes", {
+        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
+        ['w'] = 380
+    })
+    local readying = MenuItem('Next Attack', {},
+        'Skill this enemy will use next', {
+        ['elements'] = self:buildReadyingBox(sp),
+        ['w'] = HBOX_WIDTH
+    })
+    -- TODO: For each skill, add targeting info
+    local skills = sp:mkSkillsMenu(false)
+    local opts = { attributes, readying, skills }
+    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
+        { BEFORE, TEMP, function() self:renderMovementHover() end }
+    })
+end
+
+function Battle:openOptionsMenu()
+    local die = function(c) love.event.quit(0) end
+    local endfxn = function(c)
+        self:closeMenu()
+        self:openEndTurnMenu()
+    end
+    local wincon = MenuItem('Objectives', {},
+        'View victory and defeat conditions', self:buildObjectivesBox()
+    )
+    local end_turn = MenuItem('End turn', {}, 'End your turn', nil, endfxn)
+    local settings = self.player:mkSettingsMenu()
+    local restart = MenuItem('Restart battle', {},
+        'Start the battle over', nil, pass,
+        "Start the battle over from the beginning?"
+    )
+    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
+        "Save battle state and close the game?"
+    )
+    local m = { wincon, settings, restart, quit, end_turn }
+    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN, false), {})
+end
+
+function Battle:endAction(used_assist)
+    local sp = self:getSprite()
+    local end_menu = MenuItem('Confirm end', {},
+        "Confirm " .. sp.name .. "'s actions this turn", nil,
+        function(c) self:playAction() end
+    )
+    local views = {}
+    if used_assist then
+        views = {{ BEFORE, TEMP, function()
+            self:renderSkillRange({ 0, 1, 0 })
+        end }}
+    end
+    self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN, false), views)
+end
+
+function Battle:buildReadyingBox(sp)
+    -- TODO index on readying skill (not 1), and add targeting info
+    return sp.skills[1]:mkSkillBox(sp.itex, sp.icons, false)
+end
+
+function Battle:buildObjectivesBox()
+    local joinOr = function(d)
+        local res = ''
+        for i = 1, #d do
+            local s = d[i][1]
+            res = res .. s
+            if i < #d then
+                res = res .. ' or '
+            else
+                res = res .. '.'
+            end
+        end
+        return res:sub(1,1):upper() .. res:sub(2)
+    end
+    local idt     = 30
+    local wstr, _ = splitByCharLimit(joinOr(self.win), HBOX_CHARS_PER_LINE)
+    local lstr, _ = splitByCharLimit(joinOr(self.lose), HBOX_CHARS_PER_LINE)
+    local longest = max(mapf(string.len, concat(wstr, lstr)))
+    local w       = BOX_MARGIN + idt + longest * CHAR_WIDTH + BOX_MARGIN
+    return {
+        ['elements'] = {
+            mkEle('text', {'Victory'},
+                BOX_MARGIN, BOX_MARGIN, GREEN),
+            mkEle('text', wstr,
+                idt + BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT),
+            mkEle('text', {'Defeat'},
+                BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT * 3, RED),
+            mkEle('text', lstr,
+                idt + BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT * 4)
+        },
+        ['w'] = w
+    }
+end
+
+function Battle:mkUsable(sp, sk_menu)
+    local sk = skills[sk_menu.id]
+    sk_menu.hover_desc = 'Use ' .. sk_menu.name
+    local ignea_spent = sk.cost
+    local sk2 = self:getSkill()
+    if sk2 then ignea_spent = ignea_spent + sk2.cost end
+    if sp.ignea >= ignea_spent then
+        sk_menu.setPen = function(c) love.graphics.setColor(unpack(WHITE)) end
+        sk_menu.action = function(c)
+            local c = self:getCursor()
+            local cx = c[1]
+            local cy = c[2]
+            if sk.aim['type'] ~= SELF_CAST then
+                if self.grid[cy][cx + 1] then
+                    cx = cx + 1
+                elseif self.grid[cy][cx - 1] then
+                    cx = cx - 1
+                elseif self.grid[cy + 1][cx] then
+                    cy = cy + 1
+                else
+                    cy = cy - 1
+                end
+            end
+            local cclr = ite(sk.type == ASSIST, { 0.4, 1, 0.4, 1 },
+                                                { 1, 0.4, 0.4, 1 })
+            local new_c = { cx, cy, c[3], cclr }
+            local zclr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
+            self:push({
+                ['stage'] = STAGE_TARGET,
+                ['cursor'] =  new_c,
+                ['sp'] = sp,
+                ['sk'] = sk,
+                ['views'] = {
+                    { BEFORE, TEMP, function()
+                        self:renderSkillRange(zclr)
+                    end }
+                }
+            })
+        end
+    else
+        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
+    end
+end
+
+function Battle:selectAlly(sp)
+    local c = self:getCursor()
+    local new_c = { c[1], c[2], c[3], { 0.4, 0.4, 1, 1 } }
+    self:push({
+        ['stage'] = STAGE_MOVE,
+        ['sp'] = sp,
+        ['cursor'] = new_c,
+        ['views'] = {
+            { BEFORE, TEMP, function() self:renderMovementFrom() end },
+            { AFTER, PERSIST, function()
+                local y, x = self:findSprite(sp:getId())
+                self:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
+            end }
+        }
+    })
+end
+
+function Battle:selectTarget()
+    local sp = self:getSprite()
+    local c = self:getCursor(2)
+    local row, col = self:findSprite(sp:getId())
+    local attrs = self:getTmpAttributes(sp)
+    local move = math.floor(attrs['agility'] / 5)
+               - abs(col - c[1]) - abs(row - c[2])
+    if move == 0 then
+        self:push(self:stackBubble(c))
+        self:openAssistMenu(sp)
+    else
+        local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
+        self:push({
+            ['stage'] = STAGE_MOVE,
+            ['sp'] = sp,
+            ['cursor'] = nc,
+            ['views'] = {
+                { BEFORE, TEMP, function()
+                    self:renderMovementFrom(c[1], c[2])
+                end },
+                { AFTER, PERSIST, function()
+                    self:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
+                end }
+            }
+        })
+    end
+end
+
+function Battle:useAttack(sp, attack, attack_dir, c_attack)
+    local i, j = self:findSprite(sp:getId())
+    local sp_a = self.grid[i][j].assists
+    local t = self:skillRange(attack, attack_dir, c_attack)
+    local ts = {}
+    local ts_a = {}
+    for i = 1, #t do
+        local space = self.grid[t[i][1]][t[i][2]]
+        local target = space.occupied
+        if target then
+            table.insert(ts, target)
+            table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
+        end
+    end
+    return attack.use(sp, sp_a, ts, ts_a, self.status, self.grid)
+end
+
+function Battle:kill(sp)
+    local i, j = self:findSprite(sp:getId())
+    self.grid[i][j].occupied = nil
+    self.status[sp:getId()]['alive'] = false
 end
 
 function Battle:playAction()
@@ -416,439 +896,6 @@ function Battle:playAction()
     })
 end
 
-function Battle:endAction(used_assist)
-    local sp = self:getSprite()
-    local end_menu = MenuItem('Confirm end', {},
-        "Confirm " .. sp.name .. "'s actions this turn", nil,
-        function(c) self:playAction() end
-    )
-    local views = {}
-    if used_assist then
-        views = {{ BEFORE, TEMP, function()
-            self:renderSkillRange({ 0, 1, 0 })
-        end }}
-    end
-    self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN), views)
-end
-
-function Battle:endTurn()
-
-    -- Allies have their actions refreshed
-    for i = 1, #self.participants do
-        local sp = self.participants[i]
-        if self:isAlly(sp) then
-            self.status[sp:getId()]['acted'] = false
-        end
-    end
-
-    -- Construct a queue of stacks. One stack per enemy,
-    -- representing that enemy's action
-    self:planEnemyPhase()
-
-    -- Let the first enemy go, if one exists
-    if next(self.enemy_queue) then
-        self.stack = table.remove(self.enemy_queue)
-        self:playAction()
-    else
-        -- If there are no enemies, it's immediately the ally phase
-        self:beginTurn()
-    end
-end
-
-function Battle:begin()
-
-    -- Participants to battle behavior
-    for i = 1, #self.participants do
-        self.participants[i]:changeBehavior('battle')
-    end
-    self.player:changeMode('battle')
-
-    -- Start the first turn
-    self:beginTurn()
-end
-
-function Battle:beginTurn()
-
-    -- Increment turn count
-    self.turn = self.turn + 1
-
-    -- Decrement/clear statuses
-    for _, v in pairs(self.status) do
-        local es = v['effects']
-        local i = 1
-        while i <= #es do
-            if es[i].duration > 1 then
-                es[i].duration = es[i].duration - 1
-                i = i + 1
-            else
-                table.remove(es, i)
-            end
-        end
-    end
-
-    -- Clear all assists from the field
-    for i = 1, #self.grid do
-        for j = 1, #self.grid[i] do
-            if self.grid[i][j] then
-                self.grid[i][j].assists = {}
-                self.grid[i][j].n_assists = 0
-            end
-        end
-    end
-
-    -- Check win and loss
-    local battle_over = self:checkWinLose()
-    if battle_over then return end
-
-    -- Cursor to Abelon
-    local y, x = self:findSprite(self.player:getId())
-    self:moveCursor(x, y)
-
-    -- Start menu open
-    self:openStartMenu()
-end
-
-function Battle:checkWinLose()
-    for i = 1, #self.lose do
-        local defeat_scene = self.lose[i][2](self)
-        if defeat_scene then
-            -- TODO: Change to defeat music
-            self.chapter.battle = nil
-            local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
-            self.chapter:launchScene(scene_id, pass)
-            return true
-        end
-    end
-    for i = 1, #self.win do
-        if self.win[i][2](self) then
-            self.chapter.battle = nil
-            self.chapter:stopMusic()
-            self.chapter:startMapMusic()
-            self.chapter:launchScene(self.id .. '-victory')
-            return true
-        end
-    end
-    return false
-end
-
-function Battle:openStartMenu()
-    local die = function(c) love.event.quit(0) end
-    local refresh = function()
-        for i = 1, #self.participants do
-            self.status[self.participants[i]:getId()]['acted'] = false
-        end
-    end
-    local next = function(c)
-        refresh()
-        self:closeMenu()
-    end
-    local begin = MenuItem('Begin turn', {}, "Begin your turn", nil, next)
-    local wincon = MenuItem('Objectives', {},
-        'View victory and defeat conditions', self:buildObjectivesBox()
-    )
-    local restart1 = MenuItem('Restart battle', {}, 'Start the battle over',
-        nil, pass,
-        "Start the battle over from the beginning?"
-    )
-    local restart2 = MenuItem('Restart chapter', {}, 'Start the chapter over',
-        nil, pass,
-        "Are you SURE you want to restart the chapter? You will lose ALL \z
-         progress made during the chapter."
-    )
-    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
-        "Save current progress and close the game?"
-    )
-    local m = { begin, wincon, restart1, restart2, quit }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {}, true)
-end
-
-function Battle:openAttackMenu(sp)
-    local attributes = MenuItem('Attributes', {},
-        'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = HBOX_WIDTH
-    })
-    local wait = MenuItem('Skip', {},
-        'Skip ' .. sp.name .. "'s attack", nil, function(c)
-            self:push({
-                ['stage'] = STAGE_BUBBLE,
-                ['cursor'] = { 1, 1, false, { 0, 0, 0, 0 }},
-                ['views'] = {}
-            })
-            self:selectTarget()
-        end
-    )
-    local skills_menu = sp:mkSkillsMenu(true)
-    local weapon = skills_menu.children[1]
-    local spell = skills_menu.children[2]
-    for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
-    for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
-    local opts = { attributes, weapon, spell, wait }
-    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
-        { BEFORE, TEMP, function() self:renderMovementFrom() end }
-    })
-end
-
-function Battle:openAssistMenu(sp)
-    local attributes = MenuItem('Attributes', {},
-        'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = HBOX_WIDTH
-    })
-    local wait = MenuItem('Skip', {},
-        'Skip ' .. sp.name .. "'s assist", nil, function(c)
-            self:endAction(false)
-        end
-    )
-    local skills_menu = sp:mkSkillsMenu(true)
-    local assist = skills_menu.children[3]
-    for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
-    local opts = { attributes, assist, wait }
-    local c = self:getCursor(3)
-    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
-        { BEFORE, TEMP, function() self:renderMovementFrom(c[1], c[2]) end }
-    })
-end
-
-function Battle:openAllyMenu(sp)
-    local attributes = MenuItem('Attributes', {},
-        'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = HBOX_WIDTH
-    })
-    local skills = sp:mkSkillsMenu(true)
-    self:openMenu(Menu(nil, { attributes, skills }, BOX_MARGIN, BOX_MARGIN), {})
-end
-
-function Battle:openEnemyMenu(sp)
-    local attributes = MenuItem('Attributes', {},
-        'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = 380
-    })
-    local readying = MenuItem('Next Attack', {},
-        'Skill this enemy will use next', {
-        ['elements'] = self:buildReadyingBox(sp),
-        ['w'] = HBOX_WIDTH
-    })
-    -- TODO: For each skill, add targeting info
-    local skills = sp:mkSkillsMenu(false)
-    local opts = { attributes, readying, skills }
-    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN), {
-        { BEFORE, TEMP, function() self:renderMovementHover() end }
-    })
-end
-
-function Battle:openOptionsMenu()
-    local die = function(c) love.event.quit(0) end
-    local endfxn = function(c)
-        self:closeMenu()
-        self:endTurn()
-    end
-    local wincon = MenuItem('Objectives', {},
-        'View victory and defeat conditions', self:buildObjectivesBox()
-    )
-    local end_turn = MenuItem('End turn', {},
-        'End your turn', nil, endfxn,
-        "End your turn early? Some of your allies can still act."
-    )
-    local settings = self.player:mkSettingsMenu()
-    local restart = MenuItem('Restart battle', {},
-        'Start the battle over', nil, pass,
-        "Start the battle over from the beginning?"
-    )
-    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
-        "Save battle state and close the game?"
-    )
-    local m = { wincon, settings, restart, quit, end_turn }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN), {})
-end
-
-
-function Battle:openEndTurnMenu()
-    self:openMenu(Menu(nil, {
-        MenuItem('End turn', {}, 'End your turn', nil,
-            function(c)
-                self:closeMenu()
-                self:endTurn()
-            end
-        )
-    }, BOX_MARGIN, BOX_MARGIN), {}, true)
-end
-
-function Battle:buildReadyingBox(sp)
-    -- TODO index on readying skill (not 1), and add targeting info
-    return sp.skills[1]:mkSkillBox(sp.itex, sp.icons, false)
-end
-
-function Battle:buildObjectivesBox()
-    local joinOr = function(d)
-        local res = ''
-        for i = 1, #d do
-            local s = d[i][1]
-            res = res .. s
-            if i < #d then
-                res = res .. ' or '
-            else
-                res = res .. '.'
-            end
-        end
-        return res:sub(1,1):upper() .. res:sub(2)
-    end
-    local idt     = 30
-    local wstr, _ = splitByCharLimit(joinOr(self.win), HBOX_CHARS_PER_LINE)
-    local lstr, _ = splitByCharLimit(joinOr(self.lose), HBOX_CHARS_PER_LINE)
-    local longest = max(mapf(string.len, concat(wstr, lstr)))
-    local w       = BOX_MARGIN + idt + longest * CHAR_WIDTH + BOX_MARGIN
-    return {
-        ['elements'] = {
-            mkEle('text', {'Victory'},
-                BOX_MARGIN, BOX_MARGIN, GREEN),
-            mkEle('text', wstr,
-                idt + BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT),
-            mkEle('text', {'Defeat'},
-                BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT * 3, RED),
-            mkEle('text', lstr,
-                idt + BOX_MARGIN, BOX_MARGIN + LINE_HEIGHT * 4)
-        },
-        ['w'] = w
-    }
-end
-
-function Battle:mkUsable(sp, sk_menu)
-    local sk = skills[sk_menu.id]
-    sk_menu.hover_desc = 'Use ' .. sk_menu.name
-    local ignea_spent = sk.cost
-    local sk2 = self:getSkill()
-    if sk2 then ignea_spent = ignea_spent + sk2.cost end
-    if sp.ignea >= ignea_spent then
-        sk_menu.setPen = function(c) love.graphics.setColor(unpack(WHITE)) end
-        sk_menu.action = function(c)
-            local c = self:getCursor()
-            local cx = c[1]
-            local cy = c[2]
-            if sk.aim['type'] ~= SELF_CAST then
-                if self.grid[cy][cx + 1] then
-                    cx = cx + 1
-                elseif self.grid[cy][cx - 1] then
-                    cx = cx - 1
-                elseif self.grid[cy + 1][cx] then
-                    cy = cy + 1
-                else
-                    cy = cy - 1
-                end
-            end
-            local cclr = ite(sk.type == ASSIST, { 0.4, 1, 0.4, 1 },
-                                                { 1, 0.4, 0.4, 1 })
-            local new_c = { cx, cy, c[3], cclr }
-            local zclr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
-            self:push({
-                ['stage'] = STAGE_TARGET,
-                ['cursor'] =  new_c,
-                ['sp'] = sp,
-                ['sk'] = sk,
-                ['views'] = {
-                    { BEFORE, TEMP, function()
-                        self:renderSkillRange(zclr)
-                    end }
-                }
-            })
-        end
-    else
-        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
-    end
-end
-
-function Battle:findSprite(sp_id)
-    local loc = self.status[sp_id]['location']
-    return loc[2], loc[1]
-end
-
-function Battle:isAlly(sp)
-    return self.status[sp:getId()]['team'] == ALLY
-end
-
-function Battle:getTmpAttributes(sp)
-    local y, x = self:findSprite(sp:getId())
-    return mkTmpAttrs(
-        sp.attributes,
-        self.status[sp:getId()]['effects'],
-        self.grid[y][x].assists
-    )
-end
-
-function Battle:selectAlly(sp)
-    local c = self:getCursor()
-    local new_c = { c[1], c[2], c[3], { 0.4, 0.4, 1, 1 } }
-    self:push({
-        ['stage'] = STAGE_MOVE,
-        ['sp'] = sp,
-        ['cursor'] = new_c,
-        ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovementFrom() end },
-            { AFTER, PERSIST, function()
-                local y, x = self:findSprite(sp:getId())
-                self:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
-            end }
-        }
-    })
-end
-
-function Battle:selectTarget()
-    local sp = self:getSprite()
-    local c = self:getCursor(2)
-    local row, col = self:findSprite(sp:getId())
-    local attrs = self:getTmpAttributes(sp)
-    local move = math.floor(attrs['agility'] / 5)
-               - abs(col - c[1]) - abs(row - c[2])
-    if move == 0 then
-        self:push({
-            ['stage'] = STAGE_BUBBLE,
-            ['cursor'] = { c[1], c[2], false, { 0, 0, 0, 0 }},
-            ['views'] = {}
-        })
-        self:openAssistMenu(sp)
-    else
-        local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
-        self:push({
-            ['stage'] = STAGE_MOVE,
-            ['sp'] = sp,
-            ['cursor'] = nc,
-            ['views'] = {
-                { BEFORE, TEMP, function()
-                    self:renderMovementFrom(c[1], c[2])
-                end },
-                { AFTER, PERSIST, function()
-                    self:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
-                end }
-            }
-        })
-    end
-end
-
-function Battle:useAttack(sp, attack, attack_dir, c_attack)
-    local i, j = self:findSprite(sp:getId())
-    local sp_a = self.grid[i][j].assists
-    local t = self:skillRange(attack, attack_dir, c_attack)
-    local ts = {}
-    local ts_a = {}
-    for i = 1, #t do
-        local space = self.grid[t[i][1]][t[i][2]]
-        local target = space.occupied
-        if target then
-            table.insert(ts, target)
-            table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
-        end
-    end
-    return attack.use(sp, sp_a, ts, ts_a, self.status, self.grid)
-end
-
-function Battle:kill(sp)
-    local i, j = self:findSprite(sp:getId())
-    self.grid[i][j].occupied = nil
-    self.status[sp:getId()]['alive'] = false
-end
-
 function Battle:skillRange(sk, dir, c)
     local scale = #sk.range
     local tiles = {}
@@ -934,7 +981,7 @@ function Battle:update(keys, dt)
             m:hover(ite(up, UP, DOWN))
         end
 
-        if done and not m.forced then self:closeMenu() end
+        if done then self:closeMenu() end
 
     elseif s == STAGE_FREE then
 
@@ -1026,6 +1073,7 @@ function Battle:update(keys, dt)
                 self:endAction(true)
             end
         end
+
     elseif s == STAGE_WATCH then
 
         -- Clean up after actions are performed
@@ -1081,13 +1129,13 @@ function Battle:update(keys, dt)
 
     -- Update battle camera position
     local focus = self.action_in_progress
+    local c = self:getCursor()
     if focus then
         local x, y = focus:getPosition()
         local w, h = focus:getDimensions()
         self.battle_cam_x = x + w/2 - VIRTUAL_WIDTH / 2
         self.battle_cam_y = y + h/2 - VIRTUAL_HEIGHT / 2
-    else
-        local c = self:getCursor()
+    elseif c then
         self.battle_cam_x = (c[1] + self.origin_x)
                           * TILE_WIDTH - VIRTUAL_WIDTH / 2 - TILE_WIDTH / 2
         self.battle_cam_y = (c[2] + self.origin_y)
@@ -1098,7 +1146,8 @@ function Battle:update(keys, dt)
     self.pulse_timer = self.pulse_timer + dt
     while self.pulse_timer > PULSE do
         self.pulse_timer = self.pulse_timer - PULSE
-        c[3] = not c[3]
+        self.pulse = not self.pulse
+        if c then c[3] = self.pulse end
     end
     self.shading = self.shading + self.shade_dir * dt / 3
     if self.shading > 0.4 then
@@ -1156,6 +1205,14 @@ function Battle:renderCursors()
             love.graphics.line(fx, fy, fx, fy - len)
         end
     end
+end
+
+function Battle:renderLens(clr)
+    love.graphics.setColor(clr[1], clr[2], clr[3], 0.1)
+    local map = self.chapter.current_map
+    love.graphics.rectangle('fill', 0, 0,
+        map.width * TILE_WIDTH, map.height * TILE_HEIGHT
+    )
 end
 
 function Battle:renderSpriteImage(cx, cy, x, y, sp)
@@ -1281,45 +1338,10 @@ function Battle:renderViews(depth)
     end
 end
 
-function Battle:renderGrid()
-
-    -- Draw grid at fixed position
-    love.graphics.setColor(0.5, 0.5, 0.5, 1)
-    for i = 1, self.grid_h do
-        for j = 1, self.grid_w do
-            if self.grid[i][j] then
-                love.graphics.rectangle('line',
-                    (self.origin_x + j - 1) * TILE_WIDTH,
-                    (self.origin_y + i - 1) * TILE_HEIGHT,
-                    TILE_WIDTH,
-                    TILE_HEIGHT
-                )
-            end
-        end
-    end
-
-    -- Render views over grid if we aren't watching a scene
-    if self:getStage() ~= STAGE_WATCH then
-
-        -- Render active views below the cursor, in stack order
-        self:renderViews(BEFORE)
-
-        -- Draw cursors always
-        self:renderCursors()
-
-        -- Render active views above the cursor, in stack order
-        self:renderViews(AFTER)
-    else
-        local views = self.stack[#self.stack]['views']
-        for i = 1, #views do views[i][3]() end
-    end
-end
-
 function Battle:renderHealthbar(sp)
     local x, y = sp:getPosition()
     local ratio = sp.health / sp.attributes['endurance']
-    local c = self:getCursor()
-    y = y + sp.h + ite(c[3], 0, -1) - 1
+    y = y + sp.h + ite(self.pulse, 0, -1) - 1
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.rectangle('fill', x + 3, y, sp.w - 6, 3)
     love.graphics.setColor(0.4, 0, 0.2, 1)
@@ -1351,8 +1373,7 @@ function Battle:renderStatus(sp)
     end
 
     -- Render icons
-    local c = self:getCursor()
-    local y_off = ite(c[3], 0, 1)
+    local y_off = ite(self.pulse, 0, 1)
     if buffed then
         love.graphics.draw(self.status_tex, self.status_icons[1],
             x + TILE_WIDTH - 8, y + y_off, 0, 1, 1, 0, 0
@@ -1551,6 +1572,40 @@ function Battle:renderBattleText(cam_x, cam_y)
     renderString(hover_str, x, y)
 end
 
+function Battle:renderGrid()
+
+    -- Draw grid at fixed position
+    love.graphics.setColor(0.5, 0.5, 0.5, 1)
+    for i = 1, self.grid_h do
+        for j = 1, self.grid_w do
+            if self.grid[i][j] then
+                love.graphics.rectangle('line',
+                    (self.origin_x + j - 1) * TILE_WIDTH,
+                    (self.origin_y + i - 1) * TILE_HEIGHT,
+                    TILE_WIDTH,
+                    TILE_HEIGHT
+                )
+            end
+        end
+    end
+
+    -- Render views over grid if we aren't watching a scene
+    if self:getStage() ~= STAGE_WATCH then
+
+        -- Render active views below the cursor, in stack order
+        self:renderViews(BEFORE)
+
+        -- Draw cursors always
+        self:renderCursors()
+
+        -- Render active views above the cursor, in stack order
+        self:renderViews(AFTER)
+    else
+        local views = self.stack[#self.stack]['views']
+        for i = 1, #views do views[i][3]() end
+    end
+end
+
 function Battle:renderOverlay(cam_x, cam_y)
 
     -- Render healthbars below each sprite, and status markers above
@@ -1559,26 +1614,34 @@ function Battle:renderOverlay(cam_x, cam_y)
         self:renderStatus(self.participants[i])
     end
 
-    -- Dont render any other overlays while watching an action
+    -- No overlay if stack has no cursors
     local s = self:getStage()
-    if s ~= STAGE_WATCH then
+    if self:getCursor() then
 
-        -- Make and render hover boxes
-        local ibox, w, ih, clr = self:mkInnerHoverBox()
-        local obox, oh = self:mkOuterHoverBox(w)
-        self:renderHoverBoxes(cam_x, cam_y, ibox, w, ih, obox, oh, clr)
+        -- Dont render any other overlays while watching an action
+        if s ~= STAGE_WATCH then
 
-        -- Render menu if there is one, otherwise battle text in the lower right
-        if s == STAGE_MENU then
-            local m = self:getMenu()
-            m:render(cam_x, cam_y, self.chapter)
-        else
-            self:renderBattleText(cam_x, cam_y)
+            -- Make and render hover boxes
+            local ibox, w, ih, clr = self:mkInnerHoverBox()
+            local obox, oh = self:mkOuterHoverBox(w)
+            self:renderHoverBoxes(cam_x, cam_y, ibox, w, ih, obox, oh, clr)
+
+            local turn_str = 'Turn ' .. self.turn
+            renderString(turn_str,
+                cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
+                cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
+            )
+
+            -- Render battle text if not in a menu
+            if s ~= STAGE_MENU then
+                self:renderBattleText(cam_x, cam_y)
+            end
         end
-        local turn_str = 'Turn ' .. self.turn
-        renderString(turn_str,
-            cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
-            cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
-        )
+    end
+
+    -- Render menu if there is one, otherwise battle text
+    if s == STAGE_MENU then
+        local m = self:getMenu()
+        m:render(cam_x, cam_y, self.chapter)
     end
 end

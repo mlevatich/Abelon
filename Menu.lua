@@ -3,6 +3,13 @@ require 'Constants'
 
 MenuItem = Class{}
 
+CONFIRM_X = VIRTUAL_WIDTH / 2 - (CHAR_WIDTH * 3 + BOX_MARGIN * 2) / 2
+function CONFIRM_Y(msg)
+    return (VIRTUAL_HEIGHT + TEXT_MARGIN_Y) / 2
+         + (#msg/2 - 1) * LINE_HEIGHT - HALF_MARGIN
+end
+
+
 function MenuItem:init(name, children, h_desc, h_box, action, confirm, p, id)
 
     self.name = name
@@ -24,7 +31,7 @@ end
 Menu = Class{}
 
 -- Initialize a new menu
-function Menu:init(parent, menu_items, x, y, confirm_msg)
+function Menu:init(parent, menu_items, x, y, forced, confirm_msg, clr)
 
     -- What is the parent menu of this menu (nil if a top-level menu)
     self.parent = parent
@@ -46,7 +53,10 @@ function Menu:init(parent, menu_items, x, y, confirm_msg)
     -- Is this a confirmation prompt? If so, what is the message?
     -- (optional parameter)
     self.confirm_msg = confirm_msg
+    self.confirm_clr = ite(clr, clr, WHITE)
 
+    -- Is the menu forced to stay open until an option is selected
+    self.forced = forced
 
     -- The different options on this menu
     self.hovering = 1
@@ -63,7 +73,7 @@ function initSubmenu(cur, parent)
         local next_y = parent.rel_y
 
         -- Init menu and open action
-        local submenu = Menu(parent, cur.children, next_x, next_y)
+        local submenu = Menu(parent, cur.children, next_x, next_y, false)
         local old_action = cur.action
         cur.action = function(c)
             parent.selected = submenu
@@ -72,21 +82,12 @@ function initSubmenu(cur, parent)
 
     elseif cur.confirm_msg and cur.action then
 
-        -- Base position of confirm message
-        local msg = cur.confirm_msg
-        local next_x = VIRTUAL_WIDTH/2
-                     - (CHAR_WIDTH * 3 + BOX_MARGIN*2)/2
-
-        -- Witchcraft
-        local next_y = (VIRTUAL_HEIGHT + TEXT_MARGIN_Y) / 2
-                     + (#msg/2 - 1) * LINE_HEIGHT
-                     - HALF_MARGIN
-
         -- Menu item's action is forwarded to 'Yes' on the confirm screen,
         -- which is another submenu
+        local w = cur.confirm_msg
         local n = MenuItem('No', {})
         local y = MenuItem('Yes', {})
-        local submenu = Menu(parent, {n, y}, next_x, next_y, msg)
+        local submenu = Menu(parent, {n, y}, CONFIRM_X, CONFIRM_Y(w), false, w)
         local inherited_action = cur.action
         n.action = function(c) submenu:back() end
         y.action = function(c, m)
@@ -134,7 +135,7 @@ function Menu:back()
         self.parent.selected = nil
         return false
     end
-    return true
+    return not self.forced
 end
 
 -- Called when player presses up or down while in a menu to hover a selection
@@ -175,16 +176,18 @@ function Menu:renderConfirmMessage(cam_x, cam_y)
     local cbox_w = CHAR_WIDTH * longest + BOX_MARGIN*2
     local cbox_h = LINE_HEIGHT * (#msg + 2)
                  + BOX_MARGIN*2 - TEXT_MARGIN_Y
+    if #self.menu_items == 1 then cbox_h = cbox_h - LINE_HEIGHT * 2 end
     local cbox_x = cam_x + VIRTUAL_WIDTH/2 - cbox_w/2
     local cbox_y = cam_y + VIRTUAL_HEIGHT/2 - cbox_h/2 - HALF_MARGIN
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill', cbox_x, cbox_y, cbox_w, cbox_h)
+    love.graphics.setColor(unpack(self.confirm_clr))
     for i=1, #msg do
         local base_x = cam_x + VIRTUAL_WIDTH/2
                      - (#msg[i] * CHAR_WIDTH)/2
         local base_y = cbox_y + BOX_MARGIN
                      + LINE_HEIGHT * (i-1)
-        renderString(msg[i], base_x, base_y)
+        renderString(msg[i], base_x, base_y, true)
     end
 end
 
@@ -204,13 +207,17 @@ end
 
 function Menu:renderMenuItems(x, y, c)
 
+    -- If this is a confirm message with one option, it is not rendered
+    if not (self.confirm_msg and #self.menu_items == 1) then
 
-    for i=1, math.min(#self.menu_items, MAX_MENU_ITEMS) do
-        local base_x = 5 + x + BOX_MARGIN
-        local base_y = y + HALF_MARGIN + (i - 1) * LINE_HEIGHT
-        local item = self.menu_items[i + self.base - 1]
-        item.setPen(c)
-        renderString(item.name, base_x, base_y, true)
+        -- Render each menu item
+        for i=1, math.min(#self.menu_items, MAX_MENU_ITEMS) do
+            local base_x = 5 + x + BOX_MARGIN
+            local base_y = y + HALF_MARGIN + (i - 1) * LINE_HEIGHT
+            local item = self.menu_items[i + self.base - 1]
+            item.setPen(c)
+            renderString(item.name, base_x, base_y, true)
+        end
     end
 
     -- Render indicator of more content
@@ -219,7 +226,9 @@ function Menu:renderMenuItems(x, y, c)
         love.graphics.print("^", x + self.width - 11, y + 6)
     end
     if self.base <= #self.menu_items - MAX_MENU_ITEMS then
-        love.graphics.print("^", x + self.width - 5, y + self.height - 6, math.pi)
+        love.graphics.print("^",
+            x + self.width - 5, y + self.height - 6, math.pi
+        )
     end
 end
 
@@ -370,8 +379,10 @@ function Menu:render(cam_x, cam_y, c)
     -- Render options
     self:renderMenuItems(x, y, c)
 
-    -- Render arrow over item being hovered
-    self:renderSelectionArrow(x, y)
+    -- Render arrow over item being hovered (if visible)
+    if not (self.confirm_msg and #self.menu_items == 1) then
+        self:renderSelectionArrow(x, y)
+    end
 
     -- Render child menu if there is one or hover info if this is the leaf menu
     local hbox_rendered = false

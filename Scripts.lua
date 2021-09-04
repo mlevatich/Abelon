@@ -159,29 +159,24 @@ scripts = {
         ['events'] = {
             wait(0.5),
             focus(1, 100),
-            lookAt(2, 1),
             say(1, 2, false,
                 "Urgh. Damn, hurts........ But I refuse... to........"
             )
         },
-        ['result'] = {
-            ['do'] = function(c) c:failState() end
-        }
+        ['result'] = {}
     },
 
     ['1-1-abelon-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
             wait(0.5),
-            focus(1, 100),
+            focus(2, 100),
             lookAt(1, 2),
             say(1, 2, false,
                 "Abelon, no! NO!"
             )
         },
-        ['result'] = {
-            ['do'] = function(c) c:failState() end
-        }
+        ['result'] = {}
     },
 
     ['1-1-victory'] = {
@@ -272,10 +267,12 @@ scripts = {
         ['ids'] = {'medallion'},
         ['events'] = {
             say(1, 1, false,
-                "The silver medallion turns lazily as you hold it by its rope. \z
+                "The medallion turns lazily as you hold it by the rope. \z
                  You pull it over your head. The fraying rope itches the back \z
-                 of your neck, and the metal lump is inordinatelty heavy. \z
-                 Who would wear this? You put it away."
+                 of your neck, and the metal lump weighs on you like armor."
+            ),
+            say(1, 1, false,
+                "Who would wear this? You put it away."
             )
         },
         ['result'] = {}
@@ -753,7 +750,7 @@ scripts = {
             waitForText(),
             wait(0.5),
             focus(2, 100),
-            pan(150, -50, 100),
+            pan(100, -50, 100),
             wait(1),
             walk(1, 32, 72, 'walk'),
             waitForEvent('camera'),
