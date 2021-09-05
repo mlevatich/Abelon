@@ -53,3 +53,47 @@ item_triggers = {
         { function(c) c:launchScene('medallion_use') end }
     )
 }
+
+function mkTurnTrigger(t, phase)
+    return function(b)
+        if b.turn == t then
+            return ite(phase == ALLY, 'ally', 'enemy') .. '-turn-' .. t
+        end
+        return false
+    end
+end
+
+function mkSelectTrigger(sp_id)
+    return function(b)
+        if b:getSprite():getId() == sp_id then
+            return 'select-' .. sp_id
+        end
+        return false
+    end
+end
+
+battle_triggers = {
+    ['1-1'] = {
+        [SELECT] = {
+            mkSelectTrigger('kath')
+        },
+        [ALLY] = {
+            mkTurnTrigger(1, ALLY),
+            mkTurnTrigger(2, ALLY)
+        },
+        [ENEMY] = {
+            mkTurnTrigger(1, ENEMY)
+        },
+        [END_ACTION] = {
+            function(b)
+                local saw = b.chapter.state['kath-saw-spell']
+                local atk = b.status['abelon']['attack']
+                if atk then atk = atk.id end
+                if not saw and atk == 'conflagration' or atk == 'crucible' then
+                    return 'abelon-demon'
+                end
+                return false
+            end
+        },
+    }
+}

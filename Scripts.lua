@@ -18,6 +18,13 @@ function br(test, t_events, f_events)
     end
 end
 
+function brState(key, t_events, f_events)
+    return function(scene)
+        local events = ite(scene.chapter.state[key], t_events, f_events)
+        addEvents(scene, events, scene.event + 1)
+    end
+end
+
 function waitForText()
     return function(scene)
         if scene.text_state then
@@ -154,6 +161,107 @@ end
 
 scripts = {
 
+    ['1-1-select-kath'] = {
+        ['ids'] = {'kath'},
+        ['events'] = {
+            focus(1, 170),
+            say(1, 1, false,
+                "Captain Kath of Ebonach, at your command!"
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['1-1-ally-turn-1'] = {
+        ['ids'] = {'kath'},
+        ['events'] = {
+            focus(1, 170),
+            say(1, 1, false,
+                "Right, let's do the usual song and dance, then. The young \z
+                 upstart will take his orders from the grumpy \z
+                 old man."
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['1-1-ally-turn-2'] = {
+        ['ids'] = {'kath'},
+        ['events'] = {
+            brState('kath-saw-spell', {}, {
+                focus(1, 170),
+                say(1, 3, false,
+                    "Let's only use as much ignea as we need to. I shouldn't have \z
+                     to remind you, we've nowhere to reignite here in the forest, \z
+                     and we'll need as much power as we can spare when we return \z
+                     to the gates."
+                )
+            })
+        },
+        ['result'] = {}
+    },
+
+    ['1-1-enemy-turn-1'] = {
+        ['ids'] = {'kath'},
+        ['events'] = {
+            focus(1, 170),
+            say(1, 3, false,
+                "Here they come!"
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['1-1-abelon-demon'] = {
+        ['ids'] = {'kath'},
+        ['events'] = {
+            brState('kath-saw-spell', {}, {
+                focus(1, 170),
+                say(1, 3, true,
+                    "By Ignus, what the hell did you just do, Abelon? I've \z
+                     never seen such unbelievable magic!"
+                ),
+                choice({
+                    {
+                        ['response'] = "A reward from the blood rite",
+                        ['events'] = {
+                            say(1, 1, false,
+                                "Amazing... perhaps your little detour was worth \z
+                                 the trouble after all."
+                            )
+                        },
+                        ['result'] = {
+                            ['impressions'] = {1}
+                        }
+                    },
+                    {
+                        ['response'] = "A secret spell of mine",
+                        ['events'] = {
+                            say(1, 3, false,
+                                "Oh really? I seem to recall a great many dire \z
+                                 situations which this 'secret spell' of yours \z
+                                 would have resolved in short order. But you've \z
+                                 never been one for sharing, have you..."
+                            )
+                        },
+                        ['result'] = {
+                            ['impressions'] = {-1}
+                        }
+                    }
+                }),
+                say(1, 3, false,
+                    "Do save your ignea for our reunion with the knights, though. \z
+                     I suspect we'll need that spell again when the real fight \z
+                     begins, and even I can tell that unholy fire was no cheap \z
+                     cantrip."
+                )
+            })
+        },
+        ['result'] = {
+            ['state'] = 'kath-saw-spell'
+        }
+    },
+
     ['1-1-kath-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
@@ -182,7 +290,7 @@ scripts = {
     ['1-1-victory'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
-            wait(1),
+            wait(0.5),
             face(1, 2),
             focus(2, 100),
             say(2, 1, true,

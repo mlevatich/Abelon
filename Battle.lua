@@ -4,6 +4,7 @@ require 'Constants'
 require 'Menu'
 require 'Music'
 require 'Skill'
+require 'Triggers'
 
 Battle = Class{}
 
@@ -19,42 +20,6 @@ function GridSpace:init(sp)
     self.assists = {}
     self.n_assists = 0
 end
-
-wincons = {
-    ['rout'] = { "defeat all enemies",
-        function(b)
-            for _,v in pairs(b.status) do
-                if v['team'] == ENEMY and v['alive'] then
-                    return false
-                end
-            end
-            return true
-        end
-    },
-    ['escape'] = { "escape the battlefield",
-        function(b)
-             return false
-        end
-    }
-}
-
-losscons = {
-    ['death'] = { "any ally dies",
-        function(b)
-            for k,v in pairs(b.status) do
-                if v['team'] == ALLY and not v['alive'] then
-                    return k
-                end
-            end
-            return false
-        end
-    },
-    ['defend'] = { "any enemy breaches the defended area",
-        function(b)
-             return false
-        end
-    }
-}
 
 function Battle:init(battle_id, player, chapter)
 
@@ -97,10 +62,12 @@ function Battle:init(battle_id, player, chapter)
             self.status[sp:getId()] = {
                 ['sp']       = sp,
                 ['team']     = ite(idx == 4, ALLY, ENEMY),
+                ['location'] = { v[1], v[2] },
+                ['effects']  = {},
                 ['alive']    = true,
                 ['acted']    = false,
-                ['location'] = { v[1], v[2] },
-                ['effects']  = {}
+                ['attack']   = nil,
+                ['assist']   = nil
             }
             local x_tile = self.origin_x + v[1]
             local y_tile = self.origin_y + v[2]
@@ -302,7 +269,24 @@ function Battle:closeMenu()
     end
 end
 
+function Battle:checkTriggers(phase, doneAction)
+    local triggers = battle_triggers[self.id][phase]
+    for i = 1, #triggers do
+        local scene_id = triggers[i](self)
+        if scene_id then
+            table.remove(triggers, i)
+            self:suspend(self.id .. '-' .. scene_id, doneAction)
+            return true
+        end
+    end
+    return false
+end
+
 function Battle:endTurn()
+
+    -- Check triggers first
+    local doneAction = function() self:endTurn() end
+    if self:checkTriggers(ENEMY, doneAction) then return end
 
     -- Allies have their actions refreshed
     for i = 1, #self.participants do
@@ -471,6 +455,7 @@ function Battle:openBeginTurnMenu()
             self.stack = { self:stackBase() }
             local y, x = self:findSprite(self.player:getId())
             self:moveCursor(x, y)
+            self:checkTriggers(ALLY)
         end
     )}
     local e = { "   A L L Y   P H A S E   " }
@@ -685,6 +670,7 @@ function Battle:selectAlly(sp)
             end }
         }
     })
+    self:checkTriggers(SELECT)
 end
 
 function Battle:selectTarget()
@@ -884,6 +870,8 @@ function Battle:playAction()
     -- Process other battle results of actions
     c_sp[1] = c_move2[1]
     c_sp[2] = c_move2[2]
+    if attack then self.status[sp:getId()]['attack'] = attack end
+    if assist then self.status[sp:getId()]['assist'] = assist end
 
     -- Force player to watch the action
     self.action_in_progress = sp
@@ -1079,14 +1067,16 @@ function Battle:update(keys, dt)
         -- Clean up after actions are performed
         if not self.action_in_progress then
 
+            -- Check triggers
+            if self:checkTriggers(END_ACTION) then return end
+
             -- Say this sprite acted and reset stack
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
 
             -- Check win and loss
-            local battle_over = self:checkWinLose()
-            if battle_over then return end
+            if self:checkWinLose() then return end
 
             -- If there are enemies that need to go next, have them go.
             if next(self.enemy_queue) ~= nil then
@@ -1645,3 +1635,39 @@ function Battle:renderOverlay(cam_x, cam_y)
         m:render(cam_x, cam_y, self.chapter)
     end
 end
+
+wincons = {
+    ['rout'] = { "defeat all enemies",
+        function(b)
+            for _,v in pairs(b.status) do
+                if v['team'] == ENEMY and v['alive'] then
+                    return false
+                end
+            end
+            return true
+        end
+    },
+    ['escape'] = { "escape the battlefield",
+        function(b)
+             return false
+        end
+    }
+}
+
+losscons = {
+    ['death'] = { "any ally dies",
+        function(b)
+            for k,v in pairs(b.status) do
+                if v['team'] == ALLY and not v['alive'] then
+                    return k
+                end
+            end
+            return false
+        end
+    },
+    ['defend'] = { "any enemy breaches the defended area",
+        function(b)
+             return false
+        end
+    }
+}

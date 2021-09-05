@@ -1,12 +1,5 @@
 (please commit each paragraph separately for your own sanity)
 
-#38:
-
-Add in chapter 1 script scenes via suspend and restore, where the suspend is
-fired by battle_triggers, a dict of triggers that accept the battle state.
-Triggers are checked at: select unit for the first time on ally phase, start
-new phase, end action. Triggers receive battle object.
-
 #50:
 
 enemy skill targeting info

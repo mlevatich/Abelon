@@ -153,8 +153,6 @@ A: Nothing we can't handle (Kath +1 impression)
     ???: "Right, let's do the usual song and dance, then. The young upstart will take his orders from the grumpy
           old man."
 
-    Kath: "Captain Kath of Lefellen, at your command!"
-
 *Enemy turn 1 start*
 
     Kath: "Here they come!"
@@ -163,6 +161,14 @@ A: Nothing we can't handle (Kath +1 impression)
 
     Kath: "Let's only use as much ignea as we need to. I shouldn't have to remind you, we've nowhere to reignite here
            in the forest, and we'll need as much power as we can spare when we return to the gates."
+
+*Select Kath*
+
+    Kath: "Captain Kath of Lefellen, at your command!"
+
+*First wolf killed*
+
+    Kath: "That wolf won't be standing up again, at the very least. Forward! Aflame and alert, as they say."
 
 *When Abelon uses a demonic spell for the first time*
 
@@ -193,10 +199,6 @@ A: Nothing we can't handle (Kath +1 impression)
     Kath: "Abelon, no! NO!"
 
     FAIL STATE
-
-*First wolf killed*
-
-    Kath: "That wolf won't be standing up again, at the very least. Forward! Aflame and alert, as they say."
 
 *Victory*
 
@@ -278,12 +280,12 @@ A: I shouldn't have left (Kath +1 impression, +1 awareness)
 
     *if Kath awareness >= 3*
 
-        Kath: "Abelon, you...something's different about you, I swear it. But now's not the time for that, is it...
+        Kath: "Abelon, you... something's different about you, I swear it. But now's not the time for that, is it...
                ready your sword."
 
     *if Kath awareness < 3*
 
-        Kath: "But then, why did you...but I suppose now's not the time for that, is it? Ready your sword."
+        Kath: "But then, why did... I suppose now's not the time for that, is it? Ready your sword."
 
 -- Begin battle
 

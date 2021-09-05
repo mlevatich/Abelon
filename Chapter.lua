@@ -348,27 +348,24 @@ function Chapter:updateCamera(dt)
     -- Target: where is the camera headed?
     local x_target = 0
     local y_target = 0
-    if not self.battle then
 
-        -- Overwrite camera info from scene if it exists
-        if self.current_scene then
-            focus = self.current_scene.cam_lock
-            x_offset = self.current_scene.cam_offset_x
-            y_offset = self.current_scene.cam_offset_y
-            speed = self.current_scene.cam_speed
-        end
-
-        -- Compute camera target to move to
+    -- Overwrite camera info from scene if it exists, or battle if it
+    -- exists and there's no scene
+    if self.current_scene then
+        focus = self.current_scene.cam_lock
+        x_offset = self.current_scene.cam_offset_x
+        y_offset = self.current_scene.cam_offset_y
+        speed = self.current_scene.cam_speed
+    elseif self.battle then
+        x_target, y_target, speed = self.battle:getCamera()
+    end
+    if not self.battle or (self.current_scene and self.battle) then
         local x, y = focus:getPosition()
         local w, h = focus:getDimensions()
         x_target = x + w/2 + x_offset - VIRTUAL_WIDTH / 2
         y_target = y + h/2 + y_offset - VIRTUAL_HEIGHT / 2
         x_target = math.max(0, math.min(x_target, cam_max_x))
         y_target = math.max(0, math.min(y_target, cam_max_y))
-    else
-
-        -- If in a battle, follow battle cam!
-        x_target, y_target, speed = self.battle:getCamera()
     end
 
     -- Compute move in the direction of camera target based on dt

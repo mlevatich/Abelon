@@ -96,26 +96,24 @@ EFFECT_NAMES = {
     ['stun']           = "Stunned"
 }
 
--- Aim types/targets
+-- Battle enums
 DIRECTIONAL = 1
 SELF_CAST   = 2
 FREE        = 3
+ALL         = 4
+ALLY        = 5
+ENEMY       = 6
+SELECT      = 7
+END_ACTION  = 8
 DIRECTIONAL_AIM = { ['type'] = DIRECTIONAL }
 SELF_CAST_AIM   = { ['type'] = SELF_CAST }
 FREE_AIM        = function(s, t)
                       return { ['type'] = FREE, ['scale'] = s, ['target'] = t }
                   end
-ALL   = 4
-ALLY  = 5
-ENEMY = 6
-BEGIN = 7
 
 -- Buff or debuff?
 BUFF   = 1
 DEBUFF = 2
-
--- Win/lose conditions
-ROUT = function(b) return true end
 
 -- Battle stages
 STAGE_FREE   = 1
