@@ -16,7 +16,7 @@ Awareness: 0
 Discard: no
 Present:
 Level: 5
-Attributes: endurance:21 focus:4 force:17 affinity:0 reaction:7 agility:15
+Attributes: endurance:25 focus:9 force:21 affinity:0 reaction:11 agility:15
 Skilltrees:
 Skills: bite
 Description: A wolf.

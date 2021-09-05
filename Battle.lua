@@ -82,6 +82,7 @@ function Battle:init(battle_id, player, chapter)
     self.status = {}
     self.participants = concat(readEntities(4), readEntities(5))
     self.enemy_queue = {}
+    self:adjustStatsForDifficulty(MASTER)
 
     -- Win conditions and loss conditions
     self.win  = readArray(data[6], function(s) return wincons[s]  end)
@@ -119,6 +120,24 @@ function Battle:init(battle_id, player, chapter)
 
     -- Start the first turn
     self:openBattleStartMenu()
+end
+
+function Battle:adjustStatsForDifficulty(old)
+    local factor = 4 * (old - self.chapter.difficulty)
+    for i = 1, #self.participants do
+        local sp = self.participants[i]
+        if not self:isAlly(sp) then
+            local attrs = sp.attributes
+            local adjust = {
+                'endurance', 'focus', 'force', 'affinity', 'reaction'
+            }
+            for j = 1, #adjust do
+                attrs[adjust[j]] = math.max(0, attrs[adjust[j]] - factor)
+            end
+            sp.health = math.min(sp.health, attrs['endurance'])
+            sp.ignea = math.min(sp.ignea, attrs['focus'])
+        end
+    end
 end
 
 function Battle:getId()

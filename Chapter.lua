@@ -180,7 +180,9 @@ function Chapter:playerNearSprite(sp_id)
 end
 
 function Chapter:setDifficulty(d)
+    local old = self.difficulty
     self.difficulty = d
+    if self.battle then self.battle:adjustStatsForDifficulty(old) end
 end
 
 function Chapter:startMapMusic()
