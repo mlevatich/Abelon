@@ -116,9 +116,9 @@ function Sprite:init(id, spritesheet, chapter)
     self.resting_behavior = readField(data[12])
     self.current_behavior = self.resting_behavior
     self.behaviors = {
-        ['wander'] = function() self:_wanderBehavior() end,
-        ['battle'] = function() self:_battleBehavior() end,
-        ['idle'] = function() self:_idleBehavior() end
+        ['wander'] = function(dt) self:_wanderBehavior(dt) end,
+        ['battle'] = function(dt) self:_battleBehavior(dt) end,
+        ['idle'] = function(dt)   self:_idleBehavior(dt) end
     }
 
     -- Can the player interact with this sprite to start a scene?
@@ -635,6 +635,11 @@ end
 
 function Sprite:djikstra(graph, src, dst, depth)
 
+    -- If source and dest are the same, path is empty
+    if dst and src[1] == dst[1] and src[2] == dst[2] then
+        return {}
+    end
+
     -- If no depth was provided, depth is infinite
     if not depth then depth = math.huge end
 
@@ -715,7 +720,6 @@ function Sprite:djikstra(graph, src, dst, depth)
 
                         -- If tentative distance less than actual, replace
                         -- distance and make n the prev of this neighbor
-                        -- TODO: prefer straight line paths if ==
                         if d < dist[v[1]][v[2]] then
                             dist[v[1]][v[2]] = d
                             prev[v[1]][v[2]] = n
@@ -735,8 +739,14 @@ function Sprite:djikstra(graph, src, dst, depth)
     -- Otherwise just return distances
     if dst and prev[dst[1]][dst[2]] then
 
-        -- Compute path
-        -- TODO
+        -- Compute and return path
+        local path = {}
+        local cur = dst
+        while cur[1] ~= src[1] or cur[2] ~= src[2] do
+            table.insert(path, 1, cur)
+            cur = prev[cur[1]][cur[2]]
+        end
+        return path
     end
     return dist
 end
@@ -777,6 +787,7 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
         self.dir = ite((x - 1) * TILE_WIDTH > self.x, RIGHT, LEFT)
     end
     return function(dt)
+        self:stop()
         if not skill_anim_fired then
             self:fireAnimation(anim_type, function()
                 self:changeAnimation('combat')
@@ -795,8 +806,9 @@ end
 
 function Sprite:waitBehaviorGeneric(doneAction, waitAnimation, s)
     local timer = s
-    self:changeAnimation(waitAnimation)
     return function(dt)
+        self:stop()
+        self:changeAnimation(waitAnimation)
         timer = timer - dt
         if timer < 0 then doneAction() end
     end
@@ -884,6 +896,7 @@ function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run, first)
                     self.dir = RIGHT
                 end
             end
+            self:updatePosition(dt, x_dst, y_dst)
         end
     end
 end
@@ -949,6 +962,8 @@ function Sprite:_wanderBehavior(dt)
         self.dy = WANDER_SPEED
         self.dx = 0
     end
+
+    self:updatePosition(dt)
 end
 
 -- Sprite idle behavior
@@ -1138,9 +1153,23 @@ function Sprite:updateAnimation(dt)
 end
 
 -- Update sprite's position from dt
-function Sprite:updatePosition(dt)
-    self.x = self.x + self.dx * dt
-    self.y = self.y + self.dy * dt
+function Sprite:updatePosition(dt, x_dst, y_dst)
+    pre_x  = self.x
+    post_x = self.x + self.dx * dt
+    pre_y  = self.y
+    post_y = self.y + self.dy * dt
+
+    if x_dst and (pre_x < x_dst) ~= (post_x < x_dst) then
+        self.x = x_dst
+    else
+        self.x = post_x
+    end
+
+    if y_dst and (pre_y < y_dst) ~= (post_y < y_dst) then
+        self.y = y_dst
+    else
+        self.y = post_y
+    end
 end
 
 -- Per-frame updates to a sprite's state
@@ -1152,9 +1181,6 @@ function Sprite:update(dt)
 
     -- Update frame of animation
     self:updateAnimation(dt)
-
-    -- Update position based on velocity
-    self:updatePosition(dt)
 
     -- Handle collisions with walls or other sprites
     if self.blocking then

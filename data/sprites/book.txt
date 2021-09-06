@@ -4,7 +4,7 @@ Name: Book
 Width: 25
 Height: 22
 Depth: 6
-Sheet: 86
+Sheet: 84
 Interactive: yes
 Blocking: yes
 Animations: idle:0

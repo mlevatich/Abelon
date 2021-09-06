@@ -364,8 +364,8 @@ function Chapter:updateCamera(dt)
     if not self.battle or (self.current_scene and self.battle) then
         local x, y = focus:getPosition()
         local w, h = focus:getDimensions()
-        x_target = x + w/2 + x_offset - VIRTUAL_WIDTH / 2
-        y_target = y + h/2 + y_offset - VIRTUAL_HEIGHT / 2
+        x_target = x + math.ceil(w / 2) + x_offset - VIRTUAL_WIDTH / 2
+        y_target = y + math.ceil(h / 2) + y_offset - VIRTUAL_HEIGHT / 2
         x_target = math.max(0, math.min(x_target, cam_max_x))
         y_target = math.max(0, math.min(y_target, cam_max_y))
     end

@@ -4,7 +4,7 @@ Name: Silver medallion
 Width: 20
 Height: 22
 Depth: 6
-Sheet: 64
+Sheet: 62
 Interactive: yes
 Blocking: no
 Animations: idle:0

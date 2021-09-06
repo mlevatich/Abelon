@@ -145,6 +145,7 @@ function Battle:getId()
 end
 
 function Battle:getCamera()
+    self:updateBattleCam()
     return self.battle_cam_x, self.battle_cam_y, self.battle_cam_speed
 end
 
@@ -170,24 +171,25 @@ function Battle:stackBase()
         ['stage'] = STAGE_FREE,
         ['cursor'] = { 1, 1, false, { HIGHLIGHT } },
         ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovementHover() end },
-            { BEFORE, PERSIST, function() self:renderAssistSpaces() end }
+            { BEFORE, TEMP, function() self:renderMovementHover() end }
         }
     }
 end
 
-function Battle:stackBubble(c)
+function Battle:stackBubble(c, moves)
     local x = 1
     local y = 1
     if c then
         x = c[1]
         y = c[2]
     end
-    return {
+    bubble = {
         ['stage'] = STAGE_BUBBLE,
         ['cursor'] = { x, y, false, { 0, 0, 0, 0 } },
         ['views'] = {}
     }
+    if moves then bubble['moves'] = moves end
+    return bubble
 end
 
 function Battle:getCursor(n)
@@ -342,6 +344,16 @@ function Battle:beginTurn()
     -- Increment turn count
     self.turn = self.turn + 1
 
+    -- Check win and loss
+    local battle_over = self:checkWinLose()
+    if battle_over then return end
+
+    -- Start menu open
+    self:openBeginTurnMenu()
+end
+
+function Battle:turnRefresh()
+
     -- Decrement/clear statuses
     for _, v in pairs(self.status) do
         local es = v['effects']
@@ -366,12 +378,10 @@ function Battle:beginTurn()
         end
     end
 
-    -- Check win and loss
-    local battle_over = self:checkWinLose()
-    if battle_over then return end
-
-    -- Start menu open
-    self:openBeginTurnMenu()
+    -- Nobody has acted
+    for i = 1, #self.participants do
+        self.status[self.participants[i]:getId()]['acted'] = false
+    end
 end
 
 function Battle:suspend(scene_id, effects)
@@ -476,9 +486,7 @@ function Battle:openBeginTurnMenu()
     local m = { MenuItem('Begin turn', {}, nil, nil,
         function(c)
             self:closeMenu()
-            for i = 1, #self.participants do
-                self.status[self.participants[i]:getId()]['acted'] = false
-            end
+            self:turnRefresh()
             self.stack = { self:stackBase() }
             local y, x = self:findSprite(self.player:getId())
             self:moveCursor(x, y)
@@ -704,12 +712,30 @@ function Battle:selectAlly(sp)
     self:checkTriggers(SELECT)
 end
 
+function Battle:getSpent(i, j)
+    local moves = self:getMoves()
+    if moves then
+        for k = 1, #moves do
+            if moves[k]['to'][1] == i
+            and moves[k]['to'][2] == j
+            then
+                return moves[k]['spend']
+            end
+        end
+    end
+    return 0
+end
+
+function Battle:getMovement(sp, i, j)
+    local attrs = self:getTmpAttributes(sp)
+    local spent = self:getSpent(i, j)
+    return math.floor(attrs['agility'] / 5) - spent
+end
+
 function Battle:validMoves(sp, i, j)
 
-    -- Get sprite's remaining movement points
-    local row, col = self:findSprite(sp:getId())
-    local attrs = self:getTmpAttributes(sp)
-    local move = math.floor(attrs['agility'] / 5) - abs(row - i) - abs(col - j)
+    -- Get sprite's base movement points
+    local move = self:getMovement(sp, i, j)
 
     -- Run djikstra's algorithm on grid
     local dist = sp:djikstra(self.grid, { i, j }, nil, move)
@@ -719,7 +745,9 @@ function Battle:validMoves(sp, i, j)
     for y = math.max(i - move, 1), math.min(i + move, #self.grid) do
         for x = math.max(j - move, 1), math.min(j + move, #self.grid[y]) do
             if dist[y][x] <= move then
-                table.insert(moves, { y, x })
+                table.insert(moves,
+                    { ['to'] = { y, x }, ['spend'] = dist[y][x] }
+                )
             end
         end
     end
@@ -729,15 +757,11 @@ end
 function Battle:selectTarget()
     local sp = self:getSprite()
     local c = self:getCursor(2)
-    local row, col = self:findSprite(sp:getId())
-    local attrs = self:getTmpAttributes(sp)
-    local move = math.floor(attrs['agility'] / 5)
-               - abs(col - c[1]) - abs(row - c[2])
-    if move == 0 then
-        self:push(self:stackBubble(c))
+    local moves = self:validMoves(sp, c[2], c[1])
+    if #moves <= 1 then
+        self:push(self:stackBubble(c, moves))
         self:openAssistMenu(sp)
     else
-        local moves = self:validMoves(sp, c[2], c[1])
         local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
         self:push({
             ['stage'] = STAGE_MOVE,
@@ -779,6 +803,19 @@ function Battle:kill(sp)
     self.status[sp:getId()]['alive'] = false
 end
 
+function Battle:pathToWalk(sp, path)
+    local move_seq = {}
+    for i = 1, #path do
+        table.insert(move_seq, function(d)
+            return sp:walkToBehaviorGeneric(function()
+                self:moveSprite(sp, path[i][2], path[i][1])
+                d()
+            end, self.origin_x + path[i][2], self.origin_y + path[i][1], true)
+        end)
+    end
+    return move_seq
+end
+
 function Battle:playAction()
 
     -- Skills used
@@ -810,113 +847,92 @@ function Battle:playAction()
         assist_dir = computeDir(c_assist, c_move2)
     end
 
-    -- Register behavior sequence with sprite
-    sp:behaviorSequence({
-        function(d)
-            return sp:walkToBehaviorGeneric(
-                function()
-                    self:moveSprite(sp, c_move1[1], c_move1[2])
-                    d()
-                end,
-                self.origin_x + c_move1[1],
-                self.origin_y + c_move1[2],
-                true
-            )
-        end,
-        function(d)
-            if attack then
-                return sp:skillBehaviorGeneric(
-                    function()
-                        local hurt, dead = self:useAttack(sp,
-                            attack, attack_dir, c_attack
-                        )
-                        sp.ignea = sp.ignea - attack.cost
-                        for i = 1, #hurt do
-                            if hurt[i] ~= sp then
-                                hurt[i]:behaviorSequence({
-                                    function(d)
-                                        hurt[i]:fireAnimation('hurt',
-                                            function()
-                                                hurt[i]:changeBehavior('battle')
-                                            end
-                                        )
-                                        return pass
-                                    end
-                                }, pass)
-                            end
-                        end
-                        for i = 1, #dead do
-                            dead[i]:behaviorSequence({
-                                function(d)
-                                    dead[i]:fireAnimation('death',
-                                        function()
-                                            local did = dead[i]:getId()
-                                            local stat = self.status[did]
-                                            if stat['team'] == ENEMY then
-                                                dead[i]:resetPosition(0, 0)
-                                                dead[i]:changeBehavior('battle')
-                                            end
-                                        end
-                                    )
-                                    return pass
-                                end
-                            }, pass)
-                            self:kill(dead[i])
-                        end
-                        d()
-                    end,
-                    attack,
-                    attack_dir,
-                    c_attack[1] + self.origin_x,
-                    c_attack[2] + self.origin_y
-                )
-            else
-                return sp:waitBehaviorGeneric(d, 'combat', 0.2)
-            end
-        end,
-        function(d)
-            return sp:walkToBehaviorGeneric(
-                function()
-                    self:moveSprite(sp, c_move2[1], c_move2[2])
-                    d()
-                end,
-                self.origin_x + c_move2[1],
-                self.origin_y + c_move2[2],
-                true
-            )
-        end,
-        function(d)
-            if assist then
-                return sp:skillBehaviorGeneric(
-                    function()
-                        sp.ignea = sp.ignea - assist.cost
-                        local t = self:skillRange(assist,
-                            assist_dir, c_assist)
-                        for i = 1, #t do
+    -- Shorthand
+    local ox = self.origin_x
+    local oy = self.origin_y
+    local sp_y, sp_x = self:findSprite(sp:getId())
 
-                            -- Get the buffs this assist will confer, based on
-                            -- the sprite's attributes
-                            local buffs = assist.use(self:getTmpAttributes(sp))
+    -- Make behavior sequence
 
-                            -- Put the buffs on the grid
-                            local g = self.grid[t[i][1]][t[i][2]]
-                            for j = 1, #buffs do
-                                table.insert(g.assists, buffs[j])
-                            end
-                            g.n_assists = g.n_assists + 1
-                        end
-                        d()
-                    end,
-                    assist,
-                    assist_dir,
-                    c_assist[1] + self.origin_x,
-                    c_assist[2] + self.origin_y
-                )
-            else
-                return sp:waitBehaviorGeneric(d, 'combat', 0.2)
-            end
+    -- Move 1
+    local move1_path = sp:djikstra(self.grid,
+        { sp_y, sp_x },
+        { c_move1[2], c_move1[1] }
+    )
+    local seq = self:pathToWalk(sp, move1_path)
+
+    -- Attack
+    table.insert(seq, function(d)
+        if not attack then
+            return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
-    },  function()
+        return sp:skillBehaviorGeneric(function()
+            local hurt, dead = self:useAttack(sp,
+                attack, attack_dir, c_attack
+            )
+            sp.ignea = sp.ignea - attack.cost
+            for i = 1, #hurt do
+                if hurt[i] ~= sp then
+                    hurt[i]:behaviorSequence({ function(d)
+                        hurt[i]:fireAnimation('hurt', function()
+                            hurt[i]:changeBehavior('battle')
+                        end)
+                        return pass
+                    end }, pass)
+                end
+            end
+            for i = 1, #dead do
+                dead[i]:behaviorSequence({ function(d)
+                    dead[i]:fireAnimation('death', function()
+                        local did = dead[i]:getId()
+                        local stat = self.status[did]
+                        if stat['team'] == ENEMY then
+                            dead[i]:resetPosition(0, 0)
+                            dead[i]:changeBehavior('battle')
+                        end
+                    end)
+                    return pass
+                end }, pass)
+                self:kill(dead[i])
+            end
+            d()
+        end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy)
+    end)
+
+    -- Move 2
+    local move2_path = sp:djikstra(self.grid,
+        { c_move1[2], c_move1[1] },
+        { c_move2[2], c_move2[1] }
+    )
+    seq = concat(seq, self:pathToWalk(sp, move2_path))
+
+    -- Assist
+    table.insert(seq, function(d)
+        if not assist then
+            return sp:waitBehaviorGeneric(d, 'combat', 0.2)
+        end
+        return sp:skillBehaviorGeneric(function()
+            sp.ignea = sp.ignea - assist.cost
+            local t = self:skillRange(assist, assist_dir, c_assist)
+            for i = 1, #t do
+
+                -- Get the buffs this assist will confer, based on
+                -- the sprite's attributes
+                local buffs = assist.use(self:getTmpAttributes(sp))
+
+                -- Put the buffs on the grid
+                local g = self.grid[t[i][1]][t[i][2]]
+                for j = 1, #buffs do
+                    table.insert(g.assists, buffs[j])
+                end
+                g.n_assists = g.n_assists + 1
+            end
+            d()
+        end, assist, assist_dir, c_assist[1] + ox, c_assist[2] + oy)
+    end)
+
+    -- Register behavior sequence with sprite
+    sp:behaviorSequence(seq, function()
             self.action_in_progress = nil
             sp:changeBehavior('battle')
         end
@@ -933,9 +949,7 @@ function Battle:playAction()
     self:push({
         ['stage'] = STAGE_WATCH,
         ['sp'] = sp,
-        ['views'] = {
-            { BEFORE, TEMP, function() self:renderAssistSpaces() end }
-        }
+        ['views'] = {}
     })
 end
 
@@ -1057,22 +1071,21 @@ function Battle:update(keys, dt)
         else
             -- Move a sprite to a new location
             local x, y = self:newCursorPosition(up, down, left, right)
-            local moves = self:getMoves()
-            for i = 1, #moves do
-                if moves[i][1] == y and moves[i][2] == x then
-                    self:moveCursor(x, y)
-                    break
-                end
-            end
-        end
+            self:moveCursor(x, y)
 
-        c_cur = self:getCursor()
-        space = self.grid[c_cur[2]][c_cur[1]].occupied
-        if f and not (space and space ~= sp) then
-            if not c then
-                self:openAttackMenu(sp)
-            else
-                self:openAssistMenu(sp)
+            local space = self.grid[y][x].occupied
+            if f and not (space and space ~= sp) then
+                local moves = self:getMoves()
+                for i = 1, #moves do
+                    if moves[i]['to'][1] == y and moves[i]['to'][2] == x then
+                        if not c then
+                            self:openAttackMenu(sp)
+                        else
+                            self:openAssistMenu(sp)
+                        end
+                        break
+                    end
+                end
             end
         end
 
@@ -1103,13 +1116,13 @@ function Battle:update(keys, dt)
                     self:moveCursor(c_cur[1] + x_move, c_cur[2] + y_move)
                 end
             end
-        end
 
-        if f then
-            if sk.type ~= ASSIST then
-                self:selectTarget()
-            else
-                self:endAction(true)
+            if f then
+                if sk.type ~= ASSIST then
+                    self:selectTarget()
+                else
+                    self:endAction(true)
+                end
             end
         end
 
@@ -1168,21 +1181,6 @@ function Battle:update(keys, dt)
         end
     end
 
-    -- Update battle camera position
-    local focus = self.action_in_progress
-    local c = self:getCursor()
-    if focus then
-        local x, y = focus:getPosition()
-        local w, h = focus:getDimensions()
-        self.battle_cam_x = x + w/2 - VIRTUAL_WIDTH / 2
-        self.battle_cam_y = y + h/2 - VIRTUAL_HEIGHT / 2
-    elseif c then
-        self.battle_cam_x = (c[1] + self.origin_x)
-                          * TILE_WIDTH - VIRTUAL_WIDTH / 2 - TILE_WIDTH / 2
-        self.battle_cam_y = (c[2] + self.origin_y)
-                          * TILE_HEIGHT - VIRTUAL_HEIGHT / 2 - TILE_HEIGHT / 2
-    end
-
     -- Advance render timers
     self.pulse_timer = self.pulse_timer + dt
     while self.pulse_timer > PULSE do
@@ -1197,6 +1195,22 @@ function Battle:update(keys, dt)
     elseif self.shading < 0.2 then
         self.shading = 0.2
         self.shade_dir = 1
+    end
+end
+
+function Battle:updateBattleCam()
+    local focus = self.action_in_progress
+    local c = self:getCursor()
+    if focus then
+        local x, y = focus:getPosition()
+        local w, h = focus:getDimensions()
+        self.battle_cam_x = x + math.ceil(w / 2) - VIRTUAL_WIDTH / 2
+        self.battle_cam_y = y + math.ceil(h / 2) - VIRTUAL_HEIGHT / 2
+    elseif c then
+        self.battle_cam_x = (c[1] + self.origin_x)
+                          * TILE_WIDTH - VIRTUAL_WIDTH / 2 - TILE_WIDTH / 2
+        self.battle_cam_y = (c[2] + self.origin_y)
+                          * TILE_HEIGHT - VIRTUAL_HEIGHT / 2 - TILE_HEIGHT / 2
     end
 end
 
@@ -1330,7 +1344,7 @@ end
 
 function Battle:renderMovement(moves, full)
     for i = 1, #moves do
-        self:shadeSquare(moves[i][1], moves[i][2], { 0, 0, 1 }, full)
+        self:shadeSquare(moves[i]['to'][1], moves[i]['to'][2], {0, 0, 1}, full)
     end
 end
 
@@ -1607,6 +1621,8 @@ function Battle:renderGrid()
         end
     end
 
+    self:renderAssistSpaces()
+
     -- Render views over grid if we aren't watching a scene
     if self:getStage() ~= STAGE_WATCH then
 
@@ -1618,9 +1634,6 @@ function Battle:renderGrid()
 
         -- Render active views above the cursor, in stack order
         self:renderViews(AFTER)
-    else
-        local views = self.stack[#self.stack]['views']
-        for i = 1, #views do views[i][3]() end
     end
 end
 

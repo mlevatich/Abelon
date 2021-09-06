@@ -1,8 +1,8 @@
 // Sprite attributes
 
 Name: Abelon
-Width: 32
-Height: 32
+Width: 31
+Height: 31
 Depth: 5
 Sheet: 0
 Interactive: yes

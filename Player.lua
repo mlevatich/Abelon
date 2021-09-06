@@ -18,7 +18,7 @@ function Player:init(sp)
     -- Player is a superclass of Sprite
     self.sp = sp
 
-    self:addBehaviors({['free'] = function() pass() end})
+    self:addBehaviors({ ['free'] = function(dt) self:updatePosition(dt) end })
 
     -- Abelon has different modes to account for the player's keyboard input
     self.modes = {
@@ -387,6 +387,7 @@ function Player:toMenuItem() return self.sp:toMenuItem() end
 function Player:resetPosition(a, b) return self.sp:resetPosition(a, b) end
 function Player:move(a, b) return self.sp:stop(a, b) end
 function Player:stop() return self.sp:stop() end
+function Player:updatePosition(a, b, c) return self.sp:updatePosition(a, b, c) end
 function Player:changeImpression(a) return self.sp:changeImpression(a) end
 function Player:changeAwareness(a) return self.sp:changeAwareness(a) end
 function Player:changeAnimation(a) return self.sp:changeAnimation(a) end
