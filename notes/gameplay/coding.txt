@@ -2,11 +2,20 @@
 
 #50:
 
-enemy skill targeting info
+When a movement action is played in battle, or when a walkTo behavior is
+created out of battle, get sprite starting location, nearest "starting tile"
+(what tile is the sprite's center on), final location, and the nearest "goal
+tile". Make sure the starting tile and goal tile are unoccupied, and create a
+grid of occupied and unoccupied tiles of at least as wide and tall as the
+viewport (so that if there is an on-screen path, the sprite will find it),
+unless a grid is provided (in the case of a battle, in which case the battle
+grid is provided). Run Djikstra's algorithm using the grid to find a path from
+the starting tile to the goal tile. Chain together a set of walkTo behaviors: a
+walk from the starting location to the starting tile, a set of single-tile
+walks along the shortest path to the goal tile, and a walk from the goal tile
+to the final location.
 
-movement range of allies and enemies takes obstacles into account (run
-all-shortest-paths algorithm on the grid once, and store the result in a new
-pathing grid)
+add enemy skill targeting info
 
 Enemy AI: use targeting info to figure out which square to target. Move as close
 as possible to that square (but no farther than necessary to use the attack)
@@ -15,7 +24,9 @@ by consulting the shortest paths grid. If in range to use attack, use it.
 If there are multiple squares that get an enemy within range to attack, pick
 the square that can be reached by the fewest other enemies, to leave them room.
 
-Attacks should be planned all at once before any enemy moves.
+Once that's done, decide which attack to use on the next turn, based on
+distance to the enemy, and attacks recently used (prioritize underutilized
+attacks, or attacks that will kill an ally)
 
 Make sure enemies cannot benefit from assists.
 Implement stun
@@ -24,15 +35,14 @@ Movement triggers: enemies stay still until a trigger (like ally proximity, or
 reinforcements arriving) activates them. Only then will they start moving and
 acting.
 
-#54:
-
-Changing the difficulty level changes enemy attributes. Tune until it makes
-sense. +4/-4 seems like a good place to start.
+Tune the first battle on all difficulties!
 
 #55:
 
 exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
 healed, 0.5 of the value for assisters supporting any of these
+
+level up table: exp required for a level up increases with level
 
 level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
 

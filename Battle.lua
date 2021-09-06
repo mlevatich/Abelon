@@ -221,6 +221,14 @@ function Battle:getSprite()
     return top
 end
 
+function Battle:getMoves()
+    for i = 1, #self.stack do
+        if self.stack[#self.stack - i + 1]['moves'] then
+            return self.stack[#self.stack - i + 1]['moves']
+        end
+    end
+end
+
 function Battle:findSprite(sp_id)
     local loc = self.status[sp_id]['location']
     return loc[2], loc[1]
@@ -499,8 +507,9 @@ function Battle:openAttackMenu(sp)
     for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
     for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
     local opts = { attributes, weapon, spell, wait }
+    local moves = self:getMoves()
     self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
-        { BEFORE, TEMP, function() self:renderMovementFrom() end }
+        { BEFORE, TEMP, function() self:renderMovement(moves, 1) end }
     })
 end
 
@@ -520,8 +529,9 @@ function Battle:openAssistMenu(sp)
     for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
     local opts = { attributes, assist, wait }
     local c = self:getCursor(3)
+    local moves = self:getMoves()
     self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
-        { BEFORE, TEMP, function() self:renderMovementFrom(c[1], c[2]) end }
+        { BEFORE, TEMP, function() self:renderMovement(moves, 1) end }
     })
 end
 
@@ -677,12 +687,14 @@ end
 function Battle:selectAlly(sp)
     local c = self:getCursor()
     local new_c = { c[1], c[2], c[3], { 0.4, 0.4, 1, 1 } }
+    local moves = self:validMoves(sp, c[2], c[1])
     self:push({
         ['stage'] = STAGE_MOVE,
         ['sp'] = sp,
         ['cursor'] = new_c,
+        ['moves'] = moves,
         ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovementFrom() end },
+            { BEFORE, TEMP, function() self:renderMovement(moves, 1) end },
             { AFTER, PERSIST, function()
                 local y, x = self:findSprite(sp:getId())
                 self:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
@@ -690,6 +702,80 @@ function Battle:selectAlly(sp)
         }
     })
     self:checkTriggers(SELECT)
+end
+
+function Battle:visit(sp, i, j, move, dist, un)
+
+    -- Mark current tile visited and visit next if applicable
+    un[i][j] = false
+
+    -- Examine all neighboring tiles
+    local neighbors = {{i - 1, j}, {i + 1, j}, {i, j - 1}, {i, j + 1}}
+    local k = 1
+    local g = self.grid
+    local next = {}
+    while k <= #neighbors do
+
+        -- Filter neighbors to on grid and unoccupied
+        local n = neighbors[k]
+        if not un[n[1]] or not un[n[1]][n[2]] or not g[n[1]][n[2]]
+        or (g[n[1]][n[2]].occupied and g[n[1]][n[2]].occupied ~= sp)
+        then
+            table.remove(neighbors, k)
+        else
+            -- Compute tentative distance
+            if dist[n[1]][n[2]] > dist[i][j] + 1 then
+                dist[n[1]][n[2]] = dist[i][j] + 1
+            end
+
+            if dist[n[1]][n[2]] <= move then
+                table.insert(next, n)
+            end
+
+            -- Move on to next neighbor
+            k = k + 1
+        end
+    end
+
+    -- Visit candidates
+    for k = 1, #next do
+        self:visit(sp, next[k][1], next[k][2], move, dist, un)
+    end
+end
+
+function Battle:validMoves(sp, i, j)
+
+    -- Get sprite's remaining movement points
+    local row, col = self:findSprite(sp:getId())
+    local attrs = self:getTmpAttributes(sp)
+    local move = math.floor(attrs['agility'] / 5) - abs(row - i) - abs(col - j)
+
+    -- Initialization
+    local dist = {}
+    local un = {}
+    for y = math.max(i - move, 1), math.min(i + move, #self.grid) do
+        dist[y] = {}
+        un[y] = {}
+        for x = math.max(j - move, 1), math.min(j + move, #self.grid[y]) do
+            dist[y][x] = math.huge
+            un[y][x] = true
+        end
+    end
+    dist[i][j] = 0
+
+    -- Run djikstra's algorithm
+    self:visit(sp, i, j, move, dist, un)
+
+    -- Reachable nodes have distance < move
+    local moves = {}
+    for y = math.max(i - move, 1), math.min(i + move, #self.grid) do
+        for x = math.max(j - move, 1), math.min(j + move, #self.grid[y]) do
+            if dist[y][x] <= move then
+                table.insert(moves, { y, x })
+            end
+        end
+    end
+    return moves
 end
 
 function Battle:selectTarget()
@@ -703,14 +789,16 @@ function Battle:selectTarget()
         self:push(self:stackBubble(c))
         self:openAssistMenu(sp)
     else
+        local moves = self:validMoves(sp, c[2], c[1])
         local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
         self:push({
             ['stage'] = STAGE_MOVE,
             ['sp'] = sp,
             ['cursor'] = nc,
+            ['moves'] = moves,
             ['views'] = {
                 { BEFORE, TEMP, function()
-                    self:renderMovementFrom(c[1], c[2])
+                    self:renderMovement(moves, 1)
                 end },
                 { AFTER, PERSIST, function()
                     self:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
@@ -1020,17 +1108,13 @@ function Battle:update(keys, dt)
             self:pop()
         else
             -- Move a sprite to a new location
-            local y1, x1 = self:findSprite(sp:getId())
-            local attrs = self:getTmpAttributes(sp)
-            local movement = math.floor(attrs['agility'] / 5)
-            if c then
-                movement = movement - abs(c[1] - x1) - abs(c[2] - y1)
-                x1 = c[1]
-                y1 = c[2]
-            end
-            local x2, y2 = self:newCursorPosition(up, down, left, right)
-            if abs(x2 - x1) + abs(y2 - y1) <= movement then
-                self:moveCursor(x2, y2)
+            local x, y = self:newCursorPosition(up, down, left, right)
+            local moves = self:getMoves()
+            for i = 1, #moves do
+                if moves[i][1] == y and moves[i][2] == x then
+                    self:moveCursor(x, y)
+                    break
+                end
             end
         end
 
@@ -1296,23 +1380,9 @@ function Battle:renderSkillRange(clr)
     end
 end
 
-function Battle:renderMovement(x, y, sp, full)
-    local row, col = self:findSprite(sp:getId())
-    local attrs = self:getTmpAttributes(sp)
-    local move = math.floor(attrs['agility'] / 5) - abs(col - x) - abs(row - y)
-    local clr = { 0, 0, 1 }
-    self:shadeSquare(y, x, clr, full)
-    for i = 1, move do
-        self:shadeSquare(y + i, x, clr, full)
-        self:shadeSquare(y - i, x, clr, full)
-        self:shadeSquare(y, x + i, clr, full)
-        self:shadeSquare(y, x - i, clr, full)
-        for j = 1, move - i do
-            self:shadeSquare(y + i, x + j, clr, full)
-            self:shadeSquare(y - i, x + j, clr, full)
-            self:shadeSquare(y + i, x - j, clr, full)
-            self:shadeSquare(y - i, x - j, clr, full)
-        end
+function Battle:renderMovement(moves, full)
+    for i = 1, #moves do
+        self:shadeSquare(moves[i][1], moves[i][2], { 0, 0, 1 }, full)
     end
 end
 
@@ -1320,18 +1390,8 @@ function Battle:renderMovementHover()
     local c = self:getCursor()
     local sp = self.grid[c[2]][c[1]].occupied
     if sp and not self.status[sp:getId()]['acted'] then
-        local y, x = self:findSprite(sp:getId())
-        self:renderMovement(x, y, sp, 0.5)
-    end
-end
-
-function Battle:renderMovementFrom(x, y)
-    local sp = self:getSprite()
-    if x and y then
-        self:renderMovement(x, y, sp, 1)
-    else
-        local sp_y, sp_x = self:findSprite(sp:getId())
-        self:renderMovement(sp_x, sp_y, sp, 1)
+        local i, j = self:findSprite(sp:getId())
+        self:renderMovement(self:validMoves(sp, i, j), 0.5)
     end
 end
 
