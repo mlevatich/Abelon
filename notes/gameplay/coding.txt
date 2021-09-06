@@ -1,19 +1,25 @@
 (please commit each paragraph separately for your own sanity)
 
-#50:
+#58:
 
 When a movement action is played in battle, or when a walkTo behavior is
 created out of battle, get sprite starting location, nearest "starting tile"
-(what tile is the sprite's center on), final location, and the nearest "goal
-tile". Make sure the starting tile and goal tile are unoccupied, and create a
-grid of occupied and unoccupied tiles of at least as wide and tall as the
-viewport (so that if there is an on-screen path, the sprite will find it),
-unless a grid is provided (in the case of a battle, in which case the battle
-grid is provided). Run Djikstra's algorithm using the grid to find a path from
-the starting tile to the goal tile. Chain together a set of walkTo behaviors: a
-walk from the starting location to the starting tile, a set of single-tile
-walks along the shortest path to the goal tile, and a walk from the goal tile
-to the final location.
+(nearest unoccupied tile to the sprite's center), final location, and the
+nearest "goal tile". Make sure the starting tile and goal tile are unoccupied,
+and create a grid of occupied and unoccupied tiles of at least as wide and tall
+as the viewport (so that if there is an on-screen path, the sprite will find
+it), unless a grid is provided (in the case of a battle, in which case the
+battle grid is provided). Run Djikstra's algorithm using the grid to find a
+path from the starting tile to the goal tile. Chain together a set of walkTo
+behaviors: a walk from the starting location to the starting tile, a set of
+single-tile walks along the shortest path to the goal tile which prioritizes
+straight-line movements, and a walk from the goal tile to the final location.
+
+Make sure the walkTo behavior is robust enough that no matter where Kath and
+Abelon end up after the battle 1-1 victory, Kath's movements to Abelon and to
+the blood stain will still work.
+
+#50:
 
 add enemy skill targeting info
 
@@ -92,9 +98,9 @@ exists unless new game)
 
 #28:
 
-Autosave on game quit by ANY means (no rollbacks!), Autosave chapter start of
-current chapter and battle start of current battle. Implement restart chapter,
-restart battle, and battle game over options.
+Attempt to autosave on game quit. Autosave after every scene, every battle
+action, and every map transition. Implement restart chapter, restart battle,
+and battle game over.
 
 #51:
 
@@ -150,14 +156,14 @@ NEW ISSUE: combat QoL
 Try to minimize the amount of text. Replace text with pictures as much as
 possible?
 
-The effect of an assist on the squares that it will activate should be rendered
-in the top right. See below
-
 The effect of an attack on whatever targets will be hit should be rendered in
 the top right. Instead of the normal hover overlay, render rows starting from
 the top right of the screen, where each row is two hover overlays: the before
 -> after of the sprite's status and assists. Max this out by line number so
 there's no overflow.
+
+The effect of an assist on the squares that it will activate should be rendered
+in the top right. See above.
 
 When sprites take damage, a damage splash should be rendered. When they heal,
 a heal splash should be rendered. While a sprite's action is playing out, what
@@ -187,9 +193,10 @@ Expand lighting engine
 
 Add point lights to the forest to test
 
-#48: Tutorial:
+#48:
 
-Game guide shows up immediately on loading in, accessible from inventory
+Game guide shows up immediately on starting new game, and accessible from
+inventory
 
 Combat guide accessible from battle begin menu or options, both of these
 replace "formulas".
@@ -215,7 +222,7 @@ Better forest theme - more tense investigation, less funeral march
 Basic battle theme - for the three non-boss encounters
 Enemy approaches theme - for rising action before a fight! This should play for
 most of the forest.
-Defeat theme - Short theme that plays during the battle lose scene.
+Defeat theme - Short theme that plays during the battle loss scene.
 implement Elaine scenario
 implement Ghoul scenario (objective is rout or escape)
 implement Deer scenario

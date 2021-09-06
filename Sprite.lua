@@ -633,6 +633,114 @@ function Sprite:pathTo(x, y, first)
     return path
 end
 
+function Sprite:djikstra(graph, src, dst, depth)
+
+    -- If no depth was provided, depth is infinite
+    if not depth then depth = math.huge end
+
+    -- If no graph was provided, build one from the sprite's current map
+    if not graph then
+        -- TODO
+    end
+
+    -- Initialization
+    local dist = {} -- Distance to node (i, j)
+    local prev = {} -- Previous node on path to (i, j)
+    local un   = {} -- Is (i, j) not yet visited?
+    for i = 1, #graph do
+        dist[i] = {}
+        prev[i] = {}
+        un[i]   = {}
+        for j = 1, #graph[i] do
+            dist[i][j] = math.huge
+            prev[i][j] = nil
+            un[i][j]   = true
+        end
+    end
+    dist[src[1]][src[2]] = 0 -- Distance to source is 0
+
+    -- Djikstra loop
+    while true do
+
+        -- Get min dist node among unvisited nodes which are on the grid, if
+        -- such a node exists
+        local n = nil
+        local min_dist = math.huge
+        for i = 1, #graph do
+            for j = 1, #graph[i] do
+                if un[i][j] and graph[i][j]
+                and not (graph[i][j].occupied and graph[i][j].occupied ~= self)
+                then
+                    if dist[i][j] < min_dist then
+                        n = { i, j }
+                        min_dist = dist[i][j]
+                    end
+                end
+            end
+        end
+
+        -- If there is a node to visit, visit it, otherwise we're done
+        if n then
+
+            -- Mark min_dist_node as visited
+            un[n[1]][n[2]] = false
+
+            -- If dst was specified, and min_dist_node is dst, we're done
+            if dst and dst[1] == n[1] and dst[2] == n[2] then break end
+
+            -- Get tentative distance (every edge has weight 1)
+            local d = dist[n[1]][n[2]] + 1
+
+            -- If tentative distance is greater than depth, skip
+            if d <= depth then
+
+                -- Get all neighbors of min_dist_node
+                local neighbors = {
+                    { n[1] - 1, n[2] }, { n[1] + 1, n[2] },
+                    { n[1], n[2] - 1 }, { n[1], n[2] + 1 }
+                }
+                local k = 1
+                while k <= #neighbors do
+
+                    -- Filter neighbors to on grid and unoccupied
+                    local v = neighbors[k]
+                    if not un[v[1]]
+                    or not un[v[1]][v[2]]
+                    or not graph[v[1]][v[2]]
+                    or (graph[v[1]][v[2]].occupied and
+                        graph[v[1]][v[2]].occupied ~= self)
+                    then
+                        table.remove(neighbors, k)
+                    else
+
+                        -- If tentative distance less than actual, replace
+                        -- distance and make n the prev of this neighbor
+                        -- TODO: prefer straight line paths if ==
+                        if d < dist[v[1]][v[2]] then
+                            dist[v[1]][v[2]] = d
+                            prev[v[1]][v[2]] = n
+                        end
+
+                        -- Move on to next neighbor
+                        k = k + 1
+                    end
+                end
+            end
+        else
+            break
+        end
+    end
+
+    -- If a dst node was provided and there is a path to it, return path
+    -- Otherwise just return distances
+    if dst and prev[dst[1]][dst[2]] then
+
+        -- Compute path
+        -- TODO
+    end
+    return dist
+end
+
 -- Add new behavior functions or replace old ones for this sprite
 function Sprite:addBehaviors(new_behaviors)
     for name, fxn in pairs(new_behaviors) do

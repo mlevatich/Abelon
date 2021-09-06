@@ -704,45 +704,6 @@ function Battle:selectAlly(sp)
     self:checkTriggers(SELECT)
 end
 
-function Battle:visit(sp, i, j, move, dist, un)
-
-    -- Mark current tile visited and visit next if applicable
-    un[i][j] = false
-
-    -- Examine all neighboring tiles
-    local neighbors = {{i - 1, j}, {i + 1, j}, {i, j - 1}, {i, j + 1}}
-    local k = 1
-    local g = self.grid
-    local next = {}
-    while k <= #neighbors do
-
-        -- Filter neighbors to on grid and unoccupied
-        local n = neighbors[k]
-        if not un[n[1]] or not un[n[1]][n[2]] or not g[n[1]][n[2]]
-        or (g[n[1]][n[2]].occupied and g[n[1]][n[2]].occupied ~= sp)
-        then
-            table.remove(neighbors, k)
-        else
-            -- Compute tentative distance
-            if dist[n[1]][n[2]] > dist[i][j] + 1 then
-                dist[n[1]][n[2]] = dist[i][j] + 1
-            end
-
-            if dist[n[1]][n[2]] <= move then
-                table.insert(next, n)
-            end
-
-            -- Move on to next neighbor
-            k = k + 1
-        end
-    end
-
-    -- Visit candidates
-    for k = 1, #next do
-        self:visit(sp, next[k][1], next[k][2], move, dist, un)
-    end
-end
-
 function Battle:validMoves(sp, i, j)
 
     -- Get sprite's remaining movement points
@@ -750,21 +711,8 @@ function Battle:validMoves(sp, i, j)
     local attrs = self:getTmpAttributes(sp)
     local move = math.floor(attrs['agility'] / 5) - abs(row - i) - abs(col - j)
 
-    -- Initialization
-    local dist = {}
-    local un = {}
-    for y = math.max(i - move, 1), math.min(i + move, #self.grid) do
-        dist[y] = {}
-        un[y] = {}
-        for x = math.max(j - move, 1), math.min(j + move, #self.grid[y]) do
-            dist[y][x] = math.huge
-            un[y][x] = true
-        end
-    end
-    dist[i][j] = 0
-
-    -- Run djikstra's algorithm
-    self:visit(sp, i, j, move, dist, un)
+    -- Run djikstra's algorithm on grid
+    local dist = sp:djikstra(self.grid, { i, j }, nil, move)
 
     -- Reachable nodes have distance < move
     local moves = {}
@@ -1478,7 +1426,8 @@ function Battle:mkOuterHoverBox(w)
         for i = 1, #g.assists do
             local str = g.assists[i]:toStr()
             table.insert(eles, mkEle('text', str,
-                w - #str * CHAR_WIDTH - HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * i
+                w - #str * CHAR_WIDTH - HALF_MARGIN,
+                HALF_MARGIN + LINE_HEIGHT * i
             ))
         end
         return eles, LINE_HEIGHT * (#eles) + BOX_MARGIN
