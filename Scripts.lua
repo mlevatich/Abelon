@@ -68,35 +68,42 @@ function focus(p1, speed)
     end
 end
 
-function walk(p1, tx, ty, label, first)
+function _walk(scene, pathing, sp, tx, ty, label)
+    scene.active_events[label] = true
+    local move_seq = {}
+    if pathing then
+        local pth = sp:djikstra(nil, nil, { ty, tx }, nil)
+        for i = 1, #pth do
+            table.insert(move_seq, function(d)
+                return sp:walkToBehaviorGeneric(d, pth[i][2], pth[i][1], false)
+            end)
+        end
+    else
+        table.insert(move_seq, function(d)
+            return sp:walkToBehaviorGeneric(d, tx, ty, false)
+        end)
+    end
+    sp:behaviorSequence(move_seq, function() scene:release(label) end)
+end
+
+function walk(pathing, p1, tx, ty, label)
     return function(scene)
-        scene.active_events[label] = true
-        local sp = scene.participants[p1]
-        sp:behaviorSequence({
-            function(d)
-                return sp:walkToBehaviorGeneric(d, tx, ty, false, first)
-            end
-        }, function() scene:release(label) end)
+        _walk(scene, pathing, scene.participants[p1], tx, ty, label)
     end
 end
 
-function walkTo(p1, p2, label, first)
+function walkTo(pathing, p1, p2, side, label)
     return function(scene)
         local sp1 = scene.participants[p1]
         local sp2 = scene.participants[p2]
         local map = scene.chapter:getMap()
         local x, y = sp2:getPosition()
-        local sp2_tile = map:tileAtExact(x, y)
-        local offset = ite(sp1.x > sp2.x, 1.2, -1.2)
-        local tx = sp2_tile['x'] + offset
-        local ty = sp2_tile['y']
-
-        scene.active_events[label] = true
-        sp1:behaviorSequence({
-            function(d)
-                return sp1:walkToBehaviorGeneric(d, tx, ty, false, first)
-            end
-        }, function() scene:release(label) end)
+        local w, h = sp2:getDimensions()
+        local sp2_tile = ite(pathing,
+            map:tileAt(x + w/2, y + h/2), map:tileAtExact(x, y)
+        )
+        if not side then side = ite(sp1.x < sp2.x, LEFT, RIGHT) end
+        _walk(scene, pathing, sp1, sp2_tile['x'] + side, sp2_tile['y'], label)
     end
 end
 
@@ -292,11 +299,15 @@ scripts = {
         ['events'] = {
             wait(0.5),
             face(1, 2),
-            focus(2, 100),
+            focus(1, 100),
             say(2, 1, true,
                 "*huff* *huff* Ach, they aren't so tough when it's just a \z
                  couple of the bastards."
             ),
+            walk(true, 2, 42, 70, 'walk'),
+            waitForEvent('walk'),
+            face(1, 2),
+            walkTo(true, 1, 2, LEFT, 'walk'),
             choice({
                 {
                     ['response'] = "Nice bladework",
@@ -330,31 +341,30 @@ scripts = {
                 say(2, 1, false,
                     "And not a scratch on you! Your skills never fail to \z
                      impress, truly."
-                ),
-                wait(0.5)
+                )
             },
             {
                 say(2, 3, false,
                     "Let me see your wounds."
-                ),
-                walkTo(2, 1, 'walk'),
-                waitForEvent('walk'),
-                face(1, 2),
-                wait(1)
+                )
             }),
+            waitForEvent('walk'),
+            face(1, 2),
+            wait(1),
+            focus(2, 100),
             say(2, 1, false,
                 "Now then, thankfully you didn't wander off too far from the \z
                  fighting. The north gate is just ahead to the east, first \z
                  right turn on this path."
             ),
-            walk(2, 41, 69, 'walk', RIGHT),
             say(2, 3, false,
                 "We'll have to keep an eye out for more wolves - I'll follow \z
                  behind you and watch our back."
             ),
+            walk(true, 2, 43, 68, 'walk'),
             waitForEvent('walk'),
-            wait(1),
             lookDir(2, RIGHT),
+            wait(0.5),
             say(2, 3, false,
                 "But look here. This trail of blood came dribbling from that \z
                  wolf's mouth... he must have gotten to something before he \z
@@ -489,9 +499,9 @@ scripts = {
                 say(2, 3, false,
                     "Let me tell you a little bit about the history of the Kingdom."
                 ),
-                walk(2, 50, 63, 'walk1', RIGHT),
-                wait(1.7),
-                walk(1, 48, 63, 'walk2', RIGHT),
+                walk(true, 2, 50, 63, 'walk1'),
+                wait(2),
+                walk(true, 1, 48, 63, 'walk2'),
                 say(2, 3, true,
                     "Do you know why the One Kingdom of Ebonach and Mistram is \z
                      called Lefally?"
@@ -672,7 +682,7 @@ scripts = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
             face(1, 2),
-            walkTo(1, 2, 'walk'),
+            walkTo(false, 1, 2, nil, 'walk'),
             say(2, 1, true,
                 "Oh. I see you picked up that medallion from the ground. Is that \z
                  yours?"
@@ -731,7 +741,7 @@ scripts = {
                 "Abelon! At last!"
             ),
             lookAt(1, 2),
-            walk(2, 29, 73, 'walk'),
+            walk(true, 2, 29, 73, 'walk'),
             focus(1, 50),
             say(2, 3, false,
                 "By Ignus, what are you doing out here? The knights are pinned at \z
@@ -747,11 +757,11 @@ scripts = {
             say(2, 2, false,
                 "Wait, your arm. You're wounded. Let me see that."
             ),
-            walkTo(2, 1, 'walk'),
+            walkTo(false, 2, 1, RIGHT, 'walk'),
             waitForEvent('walk'),
             lookAt(2, 1),
             wait(1),
-            walk(2, 28, 73, 'walk'),
+            walk(true, 2, 28, 73, 'walk'),
             waitForEvent('walk'),
             lookAt(2, 1),
             teleport(3, 41, 69),
@@ -849,7 +859,7 @@ scripts = {
                     ['result'] = {}
                 }
             }),
-            walk(2, 33, 73, 'walk'),
+            walk(true, 2, 33, 73, 'walk'),
             waitForEvent('walk'),
             wait(0.5),
             say(2, 2, true,
@@ -860,7 +870,7 @@ scripts = {
             focus(2, 100),
             pan(100, -50, 100),
             wait(1),
-            walk(1, 32, 72, 'walk'),
+            walk(true, 1, 32, 72, 'walk'),
             waitForEvent('camera'),
             waitForEvent('walk'),
             choice({

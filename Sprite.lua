@@ -6,6 +6,7 @@ require 'Menu'
 require 'Skill'
 require 'Scripts'
 require 'Triggers'
+require 'Battle'
 
 Sprite = Class{}
 
@@ -604,48 +605,56 @@ function Sprite:atEase()
     self:changeBehavior(self.resting_behavior)
 end
 
-function Sprite:rePath(path)
-    local tmp = path[1]
-    path[1] = path[2]
-    path[2] = tmp
-    return path
-end
-
-function Sprite:pathTo(x, y, first)
-    local path = {}
-    if first and first == LEFT or first == RIGHT then
-        path = {RIGHT, DOWN}
-        if self.x > x then
-            path[1] = LEFT
-        end
-        if self.y > y then
-            path[2] = UP
-        end
-    else
-        path = {DOWN, RIGHT}
-        if self.x > x then
-            path[2] = LEFT
-        end
-        if self.y > y then
-            path[1] = UP
-        end
-    end
-    return path
-end
-
 function Sprite:djikstra(graph, src, dst, depth)
+
+    local map = self.chapter:getMap()
+
+    -- If no source was provided, source is the sprite's current tile
+    if not src then
+        src_tile = map:tileAt(self.x + self.w / 2, self.y + self.h / 2)
+        src = { src_tile['y'], src_tile['x'] }
+    end
+
+    -- If no depth was provided, depth is infinite
+    if not depth then depth = math.huge end
 
     -- If source and dest are the same, path is empty
     if dst and src[1] == dst[1] and src[2] == dst[2] then
         return {}
     end
 
-    -- If no depth was provided, depth is infinite
-    if not depth then depth = math.huge end
-
     -- If no graph was provided, build one from the sprite's current map
     if not graph then
-        -- TODO
+
+        -- Build graph from scratch (expensive)
+        graph = {}
+        for i = 1, #map.tiles do
+            graph[i] = {}
+            for j = 1, #map.tiles[i] do
+                if map.collide_tiles[map.tiles[i][j]] then
+                    graph[i][j] = false
+                else
+                    graph[i][j] = GridSpace()
+                end
+            end
+        end
+
+        -- Occupy graph with blocking sprites on map
+        local sps = map:getSprites()
+        for i = 1, #sps do
+            if sps[i]:isBlocking() then
+                local x, y = sps[i]:getPosition()
+                local w, h = sps[i]:getDimensions()
+                local corners = {
+                    map:tileAt(x, y),         map:tileAt(x + w - 1, y),
+                    map:tileAt(x, y + h - 1), map:tileAt(x + w - 1, y + h - 1)
+                }
+                for j = 1, #corners do
+                    graph[corners[j]['y']][corners[j]['x']].occupied = sps[i]
+                end
+            end
+        end
+        graph[src[1]][src[2]].occupied = self
     end
 
     -- Initialization
@@ -771,6 +780,7 @@ function Sprite:_behaviorSequence(i, behaviors, doneAction)
 end
 
 function Sprite:behaviorSequence(mkBehaviors, doneAction)
+    if not next(mkBehaviors) then return doneAction() end
     self:addBehaviors({
         ['seq'] = self:_behaviorSequence(1, mkBehaviors, doneAction)
     })
@@ -814,88 +824,99 @@ function Sprite:waitBehaviorGeneric(doneAction, waitAnimation, s)
     end
 end
 
-function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run, first)
+function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run)
+
+    -- How fast are we walking?
     local speed = ite(run, WANDER_SPEED * 2, WANDER_SPEED)
+
+    -- Where are we going?
     local map = self.chapter:getMap()
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
-    local path = self:pathTo(x_dst, y_dst, first)
+
+    -- Path ordering info
+    local order = {
+        ite(self.y > y_dst, UP, DOWN), ite(self.x > x_dst, LEFT, RIGHT)
+    }
     local prev_x, prev_y = -1, -1
-    local since_repath = 0
+    local since_reorder = 0
+    local reorder = function(i)
+        local tmp = order[1]
+        order[1] = order[2]
+        order[2] = tmp
+        since_reorder = i
+    end
+
+    -- Behavior function
     return function(dt)
 
-        if since_repath ~= 0 then
-            since_repath = since_repath - dt
-        end
-        if since_repath < 0 then
-            since_repath = 0
-            path = self:rePath(path)
-        end
-
+        -- Reordering direction taken when an obstacle is hit
         local x, y = self:getPosition()
-        if x == prev_x and y == prev_y then
-            path = self:rePath(path)
-            since_repath = 1
-        end
+        if since_reorder ~= 0 then since_reorder = since_reorder - dt end
+        if since_reorder < 0 then reorder(0) end
+        if x == prev_x and y == prev_y then reorder(1) end
         prev_x = x
         prev_y = y
 
-        if (path[2] == UP and x == x_dst and y <= y_dst) or
-           (path[2] == DOWN and x == x_dst and y >= y_dst) then
+        -- Are we done?
+        if (order[2] == UP and x == x_dst and y <= y_dst) or
+           (order[2] == DOWN and x == x_dst and y >= y_dst) then
             self.y = y_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
             doneAction()
-        elseif (path[2] == LEFT and y == y_dst and x <= x_dst) or
-               (path[2] == RIGHT and y == y_dst and x >= x_dst) then
+        elseif (order[2] == LEFT and y == y_dst and x <= x_dst) or
+               (order[2] == RIGHT and y == y_dst and x >= x_dst) then
             self.x = x_dst
             self:resetPosition(self.x, self.y)
             self:changeBehavior('idle')
             doneAction()
         else
+
+            -- Keep walking!
             self:changeAnimation('walking')
-            if path[1] == UP then
+            if order[1] == UP then
                 if y <= y_dst then
                     self.y = y_dst
                     self.dy = 0
-                    self.dx = speed * path[2]
-                    self.dir = path[2]
+                    self.dx = speed * order[2]
+                    self.dir = order[2]
                 else
                     self.dx = 0
                     self.dy = -speed
-                    self.dir = path[2]
                 end
-            elseif path[1] == DOWN then
+            elseif order[1] == DOWN then
                 if y >= y_dst then
                     self.y = y_dst
                     self.dy = 0
-                    self.dx = speed * path[2]
-                    self.dir = path[2]
+                    self.dx = speed * order[2]
+                    self.dir = order[2]
                 else
                     self.dx = 0
                     self.dy = speed
-                    self.dir = path[2]
                 end
-            elseif path[1] == LEFT then
+            elseif order[1] == LEFT then
                 if x <= x_dst then
                     self.x = x_dst
                     self.dx = 0
-                    self.dy = speed * ite(path[2] == DOWN, 1, -1)
+                    self.dy = speed * ite(order[2] == DOWN, 1, -1)
                 else
                     self.dy = 0
                     self.dx = -speed
                     self.dir = LEFT
                 end
-            elseif path[1] == RIGHT then
+            elseif order[1] == RIGHT then
                 if x >= x_dst then
                     self.x = x_dst
                     self.dx = 0
-                    self.dy = speed * ite(path[2] == DOWN, 1, -1)
+                    self.dy = speed * ite(order[2] == DOWN, 1, -1)
                 else
                     self.dy = 0
                     self.dx = speed
                     self.dir = RIGHT
                 end
             end
+
+            -- Update our position
             self:updatePosition(dt, x_dst, y_dst)
         end
     end

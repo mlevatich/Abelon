@@ -1,26 +1,5 @@
 (please commit each paragraph separately for your own sanity)
 
-#58:
-
-fix wall-clip when navigating away from game while walking into a wall
-
-COMMIT
-
-When a walkTo behavior is created in a scene, get sprite starting location,
-nearest "starting tile" (nearest unoccupied tile to the sprite's center),
-final location, and the nearest "goal tile". Make sure the starting tile and
-goal tile are unoccupied, and create a grid of occupied and unoccupied tiles of
-at least as wide and tall as the viewport (so that if there is an on-screen
-path, the sprite will find it). Run Djikstra to find a path from the starting
-tile to the goal tile. Chain together a set of walkTo behaviors: a walk from
-the starting location to the starting tile, a set of single-tile walks along
-the shortest path to the goal tile which prioritizes straight-line movements,
-and a walk from the goal tile to the final location.
-
-Make sure the walkTo behavior is robust enough that no matter where Kath and
-Abelon end up after the battle 1-1 victory, Kath's movements to Abelon and to
-the blood stain will still work.
-
 #50:
 
 add enemy skill targeting info

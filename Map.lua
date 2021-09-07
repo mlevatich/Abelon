@@ -18,7 +18,11 @@ function Map:init(name, tileset, lighting)
     self.height = tonumber(meta[2])
 
     -- Read collideable tile ids
-    self.collide_tiles = mapf(tonumber, split(lines[2]))
+    self.collide_tiles = {}
+    local collideable = mapf(tonumber, split(lines[2]))
+    for i = 1, #collideable do
+        self.collide_tiles[collideable[i]] = true
+    end
 
     -- Map texture and tile array
     local tile_file = 'graphics/tilesets/' .. name .. '/' .. tileset .. '.png'
@@ -30,9 +34,10 @@ function Map:init(name, tileset, lighting)
     self.tiles = {}
     for y = 3, self.height + 2 do
         local l = lines[y]
+        self.tiles[y - 2] = {}
         for x = 1, self.width do
             local tile_id = tonumber(l:sub(x, x))
-            self:setTile(x, y - 2, tile_id)
+            self.tiles[y - 2][x] = tile_id
         end
     end
 
@@ -142,16 +147,7 @@ end
 
 -- Return whether a given tile is collidable (wall, obstacle)
 function Map:collides(tile)
-
-    -- Return true if tile type matches
-    for _, id in pairs(self.collide_tiles) do
-        if tile.id == id then
-            return true
-        end
-    end
-
-    -- If tile not in collide_tiles, it's walkable
-    return false
+    return self.collide_tiles[tile['id']]
 end
 
 -- Return whether a pixel coordinate is on the given tile coordinates
@@ -190,7 +186,7 @@ function Map:tileAt(x, y)
     return {
         ['x'] = tile_x,
         ['y'] = tile_y,
-        ['id'] = self:getTile(tile_x, tile_y)
+        ['id'] = self.tiles[tile_y][tile_x]
     }
 end
 
@@ -204,16 +200,6 @@ function Map:tileAtExact(x, y)
         ['x'] = tile_x,
         ['y'] = tile_y
     }
-end
-
--- Return the id of the tile at the given coordinate
-function Map:getTile(x, y)
-    return self.tiles[(y - 1) * self.width + x]
-end
-
--- Set the tile id at the given tile coordinate
-function Map:setTile(x, y, id)
-    self.tiles[(y - 1) * self.width + x] = id
 end
 
 -- Figure out whether a map needs to be switched to, and what map
@@ -313,7 +299,7 @@ function Map:renderTiles()
     -- Render all non-empty tiles
     for y=1, self.height do
         for x=1, self.width do
-            local tile = self:getTile(x, y)
+            local tile = self.tiles[y][x]
             if tile then
                 love.graphics.draw(
                     self.tilesheet,
