@@ -17,8 +17,6 @@ the starting location to the starting tile, a set of single-tile walks along
 the shortest path to the goal tile which prioritizes straight-line movements,
 and a walk from the goal tile to the final location.
 
-Make sure shortest path prioritizes straight lines (it may do this by default)
-
 Make sure the walkTo behavior is robust enough that no matter where Kath and
 Abelon end up after the battle 1-1 victory, Kath's movements to Abelon and to
 the blood stain will still work.

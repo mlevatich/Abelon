@@ -55,6 +55,8 @@ end
 -- Update each frame, dt is seconds since last frame
 function love.update(dt)
 
+    dt = math.min(dt, 1 / 60)
+
     -- Update everything in the game
     game:update(dt)
 
