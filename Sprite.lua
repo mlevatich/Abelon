@@ -310,7 +310,7 @@ end
 -- Sprite as a party member in a menu
 function Sprite:toPartyMember()
 
-    local skills = self:mkSkillsMenu(true)
+    local skills = self:mkSkillsMenu(true, false)
 
     local learn = self:mkLearnMenu()
 
@@ -358,14 +358,14 @@ function Sprite:mkLearnable(sk_id, sk_item)
     return sk_item
 end
 
-function Sprite:mkSkillsMenu(with_skilltrees)
+function Sprite:mkSkillsMenu(with_skilltrees, with_prio)
 
     -- Helpers
     local learnedOf = function(t)
         return filter(function(s) return s.type == t end, self.skills)
     end
     local skToMenu = function(s)
-        return s:toMenuItem(self.itex, self.icons, with_skilltrees)
+        return s:toMenuItem(self.itex, self.icons, with_skilltrees, with_prio)
     end
 
     -- Weapon and attack skills
@@ -394,7 +394,9 @@ function Sprite:mkLearnMenu()
         end
     end
     local mkLearn = function(s)
-        return self:mkLearnable(s.id, s:toMenuItem(self.itex, self.icons, true))
+        return self:mkLearnable(s.id,
+            s:toMenuItem(self.itex, self.icons, true, false)
+        )
     end
     local skt = self.skill_trees
     local learn = MenuItem('Learn (' .. self.skill_points .. ')', {

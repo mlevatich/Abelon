@@ -36,13 +36,14 @@ end
 
 Skill = Class{}
 
-function Skill:init(id, n, ti, st, si, tr, r, at, c, e, d)
+function Skill:init(id, n, ti, st, prio, si, tr, r, at, c, e, d)
 
     -- Identifying info
     self.id           = id
     self.name         = n
     self.tree_id      = ti
     self.type         = st
+    self.prio         = prio
     self.scaling_icon = si
     self.desc         = d
 
@@ -61,15 +62,15 @@ function Skill:init(id, n, ti, st, si, tr, r, at, c, e, d)
                      -- returns targets hurt and targets dead
 end
 
-function Skill:toMenuItem(itex, icons, with_skilltrees)
-    local hbox = self:mkSkillBox(itex, icons, with_skilltrees)
+function Skill:toMenuItem(itex, icons, with_skilltrees, with_prio)
+    local hbox = self:mkSkillBox(itex, icons, with_skilltrees, with_prio)
     return MenuItem(self.name, {}, nil, {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
     }, nil, nil, nil, self.id)
 end
 
-function Skill:mkSkillBox(itex, icons, with_skilltrees)
+function Skill:mkSkillBox(itex, icons, with_skilltrees, with_prio)
     local req_x = 410
     local req_y = HALF_MARGIN
     local desc_x = HALF_MARGIN * 3 + PORTRAIT_SIZE - 5
@@ -115,8 +116,31 @@ function Skill:mkSkillBox(itex, icons, with_skilltrees)
             mkEle('text', {'  to learn  '},
                 req_x, req_y + LINE_HEIGHT * 3)
         })
+    elseif with_prio then
+        hbox = concat(hbox, self:mkPrioElements({self.prio}))
     end
     return hbox
+end
+
+function Skill:mkPrioElements(prio)
+    local header  = { 'Targeting:' }
+    local ps = {
+        [ CLOSEST   ] = { 'Closest',  'enemy'   },
+        [ KILL      ] = { 'Killable', 'enemies' },
+        [ DAMAGE    ] = { 'Highest',  'damage'  },
+        [ STRONGEST ] = { 'Biggest',  'threat'  },
+    }
+    if prio[1] == MANUAL then
+        return {}
+    else
+        local x = 415
+        local y = BOX_MARGIN
+        local str = ite(prio[1] < MANUAL, ps[prio[1]], { prio[2] })
+        return {
+            mkEle('text', header, x,      y),
+            mkEle('text', str,    x + 30, y + LINE_HEIGHT, RED)
+        }
+    end
 end
 
 function Skill:treeToIcon()
@@ -319,7 +343,7 @@ end
 
 skills = {
     ['sever'] = Skill('sever', 'Sever',
-        'Executioner', WEAPON, str_to_icon['force'],
+        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAttack(
@@ -329,7 +353,7 @@ skills = {
          (Force * 1.0) weapon damage to an enemy next to Abelon."
     ),
     ['conflagration'] = Skill('conflagration', 'Conflagration',
-        'Demon', SPELL, str_to_icon['empty'],
+        'Demon', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 5,
         genericAttack(
@@ -339,7 +363,7 @@ skills = {
          damage to all enemies in a line across the entire map."
     ),
     ['guard_blindspot'] = Skill('guard_blindspot', 'Guard Blindspot',
-        'Veteran', ASSIST, str_to_icon['affinity'],
+        'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAssist({
@@ -349,7 +373,7 @@ skills = {
          (Affinity * 1.0) to ally's Reaction."
     ),
     ['judgement'] = Skill('judgement', 'Judgement',
-        'Executioner', SPELL, str_to_icon['empty'],
+        'Executioner', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { T } }, FREE_AIM(100, ENEMY), 2,
         function(sp, assists, ts, ts_assists, status)
@@ -366,7 +390,7 @@ skills = {
          health remaining, bypassing protective status effects."
     ),
     ['inspire'] = Skill('inspire', 'Inspire',
-        'Veteran', ASSIST, str_to_icon['affinity'],
+        'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 1 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
@@ -384,7 +408,7 @@ skills = {
          to ally's Force, Reaction, and Affinity."
     ),
     ['trust'] = Skill('trust', 'Trust',
-        'Veteran', WEAPON, str_to_icon['affinity'],
+        'Veteran', WEAPON, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
         genericAttack(
@@ -395,7 +419,7 @@ skills = {
          rest of the turn."
     ),
     ['crucible'] = Skill('crucible', 'Crucible',
-        'Demon', SPELL, str_to_icon['force'],
+        'Demon', SPELL, MANUAL, str_to_icon['force'],
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
@@ -414,7 +438,7 @@ skills = {
          (Force * 2.0) spell damage (cannot kill Abelon)."
     ),
     ['contempt'] = Skill('contempt', 'Contempt',
-        'Demon', SPELL, str_to_icon['focus'],
+        'Demon', SPELL, MANUAL, str_to_icon['focus'],
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { F, T, F, T, F },
           { F, F, T, F, F },
@@ -430,7 +454,7 @@ skills = {
          affected enemies by (Focus * 1.0) for two turns."
     ),
     ['enrage'] = Skill('enrage', 'Enrage',
-        'Defender', SPELL, str_to_icon['empty'],
+        'Defender', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
@@ -448,7 +472,7 @@ skills = {
          that their next actions will target Kath."
     ),
     ['sweep'] = Skill('sweep', 'Sweep',
-        'Hero', WEAPON, str_to_icon['force'],
+        'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
@@ -461,7 +485,7 @@ skills = {
          front of Kath, and grants 2 Reaction until his next turn."
     ),
     ['stun'] = Skill('stun', 'Stun',
-        'Defender', WEAPON, str_to_icon['reaction'],
+        'Defender', WEAPON, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 1,
         genericAttack(
@@ -474,7 +498,7 @@ skills = {
          higher than his foe's, they are unable to act for a turn."
     ),
     ['blessed_mist'] = Skill('blessed_mist', 'Blessed Mist',
-        'Cleric', SPELL, str_to_icon['affinity'],
+        'Cleric', SPELL, MANUAL, str_to_icon['affinity'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
           { T, F, T },
@@ -487,7 +511,7 @@ skills = {
          Kath."
     ),
     ['javelin'] = Skill('javelin', 'Javelin',
-        'Hero', WEAPON, str_to_icon['force'],
+        'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, F, F },
@@ -499,7 +523,7 @@ skills = {
          damage."
     ),
     ['forbearance'] = Skill('forbearance', 'Forbearance',
-        'Defender', ASSIST, str_to_icon['endurance'],
+        'Defender', ASSIST, MANUAL, str_to_icon['endurance'],
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAssist({
@@ -508,7 +532,7 @@ skills = {
         "Kath receives all attacks meant for an adjacent ally."
     ),
     ['haste'] = Skill('haste', 'Haste',
-        'Cleric', SPELL, str_to_icon['empty'],
+        'Cleric', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 1 } },
         { { F, F, T, F, F },
           { F, F, T, F, F },
@@ -523,7 +547,7 @@ skills = {
         "Kath raises the agility of allies around him by 10."
     ),
     ['guardian_angel'] = Skill('guardian_angel', 'Guardian Angel',
-        'Cleric', ASSIST, str_to_icon['empty'],
+        'Cleric', ASSIST, MANUAL, str_to_icon['empty'],
         { { 'Defender', 2 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { F, F, T, T, T, F, F },
           { F, F, F, F, F, F, F },
@@ -539,7 +563,7 @@ skills = {
          drop below 1 health for the remainder of the turn."
     ),
     ['hold_the_line'] = Skill('hold_the_line', 'Hold the Line',
-        'Hero', ASSIST, str_to_icon['force'],
+        'Hero', ASSIST, MANUAL, str_to_icon['force'],
         { { 'Defender', 1 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
         genericAssist({
@@ -549,7 +573,7 @@ skills = {
          allies by (Force * 0.5)"
     ),
     ['bite'] = Skill('bite', 'Bite',
-        'Enemy', WEAPON, str_to_icon['force'],
+        'Enemy', WEAPON, KILL, str_to_icon['force'],
         {},
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAttack(

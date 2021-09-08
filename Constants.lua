@@ -115,6 +115,14 @@ FREE_AIM        = function(s, t)
 BUFF   = 1
 DEBUFF = 2
 
+-- Skill targeting algorithms (for enemies)
+CLOSEST   = 1
+KILL      = 2 -- Invert when targeting allies (heal closest to death)
+DAMAGE    = 3 -- Invert when targeting allies (biggest heal)
+STRONGEST = 4 -- Invert when targeting allies (heal strongest ally)
+MANUAL    = 5 -- For the player team
+FORCED    = 6
+
 -- Battle stages
 STAGE_FREE   = 1
 STAGE_MOVE   = 2

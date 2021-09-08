@@ -52,37 +52,15 @@ function Battle:init(battle_id, player, chapter)
         end
     end
 
-    -- Put participants on grid
-    local readEntities = function(idx)
-        local t = {}
-        for k,v in pairs(readDict(data[idx], ARR, nil, tonumber)) do
-            local sp = self.chapter:getSprite(k)
-            table.insert(t, sp)
-            self.grid[v[2]][v[1]] = GridSpace(sp)
-            self.status[sp:getId()] = {
-                ['sp']       = sp,
-                ['team']     = ite(idx == 4, ALLY, ENEMY),
-                ['location'] = { v[1], v[2] },
-                ['effects']  = {},
-                ['alive']    = true,
-                ['acted']    = false,
-                ['attack']   = nil,
-                ['assist']   = nil
-            }
-            local x_tile = self.origin_x + v[1]
-            local y_tile = self.origin_y + v[2]
-            local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
-            sp:resetPosition(x, y)
-        end
-        return t
-    end
-
     -- Participants and statuses
     self.player = player
     self.status = {}
     self.enemy_order = readArray(data[6])
+    self.participants = concat(
+        self:readEntities(data, 4),
+        self:readEntities(data, 5)
+    )
     self.enemy_action = nil
-    self.participants = concat(readEntities(4), readEntities(5))
     self:adjustStatsForDifficulty(MASTER)
 
     -- Win conditions and loss conditions
@@ -121,6 +99,42 @@ function Battle:init(battle_id, player, chapter)
 
     -- Start the first turn
     self:openBattleStartMenu()
+end
+
+-- Put participants on grid
+function Battle:readEntities(data, idx)
+
+    local t = {}
+    for k,v in pairs(readDict(data[idx], ARR, nil, tonumber)) do
+
+        -- Put sprite on grid and into participants
+        local sp = self.chapter:getSprite(k)
+        table.insert(t, sp)
+        self.grid[v[2]][v[1]] = GridSpace(sp)
+
+        -- Initialize sprite status
+        self.status[sp:getId()] = {
+            ['sp']       = sp,
+            ['team']     = ite(idx == 4, ALLY, ENEMY),
+            ['location'] = { v[1], v[2] },
+            ['effects']  = {},
+            ['alive']    = true,
+            ['acted']    = false,
+            ['attack']   = nil,
+            ['assist']   = nil,
+            ['prepare']  = nil
+        }
+        local x_tile = self.origin_x + v[1]
+        local y_tile = self.origin_y + v[2]
+        local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
+        sp:resetPosition(x, y)
+
+        -- If an enemy, prepare their first skill
+        if self.status[sp:getId()]['team'] == ENEMY then
+            self:prepareSkill(sp)
+        end
+    end
+    return t
 end
 
 function Battle:adjustStatsForDifficulty(old)
@@ -509,7 +523,7 @@ function Battle:openAttackMenu(sp)
             self:selectTarget()
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true)
+    local skills_menu = sp:mkSkillsMenu(true, false)
     local weapon = skills_menu.children[1]
     local spell = skills_menu.children[2]
     for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
@@ -532,7 +546,7 @@ function Battle:openAssistMenu(sp)
             self:endAction(false)
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true)
+    local skills_menu = sp:mkSkillsMenu(true, false)
     local assist = skills_menu.children[3]
     for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
     local opts = { attributes, assist, wait }
@@ -549,7 +563,7 @@ function Battle:openAllyMenu(sp)
         ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = HBOX_WIDTH
     })
-    local sks = sp:mkSkillsMenu(true)
+    local sks = sp:mkSkillsMenu(true, false)
     self:openMenu(Menu(nil, { attrs, sks }, BOX_MARGIN, BOX_MARGIN, false), {})
 end
 
@@ -564,8 +578,7 @@ function Battle:openEnemyMenu(sp)
         ['elements'] = self:buildReadyingBox(sp),
         ['w'] = HBOX_WIDTH
     })
-    -- TODO: For each skill, add targeting info
-    local skills = sp:mkSkillsMenu(false)
+    local skills = sp:mkSkillsMenu(false, true)
     local opts = { attributes, readying, skills }
     self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function() self:renderMovementHover() end }
@@ -610,8 +623,12 @@ function Battle:endAction(used_assist)
 end
 
 function Battle:buildReadyingBox(sp)
-    -- TODO index on readying skill (not 1), and add targeting info
-    return sp.skills[1]:mkSkillBox(sp.itex, sp.icons, false)
+    local prep = self.status[sp:getId()]['prepare']
+    if prep['prio'][1] == FORCED then
+        prep['prio'][2] = self.status[prep['prio'][2]]['sp']:getName()
+    end
+    local hbox = prep['sk']:mkSkillBox(sp.itex, sp.icons, false, false)
+    return concat(hbox, prep['sk']:mkPrioElements(prep['prio']))
 end
 
 function Battle:buildObjectivesBox()
@@ -1215,6 +1232,12 @@ function Battle:updateBattleCam()
     end
 end
 
+-- Prepare this sprite's next skill
+function Battle:prepareSkill(sp)
+    local sk = sp.skills[1] -- TODO: intelligent selection
+    self.status[sp:getId()]['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio } }
+end
+
 -- Plan the next enemy's action
 function Battle:planNextEnemyAction()
 
@@ -1222,7 +1245,6 @@ function Battle:planNextEnemyAction()
     self.enemy_action = nil
 
     -- Get enemies who haven't gone yet, in order of action
-    -- and give them template stacks to insert move and attack into
     local enemies = {}
     for i = 1, #self.enemy_order do
         local stat = self.status[self.enemy_order[i]]
@@ -1235,21 +1257,26 @@ function Battle:planNextEnemyAction()
     if not next(enemies) then return end
 
     -- For every enemy who hasn't acted, make a tentative plan for their action
+    local sps = filter(function(p) return self:isAlly(p) end, self.participants)
     local actions = {}
     for i = 1, #enemies do
+        local e    = enemies[i]
+        local stat = self.status[e:getId()]
+        local sk   = stat['prepare']['sk']
+        local prio = stat['prepare']['prio'][1]
+
         -- TODO
-        -- Each enemy that hasn't acted tentatively declares a target and the tiles
-        -- they can hit their target from, based on the initial state. Basically
-        -- dry-run the parts of the below that compute target and tiles to move to, if
-        -- the target is hittable.
-        local y, x = self:findSprite(enemies[i]:getId())
+        -- 'e' declares a target and the tiles they can hit their target from,
+        -- Basically dry-run the parts of the below that compute target and
+        -- tiles to move to, if the target is hittable.
+        local y, x = self:findSprite(e:getId())
         actions[i] = {}
         actions[i]['move'] = { x, y }
         actions[i]['attack'] = {}
     end
 
-    -- Execute the first enemy's action, taking into account what the following
-    -- enemies are planning to do
+    -- Prepare the first enemy's action, taking into account what the
+    -- following enemies are planning
     local e = enemies[1]
 
     -- TODO
@@ -1271,6 +1298,7 @@ function Battle:planNextEnemyAction()
     --     rotation and ignea levels. Decide the targeting strategy for it (this
     --     will often just be a function of the skill, but the target strategy is
     --     a sprite-level property).
+    self:prepareSkill(e)
     --
     -- If there are multiple allies within reach of the prepared skill, or if there
     -- are no allies within reach of the prepared skill:
