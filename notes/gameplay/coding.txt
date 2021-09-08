@@ -2,62 +2,13 @@
 
 #50:
 
-~~~BEGIN ENEMY AI ALGORITHM~~~
-For each enemy, in order of action:
-
-    Each enemy that hasn't acted tentatively declares a target and the tiles
-    they can hit their target from, based on the initial state. Basically
-    dry-run the parts of the below that compute target and tiles to move to, if
-    the target is hittable.
-
-    Grab the target and tiles computed for this enemy
-
-    If there is only one ally within reach of the prepared skill:
-
-        label ATTACK: Compute the set of tiles that can be moved to, to hit the
-        target ally.
-
-        Pick the tile which the fewest other enemies can attack their target
-        from. If there is a tie, pick the tile which is furthest away from the
-        target. If there is a tie, pick the tile which requires the least
-        movement.
-
-        Play action
-
-        prepare another skill to use on the next turn, based on a preset
-        rotation and ignea levels. Decide the targeting strategy for it (this
-        will often just be a function of the skill, but the target strategy is
-        a sprite-level property).
-
-    If there are multiple allies within reach of the prepared skill, or if there
-    are no allies within reach of the prepared skill:
-
-        Use targeting info to choose a target to go after (e.g. closest,
-        greatest-percent-of-remaining-hp, highest-damage, biggest-threat,
-        forced-target, etc).
-
-        If the target is within reach of the prepared skill:
-
-            goto ATTACK
-
-        If the target is NOT within reach of the prepared skill:
-
-            Use the relative skill range, and djikstra's algorithm, to compute
-            the closest tile to the sprite that will allow it to hit the target.
-
-            Move as much as possible along the shortest path to that tile
-
-            Play action
-
-            Prepare the same skill again, with the same targeting strategy
-~~~END ENEMY AI ALGORITHM~~~
+Enemy AI algorithm
 
 Add enemy targeting field to hover box and battle data, that enemy uses to
 choose a target.
 Add deterministic enemy action order to hover box and battle data.
 Verify that enemies cannot benefit from assists.
 Implement stun
-
 Tune the first battle on all difficulties!
 
 #55:

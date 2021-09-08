@@ -81,7 +81,7 @@ function Battle:init(battle_id, player, chapter)
     self.player = player
     self.status = {}
     self.enemy_order = readArray(data[6])
-    self.enemy_queue = {}
+    self.enemy_action = nil
     self.participants = concat(readEntities(4), readEntities(5))
     self:adjustStatsForDifficulty(MASTER)
 
@@ -325,14 +325,14 @@ function Battle:endTurn()
         end
     end
 
-    -- Construct a queue of stacks. One stack per enemy,
-    -- representing that enemy's action
-    self:planEnemyPhase()
+    -- Prepare the first enemy's action and place it in self.enemy_action
+    self:planNextEnemyAction()
 
-    -- Let the first enemy go, if one exists
-    if next(self.enemy_queue) then
-        self.stack = table.remove(self.enemy_queue)
+    -- Let the first enemy go if exists, and prepare the subsequent enemy
+    if self.enemy_action then
+        self.stack = self.enemy_action
         self:playAction()
+        self:planNextEnemyAction()
     else
         -- If there are no enemies, it's immediately the ally phase
         self:beginTurn()
@@ -1143,9 +1143,10 @@ function Battle:update(keys, dt)
             if self:checkWinLose() then return end
 
             -- If there are enemies that need to go next, have them go.
-            if next(self.enemy_queue) ~= nil then
-                self.stack = table.remove(self.enemy_queue)
+            if self.enemy_action then
+                self.stack = self.enemy_action
                 self:playAction()
+                self:planNextEnemyAction()
             end
 
             -- If all allies have acted, switch to enemy phase
@@ -1214,45 +1215,95 @@ function Battle:updateBattleCam()
     end
 end
 
--- Construct a queue of stacks. One stack per enemy,
--- representing that enemy's action
-function Battle:planEnemyPhase()
+-- Plan the next enemy's action
+function Battle:planNextEnemyAction()
 
-    -- Get enemies (in order of action)
+    -- Clear previous action
+    self.enemy_action = nil
+
+    -- Get enemies who haven't gone yet, in order of action
     -- and give them template stacks to insert move and attack into
     local enemies = {}
-    local stacks = {}
     for i = 1, #self.enemy_order do
-        local sp_id = self.enemy_order[i]
-        local stat = self.status[sp_id]
-        if not self:isAlly(stat['sp']) and stat['alive'] then
+        local stat = self.status[self.enemy_order[i]]
+        if stat['alive'] and not stat['acted'] then
             table.insert(enemies, stat['sp'])
-            local y, x = self:findSprite(sp_id)
-            table.insert(stacks, { self:stackBase(), { ['cursor'] = { x, y } },
-                {}, {}, { ['cursor'] = { x, y }, ['sp'] = stat['sp'] }, {}, {} }
-            )
         end
     end
 
-    -- For each enemy, prepare their action
+    -- If there are no more enemies who can act, do nothing
+    if not next(enemies) then return end
+
+    -- For every enemy who hasn't acted, make a tentative plan for their action
+    local actions = {}
     for i = 1, #enemies do
-        local e = enemies[i]
-
-        -- TODO: Dry run every enemy's action
-
-        -- TODO: Plan this enemy's action
-
-        -- TODO: Insert the computed move and attack
-        local y, x = self:findSprite(e:getId())
-        stacks[i][2]['cursor'] = { x, y }
-        stacks[i][5]['cursor'] = { x, y }
-        stacks[i][4] = {}
+        -- TODO
+        -- Each enemy that hasn't acted tentatively declares a target and the tiles
+        -- they can hit their target from, based on the initial state. Basically
+        -- dry-run the parts of the below that compute target and tiles to move to, if
+        -- the target is hittable.
+        local y, x = self:findSprite(enemies[i]:getId())
+        actions[i] = {}
+        actions[i]['move'] = { x, y }
+        actions[i]['attack'] = {}
     end
 
-    -- Put all stacks on enemy queue
-    for i = 1, #stacks do
-        table.insert(self.enemy_queue, stacks[#stacks - i + 1])
-    end
+    -- Execute the first enemy's action, taking into account what the following
+    -- enemies are planning to do
+    local e = enemies[1]
+
+    -- TODO
+    -- Grab the target and tiles computed for this enemy
+    --
+    -- If there is only one ally within reach of the prepared skill:
+    --
+    --     label ATTACK: Compute the set of tiles that can be moved to, to hit the
+    --     target ally.
+    --
+    --     Pick the tile which the fewest other enemies can attack their target
+    --     from. If there is a tie, pick the tile which is furthest away from the
+    --     target. If there is a tie, pick the tile which requires the least
+    --     movement.
+    --
+    --     Play action
+    --
+    --     prepare another skill to use on the next turn, based on a preset
+    --     rotation and ignea levels. Decide the targeting strategy for it (this
+    --     will often just be a function of the skill, but the target strategy is
+    --     a sprite-level property).
+    --
+    -- If there are multiple allies within reach of the prepared skill, or if there
+    -- are no allies within reach of the prepared skill:
+    --
+    --     Use targeting info to choose a target to go after (e.g. closest,
+    --     greatest-percent-of-remaining-hp, highest-damage, biggest-threat,
+    --     forced-target, etc).
+    --
+    --     If the target is within reach of the prepared skill:
+    --
+    --         goto ATTACK
+    --
+    --     If the target is NOT within reach of the prepared skill:
+    --
+    --         Use the relative skill range, and djikstra's algorithm, to compute
+    --         the closest tile to the sprite that will allow it to hit the target.
+    --
+    --         Move as much as possible along the shortest path to that tile
+    --
+    --         Play action
+    --
+    --         Prepare the same skill again, with the same targeting strategy
+
+    -- Declare next enemy action to be played as an action stack
+    self.enemy_action = {
+        self:stackBase(),
+        { ['cursor'] = actions[1]['move'] },
+        {},
+        actions[1]['attack'],
+        { ['cursor'] = actions[1]['move'], ['sp'] = enemies[1] },
+        {},
+        {}
+    }
 end
 
 function Battle:renderCursors()
