@@ -252,8 +252,7 @@ function genericAttack(dmg_type, affects, scaling,
 
         -- Temporary attributes and special effects for the caster
         local sp_stat = status[sp:getId()]['effects']
-        local sp_ass = sp_assists
-        local sp_tmp_attrs = mkTmpAttrs(sp.attributes, sp_stat, sp_ass)
+        local sp_tmp_attrs = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
 
         -- Affect targets
         for i = 1, #ts do

@@ -7,9 +7,7 @@ Enemy AI algorithm
 Bug: abelon changing direction briefly during a pathed walk, in between two
 walkTo behaviors
 
-Verify that enemies cannot benefit from assists.
 Implement stun, enrage
-Tune the first battle on all difficulties!
 
 #55:
 

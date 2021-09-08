@@ -283,7 +283,7 @@ function Battle:getTmpAttributes(sp)
     return mkTmpAttrs(
         sp.attributes,
         self.status[sp:getId()]['effects'],
-        self.grid[y][x].assists
+        ite(self:isAlly(sp), self.grid[y][x].assists, {})
     )
 end
 
@@ -812,7 +812,7 @@ end
 
 function Battle:useAttack(sp, attack, attack_dir, c_attack)
     local i, j = self:findSprite(sp:getId())
-    local sp_a = self.grid[i][j].assists
+    local sp_a = ite(self:isAlly(sp), self.grid[i][j].assists, {})
     local t = self:skillRange(attack, attack_dir, c_attack)
     local ts = {}
     local ts_a = {}
