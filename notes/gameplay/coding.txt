@@ -7,7 +7,6 @@ Enemy AI algorithm
 Bug: abelon changing direction briefly during a pathed walk, in between two
 walkTo behaviors
 
-Add deterministic enemy action order to hover box and battle data.
 Verify that enemies cannot benefit from assists.
 Implement stun, enrage
 Tune the first battle on all difficulties!

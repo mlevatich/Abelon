@@ -571,10 +571,10 @@ function Battle:openEnemyMenu(sp)
     local attributes = MenuItem('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
         ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = 380
+        ['w'] = 390
     })
     local readying = MenuItem('Next Attack', {},
-        'Skill this enemy will use next', {
+        'Prepared skill and target', {
         ['elements'] = self:buildReadyingBox(sp),
         ['w'] = HBOX_WIDTH
     })
@@ -623,12 +623,25 @@ function Battle:endAction(used_assist)
 end
 
 function Battle:buildReadyingBox(sp)
+
+    -- Start with basic skill box
     local prep = self.status[sp:getId()]['prepare']
+    local hbox = prep['sk']:mkSkillBox(sp.itex, sp.icons, false, false)
+
+    -- Add target priority
     if prep['prio'][1] == FORCED then
         prep['prio'][2] = self.status[prep['prio'][2]]['sp']:getName()
     end
-    local hbox = prep['sk']:mkSkillBox(sp.itex, sp.icons, false, false)
-    return concat(hbox, prep['sk']:mkPrioElements(prep['prio']))
+    hbox = concat(hbox, prep['sk']:mkPrioElements(prep['prio']))
+
+    -- add enemy order
+    local o = 0
+    for i = 1, #self.enemy_order do
+        if self.enemy_order[i] == sp:getId() then o = i end
+    end
+    local s = ite(o == 1, 'st', ite(o == 2, 'nd', ite(o == 3, 'rd', 'th')))
+    table.insert(hbox, mkEle('text', { 'Order: ' .. o .. s }, 415, 13))
+    return hbox
 end
 
 function Battle:buildObjectivesBox()

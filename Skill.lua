@@ -123,7 +123,7 @@ function Skill:mkSkillBox(itex, icons, with_skilltrees, with_prio)
 end
 
 function Skill:mkPrioElements(prio)
-    local header  = { 'Targeting:' }
+    local header  = { 'Target:' }
     local ps = {
         [ CLOSEST   ] = { 'Closest',  'enemy'   },
         [ KILL      ] = { 'Killable', 'enemies' },
@@ -134,7 +134,7 @@ function Skill:mkPrioElements(prio)
         return {}
     else
         local x = 415
-        local y = BOX_MARGIN
+        local y = HALF_MARGIN + LINE_HEIGHT + 5
         local str = ite(prio[1] < MANUAL, ps[prio[1]], { prio[2] })
         return {
             mkEle('text', header, x,      y),
