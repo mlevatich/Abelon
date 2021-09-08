@@ -63,7 +63,8 @@ Tune the first battle on all difficulties!
 #55:
 
 exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
-healed, 0.5 of the value for assisters supporting any of these
+healed, 0.5 of the value for assisters supporting any of these, flat amount for
+buffs and debuffs that land.
 
 level up table: exp required for a level up increases with level
 
@@ -104,6 +105,9 @@ choose difficulty)
 
 Implement game start scene, implement ??? for sprites whose names are not known
 to the player. Learning a name is a scene event.
+
+For title screen music, use the voice memo on my phone: Time Slows. Tentative
+track name: The Lonely Knight
 
 #15:
 
@@ -239,7 +243,7 @@ Better forest theme - more tense investigation, less funeral march
 Basic battle theme - for the three non-boss encounters
 Enemy approaches theme - for rising action before a fight! This should play for
 most of the forest.
-Defeat theme - Short theme that plays during the battle loss scene.
+Defeat theme: Despair - Short theme that plays during the battle loss scene.
 implement Elaine scenario
 implement Ghoul scenario (objective is rout or escape)
 implement Deer scenario

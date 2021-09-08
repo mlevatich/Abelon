@@ -39,7 +39,7 @@ function Battle:init(battle_id, player, chapter)
     self.origin_y = tile_origin[2]
 
     -- Battle grid
-    local grid_index = 12
+    local grid_index = 13
     local grid_dim = readArray(data[grid_index], tonumber)
     self.grid_w = grid_dim[1]
     self.grid_h = grid_dim[2]
@@ -80,13 +80,14 @@ function Battle:init(battle_id, player, chapter)
     -- Participants and statuses
     self.player = player
     self.status = {}
-    self.participants = concat(readEntities(4), readEntities(5))
+    self.enemy_order = readArray(data[6])
     self.enemy_queue = {}
+    self.participants = concat(readEntities(4), readEntities(5))
     self:adjustStatsForDifficulty(MASTER)
 
     -- Win conditions and loss conditions
-    self.win  = readArray(data[6], function(s) return wincons[s]  end)
-    self.lose = readArray(data[7], function(s) return losscons[s] end)
+    self.win  = readArray(data[7], function(s) return wincons[s]  end)
+    self.lose = readArray(data[8], function(s) return losscons[s] end)
 
     -- Battle cam starting location
     self.battle_cam_x = self.chapter.camera_x
@@ -102,7 +103,7 @@ function Battle:init(battle_id, player, chapter)
 
     -- Music
     self.chapter:stopMusic()
-    self.chapter.current_music = Music(readField(data[8]))
+    self.chapter.current_music = Music(readField(data[9]))
 
     -- Graphics
     self.status_tex = self.chapter.itex
@@ -258,7 +259,6 @@ function Battle:moveSprite(sp, x, y)
     self.grid[old_y][old_x].occupied = nil
     self.grid[y][x].occupied = sp
 end
-
 
 function Battle:isAlly(sp)
     return self.status[sp:getId()]['team'] == ALLY
@@ -1218,21 +1218,40 @@ end
 -- representing that enemy's action
 function Battle:planEnemyPhase()
 
-    -- TODO: properly plan movement
-    for i = 1, #self.participants do
-        local sp = self.participants[i]
-        if not self:isAlly(sp) and self.status[sp:getId()]['alive'] then
-            local y, x = self:findSprite(sp:getId())
-            table.insert(self.enemy_queue, {
-                self:stackBase(),
-                { ['cursor'] = { x, y } },
-                {},
-                {}, -- TODO: attack goes here
-                { ['cursor'] = { x, y }, ['sp'] = sp },
-                {},
-                {}
-            })
+    -- Get enemies (in order of action)
+    -- and give them template stacks to insert move and attack into
+    local enemies = {}
+    local stacks = {}
+    for i = 1, #self.enemy_order do
+        local sp_id = self.enemy_order[i]
+        local stat = self.status[sp_id]
+        if not self:isAlly(stat['sp']) and stat['alive'] then
+            table.insert(enemies, stat['sp'])
+            local y, x = self:findSprite(sp_id)
+            table.insert(stacks, { self:stackBase(), { ['cursor'] = { x, y } },
+                {}, {}, { ['cursor'] = { x, y }, ['sp'] = stat['sp'] }, {}, {} }
+            )
         end
+    end
+
+    -- For each enemy, prepare their action
+    for i = 1, #enemies do
+        local e = enemies[i]
+
+        -- TODO: Dry run every enemy's action
+
+        -- TODO: Plan this enemy's action
+
+        -- TODO: Insert the computed move and attack
+        local y, x = self:findSprite(e:getId())
+        stacks[i][2]['cursor'] = { x, y }
+        stacks[i][5]['cursor'] = { x, y }
+        stacks[i][4] = {}
+    end
+
+    -- Put all stacks on enemy queue
+    for i = 1, #stacks do
+        table.insert(self.enemy_queue, stacks[#stacks - i + 1])
     end
 end
 
