@@ -244,7 +244,7 @@ function genericAttack(dmg_type, affects, scaling,
     if not sp_buffs  then sp_buffs  = {} end
 
     -- Generate attack function
-    return function(sp, sp_assists, ts, ts_assists, status, grid)
+    return function(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
 
         -- Who was hurt/killed by this attack?
         local hurt = {}
@@ -255,6 +255,7 @@ function genericAttack(dmg_type, affects, scaling,
         local sp_tmp_attrs = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
 
         -- Affect targets
+        local dryrun_dmg = {}
         for i = 1, #ts do
 
             -- Temporary attributes and special effects for the target
@@ -262,6 +263,9 @@ function genericAttack(dmg_type, affects, scaling,
             local t_stat = status[t:getId()]['effects']
             local t_ass = ts_assists[i]
             local t_tmp_attrs = mkTmpAttrs(t.attributes, t_stat, t_ass)
+
+            -- Dryrun just computes damage, doesn't deal it or apply effects
+            dryrun_dmg[i] = { ['flat'] = 0, ['percent'] = 0 }
 
             -- If attacker is an enemy and target has forbearance, the target
             -- switches to Kath
@@ -305,38 +309,49 @@ function genericAttack(dmg_type, affects, scaling,
 
                     -- Deal damage or healing
                     local max_hp = t_tmp_attrs['endurance']
-                    local prev_hp = t.health
-                    t.health = math.max(min, math.min(max_hp, t.health - dmg))
+                    local pre_hp = t.health
+                    local n_hp = math.max(min, math.min(max_hp, t.health - dmg))
+                    if not dryrun then
+                        t.health = n_hp
+                    end
+                    dryrun_dmg[i]['flat'] = pre_hp - n_hp
+                    dryrun_dmg[i]['percent'] = (pre_hp - n_hp) / pre_hp
 
                     -- Determine if target is hurt, or dead
                     if t.health == 0 then
                         table.insert(dead, t)
-                    elseif t.health < prev_hp then
+                    elseif t.health < pre_hp then
                         table.insert(hurt, t)
                     end
                 end
 
                 -- Apply status effects to target
-                for j = 1, #ts_buffs do
-                    local b = mkBuff(sp_tmp_attrs, ts_buffs[j])
-                    addStatus(t_stat, Effect(b, ts_buff_turns))
-                end
+                if not dryrun then
+                    for j = 1, #ts_buffs do
+                        local b = mkBuff(sp_tmp_attrs, ts_buffs[j])
+                        addStatus(t_stat, Effect(b, ts_buff_turns))
+                    end
 
-                -- Target turns to face the caster
-                if abs(t.x - sp.x) > TILE_WIDTH / 2 then
-                    t.dir = ite(t.x > sp.x, LEFT, RIGHT)
+                    -- Target turns to face the caster
+                    if abs(t.x - sp.x) > TILE_WIDTH / 2 then
+                        t.dir = ite(t.x > sp.x, LEFT, RIGHT)
+                    end
                 end
             end
         end
 
         -- Affect caster
-        for j = 1, #sp_buffs do
-            local b = mkBuff(sp_tmp_attrs, sp_buffs[j])
-            addStatus(sp_stat, Effect(b, sp_buff_turns))
-        end
+        if not dryrun then
+            for j = 1, #sp_buffs do
+                local b = mkBuff(sp_tmp_attrs, sp_buffs[j])
+                addStatus(sp_stat, Effect(b, sp_buff_turns))
+            end
 
-        -- Return which targets were hurt/killed
-        return hurt, dead
+            -- Return which targets were hurt/killed
+            return hurt, dead
+        else
+            return dryrun_dmg
+        end
     end
 end
 
@@ -467,8 +482,8 @@ skills = {
             nil, nil,
             { { 'special', 'enrage', DEBUFF } }, 1
         ),
-        "Confuse and enrage nearby enemies with a mist of activated ignea, so \z
-         that their next actions will target Kath."
+        "Enrage nearby enemies with a mist of ignea, so that their next \z
+         actions will target Kath (whether or not they can reach him)."
     ),
     ['sweep'] = Skill('sweep', 'Sweep',
         'Hero', WEAPON, MANUAL, str_to_icon['force'],

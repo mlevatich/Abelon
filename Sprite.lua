@@ -759,7 +759,7 @@ function Sprite:djikstra(graph, src, dst, depth)
         end
         return path
     end
-    return dist
+    return dist, prev
 end
 
 -- Add new behavior functions or replace old ones for this sprite

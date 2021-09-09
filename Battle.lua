@@ -346,7 +346,6 @@ function Battle:endTurn()
     if self.enemy_action then
         self.stack = self.enemy_action
         self:playAction()
-        self:planNextEnemyAction()
     else
         -- If there are no enemies, it's immediately the ally phase
         self:beginTurn()
@@ -768,7 +767,7 @@ function Battle:validMoves(sp, i, j)
     local move = self:getMovement(sp, i, j)
 
     -- Run djikstra's algorithm on grid
-    local dist = sp:djikstra(self.grid, { i, j }, nil, move)
+    local dist, _ = sp:djikstra(self.grid, { i, j }, nil, move)
 
     -- Reachable nodes have distance < move
     local moves = {}
@@ -810,21 +809,21 @@ function Battle:selectTarget()
     end
 end
 
-function Battle:useAttack(sp, attack, attack_dir, c_attack)
+function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun)
     local i, j = self:findSprite(sp:getId())
     local sp_a = ite(self:isAlly(sp), self.grid[i][j].assists, {})
     local t = self:skillRange(attack, attack_dir, c_attack)
     local ts = {}
     local ts_a = {}
-    for i = 1, #t do
-        local space = self.grid[t[i][1]][t[i][2]]
+    for k = 1, #t do
+        local space = self.grid[t[k][1]][t[k][2]]
         local target = space.occupied
         if target then
             table.insert(ts, target)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
         end
     end
-    return attack.use(sp, sp_a, ts, ts_a, self.status, self.grid)
+    return attack.use(sp, sp_a, ts, ts_a, self.status, self.grid, dryrun)
 end
 
 function Battle:kill(sp)
@@ -983,36 +982,45 @@ function Battle:playAction()
     })
 end
 
-function Battle:skillRange(sk, dir, c)
+function Battle:rangeToTiles(sk, dir, c)
+
     local scale = #sk.range
+    local toGrid = function(x, k, flip)
+        local g = c[k] - (scale + 1) / 2 + x
+        if flip then
+            g = c[k] + (scale + 1) / 2 - x
+        end
+        return g
+    end
+
     local tiles = {}
     for i = 1, scale do
         for j = 1, scale do
-            local toGrid = function(x, k, flip)
-                local g = c[k] - (scale + 1) / 2 + x
-                if flip then
-                    g = c[k] + (scale + 1) / 2 - x
+            if sk.range[i][j] then
+                local gi = toGrid(i, 2, false)
+                local gj = toGrid(j, 1, false)
+                if dir == DOWN then
+                    gi = toGrid(i, 2, true)
+                    gj = toGrid(j, 1, false)
+                elseif dir == LEFT then
+                    gi = toGrid(j, 2, false)
+                    gj = toGrid(i, 1, false)
+                elseif dir == RIGHT then
+                    gi = toGrid(j, 2, false)
+                    gj = toGrid(i, 1, true)
                 end
-                return g
-            end
-            local gi = toGrid(i, 2, false)
-            local gj = toGrid(j, 1, false)
-            if dir == DOWN then
-                gi = toGrid(i, 2, true)
-                gj = toGrid(j, 1, false)
-            elseif dir == LEFT then
-                gi = toGrid(j, 2, false)
-                gj = toGrid(i, 1, false)
-            elseif dir == RIGHT then
-                gi = toGrid(j, 2, false)
-                gj = toGrid(i, 1, true)
-            end
-            if sk.range[i][j] and self.grid[gi] and self.grid[gi][gj] then
-                table.insert(tiles, {gi, gj})
+                table.insert(tiles, { gi, gj })
             end
         end
     end
     return tiles
+end
+
+function Battle:skillRange(sk, dir, c)
+    return filter(
+        function(t) return self.grid[t[1]] and self.grid[t[1]][t[2]] end,
+        self:rangeToTiles(sk, dir, c)
+    )
 end
 
 function Battle:newCursorMove(up, down, left, right)
@@ -1174,9 +1182,11 @@ function Battle:update(keys, dt)
 
             -- If there are enemies that need to go next, have them go.
             if self.enemy_action then
-                self.stack = self.enemy_action
-                self:playAction()
                 self:planNextEnemyAction()
+                if self.enemy_action then
+                    self.stack = self.enemy_action
+                    self:playAction()
+                end
             end
 
             -- If all allies have acted, switch to enemy phase
@@ -1246,22 +1256,264 @@ function Battle:updateBattleCam()
 end
 
 -- Prepare this sprite's next skill
-function Battle:prepareSkill(sp)
-    local sk = sp.skills[1] -- TODO: intelligent selection
-    self.status[sp:getId()]['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio } }
+function Battle:prepareSkill(e, used)
+
+    -- TODO: skill selection strategy
+    local sk = e.skills[1]
+    self.status[e:getId()]['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio } }
+end
+
+function Battle:planTarget(e, plan)
+
+    -- Get targeting priority
+    local stat = self.status[e:getId()]
+    local prio = stat['prepare']['prio'][1]
+
+    -- If the target is forced, it doesn't matter where they are. Target them.
+    if prio == FORCED then
+        local sp = self.status[stat['prepare']['prio'][2]]['sp']
+        for i = 1, #plan['options'] do
+            if sp == plan['options'][i]['sp'] then
+                return plan['options'][i], nil
+            end
+        end
+        return nil, nil
+    end
+
+    -- The set of choices is all ally sprites, unless some sprites are within
+    -- striking distance, in which case only reachable sprites are considered
+    local tgts = filter(function(o) return o['reachable'] end, plan['options'])
+    if not next(tgts) then tgts = plan['options'] end
+
+    -- Pick a target from the set of choices based on the sprite's priorities
+    local tgt = nil -- Who to target
+    local mv  = nil -- Which move to take (optional)
+
+    if prio == CLOSEST then
+
+        -- Target whichever sprite requires the least movement to attack
+        local min_dist = math.huge
+        for i = 1, #tgts do
+            for j = 1, #tgts[i]['moves'] do
+                local d = tgts[i]['moves'][j]['attack']['dist']
+                if d < min_dist then
+                    min_dist = d
+                    tgt, mv = tgts[i], tgts[i]['moves'][j]
+                end
+            end
+        end
+    elseif prio == KILL then
+
+        -- Target whichever sprite will suffer the highest percent of their
+        -- current health in damage (with 100% meaning they'd die)
+        local max_percent = 0
+        for i = 1, #tgts do
+            for j = 1, #tgts[i]['moves'] do
+                local a = tgts[i]['moves'][j]['attack']
+                local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
+                for k = 1, #d do
+                    if d[k]['percent'] > max_percent then
+                        max_percent = d[k]['percent']
+                        tgt, mv = tgts[i], tgts[i]['moves'][j]
+                    end
+                end
+            end
+        end
+    elseif prio == DAMAGE then
+
+        -- Target whichever sprite and move will achieve the maximum damage
+        -- across all affected sprites
+        local max_dmg = 0
+        for i = 1, #tgts do
+            for j = 1, #tgts[i]['moves'] do
+                local a = tgts[i]['moves'][j]['attack']
+                local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
+                local sum = 0
+                for k = 1, #d do sum = sum + d[k]['flat'] end
+                if sum > max_dmg then
+                    max_dmg = sum
+                    tgt, mv = tgts[i], tgts[i]['moves'][j]
+                end
+            end
+        end
+    elseif prio == STRONGEST then
+
+        -- Target whichever sprite poses the biggest threat
+        local max_attrs = 0
+        for i = 1, #tgts do
+            local attrs = self:getTmpAttributes(tgts[i]['sp'])
+            local sum = 0
+            for _,v in pairs(attrs) do sum = sum + v end
+            if sum > max_attrs then
+                max_attrs = sum
+                tgt, mv = tgts[i], nil
+            end
+        end
+    end
+    return tgt, mv
+end
+
+function Battle:planAction(e, plan, other_plans)
+
+    -- if other_plans then
+    --     local y, x = self:findSprite(e:getId())
+    --     print(e:getId() .. ' at ' .. x .. ' ' .. y)
+    --     for i = 1, #plan['options'] do
+    --         print("Options for " .. plan['options'][i]['sp']:getId())
+    --         print("Reachable? " .. tostring(plan['options'][i]['reachable']))
+    --         print("Moves:")
+    --         dump(plan['options'][i]['moves'])
+    --     end
+    -- end
+
+    -- Select a target and move based on skill prio and enemies in range
+    local target, move = self:planTarget(e, plan)
+
+    -- Get skill being used and suggested move
+    local move = nil
+    if not move then
+
+        -- If no suggested move, compute the nearest one
+        -- TODO: pick a non-interfering tile based on other_plans
+        local min_dist = math.huge
+        for i = 1, #target['moves'] do
+            local d = target['moves'][i]['attack']['dist']
+            if d < min_dist then
+                min_dist = d
+                move = target['moves'][i]
+            end
+        end
+    end
+
+    -- Return move data, and attack data if target is reachable
+    if target['reachable'] then
+        return move['move_c'], move['attack']['c'], target['sp']
+    end
+    return move['move_c'], nil, nil
+end
+
+function Battle:getAttackAngles(e, sp, sk)
+
+    -- Initializing stuff
+    local y,  x  = self:findSprite(sp:getId())
+    local ey, ex = self:findSprite(e:getId())
+    local g = self.grid
+    local attacks = {}
+
+    -- Tile transpose function
+    local addTransposedAttack = function(c, dir)
+        local ts = self:rangeToTiles(sk, ite(dir, dir, UP), c)
+        for i = 1, #ts do
+            local y_dst = ey + (y - ts[i][1])
+            local x_dst = ex + (x - ts[i][2])
+            local ac = { c[1] + (x - ts[i][2]), c[2] + (y - ts[i][1]) }
+            if g[y_dst] and g[y_dst][x_dst] and (not g[y_dst][x_dst].occupied
+            or g[y_dst][x_dst].occupied == e) and g[ac[2]] and g[ac[2]][ac[1]]
+            then
+                table.insert(attacks, {
+                    ['c'] = ac,
+                    ['from'] = { y_dst, x_dst },
+                    ['dir'] = ite(dir, dir, UP)
+                })
+            end
+        end
+    end
+
+    -- Add transposed attacks
+    if sk.aim == DIRECTIONAL_AIM then
+        addTransposedAttack({ ex, ey - 1 }, UP)
+        addTransposedAttack({ ex, ey + 1 }, DOWN)
+        addTransposedAttack({ ex - 1, ey }, LEFT)
+        addTransposedAttack({ ex + 1, ey }, RIGHT)
+    else
+        addTransposedAttack({ ex, ey })
+    end
+    return attacks
+end
+
+function Battle:mkInitialPlan(e, sps)
+
+    -- Get skill
+    local sk = self.status[e:getId()]['prepare']['sk']
+
+    -- Preemptively get shortest paths for the grid, and enemy movement
+    local y, x = self:findSprite(e:getId())
+    local paths_dist, paths_prev = e:djikstra(self.grid, { y, x })
+    local movement = math.floor(self:getTmpAttributes(e)['agility'] / 5)
+
+    -- Compute ALL movement options!
+    local opts = {}
+    for i = 1, #sps do
+
+        -- Init opts for this sprite
+        opts[i] = {}
+        opts[i]['sp'] = sps[i]
+        opts[i]['moves'] = {}
+        opts[i]['reachable'] = false
+
+        -- Get all attacks that can be made against this sprite using the skill
+        local attacks = self:getAttackAngles(e, sps[i], sk)
+        for j = 1, #attacks do
+
+            -- Get distance and path to attack location
+            local attack_from = attacks[j]['from']
+            local dist = paths_dist[attack_from[1]][attack_from[2]]
+            if dist ~= math.huge then
+
+                -- Sprite should move to path node with dist == movement
+                local move_c = { attack_from[2], attack_from[1] }
+                local n = attack_from
+                for k = 1, dist - movement do
+                    n = paths_prev[n[1]][n[2]]
+                    move_c[1] = n[2]
+                    move_c[2] = n[1]
+                end
+
+                -- Candidate move
+                local c = {
+                    ['move_c'] = move_c,
+                    ['attack'] = {
+                        ['dist'] = dist,
+                        ['c'] = attacks[j]['c'],
+                        ['from'] = attacks[j]['from'],
+                        ['dir'] = attacks[j]['dir']
+                    }
+                }
+                local c_reachable = move_c[1] == attack_from[2]
+                                and move_c[2] == attack_from[1]
+
+                -- If candidate move is reachable, we will only accept reachable
+                -- moves now. Clean out moves (all unreachable) and mark flag.
+                if c_reachable and not opts[i]['reachable'] then
+                    opts[i]['moves'] = {}
+                    opts[i]['reachable'] = true
+                end
+
+                -- If candidate is reachable, or if we don't care whether or not
+                -- it's reachable, add it to moves
+                if c_reachable or not opts[i]['reachable'] then
+                    table.insert(opts[i]['moves'], c)
+                end
+            end
+        end
+    end
+    return { ['sk'] = sk, ['options'] = opts }
 end
 
 -- Plan the next enemy's action
 function Battle:planNextEnemyAction()
 
-    -- Clear previous action
+    -- Clear previous action and stack
     self.enemy_action = nil
 
     -- Get enemies who haven't gone yet, in order of action
     local enemies = {}
     for i = 1, #self.enemy_order do
         local stat = self.status[self.enemy_order[i]]
-        if stat['alive'] and not stat['acted'] then
+        local prev = self:getSprite()
+        if stat['alive'] and not stat['acted']
+        and not (prev and prev == stat['sp'])
+        then
             table.insert(enemies, stat['sp'])
         end
     end
@@ -1271,80 +1523,29 @@ function Battle:planNextEnemyAction()
 
     -- For every enemy who hasn't acted, make a tentative plan for their action
     local sps = filter(function(p) return self:isAlly(p) end, self.participants)
-    local actions = {}
+    local plans = {}
     for i = 1, #enemies do
-        local e    = enemies[i]
-        local stat = self.status[e:getId()]
-        local sk   = stat['prepare']['sk']
-        local prio = stat['prepare']['prio'][1]
 
-        -- TODO
-        -- 'e' declares a target and the tiles they can hit their target from,
-        -- Basically dry-run the parts of the below that compute target and
-        -- tiles to move to, if the target is hittable.
-        local y, x = self:findSprite(e:getId())
-        actions[i] = {}
-        actions[i]['move'] = { x, y }
-        actions[i]['attack'] = {}
+        -- Precompute options for targeting all ally sprites
+        plans[i] = self:mkInitialPlan(enemies[i], sps)
+
+        -- Compute this enemy's preferred action in a vacuum and add it to plan
+        local pref_move, _, pref_target = self:planAction(enemies[i], plans[i])
+        plans[i]['pref'] = {
+            ['target'] = pref_target,
+            ['move'] = pref_move
+        }
     end
 
     -- Prepare the first enemy's action, taking into account what the
-    -- following enemies are planning
-    local e = enemies[1]
-
-    -- TODO
-    -- Grab the target and tiles computed for this enemy
-    --
-    -- If there is only one ally within reach of the prepared skill:
-    --
-    --     label ATTACK: Compute the set of tiles that can be moved to, to hit the
-    --     target ally.
-    --
-    --     Pick the tile which the fewest other enemies can attack their target
-    --     from. If there is a tie, pick the tile which is furthest away from the
-    --     target. If there is a tie, pick the tile which requires the least
-    --     movement.
-    --
-    --     Play action
-    --
-    --     prepare another skill to use on the next turn, based on a preset
-    --     rotation and ignea levels. Decide the targeting strategy for it (this
-    --     will often just be a function of the skill, but the target strategy is
-    --     a sprite-level property).
-    self:prepareSkill(e)
-    --
-    -- If there are multiple allies within reach of the prepared skill, or if there
-    -- are no allies within reach of the prepared skill:
-    --
-    --     Use targeting info to choose a target to go after (e.g. closest,
-    --     greatest-percent-of-remaining-hp, highest-damage, biggest-threat,
-    --     forced-target, etc).
-    --
-    --     If the target is within reach of the prepared skill:
-    --
-    --         goto ATTACK
-    --
-    --     If the target is NOT within reach of the prepared skill:
-    --
-    --         Use the relative skill range, and djikstra's algorithm, to compute
-    --         the closest tile to the sprite that will allow it to hit the target.
-    --
-    --         Move as much as possible along the shortest path to that tile
-    --
-    --         Play action
-    --
-    --         Prepare the same skill again, with the same targeting strategy
+    -- following enemies are planning and would prefer
+    local m_c, a_c, _ = self:planAction(enemies[1], plans[1], plans)
+    self:prepareSkill(enemies[1], ite(a_c, true, false))
 
     -- Declare next enemy action to be played as an action stack
-    self.enemy_action = {
-        self:stackBase(),
-        { ['cursor'] = actions[1]['move'] },
-        {},
-        actions[1]['attack'],
-        { ['cursor'] = actions[1]['move'], ['sp'] = enemies[1] },
-        {},
-        {}
-    }
+    local move = { ['cursor'] = m_c, ['sp'] = enemies[1] }
+    local attack = ite(a_c, { ['cursor'] = a_c, ['sk'] = plans[1]['sk'] }, {})
+    self.enemy_action = { self:stackBase(), move, {}, attack, move, {}, {} }
 end
 
 function Battle:renderCursors()

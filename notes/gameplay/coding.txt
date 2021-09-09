@@ -2,12 +2,15 @@
 
 #50:
 
-Enemy AI algorithm
+implement stun, enrage
+Bug: forbearance doesn't work
 
-Bug: abelon changing direction briefly during a pathed walk, in between two
-walkTo behaviors
+improve AI algorithm
 
-Implement stun, enrage
+Bug: abelon changing direction during a pathed walk (when walking in one
+direction, he shouldn't be changing dir!)
+
+TEST FIRST BATTLE A LOT
 
 #55:
 
