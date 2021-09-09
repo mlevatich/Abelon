@@ -216,9 +216,14 @@ function addStatus(stat, eff)
 end
 
 -- Determine whether the status effects on a character include a given special
-function hasSpecial(stat, spec)
+function hasSpecial(stat, ass, spec)
     for i = 1, #stat do
         if stat[i].buff.attr == 'special' and stat[i].buff.val == spec then
+            return true
+        end
+    end
+    for i = 1, #ass do
+        if ass[i].attr == 'special' and ass[i].val == spec then
             return true
         end
     end
@@ -269,7 +274,7 @@ function genericAttack(dmg_type, affects, scaling,
 
             -- If attacker is an enemy and target has forbearance, the target
             -- switches to Kath
-            if hasSpecial(t_stat, 'forbearance')
+            if hasSpecial(t_stat, t_ass, 'forbearance')
             and status[sp:getId()]['team'] == ENEMY then
                 local s_kath = status['kath']
                 local loc = s_kath['location']
@@ -303,7 +308,7 @@ function genericAttack(dmg_type, affects, scaling,
                     -- they can't die
                     local min = 0
                     if (t == sp and modifiers['self'])
-                    or hasSpecial(t_stat, 'guardian_angel') then
+                    or hasSpecial(t_stat, t_ass, 'guardian_angel') then
                         min = 1
                     end
 

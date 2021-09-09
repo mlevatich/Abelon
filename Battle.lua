@@ -1296,7 +1296,7 @@ function Battle:planTarget(e, plan)
         for i = 1, #tgts do
             for j = 1, #tgts[i]['moves'] do
                 local d = tgts[i]['moves'][j]['attack']['dist']
-                if d < min_dist then
+                if d <= min_dist then
                     min_dist = d
                     tgt, mv = tgts[i], tgts[i]['moves'][j]
                 end
@@ -1312,7 +1312,7 @@ function Battle:planTarget(e, plan)
                 local a = tgts[i]['moves'][j]['attack']
                 local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
                 for k = 1, #d do
-                    if d[k]['percent'] > max_percent then
+                    if d[k]['percent'] >= max_percent then
                         max_percent = d[k]['percent']
                         tgt, mv = tgts[i], tgts[i]['moves'][j]
                     end
@@ -1330,7 +1330,7 @@ function Battle:planTarget(e, plan)
                 local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
                 local sum = 0
                 for k = 1, #d do sum = sum + d[k]['flat'] end
-                if sum > max_dmg then
+                if sum >= max_dmg then
                     max_dmg = sum
                     tgt, mv = tgts[i], tgts[i]['moves'][j]
                 end
@@ -1344,7 +1344,7 @@ function Battle:planTarget(e, plan)
             local attrs = self:getTmpAttributes(tgts[i]['sp'])
             local sum = 0
             for _,v in pairs(attrs) do sum = sum + v end
-            if sum > max_attrs then
+            if sum >= max_attrs then
                 max_attrs = sum
                 tgt, mv = tgts[i], nil
             end
@@ -1354,17 +1354,6 @@ function Battle:planTarget(e, plan)
 end
 
 function Battle:planAction(e, plan, other_plans)
-
-    -- if other_plans then
-    --     local y, x = self:findSprite(e:getId())
-    --     print(e:getId() .. ' at ' .. x .. ' ' .. y)
-    --     for i = 1, #plan['options'] do
-    --         print("Options for " .. plan['options'][i]['sp']:getId())
-    --         print("Reachable? " .. tostring(plan['options'][i]['reachable']))
-    --         print("Moves:")
-    --         dump(plan['options'][i]['moves'])
-    --     end
-    -- end
 
     -- Select a target and move based on skill prio and enemies in range
     local target, move = self:planTarget(e, plan)
