@@ -1509,6 +1509,21 @@ function Battle:planNextEnemyAction()
 
     -- If there are no more enemies who can act, do nothing
     if not next(enemies) then return end
+    local e = enemies[1]
+
+    -- If the current enemy is stunned, it misses it's action
+    local stat = self.status[e:getId()]
+    if hasSpecial(stat['effects'], {}, 'stun') then
+        local y, x = self:findSprite(e:getId())
+        local move = { ['cursor'] = { x, y }, ['sp'] = e }
+        self.enemy_action = { self:stackBase(), move, {}, {}, move, {}, {} }
+        return
+    end
+
+    -- If the current enemy is enraged, force it to target Kath
+    if hasSpecial(stat['effects'], {}, 'enrage') then
+        stat['prepare']['prio'] = { FORCED, 'kath' }
+    end
 
     -- For every enemy who hasn't acted, make a tentative plan for their action
     local sps = filter(function(p) return self:isAlly(p) end, self.participants)
@@ -1528,11 +1543,11 @@ function Battle:planNextEnemyAction()
 
     -- Prepare the first enemy's action, taking into account what the
     -- following enemies are planning and would prefer
-    local m_c, a_c, _ = self:planAction(enemies[1], plans[1], plans)
+    local m_c, a_c, _ = self:planAction(e, plans[1], plans)
     self:prepareSkill(enemies[1], ite(a_c, true, false))
 
     -- Declare next enemy action to be played as an action stack
-    local move = { ['cursor'] = m_c, ['sp'] = enemies[1] }
+    local move = { ['cursor'] = m_c, ['sp'] = e }
     local attack = ite(a_c, { ['cursor'] = a_c, ['sk'] = plans[1]['sk'] }, {})
     self.enemy_action = { self:stackBase(), move, {}, attack, move, {}, {} }
 end
