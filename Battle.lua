@@ -138,7 +138,7 @@ function Battle:readEntities(data, idx)
 end
 
 function Battle:adjustStatsForDifficulty(old)
-    local factor = 4 * (old - self.chapter.difficulty)
+    local factor = 3 * (old - self.chapter.difficulty)
     for i = 1, #self.participants do
         local sp = self.participants[i]
         if not self:isAlly(sp) then
@@ -1001,9 +1001,9 @@ function Battle:rangeToTiles(sk, dir, c)
                 local gj = toGrid(j, 1, false)
                 if dir == DOWN then
                     gi = toGrid(i, 2, true)
-                    gj = toGrid(j, 1, false)
+                    gj = toGrid(j, 1, true)
                 elseif dir == LEFT then
-                    gi = toGrid(j, 2, false)
+                    gi = toGrid(j, 2, true)
                     gj = toGrid(i, 1, false)
                 elseif dir == RIGHT then
                     gi = toGrid(j, 2, false)

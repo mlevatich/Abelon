@@ -230,6 +230,12 @@ function hasSpecial(stat, ass, spec)
     return false
 end
 
+function isDebuffed(sp, stat)
+    local es = stat[sp:getId()]['effects']
+    for i = 1, #es do if es[i].buff.type == DEBUFF then return true end end
+    return false
+end
+
 -- Generate a generic assist function given the buff templates
 function genericAssist(templates)
     return function(attrs)
@@ -286,10 +292,10 @@ function genericAttack(dmg_type, affects, scaling,
 
             -- Only hit targets passing the team filter
             local team = ite(status[t:getId()]['team'] == ALLY, ENEMY, ALLY)
-            local valid = (team ~= affects or (t == sp and modifiers['self']))
-            valid = valid and (not modifiers['br'] or
-                               modifiers['br'](sp_tmp_attrs, t_tmp_attrs))
-            if valid then
+            if (team ~= affects or (t == sp and modifiers['self']))
+            and (not modifiers['br']
+            or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status))
+            then
 
                 -- If there's no scaling, the attack does no damage
                 if scaling then
@@ -366,10 +372,12 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ENEMY, Scaling(0, 'force', 1.0)
+            WEAPON, ENEMY, Scaling(0, 'force', 1.0),
+            nil, nil,
+            { { 'force', Scaling(2, 'force', 0) } }, 1
         ),
-        "Slice at an adjacent enemy's exposed limbs, crippling them. Deals \z
-         (Force * 1.0) weapon damage to an enemy next to Abelon."
+        "Slice at an enemy's exposed limbs. Deals (Force * 1.0) weapon damage \z
+         to an enemy next to Abelon and lowers their Force by 2."
     ),
     ['conflagration'] = Skill('conflagration', 'Conflagration',
         'Demon', SPELL, MANUAL, str_to_icon['empty'],
@@ -394,7 +402,7 @@ skills = {
     ['judgement'] = Skill('judgement', 'Judgement',
         'Executioner', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
-        { { T } }, FREE_AIM(100, ENEMY), 2,
+        { { T } }, FREE_AIM(100, ENEMY), 1,
         function(sp, assists, ts, ts_assists, status)
             local dead = {}
             for i = 1, #ts do
@@ -427,15 +435,32 @@ skills = {
          to ally's Force, Reaction, and Affinity."
     ),
     ['trust'] = Skill('trust', 'Trust',
-        'Veteran', WEAPON, MANUAL, str_to_icon['affinity'],
+        'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
         genericAttack(
             WEAPON, ALLY, nil,
-            { { 'affinity', Scaling(0, 'affinity', 2.0) } }, 1
+            { { 'affinity', Scaling(8, 'affinity', 0) } }, 1
         ),
-        "Place your faith in your comrades. Triples Abelon's Affinity for the \z
-         rest of the turn."
+        "Place your faith in your comrades. Increases Abelon's Affinity by 8 \z
+         for the rest of the turn."
+    ),
+    ['punish'] = Skill('punish', 'Punish',
+        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Demon', 0 }, { 'Veteran', 1 }, { 'Executioner', 1 } },
+        { { F, F, F },
+          { T, F, F },
+          { F, F, F } }, DIRECTIONAL_AIM, 0,
+        genericAttack(
+            WEAPON, ENEMY, Scaling(10, 'force', 1.0),
+            nil, nil,
+            nil, nil,
+            { ['br'] = function(a, a_a, b, b_a, st)
+                return isDebuffed(b, st) end
+            }
+        ),
+        "Exploit a brief weakness with a precise stab. Deals 10 + (Force * 1.0) \z
+         weapon damage only if the enemy is impaired or debuffed."
     ),
     ['crucible'] = Skill('crucible', 'Crucible',
         'Demon', SPELL, MANUAL, str_to_icon['force'],
@@ -497,11 +522,11 @@ skills = {
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ENEMY, Scaling(0, 'force', 0.5),
-            { { 'reaction', Scaling(2, 'force', 0) } }, 1
+            WEAPON, ENEMY, Scaling(0, 'force', 0.8),
+            { { 'reaction', Scaling(3, 'force', 0) } }, 1
         ),
-        "Slash in a wide arc. Deals (Force * 0.5) weapon damage to enemies in \z
-         front of Kath, and grants 2 Reaction until his next turn."
+        "Slash in a wide arc. Deals (Force * 0.8) weapon damage to enemies in \z
+         front of Kath, and grants 3 Reaction until his next turn."
     ),
     ['stun'] = Skill('stun', 'Stun',
         'Defender', WEAPON, MANUAL, str_to_icon['reaction'],
@@ -511,7 +536,9 @@ skills = {
             WEAPON, ENEMY, nil,
             nil, nil,
             { { 'special', 'stun', DEBUFF } }, 1,
-            { ['br'] = function(a, b) return a['reaction'] > b['reaction'] end }
+            { ['br'] = function(a, a_a, b, b_a, st)
+                return a_a['reaction'] > b_a['reaction'] end
+            }
         ),
         "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
          higher than his foe's, they are unable to act for a turn."
@@ -536,9 +563,9 @@ skills = {
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ENEMY, Scaling(0, 'force', 1.5)
+            WEAPON, ENEMY, Scaling(0, 'force', 1.2)
         ),
-        "Kath hurls a javelin at an enemy, dealing (Force * 1.5) weapon \z
+        "Kath hurls a javelin at an enemy, dealing (Force * 1.2) weapon \z
          damage."
     ),
     ['forbearance'] = Skill('forbearance', 'Forbearance',
@@ -565,6 +592,18 @@ skills = {
         ),
         "Kath raises the agility of allies around him by 10."
     ),
+    ['invigorate'] = Skill('invigorate', 'Invigorate',
+        'Cleric', ASSIST, MANUAL, str_to_icon['affinity'],
+        { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 1 } },
+        { { T, F, T },
+          { F, F, F },
+          { T, F, T } }, SELF_CAST_AIM, 1,
+        genericAssist({
+            { 'force', Scaling(0, 'affinity', 1.0) }
+        }),
+        "Kath renews allies near him with a spell. Assisted allies gain \z
+         (Affinity * 1.0) Force"
+    ),
     ['guardian_angel'] = Skill('guardian_angel', 'Guardian Angel',
         'Cleric', ASSIST, MANUAL, str_to_icon['empty'],
         { { 'Defender', 2 }, { 'Hero', 0 }, { 'Cleric', 2 } },
@@ -582,14 +621,14 @@ skills = {
          drop below 1 health for the remainder of the turn."
     ),
     ['hold_the_line'] = Skill('hold_the_line', 'Hold the Line',
-        'Hero', ASSIST, MANUAL, str_to_icon['force'],
+        'Hero', ASSIST, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
         genericAssist({
-            { 'reaction', Scaling(0, 'force', 0.5) }
+            { 'reaction', Scaling(0, 'reaction', 0.7) }
         }),
         "Kath forms a wall with his allies, raising the Reaction of assisted \z
-         allies by (Force * 0.5)"
+         allies by (Reaction * 0.7)"
     ),
     ['bite'] = Skill('bite', 'Bite',
         'Enemy', WEAPON, KILL, str_to_icon['force'],

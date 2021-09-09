@@ -2,12 +2,16 @@
 
 #50:
 
+Balance testing:
+-Make sure assists are necessary! Give varied range so they can use them in
+different setups, and high power to incentivize stepping in them.
+
+Don't forget to test on all difficulties!
+
 Bug: abelon changing direction during a pathed walk (when walking in one
 direction, he shouldn't be changing dir!)
 
-improve AI algorithm
-
-TEST FIRST BATTLE A LOT
+improve AI algorithm - use other plans!
 
 #55:
 
