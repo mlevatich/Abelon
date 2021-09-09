@@ -2,14 +2,10 @@
 
 #50:
 
-Balance testing:
--Make sure assists are necessary! Give varied range so they can use them in
-different setups, and high power to incentivize stepping in them.
-
-Don't forget to test on all difficulties!
-
 Bug: abelon changing direction during a pathed walk (when walking in one
 direction, he shouldn't be changing dir!)
+Bug: Kath got stuck behind Abelon in his lefally talk because djikstra took him
+the wrong way for a moment.
 
 improve AI algorithm - use other plans!
 
@@ -130,14 +126,8 @@ NEW ISSUE: combat QoL
 Try to minimize the amount of text. Replace text with pictures as much as
 possible?
 
-The effect of an attack on whatever targets will be hit should be rendered in
-the top right. Instead of the normal hover overlay, render rows starting from
-the top right of the screen, where each row is two hover overlays: the before
--> after of the sprite's status and assists. Max this out by line number so
-there's no overflow.
-
-The effect of an assist on the squares that it will activate should be rendered
-in the top right. See above.
+When attacking or assisting, the targets that will be affected should be
+rendered, not the tile that the cursor is on.
 
 When sprites take damage, a damage splash should be rendered. When they heal,
 a heal splash should be rendered. While a sprite's action is playing out, what

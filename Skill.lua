@@ -374,7 +374,7 @@ skills = {
         genericAttack(
             WEAPON, ENEMY, Scaling(0, 'force', 1.0),
             nil, nil,
-            { { 'force', Scaling(2, 'force', 0) } }, 1
+            { { 'force', Scaling(-2, 'force', 0) } }, 1
         ),
         "Slice at an enemy's exposed limbs. Deals (Force * 1.0) weapon damage \z
          to an enemy next to Abelon and lowers their Force by 2."
@@ -488,7 +488,7 @@ skills = {
           { F, F, T, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         genericAttack(
             SPELL, ENEMY, nil,
             nil, nil,
@@ -547,7 +547,7 @@ skills = {
         'Cleric', SPELL, MANUAL, str_to_icon['affinity'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
-          { T, F, T },
+          { T, T, T },
           { T, T, T } }, FREE_AIM(3, ALL), 3,
         genericAttack(
             SPELL, ALLY, Scaling(0, 'affinity', -1.0)
@@ -584,7 +584,7 @@ skills = {
           { F, F, T, F, F },
           { T, T, F, T, T },
           { F, F, T, F, F },
-          { F, F, T, F, F } }, SELF_CAST_AIM, 2,
+          { F, F, T, F, F } }, SELF_CAST_AIM, 1,
         genericAttack(
             SPELL, ALLY, nil,
             nil, nil,
@@ -613,7 +613,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         genericAssist({
             { 'special', 'guardian_angel', BUFF }
         }),
