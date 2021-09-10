@@ -6,6 +6,7 @@ require 'Sprite'
 require 'Map'
 require 'Scene'
 require 'Music'
+require 'Sounds'
 require 'Triggers'
 require 'Scripts'
 require 'Battle'
@@ -202,10 +203,12 @@ end
 
 function Chapter:setSfxVolume(vol)
     self.sfx_volume = vol
+    for k, v in pairs(sfx) do if k ~= 'text' then v:setVolume(vol) end end
 end
 
 function Chapter:setTextVolume(vol)
     self.text_volume = vol
+    sfx['text']:setVolume(vol)
 end
 
 function Chapter:launchBattle(b_id)

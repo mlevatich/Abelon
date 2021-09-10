@@ -6,6 +6,8 @@ require 'Scene'
 require 'Sprite'
 require 'Menu'
 
+require 'Sounds'
+
 Player = Class{}
 
 -- Movement constants
@@ -46,6 +48,7 @@ function Player:openMenu(m)
     self:changeMode('browse')
 
     -- Create and open menu
+    sfx['open']:play()
     self.open_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN, false)
 end
 
@@ -352,6 +355,7 @@ function Player:browseMode()
     end
 
     if done then
+        sfx['close']:play()
         self.open_menu:reset()
         self.open_menu = nil
         self:changeMode('free')

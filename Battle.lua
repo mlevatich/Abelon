@@ -262,6 +262,7 @@ end
 function Battle:moveCursor(x, y)
     local c = self:getCursor()
     if self.grid[y] and self.grid[y][x] then
+        sfx['hover']:play()
         c[1] = x
         c[2] = y
     end
@@ -502,7 +503,9 @@ function Battle:openBeginTurnMenu()
             self:turnRefresh()
             self.stack = { self:stackBase() }
             local y, x = self:findSprite(self.player:getId())
-            self:moveCursor(x, y)
+            local c = self:getCursor()
+            c[1] = x
+            c[2] = y
             self:checkTriggers(ALLY)
         end
     )}

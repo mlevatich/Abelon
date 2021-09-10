@@ -1,23 +1,12 @@
 (please commit each paragraph separately for your own sanity)
 
-#50:
-
 Bug: abelon changing direction during a pathed walk (when walking in one
-direction, he shouldn't be changing dir!)
+direction, he shouldn't be changing dir!). Can reproduce by having him walk
+down before the first scene.
 Bug: Kath got stuck behind Abelon in his lefally talk because djikstra took him
-the wrong way for a moment.
-
-improve AI algorithm - use other plans!
-
-#55:
-
-exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
-healed, 0.5 of the value for assisters supporting any of these, flat amount for
-buffs and debuffs that land.
-
-level up table: exp required for a level up increases with level
-
-level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
+the wrong way for a moment. This happens other places to, Djikstra sends a unit
+backwards
+Bug: Kath stops upon reaching Abelon in the opening scene and freezes
 
 #4:
 
@@ -37,8 +26,8 @@ Sound effect for: weapon skill, spell, assist, death, victory.
 Every skill has an associated single-fire animation, with render position
 determined by the cursor location of the cast. This has nothing to do with the
 sprite casting the skill. For some skills, the animation should play at every
-affected tile, for others, the animation should play centered on the cursor.
-This should be provided as an option.
+affected tile, for others, the animation should play centered on the cursor and
+affected by direction. This should be provided as an option.
 
 Insert appropriate hooks for skill animations to play at the right points in
 battle (fill in with a universal default).
@@ -46,6 +35,18 @@ battle (fill in with a universal default).
 Skill animations for all basic skills.
 
 Sound effects for all skills.
+
+#55:
+
+exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
+healed, 0.5 of the value for assisters supporting any of these, flat amount for
+buffs and debuffs that land.
+
+level up table: exp required for a level up increases with level
+
+level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
+
+Level up sound effect
 
 #16:
 
@@ -121,13 +122,18 @@ Wolf-weapon
 Wolf-hurt
 Wolf-death
 
-NEW ISSUE: combat QoL
+NEW ISSUE: combat engine second draft
 
 Try to minimize the amount of text. Replace text with pictures as much as
 possible?
 
 When attacking or assisting, the targets that will be affected should be
 rendered, not the tile that the cursor is on.
+
+improve AI algorithm - use other plans! In particular, enemies shouldn't
+interfere with each other. If one enemy has only a single path to attack their
+target, the acting enemy shouldn't get in the way of that path unless it
+needs to in order to attack its own target.
 
 When sprites take damage, a damage splash should be rendered. When they heal,
 a heal splash should be rendered. While a sprite's action is playing out, what

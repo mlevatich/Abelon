@@ -1,6 +1,8 @@
 require 'Util'
 require 'Constants'
 
+require 'Sounds'
+
 MenuItem = Class{}
 
 CONFIRM_X = VIRTUAL_WIDTH / 2 - (CHAR_WIDTH * 3 + BOX_MARGIN * 2) / 2
@@ -122,7 +124,10 @@ function Menu:forward(c)
         self.selected:forward(c)
     else
         local action = self.menu_items[self.hovering + self.base - 1].action
-        if action then action(c, self.parent) end
+        if action then
+            sfx['select']:play()
+            action(c, self.parent)
+        end
     end
 end
 
@@ -133,6 +138,7 @@ function Menu:back()
     elseif self.parent then
         self:reset()
         self.parent.selected = nil
+        sfx['cancel']:play()
         return false
     end
     return not self.forced
@@ -143,6 +149,9 @@ function Menu:hover(dir)
     if self.selected then
         self.selected:hover(dir)
     else
+        local old_h = self.hovering
+        local old_b = self.base
+
         -- self.hovering determines where the selection arrow is rendered
         local window_height = math.min(MAX_MENU_ITEMS, #self.menu_items)
         local base_max = #self.menu_items - window_height + 1
@@ -166,6 +175,10 @@ function Menu:hover(dir)
                 end
                 self.hovering = math.min(window_height, self.hovering + 1)
             end
+        end
+
+        if self.hovering ~= old_h or self.base ~= old_b then
+            sfx['hover']:play()
         end
     end
 end
