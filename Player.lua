@@ -179,8 +179,7 @@ function Player:mkSettingsMenu()
                 MenuItem('High', {}, nil, nil, sv('t', HIGH), nil, iv('t', HIGH))
             }, 'Set text volume')
         }, 'Change audio settings'),
-        self:mkDifficultyMenu(),
-        MenuItem('Formulas', {}, nil, nil)
+        self:mkDifficultyMenu()
     }, 'View settings and information')
 end
 

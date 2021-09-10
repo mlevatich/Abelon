@@ -598,6 +598,7 @@ function Battle:openOptionsMenu()
     )
     local end_turn = MenuItem('End turn', {}, 'End your turn', nil, endfxn)
     local settings = self.player:mkSettingsMenu()
+    table.remove(settings.children) -- Delete difficulty setting
     local restart = MenuItem('Restart battle', {},
         'Start the battle over', nil, pass,
         "Start the battle over from the beginning?"

@@ -46,21 +46,49 @@ Attempt to autosave on game quit. Autosave after every scene, every battle
 action, and every map transition. Implement restart chapter, restart battle,
 and battle game over.
 
+#48:
+
+Game guide shows up immediately on starting new game, and accessible from
+inventory
+
+Combat guide accessible from battle begin menu or options.
+
+#?:
+
+Turn limits: every battle should have a turn limit loss condition, to prevent
+EXP farming
+
+Try to minimize the amount of text. Replace text with pictures as much as
+possible? Come up with icons?
+
+When attacking or assisting, the targets that will be affected should be
+rendered, not the tile that the cursor is on.
+
+improve AI algorithm - use other plans! In particular, enemies shouldn't
+interfere with each other. If one enemy has only a single path to attack their
+target, the acting enemy shouldn't get in the way of that path unless it
+needs to in order to attack its own target.
+
+When sprites gain exp, render exp splash.
+
+Ally base stats should be extremely lopsided to start, because they will
+even out over time. Kath can have more reaction, less HP, Abelon more HP,
+Elaine starts with 0 focus and no spells? Interesting idea.
+
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. While a sprite's action is playing out, what
+they're doing should render in the top right. Just the ability name and icons.
+
+For free aim, the cursor can be on any space given by the FREE_AIM field
+(intersect a diamond of size "scale" with the targets given by "target").
+FREE_AIM moves should render an outline of the move's range
+
 #4:
 
 SFX for:
 menu select (not too different from current)
 Scene text sound effects
-battle cursor move
-battle select ally/enemy
-battle select target for move/attack/assist
-battle confirm end action
-battle enemy turn start
-battle ally turn start
 start game (from title screen)
-level up
-
-Mute ally turn start, enemy turn start, victory, defeat menus
 
 #52:
 
@@ -74,8 +102,6 @@ Insert appropriate hooks for skill animations to play at the right points in
 battle (fill in with a universal default).
 
 Skill animations for all basic skills.
-
-Sound effects for all skills.
 
 #51:
 
@@ -132,6 +158,16 @@ SFX for:
 use weapon skill
 use spell
 use assist
+battle cursor move
+battle select ally/enemy
+battle select target for move/attack/assist
+battle confirm end action
+battle enemy turn start
+battle ally turn start
+level up
+all skills
+
+Mute ally turn start, enemy turn start, victory, defeat menus
 
 #57:
 
@@ -151,67 +187,33 @@ Expand lighting engine
 
 Add point lights to the forest to test
 
-NEW ISSUE
+#?:
 
-Turn limits: every battle should have a turn limit loss condition, to prevent
-EXP farming
+Defeat theme: Despair - Short theme that plays during the battle loss scene.
 
-Elaine starts with 0 focus and no spells? Interesting idea.
+#?:
 
-Ally base stats should be extremely lopsided to start, because they will
-even out over time. Kath can have more reaction, less HP, Abelon more HP,
+Enemy approaches theme - for rising action before a fight! This should play for
+most of the forest.
 
-Try to minimize the amount of text. Replace text with pictures as much as
-possible?
+#?:
 
-When attacking or assisting, the targets that will be affected should be
-rendered, not the tile that the cursor is on.
+Basic battle theme - for the three non-boss encounters
 
-improve AI algorithm - use other plans! In particular, enemies shouldn't
-interfere with each other. If one enemy has only a single path to attack their
-target, the acting enemy shouldn't get in the way of that path unless it
-needs to in order to attack its own target.
+#?:
 
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. While a sprite's action is playing out, what
-they're doing should render in the top right. Just the ability name and icons.
-
-When sprites gain exp, render exp splash.
-
-For free aim, the cursor can be on any space given by the FREE_AIM field
-(intersect a diamond of size "scale" with the targets given by "target").
-FREE_AIM moves should render an outline of the move's range
-
-#48:
-
-Game guide shows up immediately on starting new game, and accessible from
-inventory
-
-Combat guide accessible from battle begin menu or options, both of these
-replace "formulas".
-
-#33:
-
-Big refactor!
+Better forest theme - more tense investigation, less funeral march
 
 
 
 
-
-FUTURE: Most of these are not issues yet, but they will be once the above are
-done. They should all be individual issues.
+FUTURE: implement everything!
 
 Finish script - Do this before even looking at the below scenarios! Because
 I might decide I want something different as I write the script.
-Better forest theme - more tense investigation, less funeral march
-Basic battle theme - for the three non-boss encounters
-Enemy approaches theme - for rising action before a fight! This should play for
-most of the forest.
-Defeat theme: Despair - Short theme that plays during the battle loss scene.
 implement Elaine scenario
 implement Ghoul scenario (objective is rout or escape)
 implement Deer scenario
 Implement crystal wolf scenario (objective is rout and defend)
 Chapter 1 endcard, end scene teaser
 Make executable
-Become the knight Abelon and take on the world
