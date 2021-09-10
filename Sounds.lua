@@ -20,5 +20,5 @@ function Sound:setVolume(vol)
 end
 
 sfx = {}
-local sfx_ids = { 'select', 'cancel', 'hover', 'close', 'open' }
+local sfx_ids = { 'select', 'cancel', 'hover', 'close', 'open', 'victory' }
 for i = 1, #sfx_ids do sfx[sfx_ids[i]] = Sound(sfx_ids[i]) end

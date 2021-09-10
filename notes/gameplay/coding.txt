@@ -6,47 +6,19 @@ down before the first scene.
 Bug: Kath got stuck behind Abelon in his lefally talk because djikstra took him
 the wrong way for a moment. This happens other places to, Djikstra sends a unit
 backwards
-Bug: Kath stops upon reaching Abelon in the opening scene and freezes
-
-#4:
-
-Write sound effects engine, globally available.
-
-Basic beep and boop sfx for all interactions (basically whenever F or D is
-pressed and does something).
-
-Scene text sound effects
-
-#56:
-
-Sound effect for: weapon skill, spell, assist, death, victory.
-
-#52:
-
-Every skill has an associated single-fire animation, with render position
-determined by the cursor location of the cast. This has nothing to do with the
-sprite casting the skill. For some skills, the animation should play at every
-affected tile, for others, the animation should play centered on the cursor and
-affected by direction. This should be provided as an option.
-
-Insert appropriate hooks for skill animations to play at the right points in
-battle (fill in with a universal default).
-
-Skill animations for all basic skills.
-
-Sound effects for all skills.
+Bug: Kath stops upon reaching Abelon in the opening scene and freezes. This is
+the same bug as above - Kath is being pathed into Abelon for some reason instead
+of away from him
 
 #55:
 
 exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
-healed, 0.5 of the value for assisters supporting any of these, flat amount for
-buffs and debuffs that land.
+mitigated, 1 per damage healed, 1 per stat buff applied, 1 per stat debuff
+applied, 10 per special effect applied
 
 level up table: exp required for a level up increases with level
 
 level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
-
-Level up sound effect
 
 #16:
 
@@ -62,16 +34,48 @@ track name: The Lonely Knight
 #15:
 
 Refactor parsing, move to parsing utils file. Files should be parsed
-automatically into a dict, like JSON
+automatically into a dict, like JSON. Key is the word before the colon, key
+also has a field giving how data should be parsed.
 
 Save state (rewrite sprite files to savedata, pull from there first if it
-exists unless new game)
+exists unless new game). Save and quit returns to title screen.
 
 #28:
 
 Attempt to autosave on game quit. Autosave after every scene, every battle
 action, and every map transition. Implement restart chapter, restart battle,
 and battle game over.
+
+#4:
+
+SFX for:
+menu select (not too different from current)
+Scene text sound effects
+battle cursor move
+battle select ally/enemy
+battle select target for move/attack/assist
+battle confirm end action
+battle enemy turn start
+battle ally turn start
+start game (from title screen)
+level up
+
+Mute ally turn start, enemy turn start, victory, defeat menus
+
+#52:
+
+Every skill has an associated single-fire animation, with render position
+determined by the cursor location of the cast. This has nothing to do with the
+sprite casting the skill. For some skills, the animation should play at every
+affected tile, for others, the animation should play centered on the cursor and
+affected by direction. This should be provided as an option.
+
+Insert appropriate hooks for skill animations to play at the right points in
+battle (fill in with a universal default).
+
+Skill animations for all basic skills.
+
+Sound effects for all skills.
 
 #51:
 
@@ -122,7 +126,40 @@ Wolf-weapon
 Wolf-hurt
 Wolf-death
 
-NEW ISSUE: combat engine second draft
+#56:
+
+SFX for:
+use weapon skill
+use spell
+use assist
+
+#57:
+
+Split forest into three maps (west, south, north) with slightly different
+tilesets/lighting/coloring
+
+And flowers, logs, plants and such to forest
+
+Redo forest tileset to use 2x2 trees
+
+Fix screen tearing - each map has a background color instead of black that
+blends in well with the tiles.
+
+#9:
+
+Expand lighting engine
+
+Add point lights to the forest to test
+
+NEW ISSUE
+
+Turn limits: every battle should have a turn limit loss condition, to prevent
+EXP farming
+
+Elaine starts with 0 focus and no spells? Interesting idea.
+
+Ally base stats should be extremely lopsided to start, because they will
+even out over time. Kath can have more reaction, less HP, Abelon more HP,
 
 Try to minimize the amount of text. Replace text with pictures as much as
 possible?
@@ -145,24 +182,6 @@ For free aim, the cursor can be on any space given by the FREE_AIM field
 (intersect a diamond of size "scale" with the targets given by "target").
 FREE_AIM moves should render an outline of the move's range
 
-#57:
-
-Split forest into three maps (west, south, north) with slightly different
-tilesets/lighting/coloring
-
-And flowers, logs, plants and such to forest
-
-Redo forest tileset to use 2x2 trees
-
-Fix screen tearing - each map has a background color instead of black that
-blends in well with the tiles.
-
-#9:
-
-Expand lighting engine
-
-Add point lights to the forest to test
-
 #48:
 
 Game guide shows up immediately on starting new game, and accessible from
@@ -170,10 +189,6 @@ inventory
 
 Combat guide accessible from battle begin menu or options, both of these
 replace "formulas".
-
-#18:
-
-Shopping and gold
 
 #33:
 

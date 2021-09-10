@@ -261,7 +261,7 @@ end
 
 function Battle:moveCursor(x, y)
     local c = self:getCursor()
-    if self.grid[y] and self.grid[y][x] then
+    if self.grid[y] and self.grid[y][x] and (x ~= c[1] or y ~= c[2]) then
         sfx['hover']:play()
         c[1] = x
         c[2] = y
@@ -429,7 +429,7 @@ function Battle:checkWinLose()
     for i = 1, #self.win do
         if self.win[i][2](self) then
             self.chapter:stopMusic()
-            -- TODO: play victory sound effect
+            sfx['victory']:play()
             self.stack = {}
             self:openVictoryMenu()
             return true
