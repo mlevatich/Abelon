@@ -261,6 +261,10 @@ function genericAttack(dmg_type, affects, scaling,
         local hurt = {}
         local dead = {}
 
+        -- Levelups gained by each sprite
+        local lvlups = {}
+        local exp_gain = 0
+
         -- Temporary attributes and special effects for the caster
         local sp_stat = status[sp:getId()]['effects']
         local sp_tmp_attrs = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
@@ -322,17 +326,28 @@ function genericAttack(dmg_type, affects, scaling,
                     local max_hp = t_tmp_attrs['endurance']
                     local pre_hp = t.health
                     local n_hp = math.max(min, math.min(max_hp, t.health - dmg))
+                    local dealt = pre_hp - n_hp
                     if not dryrun then
                         t.health = n_hp
                     end
-                    dryrun_dmg[i]['flat'] = pre_hp - n_hp
-                    dryrun_dmg[i]['percent'] = (pre_hp - n_hp) / pre_hp
+
+                    dryrun_dmg[i]['flat'] = dealt
+                    dryrun_dmg[i]['percent'] = dealt / pre_hp
+
+                    exp_gain = exp_gain + dealt
 
                     -- Determine if target is hurt, or dead
                     if t.health == 0 then
                         table.insert(dead, t)
                     elseif t.health < pre_hp then
                         table.insert(hurt, t)
+                    end
+
+                    -- If the target is an ally, gain exp for taking damage
+                    if not dryrun and status[t:getId()]['team'] == ALLY then
+                        exp_dealt = math.floor(dealt / 2)
+                        exp_mitigated = 0
+                        lvlups[t:getId()] = t:gainExp(exp_dealt + exp_mitigated)
                     end
                 end
 
@@ -341,6 +356,14 @@ function genericAttack(dmg_type, affects, scaling,
                     for j = 1, #ts_buffs do
                         local b = mkBuff(sp_tmp_attrs, ts_buffs[j])
                         addStatus(t_stat, Effect(b, ts_buff_turns))
+
+                        -- EXP gain for negative statuses applied
+                        local exp = 0
+                        if b.type == DEBUFF then
+                            exp = 10
+                            if b.attr ~= 'special' then exp = abs(b.val) end
+                        end
+                        exp_gain = exp_gain + exp
                     end
 
                     -- Target turns to face the caster
@@ -356,10 +379,22 @@ function genericAttack(dmg_type, affects, scaling,
             for j = 1, #sp_buffs do
                 local b = mkBuff(sp_tmp_attrs, sp_buffs[j])
                 addStatus(sp_stat, Effect(b, sp_buff_turns))
+
+                -- EXP gain for positive statuses applied
+                local exp = 0
+                if b.type == BUFF then
+                    exp = ite(b.attr == 'special', 10, abs(b.val))
+                end
+                exp_gain = exp_gain + exp
+            end
+
+            -- If the attacker is an ally, gain exp
+            if status[sp:getId()]['team'] == ALLY then
+                lvlups[sp:getId()] = sp:gainExp(exp_gain)
             end
 
             -- Return which targets were hurt/killed
-            return hurt, dead
+            return hurt, dead, lvlups
         else
             return dryrun_dmg
         end

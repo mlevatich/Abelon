@@ -23,6 +23,9 @@ local LEASH_DISTANCE = TILE_WIDTH * 1.5
 -- 12 different emotions (some may not use them all)
 local PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
+-- EXP_NEXT[i] = how much experience is needed to level up at level i?
+local EXP_NEXT = { 10, 20, 40, 60, 80, 120, 160, 200, 250, 300, 350, 400 }
+
 -- Initialize a new sprite
 function Sprite:init(id, spritesheet, chapter)
 
@@ -146,7 +149,7 @@ function Sprite:init(id, spritesheet, chapter)
     self.health = self.attributes['endurance']
     self.ignea = self.attributes['focus']
     self.level = readField(data[18], tonumber)
-    self.exp = 0
+    self.exp = 70
 
     -- Current chapter inhabited by sprite
     self.chapter = chapter
@@ -434,7 +437,7 @@ function Sprite:buildAttributeBox(tmp_attrs)
                             .. tostring(self.attributes['endurance'])
     local ign_str = 'Ign: ' .. tostring(self.ignea) .. '/'
                             .. tostring(self.attributes['focus'])
-    local exp_str = 'Exp: ' .. tostring(self.exp) .. '/100'
+    local exp_str = 'Exp: ' .. tostring(self.exp) .. '/' .. EXP_NEXT[self.level]
     local icon = function(i)
         return self.icons[str_to_icon[self.skill_trees[i]['name']]]
     end
@@ -521,6 +524,27 @@ function Sprite:learn(sk_id)
         self.skill_points = self.skill_points - 1
         table.insert(self.skills, skills[sk_id])
     end
+end
+
+-- Gain exp and potentially level up, increasing attributes and
+-- earning skill points
+function Sprite:gainExp(e)
+
+    -- Get exp needed to level up
+    local total = EXP_NEXT[self.level]
+
+    -- Add exp
+    local new = self.exp + e
+    self.exp = new % total
+
+    -- Handle level up
+    local levels_gained = math.floor(new / total)
+    self.level = self.level + levels_gained
+    self.skill_points = self.skill_points + levels_gained
+    for k, v in pairs(self.attributes) do
+        self.attributes[k] = self.attributes[k] + levels_gained
+    end
+    return levels_gained
 end
 
 -- Stop sprite's velocity

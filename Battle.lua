@@ -900,10 +900,14 @@ function Battle:playAction()
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
         return sp:skillBehaviorGeneric(function()
-            local hurt, dead = self:useAttack(sp,
+            local hurt, dead, lvlups = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
             sp.ignea = sp.ignea - attack.cost
+            for k, v in pairs(lvlups) do
+                -- TODO: queue levelup interfaces
+                if lvlups[k] > 0 then print(sp.name .. " levels up!") end
+            end
             for i = 1, #hurt do
                 if hurt[i] ~= sp then
                     hurt[i]:behaviorSequence({ function(d)
