@@ -78,6 +78,7 @@ function Battle:init(battle_id, player, chapter)
     self.shading = 0.2
     self.shade_dir = 1
     self.action_in_progress = nil
+    self.levelup_queue = {}
 
     -- Music
     self.chapter:stopMusic()
@@ -905,8 +906,7 @@ function Battle:playAction()
             )
             sp.ignea = sp.ignea - attack.cost
             for k, v in pairs(lvlups) do
-                -- TODO: queue levelup interfaces
-                if lvlups[k] > 0 then print(sp.name .. " levels up!") end
+                if lvlups[k] > 0 then self.levelup_queue[k] = v end
             end
             for i = 1, #hurt do
                 if hurt[i] ~= sp then

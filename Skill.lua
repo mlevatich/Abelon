@@ -334,7 +334,7 @@ function genericAttack(dmg_type, affects, scaling,
                     dryrun_dmg[i]['flat'] = dealt
                     dryrun_dmg[i]['percent'] = dealt / pre_hp
 
-                    exp_gain = exp_gain + dealt
+                    exp_gain = exp_gain + abs(dealt)
 
                     -- Determine if target is hurt, or dead
                     if t.health == 0 then
@@ -343,10 +343,13 @@ function genericAttack(dmg_type, affects, scaling,
                         table.insert(hurt, t)
                     end
 
-                    -- If the target is an ally, gain exp for taking damage
-                    if not dryrun and status[t:getId()]['team'] == ALLY then
-                        exp_dealt = math.floor(dealt / 2)
-                        exp_mitigated = 0
+                    -- If the target is an ally (and didn't die), gain exp for
+                    -- taking damage
+                    if not dryrun and status[t:getId()]['team'] == ALLY
+                    and t.health > 0
+                    then
+                        exp_dealt = math.max(0, math.floor(dealt / 2))
+                        exp_mitigated = atk - dmg
                         lvlups[t:getId()] = t:gainExp(exp_dealt + exp_mitigated)
                     end
                 end

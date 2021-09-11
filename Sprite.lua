@@ -149,7 +149,7 @@ function Sprite:init(id, spritesheet, chapter)
     self.health = self.attributes['endurance']
     self.ignea = self.attributes['focus']
     self.level = readField(data[18], tonumber)
-    self.exp = 70
+    self.exp = 0
 
     -- Current chapter inhabited by sprite
     self.chapter = chapter
@@ -538,13 +538,15 @@ function Sprite:gainExp(e)
     self.exp = new % total
 
     -- Handle level up
-    local levels_gained = math.floor(new / total)
-    self.level = self.level + levels_gained
-    self.skill_points = self.skill_points + levels_gained
+    local levels = math.floor(new / total)
+    self.level = self.level + levels
+    self.skill_points = self.skill_points + levels
     for k, v in pairs(self.attributes) do
-        self.attributes[k] = self.attributes[k] + levels_gained
+        self.attributes[k] = self.attributes[k] + levels
     end
-    return levels_gained
+    self.health = self.health + levels
+    self.ignea = self.ignea + levels
+    return levels
 end
 
 -- Stop sprite's velocity

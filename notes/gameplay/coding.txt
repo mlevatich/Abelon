@@ -12,13 +12,9 @@ of away from him
 
 #55:
 
-exp gain formulas: 1 per damage dealt, 0.5 per damage taken, 1 per damage
-mitigated, 1 per damage healed, 1 per stat buff applied, 1 per stat debuff
-applied, 10 per special effect applied
-
-level up table: exp required for a level up increases with level
-
-level up (+1 to all attributes, choice of extra attribute +1, +1 skill point)
+level up menu, extra +1
+(+1 to all attributes, choice of extra attribute +1, hover description of
+attributes, +1 skill point)
 
 #16:
 
@@ -58,6 +54,15 @@ Combat guide accessible from battle begin menu or options.
 Potential level up issues: you gain more exp on higher difficulties because you
 take more damage. Potential exp gain from taking damage in chapter 1 is up to
 90 (3 uses of blessed mist) + 3 battles of everyone losing all hp is like 200
+Solution to level up issues: bonus experience for a faster finish! You get more
+exp for dragging out battles and tanking and healing a lot, so to balance that
+out, grant experience for each turn between the turns completed in and the turn
+limit. Display these numbers on the victory menu, and do the level ups in
+between the victory menu and the victory scene
+Should offer about 20 per turn to each unit, to be worth it? Need to raise exp
+req to level up to account for this
+Additionally bonus EXP for how healthy each unit is at the end? To discourage
+eating damage for no reason
 
 Text highlighting for descriptions. Should work like a string formatting
 function passed to mkEle. weapon damage is orange, spell damage is purple,
