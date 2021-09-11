@@ -10,12 +10,6 @@ Bug: Kath stops upon reaching Abelon in the opening scene and freezes. This is
 the same bug as above - Kath is being pathed into Abelon for some reason instead
 of away from him
 
-#55:
-
-level up menu, extra +1
-(+1 to all attributes, choice of extra attribute +1, hover description of
-attributes, +1 skill point)
-
 #16:
 
 Title screen v0 (continue (if save file detected), new game ->
@@ -51,18 +45,12 @@ Combat guide accessible from battle begin menu or options.
 
 #?:
 
-Potential level up issues: you gain more exp on higher difficulties because you
-take more damage. Potential exp gain from taking damage in chapter 1 is up to
-90 (3 uses of blessed mist) + 3 battles of everyone losing all hp is like 200
-Solution to level up issues: bonus experience for a faster finish! You get more
-exp for dragging out battles and tanking and healing a lot, so to balance that
-out, grant experience for each turn between the turns completed in and the turn
-limit. Display these numbers on the victory menu, and do the level ups in
-between the victory menu and the victory scene
-Should offer about 20 per turn to each unit, to be worth it? Need to raise exp
-req to level up to account for this
-Additionally bonus EXP for how healthy each unit is at the end? To discourage
-eating damage for no reason
+Chapter end trigger. Displays a chapter 1 endcard, bridge scene, and chapter 2
+start card (Teaser). Kicks you back to the title screen
+
+#?:
+
+Finding Elaine should be a battle. Race a wolf to get to her!
 
 Text highlighting for descriptions. Should work like a string formatting
 function passed to mkEle. weapon damage is orange, spell damage is purple,
@@ -89,6 +77,19 @@ Ally base stats should be extremely lopsided to start, because they will
 even out over time. Kath can have more reaction, less HP, Abelon more HP,
 Elaine starts with 0 focus and no spells? Interesting idea. Elaine starts at
 level 2, with 3 skills (observe, 1 attack, 1 assist)
+
+Potential level up issues: you gain more exp on higher difficulties because you
+take more damage. Potential exp gain from taking damage in chapter 1 is up to
+90 (3 uses of blessed mist) + 3 battles of everyone losing all hp is like 200
+Solution to level up issues: bonus experience for a faster finish! You get more
+exp for dragging out battles and tanking and healing a lot, so to balance that
+out, grant experience for each turn between the turns completed in and the turn
+limit. Display these numbers on the victory menu, and do the level ups in
+between the victory menu and the victory scene
+Should offer about 20 per turn to each unit, to be worth it? Need to raise exp
+req to level up to account for this
+Additionally bonus EXP for how healthy each unit is at the end? To discourage
+eating damage for no reason
 
 When sprites take damage, a damage splash should be rendered. When they heal,
 a heal splash should be rendered. While a sprite's action is playing out, what
@@ -186,15 +187,15 @@ Mute ally turn start, enemy turn start, victory, defeat menus
 
 #57:
 
+Fix screen tearing - each map has a background color instead of black that
+blends in well with the tiles.
+
 Split forest into three maps (west, south, north) with slightly different
 tilesets/lighting/coloring
 
 And flowers, logs, plants and such to forest
 
 Redo forest tileset to use 2x2 trees
-
-Fix screen tearing - each map has a background color instead of black that
-blends in well with the tiles.
 
 #9:
 
@@ -230,5 +231,4 @@ implement Elaine scenario
 implement Ghoul scenario (objective is rout or escape)
 implement Deer scenario
 Implement crystal wolf scenario (objective is rout and defend)
-Chapter 1 endcard, end scene teaser
 Make executable

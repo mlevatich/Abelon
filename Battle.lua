@@ -611,6 +611,17 @@ function Battle:openOptionsMenu()
     self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN, false), {})
 end
 
+function Battle:openLevelupMenu(sp, n, interrupting)
+    local m = { MenuItem('Level up', {}, nil, nil,
+        function(c)
+            self:closeMenu()
+            self:openMenu(LevelupMenu(sp, n, interrupting), {})
+        end
+    )}
+    local l = { "     L E V E L   U P     " }
+    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN), {})
+end
+
 function Battle:endAction(used_assist)
     local sp = self:getSprite()
     local end_menu = MenuItem('Confirm end', {},
@@ -1062,6 +1073,23 @@ end
 
 function Battle:update(keys, dt)
 
+    -- Advance render timers
+    local c = self:getCursor()
+    self.pulse_timer = self.pulse_timer + dt
+    while self.pulse_timer > PULSE do
+        self.pulse_timer = self.pulse_timer - PULSE
+        self.pulse = not self.pulse
+        if c then c[3] = self.pulse end
+    end
+    self.shading = self.shading + self.shade_dir * dt / 3
+    if self.shading > 0.4 then
+        self.shading = 0.4
+        self.shade_dir = -1
+    elseif self.shading < 0.2 then
+        self.shading = 0.2
+        self.shade_dir = 1
+    end
+
     -- Control determined by stage
     local s     = self:getStage()
     local d     = keys['d']
@@ -1178,12 +1206,25 @@ function Battle:update(keys, dt)
         if not self.action_in_progress then
 
             -- Check triggers
-            if self:checkTriggers(END_ACTION) then return end
+            if self:checkTriggers(END_ACTION) then
+                return
+            end
 
             -- Say this sprite acted and reset stack
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
+
+            -- Check levelups
+            local k, v = next(self.levelup_queue)
+            if k then
+                self:openLevelupMenu(self.status[k]['sp'], v, sp)
+                self.levelup_queue[k] = self.levelup_queue[k] - 1
+                if self.levelup_queue[k] == 0 then
+                    self.levelup_queue[k] = nil
+                end
+                return
+            end
 
             -- Check win and loss
             if self:checkWinLose() then return end
@@ -1228,22 +1269,6 @@ function Battle:update(keys, dt)
                 end
             end
         end
-    end
-
-    -- Advance render timers
-    self.pulse_timer = self.pulse_timer + dt
-    while self.pulse_timer > PULSE do
-        self.pulse_timer = self.pulse_timer - PULSE
-        self.pulse = not self.pulse
-        if c then c[3] = self.pulse end
-    end
-    self.shading = self.shading + self.shade_dir * dt / 3
-    if self.shading > 0.4 then
-        self.shading = 0.4
-        self.shade_dir = -1
-    elseif self.shading < 0.2 then
-        self.shading = 0.2
-        self.shade_dir = 1
     end
 end
 
@@ -1948,7 +1973,8 @@ function Battle:renderGrid()
     self:renderAssistSpaces()
 
     -- Render views over grid if we aren't watching a scene
-    if self:getStage() ~= STAGE_WATCH then
+    local s = self:getStage()
+    if s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
 
         -- Render active views below the cursor, in stack order
         self:renderViews(BEFORE)
@@ -1974,7 +2000,7 @@ function Battle:renderOverlay(cam_x, cam_y)
     if self:getCursor() then
 
         -- Dont render any other overlays while watching an action
-        if s ~= STAGE_WATCH then
+        if s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
 
             -- Make and render hover boxes
             local ibox, w, ih, clr = self:mkInnerHoverBox()
