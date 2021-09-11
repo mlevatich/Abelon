@@ -149,7 +149,7 @@ function Sprite:init(id, spritesheet, chapter)
     self.health = self.attributes['endurance']
     self.ignea = self.attributes['focus']
     self.level = readField(data[18], tonumber)
-    self.exp = 0
+    self.exp = 75
 
     -- Current chapter inhabited by sprite
     self.chapter = chapter

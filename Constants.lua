@@ -96,6 +96,40 @@ EFFECT_NAMES = {
     ['stun']           = "Stunned"
 }
 
+ATTRIBUTE_DESC = {
+    {
+        ['id'] = 'endurance', ['name'] = 'Endurance',
+        ['desc'] = "Withstand anything and everything. Every point of \z
+        Endurance raises the character's maximum health by one."
+    },
+    {
+        ['id'] = 'focus', ['name'] = 'Focus',
+        ['desc'] = "Intense concentration is the heart of spellcasting. \z
+        Every point of Focus raises the character's maximum ignea by one."
+    },
+    {
+        ['id'] = 'force', ['name'] = 'Force',
+        ['desc'] = "Channel destructive intent. High Force improves many \z
+        offensive weapon skills and spells."
+    },
+    {
+        ['id'] = 'affinity', ['name'] = 'Affinity',
+        ['desc'] = "Connect to and synergize with allies. High Affinity \z
+        amplifies the effects of many assists."
+    },
+    {
+        ['id'] = 'reaction', ['name'] = 'Reaction',
+        ['desc'] = "Stay alert. Turn deadly strikes into glancing blows. \z
+        Received weapon damage is reduced by one for every two points of \z
+        Reaction."
+    },
+    {
+        ['id'] = 'agility', ['name'] = 'Agility',
+        ['desc'] = "Adapt fast and move faster. Every five points of \z
+        Agility grants the character one space of movement in battle."
+    }
+}
+
 -- Battle enums
 DIRECTIONAL = 1
 SELF_CAST   = 2
@@ -124,12 +158,13 @@ MANUAL    = 5 -- For the player team
 FORCED    = 6
 
 -- Battle stages
-STAGE_FREE   = 1
-STAGE_MOVE   = 2
-STAGE_MENU   = 3
-STAGE_TARGET = 4
-STAGE_WATCH  = 5
-STAGE_BUBBLE = 6
+STAGE_FREE    = 1
+STAGE_MOVE    = 2
+STAGE_MENU    = 3
+STAGE_TARGET  = 4
+STAGE_WATCH   = 5
+STAGE_LEVELUP = 6
+STAGE_BUBBLE  = 7
 
 -- View options
 BEFORE  = 1

@@ -11,7 +11,6 @@ function CONFIRM_Y(msg)
          + (#msg/2 - 1) * LINE_HEIGHT - HALF_MARGIN
 end
 
-
 function MenuItem:init(name, children, h_desc, h_box, action, confirm, p, id)
 
     self.name = name
@@ -63,8 +62,53 @@ function Menu:init(parent, menu_items, x, y, forced, confirm_msg, clr)
     -- The different options on this menu
     self.hovering = 1
     self.base = 1
+    self.window = MAX_MENU_ITEMS
     self.menu_items = menu_items
     self:initSubmenus()
+end
+
+function LevelupMenu(sp, n, interrupting)
+
+    -- Increment function
+    local incrAttr = function(i)
+        return function(c)
+            sp.attributes[i] = sp.attributes[i] + 1
+            if i == 'endurance' then sp.health = sp.health + 1 end
+            if i == 'focus'     then sp.ignea  = sp.ignea  + 1 end
+            c.battle:closeMenu()
+            c.battle:push({
+                ['stage'] = STAGE_WATCH,
+                ['sp'] = interrupting,
+                ['views'] = {}
+            })
+        end
+    end
+
+    -- Menu of attribute options
+    local m_items = {}
+    for i = 1, #ATTRIBUTE_DESC do
+        table.insert(m_items, MenuItem("", {},
+            ATTRIBUTE_DESC[i]['desc'], nil, incrAttr(ATTRIBUTE_DESC[i]['id'])
+            -- "Raise " .. sp.name .. "'s " .. ATTRIBUTE_DESC[i]['name']
+            --          .. " by an additional point?"
+        ))
+    end
+    table.insert(m_items, MenuItem("", {},
+        "Each level up grants a skill point. Skill points can be spent in the \z
+         inventory after battle to learn new skills."
+    ))
+    local m = Menu(nil, m_items, BOX_MARGIN, BOX_MARGIN, true)
+
+    -- Customize
+    m.width   = VIRTUAL_WIDTH - BOX_MARGIN * 2 - 220
+    m.height  = VIRTUAL_HEIGHT - BOX_MARGIN * 2
+    m.window  = 7
+    m.custom  = 'lvlup'
+    m.sp      = sp
+    m.levels  = n
+    m.spacing = LINE_HEIGHT * 3 - 3
+
+    return m
 end
 
 function initSubmenu(cur, parent)
@@ -126,7 +170,7 @@ function Menu:forward(c)
         local action = self.menu_items[self.hovering + self.base - 1].action
         if action then
             sfx['select']:play()
-            action(c, self.parent)
+            return action(c, self.parent)
         end
     end
 end
@@ -153,7 +197,7 @@ function Menu:hover(dir)
         local old_b = self.base
 
         -- self.hovering determines where the selection arrow is rendered
-        local window_height = math.min(MAX_MENU_ITEMS, #self.menu_items)
+        local window_height = math.min(self.window, #self.menu_items)
         local base_max = #self.menu_items - window_height + 1
         if dir == UP then
             if self.hovering == 1 and self.base == 1 then
@@ -170,7 +214,7 @@ function Menu:hover(dir)
                 self.hovering = 1
                 self.base = 1
             else
-                if self.hovering == MAX_MENU_ITEMS then
+                if self.hovering == self.window then
                     self.base = math.min(base_max, self.base + 1)
                 end
                 self.hovering = math.min(window_height, self.hovering + 1)
@@ -205,26 +249,103 @@ function Menu:renderConfirmMessage(cam_x, cam_y)
 end
 
 function Menu:renderHoverDescription(cam_x, cam_y)
-
-    love.graphics.setColor(unpack(WHITE))
     local selection = self.menu_items[self.base + self.hovering - 1]
     if selection.hover_desc then
         local desc = selection.hover_desc
 
-        local desc_x_base = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
-                          - #desc * CHAR_WIDTH
-        local desc_y_base = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
-        renderString(desc, desc_x_base, desc_y_base)
+        if self.custom == 'lvlup' then
+            local b2 = BOX_MARGIN * 2
+            local desc_x = cam_x + b2
+            local desc_y = cam_y + b2 + LINE_HEIGHT * 7 + PORTRAIT_SIZE
+            local sdesc, _ = splitByCharLimit(desc, 32)
+            for i = 1, #sdesc do
+                renderString(sdesc[i], desc_x, desc_y + LINE_HEIGHT * (i - 1))
+            end
+        else
+            local desc_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
+                         - #desc * CHAR_WIDTH
+            local desc_y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
+            renderString(desc, desc_x, desc_y)
+        end
     end
 end
 
 function Menu:renderMenuItems(x, y, c)
 
     -- If this is a confirm message with one option, it is not rendered
-    if not (self.confirm_msg and #self.menu_items == 1) then
+    if self.custom == 'lvlup' then
+
+        -- Render header
+        local b = BOX_MARGIN
+        love.graphics.setColor(unpack(WHITE))
+        love.graphics.draw(self.sp.ptexture, self.sp.portraits[1],
+            b + x, HALF_MARGIN + y, 0, 1, 1, 0, 0
+        )
+        local l = self.sp.level - self.levels
+        local lstr = 'Level:  ' .. l .. '  >>  ' .. (l + 1)
+        love.graphics.setColor(unpack(HIGHLIGHT))
+        renderString(lstr, b + x, b + y + PORTRAIT_SIZE, true)
+        renderString(self.sp.name .. ' grows stronger!',
+            b + x, b + y + LINE_HEIGHT + PORTRAIT_SIZE
+        )
+        renderString('Select an attribute to improve.',
+            b + x, b + y + LINE_HEIGHT * 2 + PORTRAIT_SIZE
+        )
+
+        -- Render attributes
+        local dist = 250
+        local x_base = x + VIRTUAL_WIDTH / 2 - 100
+        local y_base = y + b
+        for i = 1, #ATTRIBUTE_DESC do
+            local a = ATTRIBUTE_DESC[i]
+            local val = self.sp.attributes[a['id']] - self.levels
+            local icon = c.icons[str_to_icon[a['id']]]
+            local y_cur = y_base + self.spacing * (i - 1)
+            local incr = 1
+            local pen = false
+            love.graphics.setColor(unpack(WHITE))
+            love.graphics.draw(c.itex, icon, x_base, y_cur, 0, 1, 1, 0, 0)
+            if self.hovering == i then
+                love.graphics.draw(c.itex, icon, b + x,
+                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, 0, 1, 1, 0, 0
+                )
+                renderString(a['name'], b + x + 27,
+                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE
+                )
+                incr = 2
+                pen = true
+                love.graphics.setColor(unpack(HIGHLIGHT))
+            end
+            renderString(tostring(val), x_base + 57, y_cur + LINE_HEIGHT, pen)
+            renderString(a['name'], x_base + 27, y_cur, pen)
+            renderString('+' .. incr .. '  >>  ',
+                x_base + dist - 100,
+                y_cur + LINE_HEIGHT, pen
+            )
+            renderString(tostring(val + incr),
+                x_base + dist - 25,
+                y_cur + LINE_HEIGHT, pen
+            )
+        end
+
+        -- Render skill point increase
+        local val = self.sp.skill_points - self.levels
+        local y_cur = y_base + self.spacing * 6
+        renderString('Skill pts', x_base + 27, y_cur)
+        renderString(tostring(val), x_base + 57, y_cur + LINE_HEIGHT)
+        renderString('+1  >>  ',
+            x_base + dist - 100,
+            y_cur + LINE_HEIGHT
+        )
+        renderString(tostring(val + 1),
+            x_base + dist - 25,
+            y_cur + LINE_HEIGHT
+        )
+
+    elseif not (self.confirm_msg and #self.menu_items == 1) then
 
         -- Render each menu item
-        for i=1, math.min(#self.menu_items, MAX_MENU_ITEMS) do
+        for i=1, math.min(#self.menu_items, self.window) do
             local base_x = 5 + x + BOX_MARGIN
             local base_y = y + HALF_MARGIN + (i - 1) * LINE_HEIGHT
             local item = self.menu_items[i + self.base - 1]
@@ -238,7 +359,7 @@ function Menu:renderMenuItems(x, y, c)
     if self.base > 1 then
         love.graphics.print("^", x + self.width - 11, y + 6)
     end
-    if self.base <= #self.menu_items - MAX_MENU_ITEMS then
+    if self.base <= #self.menu_items - self.window then
         love.graphics.print("^",
             x + self.width - 5, y + self.height - 6, math.pi
         )
@@ -370,8 +491,14 @@ end
 
 function Menu:renderSelectionArrow(x, y)
     local arrow_y = y + HALF_MARGIN + LINE_HEIGHT * (self.hovering - 1)
+    local arrow_x = x + 10
+    if self.custom == 'lvlup' then
+        arrow_x = x + VIRTUAL_WIDTH / 2 - 100 - 15
+        arrow_y = y + BOX_MARGIN + 3
+                + (self.hovering - 1) * self.spacing
+    end
     love.graphics.setColor(unpack(WHITE))
-    love.graphics.print(">", x + 10, arrow_y)
+    love.graphics.print(">", arrow_x, arrow_y)
 end
 
 function Menu:render(cam_x, cam_y, c)
