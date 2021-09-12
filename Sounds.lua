@@ -1,7 +1,7 @@
 require 'Util'
 require 'Constants'
 
-Sound = class('Sound')
+local Sound = class('Sound')
 
 function Sound:initialize(id)
     self.id = id

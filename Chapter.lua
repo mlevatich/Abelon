@@ -38,7 +38,7 @@ function Chapter:initialize(id, spriteesheet)
     -- Volume levels
     self.music_volume = OFF
     self.sfx_volume   = OFF
-    self.text_volume  = HIGH
+    self.text_volume  = OFF
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
 
@@ -98,17 +98,14 @@ function Chapter:load()
 
             -- Read data from line
             local fields = split(lines[i]:sub(3))
-            local map_name, tileset, song = fields[1], fields[2], fields[3]
+            local map_name, tileset, song_name = fields[1], fields[2], fields[3]
             current_map_name = map_name
 
             -- Initialize map and tie it to chapter
             self.maps[map_name] = Map:new(map_name, tileset, nil)
 
             -- Maps sharing a music track share a pointer to the audio
-            if not audio_sources[song] then
-                audio_sources[song] = Music:new(song, self.music_volume)
-            end
-            self.map_to_music[map_name] = audio_sources[song]
+            self.map_to_music[map_name] = song_name
 
         -- Lines starting with ~ denote a new sprite
         elseif lines[i]:sub(1,1) == '~' then
@@ -194,7 +191,7 @@ end
 
 function Chapter:stopMusic()
     if self.current_music then
-        self.current_music:stop()
+        music_tracks[self.current_music]:stop()
     end
     self.current_music = nil
 end
@@ -434,7 +431,7 @@ function Chapter:update(dt)
 
     -- Update music
     if self.current_music then
-        self.current_music:update(dt, self.music_volume)
+        music_tracks[self.current_music]:update(dt, self.music_volume)
     end
 
     -- Update current transition or initiate new one

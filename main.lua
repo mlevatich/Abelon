@@ -6,6 +6,7 @@ require 'Util'
 require 'Constants'
 
 require 'Game'
+require 'Skill'
 
 -- Seed RNG
 math.randomseed(os.time())
@@ -33,6 +34,12 @@ function love.load()
     -- Storing keypresses
     love.keyboard.keysPressed = {}
     love.keyboard.keysReleased = {}
+
+    -- Register classes so they're serializable
+    binser.register(Scaling)
+    binser.register(Buff)
+    binser.register(Effect)
+    binser.register(Skill)
 
     -- Go!
     game = Game:new()

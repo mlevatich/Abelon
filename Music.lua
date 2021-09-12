@@ -1,7 +1,7 @@
 require 'Util'
 require 'Constants'
 
-Music = class('Music')
+local Music = class('Music')
 
 -- Constructor for an audio source
 function Music:initialize(name)
@@ -81,4 +81,10 @@ function Music:stop()
     self.buf:stop()
     self.src:seek(0.0)
     self.buf:seek(0.0)
+end
+
+music_tracks = {}
+local track_ids = { 'Dying-Forest', 'A-Single-Shard-Of-Ignea' }
+for i = 1, #track_ids do
+    music_tracks[track_ids[i]] = Music:new(track_ids[i])
 end

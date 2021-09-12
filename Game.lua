@@ -16,6 +16,12 @@ function Game:initialize()
 
     -- Start first chapter
     self:nextChapter()
+
+    -- TODO: on reload
+    -- set sfx volume
+    -- set text volume
+    -- start playing current music (check in battle or not)
+    -- load assets?
 end
 
 -- Clear all sprites from the current map and change the current map

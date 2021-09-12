@@ -82,7 +82,7 @@ function Battle:initialize(battle_id, player, chapter)
 
     -- Music
     self.chapter:stopMusic()
-    self.chapter.current_music = Music:new(readField(data[9]))
+    self.chapter.current_music = readField(data[9])
 
     -- Graphics
     self.status_tex = self.chapter.itex
