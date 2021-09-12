@@ -29,7 +29,7 @@ function mkSimpleTrigger(check, action)
 end
 
 scene_triggers = {
-    mkAreaTrigger('meet_kath', 'forest',
+    ['meet_kath'] = mkAreaTrigger('meet_kath', 'forest',
         function(x) return x > 25 end,
         function(y) return true end
     )
@@ -75,17 +75,17 @@ end
 battle_triggers = {
     ['1-1'] = {
         [SELECT] = {
-            mkSelectTrigger('kath')
+            ['select-kath'] = mkSelectTrigger('kath')
         },
         [ALLY] = {
-            mkTurnTrigger(1, ALLY),
-            mkTurnTrigger(2, ALLY)
+            ['ally-turn1'] = mkTurnTrigger(1, ALLY),
+            ['ally-turn2'] = mkTurnTrigger(2, ALLY)
         },
         [ENEMY] = {
-            mkTurnTrigger(1, ENEMY)
+            ['enemy-turn1'] = mkTurnTrigger(1, ENEMY)
         },
         [END_ACTION] = {
-            function(b)
+            ['first-demonic-spell'] =  function(b)
                 local saw = b.chapter.state['kath-saw-spell']
                 local atk = b.status['abelon']['attack']
                 if atk then atk = atk.id end
@@ -94,6 +94,6 @@ battle_triggers = {
                 end
                 return false
             end
-        },
+        }
     }
 }

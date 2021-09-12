@@ -28,6 +28,7 @@ function Battle:initialize(battle_id, player, chapter)
 
     -- Tracking state
     self.turn = 0
+    self.seen = {}
 
     -- Data file
     local data_file = 'Abelon/data/battles/' .. self.id .. '.txt'
@@ -316,12 +317,14 @@ end
 
 function Battle:checkTriggers(phase, doneAction)
     local triggers = battle_triggers[self.id][phase]
-    for i = 1, #triggers do
-        local scene_id = triggers[i](self)
-        if scene_id then
-            table.remove(triggers, i)
-            self:suspend(self.id .. '-' .. scene_id, doneAction)
-            return true
+    for k, v in pairs(triggers) do
+        if not self.seen[k] then
+            local scene_id = v(self)
+            if scene_id then
+                self.seen[k] = true
+                self:suspend(self.id .. '-' .. scene_id, doneAction)
+                return true
+            end
         end
     end
     return false

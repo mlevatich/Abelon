@@ -67,6 +67,7 @@ function Chapter:initialize(id, spriteesheet)
     -- Tracking the scene the player is currently in
     self.current_scene = nil
     self.scene_inputs = {}
+    self.seen = {}
 
     -- If the player is in a battle, it goes here
     self.battle = nil
@@ -394,15 +395,15 @@ end
 
 function Chapter:checkSceneTriggers()
     local i = 1
-    while i <= #scene_triggers do
-        local check = scene_triggers[i](self)
-        if check then
-            table.remove(scene_triggers, i)
-            if check ~= DELETE then
-                self:launchScene(check)
+    for k, v in pairs(scene_triggers) do
+        if not self.seen[k] then
+            local check = v(self)
+            if check then
+                self.seen[k] = true
+                if check ~= DELETE then
+                    self:launchScene(check)
+                end
             end
-        else
-            i = i + 1
         end
     end
 end

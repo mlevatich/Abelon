@@ -7,6 +7,30 @@ require 'Constants'
 
 require 'Game'
 require 'Skill'
+require 'Menu'
+require 'Sprite'
+require 'Player'
+require 'Map'
+require 'Battle'
+require 'Chapter'
+
+-- Register classes so they're serializable
+-- Don't serialize Music, preloaded
+-- Don't serialize Sound, preloaded
+-- Don't serialize Animation, preloaded
+-- Don't serialize Scene, can only save when current_scene is nil
+binser.register(Scaling)
+binser.register(Buff)
+binser.register(Effect)
+binser.register(Skill)
+binser.register(MenuItem)
+binser.register(Menu)
+binser.register(Sprite)
+binser.register(Player)
+binser.register(Map)
+binser.register(GridSpace)
+binser.register(Battle)
+binser.register(Chapter)
 
 -- Seed RNG
 math.randomseed(os.time())
@@ -34,12 +58,6 @@ function love.load()
     -- Storing keypresses
     love.keyboard.keysPressed = {}
     love.keyboard.keysReleased = {}
-
-    -- Register classes so they're serializable
-    binser.register(Scaling)
-    binser.register(Buff)
-    binser.register(Effect)
-    binser.register(Skill)
 
     -- Go!
     game = Game:new()
