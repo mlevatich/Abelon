@@ -3,7 +3,7 @@ require 'Constants'
 
 require 'Sounds'
 
-MenuItem = Class{}
+MenuItem = class('MenuItem')
 
 CONFIRM_X = VIRTUAL_WIDTH / 2 - (CHAR_WIDTH * 3 + BOX_MARGIN * 2) / 2
 function CONFIRM_Y(msg)
@@ -11,7 +11,7 @@ function CONFIRM_Y(msg)
          + (#msg/2 - 1) * LINE_HEIGHT - HALF_MARGIN
 end
 
-function MenuItem:init(name, children, h_desc, h_box, action, confirm, p, id)
+function MenuItem:initialize(name, children, h_desc, h_box, action, confirm, p, id)
 
     self.name = name
     self.children = children
@@ -29,10 +29,10 @@ function MenuItem:init(name, children, h_desc, h_box, action, confirm, p, id)
     self.id = id
 end
 
-Menu = Class{}
+Menu = class('Menu')
 
 -- Initialize a new menu
-function Menu:init(parent, menu_items, x, y, forced, confirm_msg, clr)
+function Menu:initialize(parent, menu_items, x, y, forced, confirm_msg, clr)
 
     -- What is the parent menu of this menu (nil if a top-level menu)
     self.parent = parent
@@ -87,17 +87,17 @@ function LevelupMenu(sp, n, interrupting)
     -- Menu of attribute options
     local m_items = {}
     for i = 1, #ATTRIBUTE_DESC do
-        table.insert(m_items, MenuItem("", {},
+        table.insert(m_items, MenuItem:new("", {},
             ATTRIBUTE_DESC[i]['desc'], nil, incrAttr(ATTRIBUTE_DESC[i]['id'])
             -- "Raise " .. sp.name .. "'s " .. ATTRIBUTE_DESC[i]['name']
             --          .. " by an additional point?"
         ))
     end
-    table.insert(m_items, MenuItem("", {},
+    table.insert(m_items, MenuItem:new("", {},
         "Each level up grants a skill point. Skill points can be spent in the \z
          inventory after battle to learn new skills."
     ))
-    local m = Menu(nil, m_items, BOX_MARGIN, BOX_MARGIN, true)
+    local m = Menu:new(nil, m_items, BOX_MARGIN, BOX_MARGIN, true)
 
     -- Customize
     m.width   = VIRTUAL_WIDTH - BOX_MARGIN * 2 - 220
@@ -119,7 +119,7 @@ function initSubmenu(cur, parent)
         local next_y = parent.rel_y
 
         -- Init menu and open action
-        local submenu = Menu(parent, cur.children, next_x, next_y, false)
+        local submenu = Menu:new(parent, cur.children, next_x, next_y, false)
         local old_action = cur.action
         cur.action = function(c)
             parent.selected = submenu
@@ -131,9 +131,9 @@ function initSubmenu(cur, parent)
         -- Menu item's action is forwarded to 'Yes' on the confirm screen,
         -- which is another submenu
         local w = cur.confirm_msg
-        local n = MenuItem('No', {})
-        local y = MenuItem('Yes', {})
-        local submenu = Menu(parent, {n, y}, CONFIRM_X, CONFIRM_Y(w), false, w)
+        local n = MenuItem:new('No', {})
+        local y = MenuItem:new('Yes', {})
+        local submenu = Menu:new(parent, {n, y}, CONFIRM_X, CONFIRM_Y(w), false, w)
         local inherited_action = cur.action
         n.action = function(c) submenu:back() end
         y.action = function(c, m)

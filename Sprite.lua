@@ -8,7 +8,7 @@ require 'Scripts'
 require 'Triggers'
 require 'Battle'
 
-Sprite = Class{}
+Sprite = class('Sprite')
 
 -- Class constants
 local INIT_DIRECTION = RIGHT
@@ -27,7 +27,7 @@ local PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 local EXP_NEXT = { 10, 20, 40, 60, 80, 120, 160, 200, 250, 300, 350, 400 }
 
 -- Initialize a new sprite
-function Sprite:init(id, spritesheet, chapter)
+function Sprite:initialize(id, spritesheet, chapter)
 
     -- Unique identifier
     self.id = id
@@ -101,7 +101,7 @@ function Sprite:init(id, spritesheet, chapter)
         local quads = {}
         for name, frames in pairs(animations) do
             sqs = getSpriteQuads(frames, self.sheet, self.w, self.h, s_offset)
-            quads[name] = Animation(sqs)
+            quads[name] = Animation:new(sqs)
         end
 
         -- Associate the created animations with this version of the sprite
@@ -213,11 +213,11 @@ end
 function Sprite:toItem()
 
     -- Initialize sprite options
-    local u = MenuItem('Use', {}, nil, nil, self:mkUse())
-    local p = MenuItem('Present', {}, nil, nil, self:mkPresent())
+    local u = MenuItem:new('Use', {}, nil, nil, self:mkUse())
+    local p = MenuItem:new('Present', {}, nil, nil, self:mkPresent())
     local children = {u, p}
     if self.can_discard then
-        local d = MenuItem('Discard', {}, nil, nil, self:mkDiscard(),
+        local d = MenuItem:new('Discard', {}, nil, nil, self:mkDiscard(),
             "Discard the " .. string.lower(self.name) ..
             "? It will be gone forever."
         )
@@ -234,7 +234,7 @@ function Sprite:toItem()
     }
 
     -- Create menu item
-    return MenuItem(self.name, children, 'See item options', {
+    return MenuItem:new(self.name, children, 'See item options', {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
     })
@@ -321,7 +321,7 @@ function Sprite:toPartyMember()
 
     -- Put it all together!
     local opts = { skills, learn }
-    return MenuItem(self.name, opts, "See options for " .. self.name, {
+    return MenuItem:new(self.name, opts, "See options for " .. self.name, {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
     })
@@ -372,16 +372,16 @@ function Sprite:mkSkillsMenu(with_skilltrees, with_prio)
     end
 
     -- Weapon and attack skills
-    local skills = MenuItem('Skills', {
-        MenuItem('Weapon', mapf(skToMenu, learnedOf(WEAPON)),
+    local skills = MenuItem:new('Skills', {
+        MenuItem:new('Weapon', mapf(skToMenu, learnedOf(WEAPON)),
                  'View ' .. self.name .. "'s weapon skills"),
-        MenuItem('Spell', mapf(skToMenu, learnedOf(SPELL)),
+        MenuItem:new('Spell', mapf(skToMenu, learnedOf(SPELL)),
                  'View ' .. self.name .. "'s spells")
     }, 'View ' .. self.name .. "'s learned skills")
 
     -- Assists, if this sprite has them
     if #learnedOf(ASSIST) > 0 then
-        table.insert(skills.children, MenuItem('Assist',
+        table.insert(skills.children, MenuItem:new('Assist',
             mapf(skToMenu, learnedOf(ASSIST)),
             'View ' .. self.name .. "'s assists")
         )
@@ -402,12 +402,12 @@ function Sprite:mkLearnMenu()
         )
     end
     local skt = self.skill_trees
-    local learn = MenuItem('Learn (' .. self.skill_points .. ')', {
-        MenuItem(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
+    local learn = MenuItem:new('Learn (' .. self.skill_points .. ')', {
+        MenuItem:new(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
                  'View the ' .. skt[1]['name'] .. " tree"),
-        MenuItem(skt[2]['name'], mapf(mkLearn, skt[2]['skills']),
+        MenuItem:new(skt[2]['name'], mapf(mkLearn, skt[2]['skills']),
                  'View the ' .. skt[2]['name'] .. " tree"),
-        MenuItem(skt[3]['name'], mapf(mkLearn, skt[3]['skills']),
+        MenuItem:new(skt[3]['name'], mapf(mkLearn, skt[3]['skills']),
                  'View the ' .. skt[3]['name'] .. " tree")
     }, 'Learn new skills', nil, nil, nil, checkUnspent)
 
@@ -662,7 +662,7 @@ function Sprite:djikstra(graph, src, dst, depth)
                 if map.collide_tiles[map.tiles[i][j]] then
                     graph[i][j] = false
                 else
-                    graph[i][j] = GridSpace()
+                    graph[i][j] = GridSpace:new()
                 end
             end
         end

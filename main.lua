@@ -1,5 +1,6 @@
-Class = require 'class'
+class = require 'middleclass'
 push = require 'push'
+binser = require 'binser'
 
 require 'Util'
 require 'Constants'
@@ -34,7 +35,7 @@ function love.load()
     love.keyboard.keysReleased = {}
 
     -- Go!
-    game = Game()
+    game = Game:new()
 end
 
 -- Resize game window

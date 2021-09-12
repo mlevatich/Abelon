@@ -11,10 +11,10 @@ require 'Triggers'
 require 'Scripts'
 require 'Battle'
 
-Chapter = Class{}
+Chapter = class('Chapter')
 
 -- Constructor for our scenario object
-function Chapter:init(id, spriteesheet)
+function Chapter:initialize(id, spriteesheet)
 
     -- Store id and spritesheet
     self.id = id
@@ -102,11 +102,11 @@ function Chapter:load()
             current_map_name = map_name
 
             -- Initialize map and tie it to chapter
-            self.maps[map_name] = Map(map_name, tileset, nil)
+            self.maps[map_name] = Map:new(map_name, tileset, nil)
 
             -- Maps sharing a music track share a pointer to the audio
             if not audio_sources[song] then
-                audio_sources[song] = Music(song, self.music_volume)
+                audio_sources[song] = Music:new(song, self.music_volume)
             end
             self.map_to_music[map_name] = audio_sources[song]
 
@@ -121,7 +121,7 @@ function Chapter:load()
             local first_interaction = fields[4]
 
             -- Initialize sprite object and set its starting position
-            local new_sp = Sprite(current_sp_id, self.sheet, self)
+            local new_sp = Sprite:new(current_sp_id, self.sheet, self)
             self.sprites[current_sp_id] = new_sp
             new_sp:resetPosition(init_x, init_y)
 
@@ -133,7 +133,7 @@ function Chapter:load()
             if first_interaction then
                 if first_interaction == 'P' then
                     self.current_map = self.maps[current_map_name]
-                    self.player = Player(new_sp)
+                    self.player = Player:new(new_sp)
                     self:updateCamera(100)
                 else
                     scripts[current_sp_id] = scripts[first_interaction]
@@ -214,7 +214,7 @@ function Chapter:setTextVolume(vol)
 end
 
 function Chapter:launchBattle(b_id)
-    self.battle = Battle(b_id, self.player, self)
+    self.battle = Battle:new(b_id, self.player, self)
 end
 
 -- Store player inputs to a scene, to be processed on update
@@ -235,7 +235,7 @@ function Chapter:launchScene(s_id, returnToBattle)
     if not returnToBattle then
         self.player:changeBehavior('idle')
     end
-    self.current_scene = Scene(s_id, self.player, self, returnToBattle)
+    self.current_scene = Scene:new(s_id, self.player, self, returnToBattle)
 end
 
 -- Begin an interaction with the target sprite

@@ -1,9 +1,9 @@
 require 'Util'
 require 'Constants'
 
-Sound = Class{}
+Sound = class('Sound')
 
-function Sound:init(id)
+function Sound:initialize(id)
     self.id = id
     local audio_file = 'audio/sounds/' .. self.id .. '.wav'
     self.src = love.audio.newSource(audio_file, 'static')
@@ -21,4 +21,4 @@ end
 
 sfx = {}
 local sfx_ids = { 'select', 'cancel', 'hover', 'close', 'open', 'victory' }
-for i = 1, #sfx_ids do sfx[sfx_ids[i]] = Sound(sfx_ids[i]) end
+for i = 1, #sfx_ids do sfx[sfx_ids[i]] = Sound:new(sfx_ids[i]) end

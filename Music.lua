@@ -1,10 +1,10 @@
 require 'Util'
 require 'Constants'
 
-Music = Class{}
+Music = class('Music')
 
 -- Constructor for an audio source
-function Music:init(name)
+function Music:initialize(name)
 
     -- Identity
     self.name = name

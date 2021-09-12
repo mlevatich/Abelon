@@ -3,7 +3,7 @@ require 'Constants'
 
 require 'Scripts'
 
-Scene = Class{}
+Scene = class('Scene')
 
 local PAUSE_CHARS = {'. ', '! ', '? ', '.', '!', '?'}
 local BREATHE_CHARS = {', ', ',', '* ', '*'}
@@ -11,7 +11,7 @@ local PAUSE_WEIGHT = 10
 local BREATHE_WEIGHT = 3
 
 -- Initialize a new dialogue
-function Scene:init(scene_id, player, chapter, returnToBattle)
+function Scene:initialize(scene_id, player, chapter, returnToBattle)
 
     -- Retrieve scene by id
     self.id = scene_id

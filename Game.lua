@@ -3,10 +3,10 @@ require 'Constants'
 
 require 'Chapter'
 
-Game = Class{}
+Game = class('Game')
 
 -- Initialize game context
-function Game:init()
+function Game:initialize()
 
     -- Track current chapter
     self.chapter_id = 0
@@ -30,7 +30,7 @@ function Game:nextChapter()
 
     -- Start new chapter
     self.chapter_id = self.chapter_id + 1
-    self.chapter = Chapter(self.chapter_id)
+    self.chapter = Chapter:new(self.chapter_id)
 end
 
 -- Update game state

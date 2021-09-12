@@ -1,13 +1,13 @@
 require 'Util'
 require 'Constants'
 
-Animation = Class{}
+Animation = class('Animation')
 
 -- Class constants
 local ANIMATION_SPEED = 6.5
 
 -- Initialize a new set of frames
-function Animation:init(frames)
+function Animation:initialize(frames)
 
     -- Time per frame and total time elapsed
     self.interval = 1 / ANIMATION_SPEED

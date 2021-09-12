@@ -3,10 +3,10 @@ require 'Constants'
 
 require 'Sprite'
 
-Map = Class{}
+Map = class('Map')
 
 -- constructor for our map object
-function Map:init(name, tileset, lighting)
+function Map:initialize(name, tileset, lighting)
 
     -- Read lines of map file
     local map_file = 'Abelon/data/maps/' .. name .. '.txt'

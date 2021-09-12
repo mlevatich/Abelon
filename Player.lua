@@ -8,14 +8,14 @@ require 'Menu'
 
 require 'Sounds'
 
-Player = Class{}
+Player = class('Player')
 
 -- Movement constants
 local WALK_SPEED = 100
 local DIAG_SPEED = 80
 
 -- Initialize the player character, Abelon
-function Player:init(sp)
+function Player:initialize(sp)
 
     -- Player is a superclass of Sprite
     self.sp = sp
@@ -49,7 +49,7 @@ function Player:openMenu(m)
 
     -- Create and open menu
     sfx['open']:play()
-    self.open_menu = Menu(nil, m, BOX_MARGIN, BOX_MARGIN, false)
+    self.open_menu = Menu:new(nil, m, BOX_MARGIN, BOX_MARGIN, false)
 end
 
 -- When player presses i to open the inventory, the inventory menu appears
@@ -62,8 +62,8 @@ function Player:openInventory()
     local inv_ch = mapf(function(sp) return sp:toItem() end, self.inventory)
     local party_ch = mapf(function(sp) return sp:toPartyMember() end, self.party)
 
-    local inv_m = MenuItem('Items', inv_ch, 'View possessions')
-    local party_m = MenuItem('Party', party_ch, 'View traveling companions')
+    local inv_m = MenuItem:new('Items', inv_ch, 'View possessions')
+    local party_m = MenuItem:new('Party', party_ch, 'View traveling companions')
 
     -- Open inventory menu
     self:openMenu({ inv_m, party_m, self:mkSettingsMenu(), self:mkQuitMenu() })
@@ -71,11 +71,11 @@ end
 
 function Player:mkQuitMenu()
     local die = function(c) love.event.quit(0) end
-    return MenuItem('Quit', {
-        MenuItem('Save and quit', {}, nil, nil, die,
+    return MenuItem:new('Quit', {
+        MenuItem:new('Save and quit', {}, nil, nil, die,
             "Save current progress and close the game?"
         ),
-        MenuItem('Restart chapter', {}, nil, nil, pass,
+        MenuItem:new('Restart chapter', {}, nil, nil, pass,
             "Are you SURE you want to restart the chapter? You will lose ALL \z
              progress made during the chapter."
         )
@@ -113,20 +113,20 @@ function Player:mkDifficultyMenu()
             end
         end
     end
-    return MenuItem('Difficulty', {
-        MenuItem('Normal', {}, "Switch to this difficulty", nil,
+    return MenuItem:new('Difficulty', {
+        MenuItem:new('Normal', {}, "Switch to this difficulty", nil,
             setD(NORMAL),
             "Lower the difficulty to Normal? Difficulty can \z
              be lowered but not raised.",
             isD(NORMAL)
         ),
-        MenuItem('Adept', {}, "Switch to this difficulty", nil,
+        MenuItem:new('Adept', {}, "Switch to this difficulty", nil,
             setD(ADEPT),
             "Lower the difficulty to Adept? Difficulty can \z
              be lowered but not raised.",
             isD(ADEPT)
         ),
-        MenuItem('Master', {}, "Switch to this difficulty", nil,
+        MenuItem:new('Master', {}, "Switch to this difficulty", nil,
             setD(MASTER),
             "Lower the difficulty to Master? Difficulty can \z
              be lowered but not raised.",
@@ -155,28 +155,28 @@ function Player:mkSettingsMenu()
             end
         end
     end
-    return MenuItem('Settings', {
-        MenuItem('Video', {
-            MenuItem('Coming soon!', {})
+    return MenuItem:new('Settings', {
+        MenuItem:new('Video', {
+            MenuItem:new('Coming soon!', {})
         }, 'Change video settings'),
-        MenuItem('Volume', {
-            MenuItem('Music', {
-                MenuItem('Off',  {}, nil, nil, sv('m', OFF),  nil, iv('m', OFF)),
-                MenuItem('Low',  {}, nil, nil, sv('m', LOW),  nil, iv('m', LOW)),
-                MenuItem('Med',  {}, nil, nil, sv('m', MED),  nil, iv('m', MED)),
-                MenuItem('High', {}, nil, nil, sv('m', HIGH), nil, iv('m', HIGH))
+        MenuItem:new('Volume', {
+            MenuItem:new('Music', {
+                MenuItem:new('Off',  {}, nil, nil, sv('m', OFF),  nil, iv('m', OFF)),
+                MenuItem:new('Low',  {}, nil, nil, sv('m', LOW),  nil, iv('m', LOW)),
+                MenuItem:new('Med',  {}, nil, nil, sv('m', MED),  nil, iv('m', MED)),
+                MenuItem:new('High', {}, nil, nil, sv('m', HIGH), nil, iv('m', HIGH))
             }, 'Set music volume'),
-            MenuItem('Sound effects', {
-                MenuItem('Off',  {}, nil, nil, sv('s', OFF),  nil, iv('s', OFF)),
-                MenuItem('Low',  {}, nil, nil, sv('s', LOW),  nil, iv('s', LOW)),
-                MenuItem('Med',  {}, nil, nil, sv('s', MED),  nil, iv('s', MED)),
-                MenuItem('High', {}, nil, nil, sv('s', HIGH), nil, iv('s', HIGH))
+            MenuItem:new('Sound effects', {
+                MenuItem:new('Off',  {}, nil, nil, sv('s', OFF),  nil, iv('s', OFF)),
+                MenuItem:new('Low',  {}, nil, nil, sv('s', LOW),  nil, iv('s', LOW)),
+                MenuItem:new('Med',  {}, nil, nil, sv('s', MED),  nil, iv('s', MED)),
+                MenuItem:new('High', {}, nil, nil, sv('s', HIGH), nil, iv('s', HIGH))
             }, 'Set sound effects volume'),
-            MenuItem('Text effects', {
-                MenuItem('Off',  {}, nil, nil, sv('t', OFF),  nil, iv('t', OFF)),
-                MenuItem('Low',  {}, nil, nil, sv('t', LOW),  nil, iv('t', LOW)),
-                MenuItem('Med',  {}, nil, nil, sv('t', MED),  nil, iv('t', MED)),
-                MenuItem('High', {}, nil, nil, sv('t', HIGH), nil, iv('t', HIGH))
+            MenuItem:new('Text effects', {
+                MenuItem:new('Off',  {}, nil, nil, sv('t', OFF),  nil, iv('t', OFF)),
+                MenuItem:new('Low',  {}, nil, nil, sv('t', LOW),  nil, iv('t', LOW)),
+                MenuItem:new('Med',  {}, nil, nil, sv('t', MED),  nil, iv('t', MED)),
+                MenuItem:new('High', {}, nil, nil, sv('t', HIGH), nil, iv('t', HIGH))
             }, 'Set text volume')
         }, 'Change audio settings'),
         self:mkDifficultyMenu()

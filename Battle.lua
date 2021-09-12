@@ -6,13 +6,13 @@ require 'Music'
 require 'Skill'
 require 'Triggers'
 
-Battle = Class{}
+Battle = class('Battle')
 
-GridSpace = Class{}
+GridSpace = class('GridSpace')
 
 local PULSE = 0.4
 
-function GridSpace:init(sp)
+function GridSpace:initialize(sp)
     self.occupied = nil
     if sp then
         self.occupied = sp
@@ -21,7 +21,7 @@ function GridSpace:init(sp)
     self.n_assists = 0
 end
 
-function Battle:init(battle_id, player, chapter)
+function Battle:initialize(battle_id, player, chapter)
 
     self.id = battle_id
     self.chapter = chapter
@@ -48,7 +48,7 @@ function Battle:init(battle_id, player, chapter)
         local row_str = data[grid_index + i]
         self.grid[i] = {}
         for j = 1, self.grid_w do
-            self.grid[i][j] = ite(row_str:sub(j, j) == 'T', GridSpace(), F)
+            self.grid[i][j] = ite(row_str:sub(j, j) == 'T', GridSpace:new(), F)
         end
     end
 
@@ -82,7 +82,7 @@ function Battle:init(battle_id, player, chapter)
 
     -- Music
     self.chapter:stopMusic()
-    self.chapter.current_music = Music(readField(data[9]))
+    self.chapter.current_music = Music:new(readField(data[9]))
 
     -- Graphics
     self.status_tex = self.chapter.itex
@@ -111,7 +111,7 @@ function Battle:readEntities(data, idx)
         -- Put sprite on grid and into participants
         local sp = self.chapter:getSprite(k)
         table.insert(t, sp)
-        self.grid[v[2]][v[1]] = GridSpace(sp)
+        self.grid[v[2]][v[1]] = GridSpace:new(sp)
 
         -- Initialize sprite status
         self.status[sp:getId()] = {
@@ -445,25 +445,25 @@ function Battle:openBattleStartMenu()
         self:closeMenu()
         self:beginTurn()
     end
-    local begin = MenuItem('Begin battle', {}, "Begin the battle", nil, next)
-    local wincon = MenuItem('Objectives', {},
+    local begin = MenuItem:new('Begin battle', {}, "Begin the battle", nil, next)
+    local wincon = MenuItem:new('Objectives', {},
         'View victory and defeat conditions', self:buildObjectivesBox()
     )
     local settings = self.player:mkSettingsMenu()
-    local restart = MenuItem('Restart chapter', {}, 'Start the chapter over',
+    local restart = MenuItem:new('Restart chapter', {}, 'Start the chapter over',
         nil, die,
         "Are you SURE you want to restart the chapter? You will lose ALL \z
          progress made during the chapter."
     )
-    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
+    local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, die,
         "Save current progress and close the game?"
     )
     local m = { wincon, settings, restart, quit, begin }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN, true), {})
+    self:openMenu(Menu:new(nil, m, BOX_MARGIN, BOX_MARGIN, true), {})
 end
 
 function Battle:openVictoryMenu()
-    local m = { MenuItem('Continue', {}, 'Finish the battle', nil,
+    local m = { MenuItem:new('Continue', {}, 'Finish the battle', nil,
         function(c)
             self.chapter:launchScene(self.id .. '-victory')
             self.chapter:startMapMusic()
@@ -471,34 +471,34 @@ function Battle:openVictoryMenu()
         end
     )}
     local v = { "     V I C T O R Y     " }
-    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN), {})
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN), {})
 end
 
 function Battle:openDefeatMenu()
-    local m = { MenuItem('Restart battle', {}, 'Start the battle over', nil,
+    local m = { MenuItem:new('Restart battle', {}, 'Start the battle over', nil,
         function(c) love.event.quit(0) end
     )}
     local d = { "     D E F E A T     " }
-    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED), {
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED), {
         { AFTER, TEMP, function() self:renderLens({ 0.5, 0, 0 }) end }
     })
 end
 
 function Battle:openEndTurnMenu()
     self.stack = {}
-    local m = { MenuItem('End turn', {}, nil, nil,
+    local m = { MenuItem:new('End turn', {}, nil, nil,
         function(c)
             self:closeMenu()
             self:endTurn()
         end
     )}
     local e = { "   E N E M Y   P H A S E   " }
-    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED), {})
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED), {})
 end
 
 function Battle:openBeginTurnMenu()
     self.stack = {}
-    local m = { MenuItem('Begin turn', {}, nil, nil,
+    local m = { MenuItem:new('Begin turn', {}, nil, nil,
         function(c)
             self:closeMenu()
             self:turnRefresh()
@@ -511,16 +511,16 @@ function Battle:openBeginTurnMenu()
         end
     )}
     local e = { "   A L L Y   P H A S E   " }
-    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, HIGHLIGHT), {})
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, HIGHLIGHT), {})
 end
 
 function Battle:openAttackMenu(sp)
-    local attributes = MenuItem('Attributes', {},
+    local attributes = MenuItem:new('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
         ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = HBOX_WIDTH
     })
-    local wait = MenuItem('Skip', {},
+    local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s attack", nil, function(c)
             self:push(self:stackBubble())
             self:selectTarget()
@@ -533,18 +533,18 @@ function Battle:openAttackMenu(sp)
     for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
     local opts = { attributes, weapon, spell, wait }
     local moves = self:getMoves()
-    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
+    self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function() self:renderMovement(moves, 1) end }
     })
 end
 
 function Battle:openAssistMenu(sp)
-    local attributes = MenuItem('Attributes', {},
+    local attributes = MenuItem:new('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
         ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = HBOX_WIDTH
     })
-    local wait = MenuItem('Skip', {},
+    local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s assist", nil, function(c)
             self:endAction(false)
         end
@@ -555,35 +555,35 @@ function Battle:openAssistMenu(sp)
     local opts = { attributes, assist, wait }
     local c = self:getCursor(3)
     local moves = self:getMoves()
-    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
+    self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function() self:renderMovement(moves, 1) end }
     })
 end
 
 function Battle:openAllyMenu(sp)
-    local attrs = MenuItem('Attributes', {},
+    local attrs = MenuItem:new('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
         ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = HBOX_WIDTH
     })
     local sks = sp:mkSkillsMenu(true, false)
-    self:openMenu(Menu(nil, { attrs, sks }, BOX_MARGIN, BOX_MARGIN, false), {})
+    self:openMenu(Menu:new(nil, { attrs, sks }, BOX_MARGIN, BOX_MARGIN, false), {})
 end
 
 function Battle:openEnemyMenu(sp)
-    local attributes = MenuItem('Attributes', {},
+    local attributes = MenuItem:new('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
         ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
         ['w'] = 390
     })
-    local readying = MenuItem('Next Attack', {},
+    local readying = MenuItem:new('Next Attack', {},
         'Prepared skill and target', {
         ['elements'] = self:buildReadyingBox(sp),
         ['w'] = HBOX_WIDTH
     })
     local skills = sp:mkSkillsMenu(false, true)
     local opts = { attributes, readying, skills }
-    self:openMenu(Menu(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
+    self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function() self:renderMovementHover() end }
     })
 end
@@ -594,37 +594,37 @@ function Battle:openOptionsMenu()
         self:closeMenu()
         self:openEndTurnMenu()
     end
-    local wincon = MenuItem('Objectives', {},
+    local wincon = MenuItem:new('Objectives', {},
         'View victory and defeat conditions', self:buildObjectivesBox()
     )
-    local end_turn = MenuItem('End turn', {}, 'End your turn', nil, endfxn)
+    local end_turn = MenuItem:new('End turn', {}, 'End your turn', nil, endfxn)
     local settings = self.player:mkSettingsMenu()
     table.remove(settings.children) -- Delete difficulty setting
-    local restart = MenuItem('Restart battle', {},
+    local restart = MenuItem:new('Restart battle', {},
         'Start the battle over', nil, pass,
         "Start the battle over from the beginning?"
     )
-    local quit = MenuItem('Save and quit', {}, 'Quit the game', nil, die,
+    local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, die,
         "Save battle state and close the game?"
     )
     local m = { wincon, settings, restart, quit, end_turn }
-    self:openMenu(Menu(nil, m, BOX_MARGIN, BOX_MARGIN, false), {})
+    self:openMenu(Menu:new(nil, m, BOX_MARGIN, BOX_MARGIN, false), {})
 end
 
 function Battle:openLevelupMenu(sp, n, interrupting)
-    local m = { MenuItem('Level up', {}, nil, nil,
+    local m = { MenuItem:new('Level up', {}, nil, nil,
         function(c)
             self:closeMenu()
             self:openMenu(LevelupMenu(sp, n, interrupting), {})
         end
     )}
     local l = { "     L E V E L   U P     " }
-    self:openMenu(Menu(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN), {})
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN), {})
 end
 
 function Battle:endAction(used_assist)
     local sp = self:getSprite()
-    local end_menu = MenuItem('Confirm end', {},
+    local end_menu = MenuItem:new('Confirm end', {},
         "Confirm " .. sp.name .. "'s actions this turn", nil,
         function(c) self:playAction() end
     )
@@ -634,7 +634,7 @@ function Battle:endAction(used_assist)
             self:renderSkillRange({ 0, 1, 0 })
         end }}
     end
-    self:openMenu(Menu(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN, false), views)
+    self:openMenu(Menu:new(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN, false), views)
 end
 
 function Battle:buildReadyingBox(sp)

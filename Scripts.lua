@@ -500,7 +500,7 @@ scripts = {
                     "Let me tell you a little bit about the history of the Kingdom."
                 ),
                 walk(true, 2, 50, 63, 'walk1'),
-                wait(2),
+                wait(2.5),
                 walk(true, 1, 48, 63, 'walk2'),
                 say(2, 3, true,
                     "Do you know why the One Kingdom of Ebonach and Mistram is \z
@@ -761,7 +761,7 @@ scripts = {
             waitForEvent('walk'),
             lookAt(2, 1),
             wait(1),
-            walk(true, 2, 28, 73, 'walk'),
+            walk(false, 2, 28, 73, 'walk'),
             waitForEvent('walk'),
             lookAt(2, 1),
             teleport(3, 41, 69),
@@ -870,7 +870,7 @@ scripts = {
             focus(2, 100),
             pan(100, -50, 100),
             wait(1),
-            walk(true, 1, 32, 72, 'walk'),
+            walk(false, 1, 32, 72, 'walk'),
             waitForEvent('camera'),
             waitForEvent('walk'),
             choice({

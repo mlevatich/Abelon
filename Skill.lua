@@ -3,17 +3,17 @@ require 'Constants'
 
 require 'Menu'
 
-Scaling = Class{}
+Scaling = class('Scaling')
 
-function Scaling:init(base, attr, mul)
+function Scaling:initialize(base, attr, mul)
     self.base = base
     self.attr = attr
     self.mul  = mul
 end
 
-Buff = Class{}
+Buff = class('Buff')
 
-function Buff:init(attr, val, type)
+function Buff:initialize(attr, val, type)
     self.attr = attr
     self.val  = val
     self.type = type
@@ -27,16 +27,16 @@ function Buff:toStr()
     return ite(self.val > 0, '+', '-') .. abs(self.val) .. ' ' .. self.attr
 end
 
-Effect = Class{}
+Effect = class('Effect')
 
-function Effect:init(buff, dur)
+function Effect:initialize(buff, dur)
     self.buff     = buff
     self.duration = dur
 end
 
-Skill = Class{}
+Skill = class('Skill')
 
-function Skill:init(id, n, ti, st, prio, si, tr, r, at, c, e, d)
+function Skill:initialize(id, n, ti, st, prio, si, tr, r, at, c, e, d)
 
     -- Identifying info
     self.id           = id
@@ -64,7 +64,7 @@ end
 
 function Skill:toMenuItem(itex, icons, with_skilltrees, with_prio)
     local hbox = self:mkSkillBox(itex, icons, with_skilltrees, with_prio)
-    return MenuItem(self.name, {}, nil, {
+    return MenuItem:new(self.name, {}, nil, {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
     }, nil, nil, nil, self.id)
@@ -188,11 +188,11 @@ end
 -- Create a buff, given an attribute set, the buffed stat, and buff scaling
 function mkBuff(attrs, template)
     if template[1] == 'special' then
-        return Buff(unpack(template))
+        return Buff:new(unpack(template))
     else
         local s = template[2]
         local tp = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF)
-        return Buff(template[1], s.base + math.floor(attrs[s.attr] * s.mul), tp)
+        return Buff:new(template[1], s.base + math.floor(attrs[s.attr] * s.mul), tp)
     end
 end
 
@@ -358,7 +358,7 @@ function genericAttack(dmg_type, affects, scaling,
                 if not dryrun then
                     for j = 1, #ts_buffs do
                         local b = mkBuff(sp_tmp_attrs, ts_buffs[j])
-                        addStatus(t_stat, Effect(b, ts_buff_turns))
+                        addStatus(t_stat, Effect:new(b, ts_buff_turns))
 
                         -- EXP gain for negative statuses applied
                         local exp = 0
@@ -381,7 +381,7 @@ function genericAttack(dmg_type, affects, scaling,
         if not dryrun then
             for j = 1, #sp_buffs do
                 local b = mkBuff(sp_tmp_attrs, sp_buffs[j])
-                addStatus(sp_stat, Effect(b, sp_buff_turns))
+                addStatus(sp_stat, Effect:new(b, sp_buff_turns))
 
                 -- EXP gain for positive statuses applied
                 local exp = 0
@@ -405,39 +405,39 @@ function genericAttack(dmg_type, affects, scaling,
 end
 
 skills = {
-    ['sever'] = Skill('sever', 'Sever',
+    ['sever'] = Skill:new('sever', 'Sever',
         'Executioner', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ENEMY, Scaling(0, 'force', 1.0),
+            WEAPON, ENEMY, Scaling:new(0, 'force', 1.0),
             nil, nil,
-            { { 'force', Scaling(-2, 'force', 0) } }, 1
+            { { 'force', Scaling:new(-2, 'force', 0) } }, 1
         ),
         "Slice at an enemy's exposed limbs. Deals (Force * 1.0) weapon damage \z
          to an enemy next to Abelon and lowers their Force by 2."
     ),
-    ['conflagration'] = Skill('conflagration', 'Conflagration',
+    ['conflagration'] = Skill:new('conflagration', 'Conflagration',
         'Demon', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 5,
         genericAttack(
-            SPELL, ENEMY, Scaling(30, 'force', 0)
+            SPELL, ENEMY, Scaling:new(30, 'force', 0)
         ),
         "Scour the battlefield with unholy fire. Deals 30 spell \z
          damage to all enemies in a line across the entire map."
     ),
-    ['guard_blindspot'] = Skill('guard_blindspot', 'Guard Blindspot',
+    ['guard_blindspot'] = Skill:new('guard_blindspot', 'Guard Blindspot',
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAssist({
-            { 'reaction', Scaling(0, 'affinity', 1.0) }
+            { 'reaction', Scaling:new(0, 'affinity', 1.0) }
         }),
         "Protect an adjacent ally from wounds to the back. Adds \z
          (Affinity * 1.0) to ally's Reaction."
     ),
-    ['judgement'] = Skill('judgement', 'Judgement',
+    ['judgement'] = Skill:new('judgement', 'Judgement',
         'Executioner', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { T } }, FREE_AIM(100, ENEMY), 1,
@@ -454,7 +454,7 @@ skills = {
         "Instantly kill an enemy anywhere on the field with less than 10 \z
          health remaining, bypassing protective status effects."
     ),
-    ['inspire'] = Skill('inspire', 'Inspire',
+    ['inspire'] = Skill:new('inspire', 'Inspire',
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 1 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
         { { F, F, F, T, F, F, F },
@@ -465,32 +465,32 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         genericAssist({
-            { 'force',    Scaling(0, 'affinity', 1.0) },
-            { 'reaction', Scaling(0, 'affinity', 1.0) },
-            { 'affinity', Scaling(0, 'affinity', 1.0) }
+            { 'force',    Scaling:new(0, 'affinity', 1.0) },
+            { 'reaction', Scaling:new(0, 'affinity', 1.0) },
+            { 'affinity', Scaling:new(0, 'affinity', 1.0) }
         }),
         "Inspire a distant ally with a courageous cry. Adds (Affinity * 1.0) \z
          to ally's Force, Reaction, and Affinity."
     ),
-    ['trust'] = Skill('trust', 'Trust',
+    ['trust'] = Skill:new('trust', 'Trust',
         'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
         genericAttack(
             WEAPON, ALLY, nil,
-            { { 'affinity', Scaling(8, 'affinity', 0) } }, 1
+            { { 'affinity', Scaling:new(8, 'affinity', 0) } }, 1
         ),
         "Place your faith in your comrades. Increases Abelon's Affinity by 8 \z
          for the rest of the turn."
     ),
-    ['punish'] = Skill('punish', 'Punish',
+    ['punish'] = Skill:new('punish', 'Punish',
         'Executioner', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Veteran', 1 }, { 'Executioner', 1 } },
         { { F, F, F },
           { T, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ENEMY, Scaling(10, 'force', 1.0),
+            WEAPON, ENEMY, Scaling:new(10, 'force', 1.0),
             nil, nil,
             nil, nil,
             { ['br'] = function(a, a_a, b, b_a, st)
@@ -500,7 +500,7 @@ skills = {
         "Exploit a brief weakness with a precise stab. Deals 10 + (Force * 1.0) \z
          weapon damage only if the enemy is impaired or debuffed."
     ),
-    ['crucible'] = Skill('crucible', 'Crucible',
+    ['crucible'] = Skill:new('crucible', 'Crucible',
         'Demon', SPELL, MANUAL, str_to_icon['force'],
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, F, T, F, F, F },
@@ -511,7 +511,7 @@ skills = {
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 8,
         genericAttack(
-            SPELL, ENEMY, Scaling(0, 'force', 2.0),
+            SPELL, ENEMY, Scaling:new(0, 'force', 2.0),
             nil, nil,
             nil, nil,
             { ['self'] = true }
@@ -519,7 +519,7 @@ skills = {
         "Unleash a scorching miasma. Abelon and nearby enemies suffer \z
          (Force * 2.0) spell damage (cannot kill Abelon)."
     ),
-    ['contempt'] = Skill('contempt', 'Contempt',
+    ['contempt'] = Skill:new('contempt', 'Contempt',
         'Demon', SPELL, MANUAL, str_to_icon['focus'],
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { F, T, F, T, F },
@@ -530,12 +530,12 @@ skills = {
         genericAttack(
             SPELL, ENEMY, nil,
             nil, nil,
-            { { 'reaction', Scaling(0, 'focus', -1.0) } }, 2
+            { { 'reaction', Scaling:new(0, 'focus', -1.0) } }, 2
         ),
         "Glare with an evil eye lit by ignea, reducing the Reaction of \z
          affected enemies by (Focus * 1.0) for two turns."
     ),
-    ['enrage'] = Skill('enrage', 'Enrage',
+    ['enrage'] = Skill:new('enrage', 'Enrage',
         'Defender', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F, T, F, F, F },
@@ -553,20 +553,20 @@ skills = {
         "Enrage nearby enemies with a mist of ignea, so that their next \z
          actions will target Kath (whether or not they can reach him)."
     ),
-    ['sweep'] = Skill('sweep', 'Sweep',
+    ['sweep'] = Skill:new('sweep', 'Sweep',
         'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ENEMY, Scaling(0, 'force', 0.8),
-            { { 'reaction', Scaling(3, 'force', 0) } }, 1
+            WEAPON, ENEMY, Scaling:new(0, 'force', 0.8),
+            { { 'reaction', Scaling:new(3, 'force', 0) } }, 1
         ),
         "Slash in a wide arc. Deals (Force * 0.8) weapon damage to enemies in \z
          front of Kath, and grants 3 Reaction until his next turn."
     ),
-    ['stun'] = Skill('stun', 'Stun',
+    ['stun'] = Skill:new('stun', 'Stun',
         'Defender', WEAPON, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 1,
@@ -581,32 +581,32 @@ skills = {
         "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
          higher than his foe's, they are unable to act for a turn."
     ),
-    ['blessed_mist'] = Skill('blessed_mist', 'Blessed Mist',
+    ['blessed_mist'] = Skill:new('blessed_mist', 'Blessed Mist',
         'Cleric', SPELL, MANUAL, str_to_icon['affinity'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
           { T, T, T },
           { T, T, T } }, FREE_AIM(3, ALL), 3,
         genericAttack(
-            SPELL, ALLY, Scaling(0, 'affinity', -1.0)
+            SPELL, ALLY, Scaling:new(0, 'affinity', -1.0)
         ),
         "Infuse the air to close wounds. Allies in the area recover \z
          (Affinity * 1.0) health. Can target a square within three spaces of \z
          Kath."
     ),
-    ['javelin'] = Skill('javelin', 'Javelin',
+    ['javelin'] = Skill:new('javelin', 'Javelin',
         'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ENEMY, Scaling(0, 'force', 1.2)
+            WEAPON, ENEMY, Scaling:new(0, 'force', 1.2)
         ),
         "Kath hurls a javelin at an enemy, dealing (Force * 1.2) weapon \z
          damage."
     ),
-    ['forbearance'] = Skill('forbearance', 'Forbearance',
+    ['forbearance'] = Skill:new('forbearance', 'Forbearance',
         'Defender', ASSIST, MANUAL, str_to_icon['endurance'],
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
@@ -615,7 +615,7 @@ skills = {
         }),
         "Kath receives all attacks meant for an adjacent ally."
     ),
-    ['haste'] = Skill('haste', 'Haste',
+    ['haste'] = Skill:new('haste', 'Haste',
         'Cleric', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 1 } },
         { { F, F, T, F, F },
@@ -626,23 +626,23 @@ skills = {
         genericAttack(
             SPELL, ALLY, nil,
             nil, nil,
-            { { 'agility', Scaling(10, 'force', 0) } }, 1
+            { { 'agility', Scaling:new(10, 'force', 0) } }, 1
         ),
         "Kath raises the agility of allies around him by 10."
     ),
-    ['invigorate'] = Skill('invigorate', 'Invigorate',
+    ['invigorate'] = Skill:new('invigorate', 'Invigorate',
         'Cleric', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 1 } },
         { { T, F, T },
           { F, F, F },
           { T, F, T } }, SELF_CAST_AIM, 1,
         genericAssist({
-            { 'force', Scaling(0, 'affinity', 1.0) }
+            { 'force', Scaling:new(0, 'affinity', 1.0) }
         }),
         "Kath renews allies near him with a spell. Assisted allies gain \z
          (Affinity * 1.0) Force"
     ),
-    ['guardian_angel'] = Skill('guardian_angel', 'Guardian Angel',
+    ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel',
         'Cleric', ASSIST, MANUAL, str_to_icon['empty'],
         { { 'Defender', 2 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { F, F, T, T, T, F, F },
@@ -658,22 +658,22 @@ skills = {
         "Kath casts a powerful protective spell. Assisted allies cannot \z
          drop below 1 health for the remainder of the turn."
     ),
-    ['hold_the_line'] = Skill('hold_the_line', 'Hold the Line',
+    ['hold_the_line'] = Skill:new('hold_the_line', 'Hold the Line',
         'Hero', ASSIST, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
         genericAssist({
-            { 'reaction', Scaling(0, 'reaction', 0.7) }
+            { 'reaction', Scaling:new(0, 'reaction', 0.7) }
         }),
         "Kath forms a wall with his allies, raising the Reaction of assisted \z
          allies by (Reaction * 0.7)"
     ),
-    ['bite'] = Skill('bite', 'Bite',
+    ['bite'] = Skill:new('bite', 'Bite',
         'Enemy', WEAPON, KILL, str_to_icon['force'],
         {},
         { { T } }, DIRECTIONAL_AIM, 0,
         genericAttack(
-            WEAPON, ALLY, Scaling(0, 'force', 1.0)
+            WEAPON, ALLY, Scaling:new(0, 'force', 1.0)
         ),
         "Leap at an adjacent enemy and bite into them. Deals \z
          (Force * 1.0) weapon damage to an enemy next to the user."

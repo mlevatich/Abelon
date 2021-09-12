@@ -1,14 +1,7 @@
-(please commit each paragraph separately for your own sanity)
+What to do next, organized into sections and issues! (please commit each
+paragraph separately for your own sanity)
 
-Bug: abelon changing direction during a pathed walk (when walking in one
-direction, he shouldn't be changing dir!). Can reproduce by having him walk
-down before the first scene.
-Bug: Kath got stuck behind Abelon in his lefally talk because djikstra took him
-the wrong way for a moment. This happens other places to, Djikstra sends a unit
-backwards
-Bug: Kath stops upon reaching Abelon in the opening scene and freezes. This is
-the same bug as above - Kath is being pathed into Abelon for some reason instead
-of away from him
+SECTION: GAME ENTRY-EXIT PROCEDURES
 
 #16:
 
@@ -28,13 +21,14 @@ automatically into a dict, like JSON. Key is the word before the colon, key
 also has a field giving how data should be parsed.
 
 Save state (rewrite sprite files to savedata, pull from there first if it
-exists unless new game). Save and quit returns to title screen.
+exists unless new game). Save and quit returns to title screen. Use the Ser
+library! (found online)
 
 #28:
 
 Attempt to autosave on game quit. Autosave after every scene, every battle
 action, and every map transition. Implement restart chapter, restart battle,
-and battle game over.
+and battle game over. Again, use Ser.
 
 #48:
 
@@ -48,17 +42,20 @@ Combat guide accessible from battle begin menu or options.
 Chapter end trigger. Displays a chapter 1 endcard, bridge scene, and chapter 2
 start card (Teaser). Kicks you back to the title screen
 
+
+
+
+
+SECTION: COMBAT SECOND PASS
+
 #?:
 
-Finding Elaine should be a battle. Race a wolf to get to her!
+(Battle interfaces!)
 
 Text highlighting for descriptions. Should work like a string formatting
 function passed to mkEle. weapon damage is orange, spell damage is purple,
 attributes each have their own color, sprite names are colored, numbers are
 colored.
-
-Turn limits: every battle should have a turn limit loss condition, to prevent
-EXP farming
 
 Try to minimize the amount of text. Replace text with pictures as much as
 possible? Come up with icons?
@@ -66,17 +63,22 @@ possible? Come up with icons?
 When attacking or assisting, the targets that will be affected should be
 rendered, not the tile that the cursor is on.
 
-improve AI algorithm - use other plans! In particular, enemies shouldn't
-interfere with each other. If one enemy has only a single path to attack their
-target, the acting enemy shouldn't get in the way of that path unless it
-needs to in order to attack its own target.
-
 When sprites gain exp, render exp splash.
 
-Ally base stats should be extremely lopsided to start, because they will
-even out over time. Kath can have more reaction, less HP, Abelon more HP,
-Elaine starts with 0 focus and no spells? Interesting idea. Elaine starts at
-level 2, with 3 skills (observe, 1 attack, 1 assist)
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. While a sprite's action is playing out, what
+they're doing should render in the top right. Just the ability name and icons.
+
+For free aim, the cursor can be on any space given by the FREE_AIM field
+(intersect a diamond of size "scale" with the targets given by "target").
+FREE_AIM moves should render an outline of the move's range
+
+#?:
+
+(Combat and balancing second draft!)
+
+Turn limits: every battle should have a turn limit loss condition, to prevent
+EXP farming
 
 Potential level up issues: you gain more exp on higher difficulties because you
 take more damage. Potential exp gain from taking damage in chapter 1 is up to
@@ -91,20 +93,26 @@ req to level up to account for this
 Additionally bonus EXP for how healthy each unit is at the end? To discourage
 eating damage for no reason
 
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. While a sprite's action is playing out, what
-they're doing should render in the top right. Just the ability name and icons.
+improve AI algorithm - use other plans! In particular, enemies shouldn't
+interfere with each other. If one enemy has only a single path to attack their
+target, the acting enemy shouldn't get in the way of that path unless it
+needs to in order to attack its own target. To minimize interference in general,
+the strongest enemies should take their turns first, and the enemies who start
+farther away from the allies should also be prioritized.
 
-For free aim, the cursor can be on any space given by the FREE_AIM field
-(intersect a diamond of size "scale" with the targets given by "target").
-FREE_AIM moves should render an outline of the move's range
+Ally base stats should be extremely lopsided to start, because they will
+even out over time. Kath can have more reaction, less HP, Abelon more HP,
+Elaine starts with 0 focus and no spells? Interesting idea. Elaine starts at
+level 2, with 3 skills (observe, 1 attack, 1 assist)
 
-#4:
+Finding Elaine should be a battle. Race a wolf to get to her! Once all this
+QoL stuff is done, can mess around with implementing that.
 
-SFX for:
-menu select (not too different from current)
-Scene text sound effects
-start game (from title screen)
+
+
+
+
+SECTION: ANIMATION WORK
 
 #52:
 
@@ -168,22 +176,11 @@ Wolf-weapon
 Wolf-hurt
 Wolf-death
 
-#56:
 
-SFX for:
-use weapon skill
-use spell
-use assist
-battle cursor move
-battle select ally/enemy
-battle select target for move/attack/assist
-battle confirm end action
-battle enemy turn start
-battle ally turn start
-level up
-all skills
 
-Mute ally turn start, enemy turn start, victory, defeat menus
+
+
+SECTION: MAP WORK
 
 #57:
 
@@ -202,6 +199,42 @@ Redo forest tileset to use 2x2 trees
 Expand lighting engine
 
 Add point lights to the forest to test
+
+
+
+
+
+SECTION: SFX WORK
+
+#4:
+
+SFX for:
+menu select (not too different from current)
+Scene text sound effects
+start game (from title screen)
+
+#56:
+
+SFX for:
+use weapon skill
+use spell
+use assist
+battle cursor move
+battle select ally/enemy
+battle select target for move/attack/assist
+battle confirm end action
+battle enemy turn start
+battle ally turn start
+level up
+all skills
+
+Mute ally turn start, enemy turn start, victory, defeat menus
+
+
+
+
+
+SECTION: MUSIC TRACKS
 
 #?:
 
@@ -223,12 +256,18 @@ Better forest theme - more tense investigation, less funeral march
 
 
 
-FUTURE: implement everything!
+
+SECTION: CHAPTER 1 IMPLEMENTATION
 
 Finish script - Do this before even looking at the below scenarios! Because
 I might decide I want something different as I write the script.
+
 implement Elaine scenario
+
 implement Ghoul scenario (objective is rout or escape)
+
 implement Deer scenario
+
 Implement crystal wolf scenario (objective is rout and defend)
+
 Make executable
