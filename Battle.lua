@@ -839,7 +839,7 @@ function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
         end
     end
-    return attack.use(sp, sp_a, ts, ts_a, self.status, self.grid, dryrun)
+    return attack:use(sp, sp_a, ts, ts_a, self.status, self.grid, dryrun)
 end
 
 function Battle:kill(sp)
@@ -966,7 +966,7 @@ function Battle:playAction()
 
                 -- Get the buffs this assist will confer, based on
                 -- the sprite's attributes
-                local buffs = assist.use(self:getTmpAttributes(sp))
+                local buffs = assist:use(self:getTmpAttributes(sp))
 
                 -- Put the buffs on the grid
                 local g = self.grid[t[i][1]][t[i][2]]
