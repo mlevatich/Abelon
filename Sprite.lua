@@ -11,20 +11,20 @@ require 'Battle'
 Sprite = class('Sprite')
 
 -- Class constants
-local INIT_DIRECTION = RIGHT
-local INIT_ANIMATION = 'idle'
-local INIT_VERSION = 'standard'
+INIT_DIRECTION = RIGHT
+INIT_ANIMATION = 'idle'
+INIT_VERSION = 'standard'
 
 -- Movement constants
-local WANDER_SPEED = 70
-local LEASH_DISTANCE = TILE_WIDTH * 1.5
+WANDER_SPEED = 70
+LEASH_DISTANCE = TILE_WIDTH * 1.5
 
 -- Each spacter has 12 possible portraits for
 -- 12 different emotions (some may not use them all)
-local PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
 -- EXP_NEXT[i] = how much experience is needed to level up at level i?
-local EXP_NEXT = { 10, 20, 40, 60, 80, 120, 160, 200, 250, 300, 350, 400 }
+EXP_NEXT = { 10, 20, 40, 60, 80, 120, 160, 200, 250, 300, 350, 400 }
 
 -- Initialize a new sprite
 function Sprite:initialize(id, chapter)
@@ -67,9 +67,9 @@ function Sprite:initialize(id, chapter)
     self.resting_behavior = readField(data[7])
     self.current_behavior = self.resting_behavior
     self.behaviors = {
-        ['wander'] = function(dt) self:_wanderBehavior(dt) end,
-        ['battle'] = function(dt) self:_battleBehavior(dt) end,
-        ['idle'] = function(dt)   self:_idleBehavior(dt) end
+        ['wander'] = function(sp, dt) sp:_wanderBehavior(dt) end,
+        ['battle'] = function(sp, dt) sp:_battleBehavior(dt) end,
+        ['idle']   = function(sp, dt) sp:_idleBehavior(dt)   end
     }
 
     -- Can the player interact with this sprite to start a scene?
@@ -764,6 +764,7 @@ end
 
 function Sprite:_behaviorSequence(i, behaviors, doneAction)
     if i == #behaviors then
+        self.behaviors['seq'] = nil
         return behaviors[i](doneAction)
     end
     return behaviors[i](function()
@@ -791,7 +792,7 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
     if abs((x - 1) * TILE_WIDTH - self.x) > TILE_WIDTH / 2 then
         self.dir = ite((x - 1) * TILE_WIDTH > self.x, RIGHT, LEFT)
     end
-    return function(dt)
+    return function(sp, dt)
         self:stop()
         if not skill_anim_fired then
             self:fireAnimation(anim_type, function()
@@ -811,7 +812,7 @@ end
 
 function Sprite:waitBehaviorGeneric(doneAction, waitAnimation, s)
     local timer = s
-    return function(dt)
+    return function(sp, dt)
         self:stop()
         self:changeAnimation(waitAnimation)
         timer = timer - dt
@@ -842,7 +843,7 @@ function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run)
     end
 
     -- Behavior function
-    return function(dt)
+    return function(sp, dt)
 
         -- Reordering direction taken when an obstacle is hit
         local x, y = self:getPosition()
@@ -1192,7 +1193,7 @@ function Sprite:update(dt)
 
     -- Update velocity, direction, behavior,
     -- and animation based on current behavior
-    self.behaviors[self.current_behavior](dt)
+    self.behaviors[self.current_behavior](self, dt)
 
     -- Update frame of animation
     self:updateAnimation(dt)

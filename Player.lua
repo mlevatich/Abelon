@@ -11,8 +11,8 @@ require 'Sounds'
 Player = class('Player')
 
 -- Movement constants
-local WALK_SPEED = 100
-local DIAG_SPEED = 80
+WALK_SPEED = 100
+DIAG_SPEED = 80
 
 -- Initialize the player character, Abelon
 function Player:initialize(sp)
@@ -20,15 +20,15 @@ function Player:initialize(sp)
     -- Player is a superclass of Sprite
     self.sp = sp
 
-    self:addBehaviors({ ['free'] = function(dt) self:updatePosition(dt) end })
+    self:addBehaviors({ ['free'] = function(sp, dt) sp:updatePosition(dt) end })
 
     -- Abelon has different modes to account for the player's keyboard input
     self.modes = {
-        ['frozen'] = function() self:stillMode() end,
-        ['free'] = function() self:freeMode() end,
-        ['scene'] = function() self:sceneMode() end,
-        ['browse'] = function() self:browseMode() end,
-        ['battle'] = function() self:battleMode() end
+        ['frozen'] = function(p) p:stillMode()  end,
+        ['free']   = function(p) p:freeMode()   end,
+        ['scene']  = function(p) p:sceneMode()  end,
+        ['browse'] = function(p) p:browseMode() end,
+        ['battle'] = function(p) p:battleMode() end
     }
     self.mode = 'free'
 
@@ -363,7 +363,7 @@ end
 
 -- Update player character based on key presses
 function Player:update()
-    self.modes[self.mode]()
+    self.modes[self.mode](self)
 end
 
 -- Render the player character's interactions

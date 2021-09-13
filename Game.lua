@@ -21,9 +21,12 @@ function Game:initialize()
     -- set sfx volume
     -- set text volume
 
-    -- TODO: upvalue suspects:
-    -- MenuItem.action
-    -- Sprite.behaviors
+    -- TODO: make sure that there is no menu open when reloading into a battle
+    -- start, and that the menu is opened AFTER the reload. Menu items have
+    -- lots of upvalues, so there can't be an open menu on a reload.
+
+    local res, len = binser.deserialize(binser.serialize(self.chapter))
+    self.chapter = res[1]
 end
 
 -- Clear all sprites from the current map and change the current map

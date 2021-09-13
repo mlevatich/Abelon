@@ -10,7 +10,7 @@ Battle = class('Battle')
 
 GridSpace = class('GridSpace')
 
-local PULSE = 0.4
+PULSE = 0.4
 
 function GridSpace:initialize(sp)
     self.occupied = nil
@@ -184,7 +184,7 @@ function Battle:stackBase()
         ['stage'] = STAGE_FREE,
         ['cursor'] = { 1, 1, false, { HIGHLIGHT } },
         ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovementHover() end }
+            { BEFORE, TEMP, function(b) b:renderMovementHover() end }
         }
     }
 end
@@ -479,7 +479,7 @@ function Battle:openDefeatMenu()
     )}
     local d = { "     D E F E A T     " }
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED), {
-        { AFTER, TEMP, function() self:renderLens({ 0.5, 0, 0 }) end }
+        { AFTER, TEMP, function(b) b:renderLens({ 0.5, 0, 0 }) end }
     })
 end
 
@@ -533,7 +533,7 @@ function Battle:openAttackMenu(sp)
     local opts = { attributes, weapon, spell, wait }
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
-        { BEFORE, TEMP, function() self:renderMovement(moves, 1) end }
+        { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end }
     })
 end
 
@@ -555,7 +555,7 @@ function Battle:openAssistMenu(sp)
     local c = self:getCursor(3)
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
-        { BEFORE, TEMP, function() self:renderMovement(moves, 1) end }
+        { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end }
     })
 end
 
@@ -583,7 +583,7 @@ function Battle:openEnemyMenu(sp)
     local skills = sp:mkSkillsMenu(false, true)
     local opts = { attributes, readying, skills }
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
-        { BEFORE, TEMP, function() self:renderMovementHover() end }
+        { BEFORE, TEMP, function(b) b:renderMovementHover() end }
     })
 end
 
@@ -629,8 +629,8 @@ function Battle:endAction(used_assist)
     )
     local views = {}
     if used_assist then
-        views = {{ BEFORE, TEMP, function()
-            self:renderSkillRange({ 0, 1, 0 })
+        views = {{ BEFORE, TEMP, function(b)
+            b:renderSkillRange({ 0, 1, 0 })
         end }}
     end
     self:openMenu(Menu:new(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN, false), views)
@@ -725,8 +725,8 @@ function Battle:mkUsable(sp, sk_menu)
                 ['sp'] = sp,
                 ['sk'] = sk,
                 ['views'] = {
-                    { BEFORE, TEMP, function()
-                        self:renderSkillRange(zclr)
+                    { BEFORE, TEMP, function(b)
+                        b:renderSkillRange(zclr)
                     end }
                 }
             })
@@ -746,10 +746,10 @@ function Battle:selectAlly(sp)
         ['cursor'] = new_c,
         ['moves'] = moves,
         ['views'] = {
-            { BEFORE, TEMP, function() self:renderMovement(moves, 1) end },
-            { AFTER, PERSIST, function()
-                local y, x = self:findSprite(sp:getId())
-                self:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
+            { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end },
+            { AFTER, PERSIST, function(b)
+                local y, x = b:findSprite(sp:getId())
+                b:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
             end }
         }
     })
@@ -813,11 +813,11 @@ function Battle:selectTarget()
             ['cursor'] = nc,
             ['moves'] = moves,
             ['views'] = {
-                { BEFORE, TEMP, function()
-                    self:renderMovement(moves, 1)
+                { BEFORE, TEMP, function(b)
+                    b:renderMovement(moves, 1)
                 end },
-                { AFTER, PERSIST, function()
-                    self:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
+                { AFTER, PERSIST, function(b)
+                    b:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
                 end }
             }
         })
@@ -1711,7 +1711,7 @@ function Battle:renderViews(depth)
         for j = 1, #views do
             if views[j][1] == depth
             and (views[j][2] == PERSIST or i == #self.stack) then
-                views[j][3]()
+                views[j][3](self)
             end
         end
     end

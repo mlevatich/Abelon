@@ -4,7 +4,7 @@ require 'Constants'
 Animation = class('Animation')
 
 -- Class constants
-local ANIMATION_SPEED = 6.5
+ANIMATION_SPEED = 6.5
 
 -- Initialize a new set of frames
 function Animation:initialize(frames)

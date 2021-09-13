@@ -5,10 +5,10 @@ require 'Scripts'
 
 Scene = class('Scene')
 
-local PAUSE_CHARS = {'. ', '! ', '? ', '.', '!', '?'}
-local BREATHE_CHARS = {', ', ',', '* ', '*'}
-local PAUSE_WEIGHT = 10
-local BREATHE_WEIGHT = 3
+PAUSE_CHARS = {'. ', '! ', '? ', '.', '!', '?'}
+BREATHE_CHARS = {', ', ',', '* ', '*'}
+PAUSE_WEIGHT = 10
+BREATHE_WEIGHT = 3
 
 -- Initialize a new dialogue
 function Scene:initialize(scene_id, player, chapter, returnToBattle)
