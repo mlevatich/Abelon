@@ -443,8 +443,7 @@ function Battle:openBattleStartMenu()
     local save = function(c)
         self:closeMenu()
         self.start_save = true
-        binser.writeFile('abelon/data/savedata/save.dat', c)
-        love.event.quit(0)
+        c:saveAndQuit()
     end
     local next = function(c)
         self:closeMenu()
@@ -456,7 +455,7 @@ function Battle:openBattleStartMenu()
     )
     local settings = self.player:mkSettingsMenu()
     local restart = MenuItem:new('Restart chapter', {}, 'Start the chapter over',
-        nil, pass,
+        nil, function(c) c:reloadChapter() end,
         "Are you SURE you want to restart the chapter? You will lose ALL \z
          progress made during the chapter."
     )
@@ -481,7 +480,7 @@ end
 
 function Battle:openDefeatMenu()
     local m = { MenuItem:new('Restart battle', {}, 'Start the battle over', nil,
-        function(c) love.event.quit(0) end
+        function(c) c:reloadBattle() end
     )}
     local d = { "     D E F E A T     " }
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED), {
@@ -597,8 +596,7 @@ function Battle:openOptionsMenu()
     local save = function(c)
         self:closeMenu()
         self.start_save = false
-        binser.writeFile('abelon/data/savedata/save.dat', c)
-        love.event.quit(0)
+        c:saveAndQuit()
     end
     local endfxn = function(c)
         self:closeMenu()
@@ -611,7 +609,7 @@ function Battle:openOptionsMenu()
     local settings = self.player:mkSettingsMenu()
     table.remove(settings.children) -- Delete difficulty setting
     local restart = MenuItem:new('Restart battle', {},
-        'Start the battle over', nil, pass,
+        'Start the battle over', nil, function(c) c:reloadBattle() end,
         "Start the battle over from the beginning?"
     )
     local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, save,

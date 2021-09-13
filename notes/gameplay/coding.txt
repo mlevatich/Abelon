@@ -14,12 +14,6 @@ to the player. Learning a name is a scene event.
 For title screen music, use the voice memo on my phone: Time Slows. Tentative
 track name: The Lonely Knight
 
-#28:
-
-Attempt to autosave on game quit. Autosave after every scene, every battle
-action, and every map transition. Implement restart chapter, restart battle,
-and battle game over. Again, use Ser.
-
 #48:
 
 Game guide shows up immediately on starting new game, and accessible from

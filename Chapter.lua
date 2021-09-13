@@ -56,6 +56,7 @@ function Chapter:initialize(id)
     -- Rendering information
     self.alpha = 1
     self.fade_to = nil
+    self.autosave_flash = 0
 
     -- Sprites in this chapter
     self.sprites = {}
@@ -80,7 +81,39 @@ function Chapter:initialize(id)
     self.battle_inputs = {}
 
     -- Read into the above fields from chapter file
+    self.signal = nil
     self:load()
+    self:saveChapter()
+end
+
+function Chapter:autosave(silent)
+    binser.writeFile('abelon/' .. SAVE_DIRECTORY .. AUTO_SAVE, self)
+    self.autosave_flash = ite(silent, 0, 1)
+end
+
+function Chapter:saveBattle()
+    binser.writeFile('abelon/' .. SAVE_DIRECTORY .. BATTLE_SAVE, self)
+    self:autosave()
+end
+
+function Chapter:saveChapter()
+    binser.writeFile('abelon/' .. SAVE_DIRECTORY .. CHAPTER_SAVE, self)
+    self:autosave(true)
+end
+
+function Chapter:saveAndQuit()
+    self:autosave()
+    love.event.quit(0)
+end
+
+function Chapter:reloadBattle()
+    self.signal = RELOAD_BATTLE
+    self:stopMusic()
+end
+
+function Chapter:reloadChapter()
+    self.signal = RELOAD_CHAPTER
+    self:stopMusic()
 end
 
 -- Read information about sprites and scenes for this chapter
@@ -215,6 +248,7 @@ end
 
 function Chapter:launchBattle(b_id)
     self.battle = Battle:new(b_id, self.player, self)
+    self:saveBattle()
 end
 
 -- Store player inputs to a scene, to be processed on update
@@ -278,6 +312,9 @@ function Chapter:updateScene(dt)
     if self.current_scene:over() then
         self.current_scene:close()
         self.current_scene = nil
+        if not self.battle then
+            self:autosave()
+        end
     end
 end
 
@@ -445,8 +482,10 @@ function Chapter:update(dt)
     -- Update camera position
     self:updateCamera(dt)
 
-    -- No chapter change
-    return nil
+    self.autosave_flash = math.max(0, self.autosave_flash - dt)
+
+    -- Return reload/end signal
+    return self.signal
 end
 
 -- Render the map and sprites of the chapter at the current position,
@@ -481,5 +520,14 @@ function Chapter:render()
     -- Render effects and text from current scene if there is one
     if self.current_scene then
         self.current_scene:render(self.camera_x, self.camera_y)
+    end
+
+    if self.autosave_flash > 0 then
+        love.graphics.setColor({ 1, 1, 1, self.autosave_flash })
+        local str = 'Game saved'
+        renderString(str,
+            self.camera_x + VIRTUAL_WIDTH - #str * CHAR_WIDTH - BOX_MARGIN,
+            self.camera_y + BOX_MARGIN, true
+        )
     end
 end

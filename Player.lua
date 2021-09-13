@@ -72,14 +72,14 @@ end
 function Player:mkQuitMenu()
     local save = function(c)
         self:changeMode('free')
-        binser.writeFile('abelon/data/savedata/save.dat', c)
-        love.event.quit(0)
+        c:saveAndQuit()
     end
+    local restart = function(c) c:reloadChapter() end
     return MenuItem:new('Quit', {
         MenuItem:new('Save and quit', {}, nil, nil, save,
             "Save current progress and close the game?"
         ),
-        MenuItem:new('Restart chapter', {}, nil, nil, pass,
+        MenuItem:new('Restart chapter', {}, nil, nil, restart,
             "Are you SURE you want to restart the chapter? You will lose ALL \z
              progress made during the chapter."
         )

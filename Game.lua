@@ -13,18 +13,13 @@ function Game:initialize()
 
     -- TODO: title screen stuff
 
-    local save_path = 'data/savedata/save.dat'
-    if love.filesystem.getInfo(save_path) then
+    if love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
 
         -- Read the chapter from save file
-        local res, _ = binser.readFile('abelon/' .. save_path)
+        local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. AUTO_SAVE)
         self.chapter = res[1]
 
-        -- Reset volume levels and clear any lingering inputs
-        self.chapter:setSfxVolume(self.chapter.sfx_volume)
-        -- self.chapter:setTextVolume(self.chapter.text_volume)
-        self.chapter.scene_inputs = {}
-        self.chapter.battle_inputs = {}
+        self:cleanChapter()
 
         -- If in a battle, reopen the closed menu
         if self.chapter.battle and self.chapter.battle.start_save then
@@ -33,6 +28,17 @@ function Game:initialize()
     else
         self:nextChapter()
     end
+
+    G = self
+end
+
+function Game:cleanChapter()
+
+    -- Reset volume levels and clear any lingering inputs
+    self.chapter:setSfxVolume(self.chapter.sfx_volume)
+    -- self.chapter:setTextVolume(self.chapter.text_volume)
+    self.chapter.scene_inputs = {}
+    self.chapter.battle_inputs = {}
 end
 
 -- Clear all sprites from the current map and change the current map
@@ -52,15 +58,23 @@ function Game:nextChapter()
     end
 end
 
+function Game:loadSave(path)
+    local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. path)
+    self.chapter = res[1]
+    self:cleanChapter()
+    self.chapter:autosave(true)
+end
+
 -- Update game state
 function Game:update(dt)
 
     -- Update chapter state, map, and all sprites in chapter
-    local chapter_end = self.chapter:update(dt)
+    local signal = self.chapter:update(dt)
 
-    -- Detect and handle chapter change
-    if chapter_end then
-        self:nextChapter()
+    -- Detect and handle chapter change or reload
+    if     signal == RELOAD_BATTLE  then self:loadSave(BATTLE_SAVE)
+    elseif signal == RELOAD_CHAPTER then self:loadSave(CHAPTER_SAVE)
+    elseif signal == END_CHAPTER    then self:nextChapter()
     end
 end
 

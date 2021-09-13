@@ -18,6 +18,15 @@ WINDOW_HEIGHT  = 720
 VIRTUAL_WIDTH  = 864
 VIRTUAL_HEIGHT = 486
 
+-- Saving and reloading constants
+SAVE_DIRECTORY = 'data/savedata/'
+AUTO_SAVE      = 'save.dat'
+BATTLE_SAVE    = 'battle_save.dat'
+CHAPTER_SAVE   = 'chapter_save.dat'
+RELOAD_BATTLE  = 0
+RELOAD_CHAPTER = 1
+END_CHAPTER    = 2
+
 -- Text variables
 FONT           = 'VT323-Regular'
 FONT_SIZE      = 16
