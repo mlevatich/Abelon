@@ -1,9 +1,9 @@
 ~~forest standard Dying-Forest
 
 ~abelon 24 73 P
-~kath 36 73 kath_interact_base
-~book 8 75 book_interact_base
-~medallion 13 70 medallion_interact_base
+~kath 36 73 kath-interact-base
+~book 8 75 book-interact-base
+~medallion 13 70 medallion-interact-base
 ~wolf1 1 1
 ~wolf2 1 1
 ~wolf3 1 1

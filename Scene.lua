@@ -98,12 +98,7 @@ function Scene:processResult(result)
         result['do'](self.chapter)
     end
     if result['callback'] then
-        local new_script = {
-            ['ids'] = self.script['ids'],
-            ['events'] = result['callback'],
-            ['result'] = {}
-        }
-        scripts[self.id] = new_script
+        self.chapter.callbacks[self.id] = result['callback']
     end
 end
 

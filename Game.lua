@@ -20,8 +20,9 @@ function Game:initialize()
     -- TODO: on reload
     -- set sfx volume
     -- set text volume
-    -- start playing current music (check in battle or not)
-    -- load assets?
+
+    -- TODO: upvalue suspects:
+    -- MenuItem.action
 end
 
 -- Clear all sprites from the current map and change the current map

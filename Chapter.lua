@@ -67,6 +67,7 @@ function Chapter:initialize(id, spriteesheet)
     -- Tracking the scene the player is currently in
     self.current_scene = nil
     self.scene_inputs = {}
+    self.callbacks = {}
     self.seen = {}
 
     -- If the player is in a battle, it goes here
@@ -134,7 +135,7 @@ function Chapter:load()
                     self.player = Player:new(new_sp)
                     self:updateCamera(100)
                 else
-                    scripts[current_sp_id] = scripts[first_interaction]
+                    new_sp.interactive = first_interaction
                 end
             end
         end
@@ -233,12 +234,14 @@ function Chapter:launchScene(s_id, returnToBattle)
     if not returnToBattle then
         self.player:changeBehavior('idle')
     end
+
+    while self.callbacks[s_id] do s_id = self.callbacks[s_id] end
     self.current_scene = Scene:new(s_id, self.player, self, returnToBattle)
 end
 
 -- Begin an interaction with the target sprite
 function Chapter:interactWith(target)
-    self:launchScene(target:getId())
+    self:launchScene(target.interactive)
 end
 
 -- Store player inputs to a scene, to be processed on update

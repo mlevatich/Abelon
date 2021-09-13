@@ -29,7 +29,7 @@ function mkSimpleTrigger(check, action)
 end
 
 scene_triggers = {
-    ['meet_kath'] = mkAreaTrigger('meet_kath', 'forest',
+    ['meet-kath'] = mkAreaTrigger('meet-kath', 'forest',
         function(x) return x > 25 end,
         function(y) return true end
     )
@@ -43,14 +43,14 @@ function mkUseTrigger(id, checks, actions)
                 return
             end
         end
-        c:launchScene(id .. '_use_fail')
+        c:launchScene(id .. '-use-fail')
     end
 end
 
 item_triggers = {
     ['medallion'] = mkUseTrigger('medallion',
         { function(c) return true end },
-        { function(c) c:launchScene('medallion_use') end }
+        { function(c) c:launchScene('medallion-use') end }
     )
 }
 

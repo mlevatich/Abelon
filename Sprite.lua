@@ -243,7 +243,7 @@ end
 function Sprite:mkUse()
 
     -- Add fail scene for this item
-    scripts[self.id .. '_use_fail'] = {
+    scripts[self.id .. '-use-fail'] = {
         ['ids'] = {self.id},
         ['events'] = {
             say(1, 1, false,
@@ -261,7 +261,7 @@ end
 function Sprite:mkPresent()
 
     -- Add fail scene for this item
-    scripts[self.id .. '_present_fail'] = {
+    scripts[self.id .. '-present-fail'] = {
         ['ids'] = {self.id},
         ['events'] = {
             say(1, 1, false,
@@ -278,18 +278,18 @@ function Sprite:mkPresent()
     return function(c)
         for _, sp_id in pairs(self.present_to) do
             if c:playerNearSprite(sp_id) then
-                c:launchScene(self.id .. '_present_' .. sp_id)
+                c:launchScene(self.id .. '-present-' .. sp_id)
                 return
             end
         end
-        c:launchScene(self.id .. '_present_fail')
+        c:launchScene(self.id .. '-present-fail')
     end
 end
 
 function Sprite:mkDiscard()
 
     -- Add discard scene for this item
-    scripts[self.id .. '_discard'] = {
+    scripts[self.id .. '-discard'] = {
         ['ids'] = {self.id},
         ['events'] = {
             say(1, 1, false,
@@ -306,7 +306,7 @@ function Sprite:mkDiscard()
 
     -- Function plays the discard scene
     return function(c)
-        c:launchScene(self.id .. '_discard')
+        c:launchScene(self.id .. '-discard')
     end
 end
 

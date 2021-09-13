@@ -1,10 +1,6 @@
 require 'Util'
 require 'Constants'
 
-function switchScriptFor(sp_id, new_id)
-    scripts[sp_id] = scripts[new_id]
-end
-
 function addEvents(scene, e, at)
     for i = 1, #e do
         table.insert(scene.script['events'], at, e[#e + 1 - i])
@@ -381,7 +377,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['medallion_use'] = {
+    ['medallion-use'] = {
         ['ids'] = {'medallion'},
         ['events'] = {
             say(1, 1, false,
@@ -396,7 +392,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['kath_interact_base'] = {
+    ['kath-interact-base'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
             face(1, 2),
@@ -457,14 +453,7 @@ scripts = {
                     },
                     ['result'] = {
                         ['impressions'] = {0, 1},
-                        ['callback'] = {
-                            face(1, 2),
-                            say(2, 1, false,
-                                "I'll have to hear more about this trip of yours \z
-                                 to the Ash, but perhaps it's best left for \z
-                                 another time."
-                            )
-                        }
+                        ['callback'] = 'kath-interact-base-callback2'
                     }
                 },
                 {
@@ -478,17 +467,7 @@ scripts = {
                     },
                     ['result'] = {
                         ['impressions'] = {0, -1},
-                        ['callback'] = {
-                            face(1, 2),
-                            say(2, 3, false,
-                                "You will tell me eventually, won't you? Or at \z
-                                 least His Majesty? If we equipped our mages with \z
-                                 those spells of yours, why,"
-                            ),
-                            say(2, 3, false,
-                                "this city might survive the winter after all..."
-                            )
-                        }
+                        ['callback'] = 'kath-interact-base-callback1'
                     }
                 }
             }),
@@ -585,11 +564,40 @@ scripts = {
             waitForEvent('camera')
         },
         ['result'] = {
-            ['state'] = 'kath_interact_base'
+            ['state'] = 'kath-interact-base'
         }
     },
 
-    ['book_interact_base'] = {
+    ['kath-interact-base-callback1'] = {
+        ['ids'] = {'abelon', 'kath'},
+        ['events'] = {
+            face(1, 2),
+            say(2, 3, false,
+                "You will tell me eventually, won't you? Or at \z
+                 least His Majesty? If we equipped our mages with \z
+                 those spells of yours, why,"
+            ),
+            say(2, 3, false,
+                "this city might survive the winter after all..."
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['kath-interact-base-callback2'] = {
+        ['ids'] = {'abelon', 'kath'},
+        ['events'] = {
+            face(1, 2),
+            say(2, 1, false,
+                "I'll have to hear more about this trip of yours \z
+                 to the Ash, but perhaps it's best left for \z
+                 another time."
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['book-interact-base'] = {
         ['ids'] = {'abelon', 'book'},
         ['events'] = {
             lookAt(1, 2),
@@ -603,17 +611,23 @@ scripts = {
             )
         },
         ['result'] = {
-            ['callback'] = {
-                lookAt(1, 2),
-                say(2, 0, false,
-                    "On a second glance, it looks like there's another small book \z
-                     beneath the first."
-                )
-            }
+            ['callback'] = 'book-interact-callback'
         }
     },
 
-    ['medallion_interact_base'] = {
+    ['book-interact-callback'] = {
+        ['ids'] = {'abelon', 'book'},
+        ['events'] = {
+            lookAt(1, 2),
+            say(2, 0, false,
+                "On a second glance, it looks like there's another small book \z
+                 beneath the first."
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['medallion-interact-base'] = {
         ['ids'] = {'abelon', 'medallion'},
         ['events'] = {
             lookAt(1, 2),
@@ -646,39 +660,45 @@ scripts = {
             })
         },
         ['result'] = {
-            ['callback'] = {
-                lookAt(1, 2),
-                say(2, 1, true,
-                    "The medallion shines among the twigs and leaves of the \z
-                     forest floor."
-                ),
-                choice({
-                    {
-                        ['response'] = "Pick it up",
-                        ['events'] = {
-                            say(2, 1, false,
-                                "You brush the dirt off of the medallion and \z
-                                 place it in your pack."
-                            )
-                        },
-                        ['result'] = {
-                            ['do'] = function(c)
-                                local sp = c:getMap():dropSprite('medallion')
-                                c.player:acquire(sp)
-                            end
-                        }
-                    },
-                    {
-                        ['response'] = "Leave it",
-                        ['events'] = {},
-                        ['result'] = {}
-                    }
-                })
-            }
+            ['callback'] = 'medallion-interact-base-callback'
         }
     },
 
-    ['medallion_present_kath'] = {
+    ['medallion-interact-base-callback'] = {
+        ['ids'] = {'abelon', 'medallion'},
+        ['events'] = {
+            lookAt(1, 2),
+            say(2, 1, true,
+                "The medallion shines among the twigs and leaves of the \z
+                 forest floor."
+            ),
+            choice({
+                {
+                    ['response'] = "Pick it up",
+                    ['events'] = {
+                        say(2, 1, false,
+                            "You brush the dirt off of the medallion and \z
+                             place it in your pack."
+                        )
+                    },
+                    ['result'] = {
+                        ['do'] = function(c)
+                            local sp = c:getMap():dropSprite('medallion')
+                            c.player:acquire(sp)
+                        end
+                    }
+                },
+                {
+                    ['response'] = "Leave it",
+                    ['events'] = {},
+                    ['result'] = {}
+                }
+            })
+        },
+        ['result'] = {}
+    },
+
+    ['medallion-present-kath'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
             face(1, 2),
@@ -700,12 +720,7 @@ scripts = {
                         )
                     },
                     ['result'] = {
-                        ['callback'] = {
-                            face(1, 2),
-                            say(2, 1, false,
-                                "You're quite enchanted by that thing, aren't you?"
-                            )
-                        }
+                        ['callback'] = 'medallion-present-kath-callback'
                     }
                 },
                 {
@@ -717,12 +732,7 @@ scripts = {
                         )
                     },
                     ['result'] = {
-                        ['callback'] = {
-                            face(1, 2),
-                            say(2, 1, false,
-                                "You're quite enchanted by that thing, aren't you?"
-                            )
-                        }
+                        ['callback'] = 'medallion-present-kath-callback'
                     }
                 }
             })
@@ -730,7 +740,18 @@ scripts = {
         ['result'] = {}
     },
 
-    ['meet_kath'] = {
+    ['medallion-present-kath-callback'] = {
+        ['ids'] = {'abelon', 'kath'},
+        ['events'] = {
+            face(1, 2),
+            say(2, 1, false,
+                "You're quite enchanted by that thing, aren't you?"
+            )
+        },
+        ['result'] = {}
+    },
+
+    ['meet-kath'] = {
         ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3'},
         ['events'] = {
             lookAt(2, 1),
@@ -833,7 +854,7 @@ scripts = {
                                     )
                                 },
                                 ['result'] = {
-                                    ['state'] = "mentioned_blood_rite"
+                                    ['state'] = "mentioned-blood-rite"
                                 }
                             },
                             {

@@ -89,8 +89,6 @@ function LevelupMenu(sp, n, interrupting)
     for i = 1, #ATTRIBUTE_DESC do
         table.insert(m_items, MenuItem:new("", {},
             ATTRIBUTE_DESC[i]['desc'], nil, incrAttr(ATTRIBUTE_DESC[i]['id'])
-            -- "Raise " .. sp.name .. "'s " .. ATTRIBUTE_DESC[i]['name']
-            --          .. " by an additional point?"
         ))
     end
     table.insert(m_items, MenuItem:new("", {},
