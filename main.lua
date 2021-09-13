@@ -2,6 +2,12 @@ class = require 'middleclass'
 push = require 'push'
 binser = require 'binser'
 
+-- Seed RNG
+math.randomseed(os.time())
+
+-- Make upscaling look pixelated instead of blurry
+love.graphics.setDefaultFilter('nearest', 'nearest')
+
 require 'Util'
 require 'Constants'
 
@@ -31,12 +37,6 @@ binser.register(Map)
 binser.register(GridSpace)
 binser.register(Battle)
 binser.register(Chapter)
-
--- Seed RNG
-math.randomseed(os.time())
-
--- Make upscaling look pixelated instead of blurry
-love.graphics.setDefaultFilter('nearest', 'nearest')
 
 -- Initialize window and launch game
 function love.load()

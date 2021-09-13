@@ -83,6 +83,7 @@ function Music:stop()
     self.buf:seek(0.0)
 end
 
+-- INITIALIZE AUDIO DATA
 music_tracks = {}
 local track_ids = { 'Dying-Forest', 'A-Single-Shard-Of-Ignea' }
 for i = 1, #track_ids do

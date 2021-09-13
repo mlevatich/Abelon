@@ -25,10 +25,8 @@ function Map:initialize(name, tileset, lighting)
     end
 
     -- Map texture and tile array
-    local tile_file = 'graphics/tilesets/' .. name .. '/' .. tileset .. '.png'
     self.name = name
-    self.tilesheet = love.graphics.newImage(tile_file)
-    self.quads = generateQuads(self.tilesheet, TILE_WIDTH, TILE_HEIGHT)
+    self.tileset = tileset
 
     -- Read tiles from file
     self.tiles = {}
@@ -297,13 +295,15 @@ end
 function Map:renderTiles()
 
     -- Render all non-empty tiles
+    local tilesheet = map_graphics[self.name][self.tileset]['tilesheet']
+    local quads = map_graphics[self.name][self.tileset]['quads']
     for y=1, self.height do
         for x=1, self.width do
             local tile = self.tiles[y][x]
             if tile then
                 love.graphics.draw(
-                    self.tilesheet,
-                    self.quads[tile],
+                    tilesheet,
+                    quads[tile],
                     (x-1) * TILE_WIDTH,
                     (y-1) * TILE_HEIGHT
                 )
@@ -323,4 +323,20 @@ end
 -- Apply lighting effects to map
 function Map:renderLighting()
     self:applyLighting()
+end
+
+-- INITIALIZE GRAPHICAL DATA
+map_graphics = {}
+local map_ids = { { 'forest', 'standard' }, { 'dungeon', 'standard' } }
+for i = 1, #map_ids do
+    local n = map_ids[i][1]
+    local tileset = map_ids[i][2]
+
+    if not map_graphics[n] then map_graphics[n] = {} end
+    map_graphics[n][tileset] = {}
+
+    local map = map_graphics[n][tileset]
+    local img_file = 'graphics/tilesets/' .. n .. '/' .. tileset .. '.png'
+    map['tilesheet'] = love.graphics.newImage(img_file)
+    map['quads'] = generateQuads(map['tilesheet'], TILE_WIDTH, TILE_HEIGHT)
 end
