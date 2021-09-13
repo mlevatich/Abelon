@@ -85,10 +85,6 @@ function Battle:initialize(battle_id, player, chapter)
     self.chapter:stopMusic()
     self.chapter.current_music = readField(data[9])
 
-    -- Graphics
-    self.status_tex = self.chapter.itex
-    self.status_icons = getSpriteQuads({0, 1, 2, 3}, self.status_tex, 8, 8, 23)
-
     -- Action stack
     self.suspend_stack = {}
     self.stack = {}
@@ -644,7 +640,7 @@ function Battle:buildReadyingBox(sp)
 
     -- Start with basic skill box
     local prep = self.status[sp:getId()]['prepare']
-    local hbox = prep['sk']:mkSkillBox(sp.itex, sp.icons, false, false)
+    local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false)
 
     -- Add target priority
     if prep['prio'][1] == FORCED then
@@ -1626,8 +1622,8 @@ function Battle:renderSpriteImage(cx, cy, x, y, sp)
     if cx ~= x or cy ~= y then
         love.graphics.setColor(1, 1, 1, 0.5)
         love.graphics.draw(
-            sp.sheet,
-            sp.on_frame,
+            sp:getSheet(),
+            sp:getCurrentQuad(),
             TILE_WIDTH * (cx + self.origin_x - 1) + sp.w / 2,
             TILE_HEIGHT * (cy + self.origin_y - 1) + sp.h / 2,
             0,
@@ -1758,22 +1754,22 @@ function Battle:renderStatus(sp)
     -- Render icons
     local y_off = ite(self.pulse, 0, 1)
     if buffed then
-        love.graphics.draw(self.status_tex, self.status_icons[1],
+        love.graphics.draw(icon_texture, status_icons[1],
             x + TILE_WIDTH - 8, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if debuffed then
-        love.graphics.draw(self.status_tex, self.status_icons[2],
+        love.graphics.draw(icon_texture, status_icons[2],
             x + TILE_WIDTH - 16, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if augmented then
-        love.graphics.draw(self.status_tex, self.status_icons[4],
+        love.graphics.draw(icon_texture, status_icons[4],
             x + 8, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if impaired then
-        love.graphics.draw(self.status_tex, self.status_icons[3],
+        love.graphics.draw(icon_texture, status_icons[3],
             x, y + y_off, 0, 1, 1, 0, 0
         )
     end
@@ -1842,10 +1838,10 @@ function Battle:mkInnerHoverBox()
                   HALF_MARGIN + LINE_HEIGHT + 3),
             mkEle('text', ign_str, w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
                   HALF_MARGIN + LINE_HEIGHT * 2 + 9),
-            mkEle('image', sp.icons[str_to_icon['endurance']],
-                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, sp.itex),
-            mkEle('image', sp.icons[str_to_icon['focus']],
-                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2 + 6, sp.itex)
+            mkEle('image', icons[str_to_icon['endurance']],
+                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, icon_texture),
+            mkEle('image', icons[str_to_icon['focus']],
+                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2 + 6, icon_texture)
         }
 
         -- Add sprite statuses

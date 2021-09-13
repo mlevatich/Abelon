@@ -27,7 +27,7 @@ local PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 local EXP_NEXT = { 10, 20, 40, 60, 80, 120, 160, 200, 250, 300, 350, 400 }
 
 -- Initialize a new sprite
-function Sprite:initialize(id, spritesheet, chapter)
+function Sprite:initialize(id, chapter)
 
     -- Unique identifier
     self.id = id
@@ -42,13 +42,13 @@ function Sprite:initialize(id, spritesheet, chapter)
     self.name = string.sub(data[3], 7)
 
     -- Size
-    self.w = readField(data[4], tonumber)
-    self.h = readField(data[5], tonumber)
+    self.w = sprite_graphics[self.id]['w']
+    self.h = sprite_graphics[self.id]['h']
 
     -- Position
     self.x = 0
     self.y = 0
-    self.z = readField(data[6], tonumber) -- Affects rendering order
+    self.z = readField(data[4], tonumber) -- Affects rendering order
 
     -- Anchor position for a wandering sprite
     self.leash_x = 0
@@ -58,66 +58,13 @@ function Sprite:initialize(id, spritesheet, chapter)
     self.dx = 0
     self.dy = 0
 
-    -- Portrait texture, if the sprite has a portrait
-    self.ptexture = nil
-    self.portraits = nil
-    if readField(data[13], tobool) then
-        local portrait_file = 'graphics/portraits/' .. self.id .. '.png'
-        self.ptexture = love.graphics.newImage(portrait_file)
-        self.portraits = getSpriteQuads(
-            PORTRAIT_INDICES,
-            self.ptexture,
-            PORTRAIT_SIZE,
-            PORTRAIT_SIZE,
-            0
-        )
-    end
-
-    self.itex = chapter.itex
-    self.icons = chapter.icons
-
-    -- y-position on spritesheet of first costume
-    local base_y = readField(data[7], tonumber)
-
-    -- Costume names
-    local version_names = readArray(data[11])
-
-    -- Number of frames in each named animation
-    local animations = readDict(data[10], ARR, nil, tonumber)
-
-    -- The master sheet containing all versions of this sprite
-    self.sheet = spritesheet
-
-    -- All animation quads for each version (costume) of the sprite
-    self.versions = {}
-
-    -- Need a different set of animations for each version of the sprite
-    for i = 1, #version_names do
-
-        -- Y position on spritesheet for this version of the sprite
-        local s_offset = base_y + (i - 1) * self.h
-
-        -- Pull the animations from the spritesheet
-        local quads = {}
-        for name, frames in pairs(animations) do
-            sqs = getSpriteQuads(frames, self.sheet, self.w, self.h, s_offset)
-            quads[name] = Animation:new(sqs)
-        end
-
-        -- Associate the created animations with this version of the sprite
-        self.versions[version_names[i]] = quads
-    end
-
     -- Initial animation state
     self.dir = INIT_DIRECTION
     self.animation_name = INIT_ANIMATION
     self.version_name = INIT_VERSION
-    local curam = self.versions[self.version_name][self.animation_name]
-    self.current_animation = curam
-    self.on_frame = self.current_animation:getCurrentFrame()
 
     -- Sprite behaviors
-    self.resting_behavior = readField(data[12])
+    self.resting_behavior = readField(data[7])
     self.current_behavior = self.resting_behavior
     self.behaviors = {
         ['wander'] = function(dt) self:_wanderBehavior(dt) end,
@@ -126,30 +73,30 @@ function Sprite:initialize(id, spritesheet, chapter)
     }
 
     -- Can the player interact with this sprite to start a scene?
-    self.interactive = readField(data[8], tobool)
+    self.interactive = readField(data[5], tobool)
 
     -- Can other sprites walk through/over this sprite?
-    self.blocking = readField(data[9], tobool)
+    self.blocking = readField(data[6], tobool)
 
     -- Sprite's opinions
-    self.impression = readField(data[14], tonumber)
-    self.awareness = readField(data[15], tonumber)
+    self.impression = readField(data[8], tonumber)
+    self.awareness = readField(data[9], tonumber)
 
     -- Info that allows this sprite to be treated as an item
-    self.can_discard = readField(data[16], tobool)
-    self.present_to = readArray(data[17])
-    self.description = readMultiline(data, 22)
+    self.can_discard = readField(data[10], tobool)
+    self.present_to = readArray(data[11])
+    self.description = readMultiline(data, 16)
 
     -- Info that allows this sprite to be treated as a party member
-    self.attributes = readDict(data[19], VAL, nil, tonumber)
-    self.skill_trees = readDict(data[20], ARR, {'name', 'skills'}, getSk)
-    self.skills = readArray(data[21], getSk)
+    self.attributes = readDict(data[13], VAL, nil, tonumber)
+    self.skill_trees = readDict(data[14], ARR, {'name', 'skills'}, getSk)
+    self.skills = readArray(data[15], getSk)
     self.skill_points = 0
 
     self.health = self.attributes['endurance']
     self.ignea = self.attributes['focus']
-    self.level = readField(data[18], tonumber)
-    self.exp = 75
+    self.level = readField(data[12], tonumber)
+    self.exp = 0
 
     -- Current chapter inhabited by sprite
     self.chapter = chapter
@@ -195,10 +142,6 @@ function Sprite:getChapter()
     return self.chapter
 end
 
-function Sprite:getMovement()
-    return math.floor(self.attributes['agility'] / 5)
-end
-
 -- Is this sprite interactive?
 function Sprite:isInteractive()
     return self.interactive
@@ -207,6 +150,35 @@ end
 -- Is this sprite blocking?
 function Sprite:isBlocking()
     return self.blocking
+end
+
+function Sprite:getPtexture()
+    return sprite_graphics[self.id]['ptexture']
+end
+
+function Sprite:getPortrait(i)
+    return sprite_graphics[self.id]['portraits'][i]
+end
+
+function Sprite:getSheet()
+    local by_chapter = sprite_graphics[self.id]['sprites_by_chapter']
+    return by_chapter[self.chapter.id]['sheet']
+end
+
+function Sprite:getCurrentAnimation()
+    local by_chapter = sprite_graphics[self.id]['sprites_by_chapter']
+    local versions = by_chapter[self.chapter.id]['versions']
+    return versions[self.version_name][self.animation_name]
+end
+
+function Sprite:getRestingQuad()
+    local by_chapter = sprite_graphics[self.id]['sprites_by_chapter']
+    local versions = by_chapter[self.chapter.id]['versions']
+    return versions[self.version_name]['idle'].frames[1]
+end
+
+function Sprite:getCurrentQuad()
+    return self:getCurrentAnimation():getCurrentFrame()
 end
 
 -- Sprite as an item in a menu
@@ -227,8 +199,8 @@ function Sprite:toItem()
     -- Initialize hover information
     local hbox = {
         mkEle('text', {self.name}, HALF_MARGIN, HALF_MARGIN),
-        mkEle('image', self.portraits[1],
-            HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, self.ptexture),
+        mkEle('image', self:getPortrait(1),
+            HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, self:getPtexture()),
         mkEle('text', splitByCharLimit(self.description, HBOX_CHARS_PER_LINE),
             HALF_MARGIN * 3 + PORTRAIT_SIZE, BOX_MARGIN + LINE_HEIGHT)
     }
@@ -368,7 +340,7 @@ function Sprite:mkSkillsMenu(with_skilltrees, with_prio)
         return filter(function(s) return s.type == t end, self.skills)
     end
     local skToMenu = function(s)
-        return s:toMenuItem(self.itex, self.icons, with_skilltrees, with_prio)
+        return s:toMenuItem(icon_texture, icons, with_skilltrees, with_prio)
     end
 
     -- Weapon and attack skills
@@ -398,7 +370,7 @@ function Sprite:mkLearnMenu()
     end
     local mkLearn = function(s)
         return self:mkLearnable(s.id,
-            s:toMenuItem(self.itex, self.icons, true, false)
+            s:toMenuItem(icon_texture, icons, true, false)
         )
     end
     local skt = self.skill_trees
@@ -439,7 +411,7 @@ function Sprite:buildAttributeBox(tmp_attrs)
                             .. tostring(self.attributes['focus'])
     local exp_str = 'Exp: ' .. tostring(self.exp) .. '/' .. EXP_NEXT[self.level]
     local icon = function(i)
-        return self.icons[str_to_icon[self.skill_trees[i]['name']]]
+        return icons[str_to_icon[self.skill_trees[i]['name']]]
     end
     local learnedIn = function(tn)
         local tree = self.skill_trees[tn]['skills']
@@ -454,8 +426,8 @@ function Sprite:buildAttributeBox(tmp_attrs)
     local elements = {
         mkEle('text', {self.name}, HALF_MARGIN, line(1)),
         mkEle('text', {'Attributes'}, attrib_x, line(1)),
-        mkEle('image', self.versions[self.version_name]['idle'].frames[1],
-            sp_x, line(2) + 5, self.sheet),
+        mkEle('image', self:getRestingQuad(),
+            sp_x, line(2) + 5, self:getSheet()),
         mkEle('text', {hp_str},
             sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
         mkEle('text', {ign_str},
@@ -466,18 +438,18 @@ function Sprite:buildAttributeBox(tmp_attrs)
         mkEle('text', {'Affinity'}, attrib_ind + 125, line(2), aC('affinity')),
         mkEle('text', {'Reaction'}, attrib_ind + 125, line(4), aC('reaction')),
         mkEle('text', {'Agility'},  attrib_ind + 125, line(6), aC('agility')),
-        mkEle('image', self.icons[str_to_icon['endurance']],
-            attrib_ind - 25,  line(2), self.itex),
-        mkEle('image', self.icons[str_to_icon['focus']],
-            attrib_ind - 25,  line(4), self.itex),
-        mkEle('image', self.icons[str_to_icon['force']],
-            attrib_ind - 25,  line(6), self.itex),
-        mkEle('image', self.icons[str_to_icon['affinity']],
-            attrib_ind + 100, line(2), self.itex),
-        mkEle('image', self.icons[str_to_icon['reaction']],
-            attrib_ind + 100, line(4), self.itex),
-        mkEle('image', self.icons[str_to_icon['agility']],
-            attrib_ind + 100, line(6), self.itex),
+        mkEle('image', icons[str_to_icon['endurance']],
+            attrib_ind - 25,  line(2), icon_texture),
+        mkEle('image', icons[str_to_icon['focus']],
+            attrib_ind - 25,  line(4), icon_texture),
+        mkEle('image', icons[str_to_icon['force']],
+            attrib_ind - 25,  line(6), icon_texture),
+        mkEle('image', icons[str_to_icon['affinity']],
+            attrib_ind + 100, line(2), icon_texture),
+        mkEle('image', icons[str_to_icon['reaction']],
+            attrib_ind + 100, line(4), icon_texture),
+        mkEle('image', icons[str_to_icon['agility']],
+            attrib_ind + 100, line(6), icon_texture),
         mkEle('text', {tostring(att['endurance'])},
             attrib_ind + indent2,       line(3), aC('endurance')),
         mkEle('text', {tostring(att['focus'])},
@@ -503,9 +475,9 @@ function Sprite:buildAttributeBox(tmp_attrs)
             mkEle('text', {self.skill_trees[1]['name']}, skills_ind, line(2)),
             mkEle('text', {self.skill_trees[2]['name']}, skills_ind, line(4)),
             mkEle('text', {self.skill_trees[3]['name']}, skills_ind, line(6)),
-            mkEle('image', icon(1), skills_ind - 25, line(2), self.itex),
-            mkEle('image', icon(2), skills_ind - 25, line(4), self.itex),
-            mkEle('image', icon(3), skills_ind - 25, line(6), self.itex),
+            mkEle('image', icon(1), skills_ind - 25, line(2), icon_texture),
+            mkEle('image', icon(2), skills_ind - 25, line(4), icon_texture),
+            mkEle('image', icon(3), skills_ind - 25, line(6), icon_texture),
             mkEle('text', {tostring(#learnedIn(1))},
                 skills_ind + indent2,       line(3)),
             mkEle('text', {tostring(#learnedIn(2))},
@@ -584,53 +556,6 @@ end
 -- Change a sprite's awareness of the player
 function Sprite:changeAwareness(value)
     self.awareness = self.awareness + value
-end
-
--- Play an animation once, followed by a doneAction
-function Sprite:fireAnimation(animation_name, doneAction)
-    self:changeAnimation(animation_name)
-    self.current_animation:setDoneAction(doneAction)
-end
-
--- Change the animation the sprite is performing
-function Sprite:changeAnimation(new_animation_name)
-
-    -- Get the new animation for the current version of the sprite
-    local new_animation = self.versions[self.version_name][new_animation_name]
-
-    -- Start the new animation from the beginning (if it's actually new)
-    if new_animation ~= self.current_animation then
-        new_animation:restart()
-
-        -- Set the sprite's current animation to the new animation
-        self.current_animation = new_animation
-        self.animation_name = new_animation_name
-    end
-end
-
--- Change a sprite's version so that it is rendered
--- using a different set of animations
-function Sprite:changeVersion(new_version_name)
-
-    -- Get the animation for the new version, based on current state
-    local new_animation = self.versions[new_version_name][self.animation_name]
-
-    -- Sync the exact timing between the animations so there is no stuttering
-    self.new_animation:syncWith(self.current_animation)
-
-    -- Set the current animation to be the new animation
-    self.current_animation = new_animation
-    self.version_name = new_version_name
-end
-
--- Change a sprite's behavior so that they perform different actions
-function Sprite:changeBehavior(new_behavior)
-    self.current_behavior = new_behavior
-end
-
--- Change sprite to resting behavior
-function Sprite:atEase()
-    self:changeBehavior(self.resting_behavior)
 end
 
 function Sprite:djikstra(graph, src, dst, depth)
@@ -788,6 +713,48 @@ function Sprite:djikstra(graph, src, dst, depth)
     return dist, prev
 end
 
+-- Play an animation once, followed by a doneAction
+function Sprite:fireAnimation(animation_name, doneAction)
+    self:changeAnimation(animation_name)
+    self:getCurrentAnimation():setDoneAction(doneAction)
+end
+
+-- Change the animation the sprite is performing
+function Sprite:changeAnimation(new_animation_name)
+
+    -- Get the new animation for the current version of the sprite
+    local current_animation = self:getCurrentAnimation()
+    self.animation_name = new_animation_name
+    local new_animation = self:getCurrentAnimation()
+
+    -- Start the new animation from the beginning (if it's actually new)
+    if new_animation ~= current_animation then
+        new_animation:restart()
+    end
+end
+
+-- Change a sprite's version so that it is rendered
+-- using a different set of animations
+function Sprite:changeVersion(new_version_name)
+
+    local current_animation = self:getCurrentAnimation()
+    self.version_name = new_version_name
+    local new_animation = self:getCurrentAnimation()
+
+    -- Sync the exact timing between the animations so there is no stuttering
+    new_animation:syncWith(current_animation)
+end
+
+-- Change a sprite's behavior so that they perform different actions
+function Sprite:changeBehavior(new_behavior)
+    self.current_behavior = new_behavior
+end
+
+-- Change sprite to resting behavior
+function Sprite:atEase()
+    self:changeBehavior(self.resting_behavior)
+end
+
 -- Add new behavior functions or replace old ones for this sprite
 function Sprite:addBehaviors(new_behaviors)
     for name, fxn in pairs(new_behaviors) do
@@ -834,7 +801,7 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
             end)
             skill_anim_fired = true
         end
-        local frame = self.current_animation.current_frame
+        local frame = self:getCurrentAnimation().current_frame
         if not fired and (frame >= 4 or skill_anim_done) then
             -- TODO: fire skill animation
             fired = true
@@ -1197,8 +1164,7 @@ end
 
 -- Update rendered frame of animation
 function Sprite:updateAnimation(dt)
-    self.current_animation:update(dt)
-    self.on_frame = self.current_animation:getCurrentFrame()
+    self:getCurrentAnimation():update(dt)
 end
 
 -- Update sprite's position from dt
@@ -1255,8 +1221,8 @@ function Sprite:render(cam_x, cam_y)
     -- Draw sprite's current animation frame, at its current position,
     -- in its current direction
     love.graphics.draw(
-        self.sheet,
-        self.on_frame,
+        self:getSheet(),
+        self:getCurrentQuad(),
         self.x + self.w / 2,
         self.y + self.h / 2,
         0,
@@ -1265,4 +1231,109 @@ function Sprite:render(cam_x, cam_y)
         self.w / 2,
         self.h / 2
     )
+end
+
+-- INITIALIZE GRAPHICAL DATA
+living = {
+    ['idle'] = { 0 },
+    ['walking'] = { 1, 2, 3, 4 },
+    ['weapon'] = { 0, 1, 0, 1, 0, 1, 0, 1 },
+    ['spell'] = { 0, 1, 0, 1, 0, 1, 0, 1 },
+    ['assist'] = { 0, 1, 0, 1, 0, 1, 0, 1 },
+    ['combat'] = { 1, 2, 3, 4 },
+    ['hurt'] = { 3, 3, 3, 3 },
+    ['death'] = { 5, 5, 5, 5 },
+    ['entry'] = { 0 }
+}
+inanimate = { ['idle'] = { 0 } }
+sprite_data = {
+    {
+        ['id'] = 'abelon',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['y'] = 0,
+        ['animations'] = living,
+        ['versions'] = { 'standard', 'injured' }
+    },
+    {
+        ['id'] = 'kath',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['y'] = 31,
+        ['animations'] = living,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'wolf1',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['y'] = 106,
+        ['animations'] = living,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'wolf2',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['y'] = 106,
+        ['animations'] = living,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'wolf3',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['y'] = 106,
+        ['animations'] = living,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'medallion',
+        ['w'] = 20,
+        ['h'] = 22,
+        ['y'] = 62,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'book',
+        ['w'] = 25,
+        ['h'] = 22,
+        ['y'] = 84,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    }
+}
+sprite_graphics = {}
+for i = 1, #sprite_data do
+    local data = sprite_data[i]
+    local id = data['id']
+    sprite_graphics[id] = {}
+    local g = sprite_graphics[id]
+    local portrait_file = 'graphics/portraits/' .. id .. '.png'
+    if love.filesystem.getInfo(portrait_file) then
+        g['ptexture'] = love.graphics.newImage(portrait_file)
+        g['portraits'] = getSpriteQuads(PORTRAIT_INDICES, g['ptexture'],
+            PORTRAIT_SIZE, PORTRAIT_SIZE, 0
+        )
+    end
+    g['w'] = data['w']
+    g['h'] = data['h']
+    g['sprites_by_chapter'] = {}
+    for j = 1, n_chapters do
+        g['sprites_by_chapter'][j] = {}
+        local gj = g['sprites_by_chapter'][j]
+        gj['sheet'] = chapter_spritesheets[j]
+        gj['versions'] = {}
+        for k = 1, #sprite_data[i]['versions'] do
+            local v = sprite_data[i]['versions'][k]
+            gj['versions'][v] = {}
+            local y = data['y'] + (k - 1) * data['h']
+            for name, frames in pairs(data['animations']) do
+                gj['versions'][v][name] = Animation:new(
+                    getSpriteQuads(frames, gj['sheet'], data['w'], data['h'], y)
+                )
+            end
+        end
+    end
 end

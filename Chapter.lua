@@ -1,6 +1,20 @@
 require 'Util'
 require 'Constants'
 
+-- INITIALIZE GRAPHICAL DATA
+icon_texture = love.graphics.newImage('graphics/icons.png')
+icons = getSpriteQuads(
+    { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 },
+    icon_texture, 22, 22, 0
+)
+status_icons = getSpriteQuads({0, 1, 2, 3}, icon_texture, 8, 8, 23)
+chapter_spritesheets = {}
+n_chapters = 1
+for i = 1, n_chapters do
+    local sheet_file = 'graphics/spritesheets/ch' .. i .. '.png'
+    chapter_spritesheets[i] = love.graphics.newImage(sheet_file)
+end
+
 require 'Player'
 require 'Sprite'
 require 'Map'
@@ -14,13 +28,10 @@ require 'Battle'
 Chapter = class('Chapter')
 
 -- Constructor for our scenario object
-function Chapter:initialize(id, spriteesheet)
+function Chapter:initialize(id)
 
-    -- Store id and spritesheet
+    -- Store id
     self.id = id
-
-    -- This chapter's spritesheet
-    self.sheet = nil
 
     -- Camera that follows coordinates of player sprite around the chapter
     self.camera_x = 0
@@ -50,12 +61,6 @@ function Chapter:initialize(id, spriteesheet)
     self.sprites = {}
     self.player = nil
 
-    local icon_indices = {
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
-    }
-    self.itex = love.graphics.newImage('graphics/icons.png')
-    self.icons = getSpriteQuads(icon_indices, self.itex, 22, 22, 0)
-
     -- Difficulty level
     self.difficulty = MASTER
 
@@ -80,10 +85,6 @@ end
 
 -- Read information about sprites and scenes for this chapter
 function Chapter:load()
-
-    -- Load chapter's spritesheet into memory
-    local sheet_file = 'graphics/spritesheets/ch' .. self.id .. '.png'
-    self.sheet = love.graphics.newImage(sheet_file)
 
     -- Read lines into list
     local chap_file = 'Abelon/data/chapters/' .. self.id .. '/chapterfile.txt'
@@ -120,7 +121,7 @@ function Chapter:load()
             local first_interaction = fields[4]
 
             -- Initialize sprite object and set its starting position
-            local new_sp = Sprite:new(current_sp_id, self.sheet, self)
+            local new_sp = Sprite:new(current_sp_id, self)
             self.sprites[current_sp_id] = new_sp
             new_sp:resetPosition(init_x, init_y)
 

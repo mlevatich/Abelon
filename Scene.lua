@@ -257,8 +257,8 @@ function Scene:renderSpeaker(sp, pid, x, y)
         renderString(sp:getName(), base_x, base_y)
 
         -- Render portrait of current speaker
-        if sp.ptexture then
-            love.graphics.draw(sp.ptexture, sp.portraits[pid],
+        if sp:getPtexture() then
+            love.graphics.draw(sp:getPtexture(), sp:getPortrait(pid),
                 x + BOX_MARGIN * 1.5,
                 y + BOX_MARGIN * 2,
                 0, 1, 1, 0, 0

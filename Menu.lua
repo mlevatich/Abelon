@@ -276,7 +276,7 @@ function Menu:renderMenuItems(x, y, c)
         -- Render header
         local b = BOX_MARGIN
         love.graphics.setColor(unpack(WHITE))
-        love.graphics.draw(self.sp.ptexture, self.sp.portraits[1],
+        love.graphics.draw(self.sp:getPtexture(), self.sp:getPortrait(1),
             b + x, HALF_MARGIN + y, 0, 1, 1, 0, 0
         )
         local l = self.sp.level - self.levels
@@ -297,14 +297,14 @@ function Menu:renderMenuItems(x, y, c)
         for i = 1, #ATTRIBUTE_DESC do
             local a = ATTRIBUTE_DESC[i]
             local val = self.sp.attributes[a['id']] - self.levels
-            local icon = c.icons[str_to_icon[a['id']]]
+            local icon = icons[str_to_icon[a['id']]]
             local y_cur = y_base + self.spacing * (i - 1)
             local incr = 1
             local pen = false
             love.graphics.setColor(unpack(WHITE))
-            love.graphics.draw(c.itex, icon, x_base, y_cur, 0, 1, 1, 0, 0)
+            love.graphics.draw(icon_texture, icon, x_base, y_cur, 0, 1, 1, 0, 0)
             if self.hovering == i then
-                love.graphics.draw(c.itex, icon, b + x,
+                love.graphics.draw(icon_texture, icon, b + x,
                     b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, 0, 1, 1, 0, 0
                 )
                 renderString(a['name'], b + x + 27,

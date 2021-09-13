@@ -23,7 +23,7 @@ require 'Chapter'
 -- Register classes so they're serializable
 -- Don't serialize Music, preloaded
 -- Don't serialize Sound, preloaded
--- Don't serialize Animation, preloaded
+-- Don't serialize Animation, only referenced by graphics preload
 -- Don't serialize Scene, can only save when current_scene is nil
 binser.register(Scaling)
 binser.register(Buff)

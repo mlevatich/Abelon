@@ -23,6 +23,7 @@ function Game:initialize()
 
     -- TODO: upvalue suspects:
     -- MenuItem.action
+    -- Sprite.behaviors
 end
 
 -- Clear all sprites from the current map and change the current map

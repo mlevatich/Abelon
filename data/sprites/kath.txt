@@ -1,16 +1,10 @@
 // Sprite attributes
 
 Name: Kath
-Width: 31
-Height: 31
 Depth: 5
-Sheet: 31
 Interactive: yes
 Blocking: yes
-Animations: idle:0 walking:1,2,3,4 weapon:0,1,0,1,0,1,0,1 spell:0,1,0,1,0,1,0,1 assist:0,1,0,1,0,1,0,1 combat:1,2,3,4 hurt:3,3,3,3 death:4,4,4,4 entry:0
-Versions: standard
 Resting: wander
-Portrait: yes
 Impression: 50
 Awareness: 0
 Discard: no
