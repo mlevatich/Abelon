@@ -14,16 +14,6 @@ to the player. Learning a name is a scene event.
 For title screen music, use the voice memo on my phone: Time Slows. Tentative
 track name: The Lonely Knight
 
-#15:
-
-Refactor parsing, move to parsing utils file. Files should be parsed
-automatically into a dict, like JSON. Key is the word before the colon, key
-also has a field giving how data should be parsed.
-
-Save state (rewrite sprite files to savedata, pull from there first if it
-exists unless new game). Save and quit returns to title screen. Use the Ser
-library! (found online)
-
 #28:
 
 Attempt to autosave on game quit. Autosave after every scene, every battle

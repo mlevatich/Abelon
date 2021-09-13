@@ -96,6 +96,7 @@ function Battle:initialize(battle_id, player, chapter)
     self.player:changeMode('battle')
 
     -- Start the first turn
+    self.start_save = false
     self:openBattleStartMenu()
 end
 
@@ -439,7 +440,12 @@ function Battle:checkWinLose()
 end
 
 function Battle:openBattleStartMenu()
-    local die = function(c) love.event.quit(0) end
+    local save = function(c)
+        self:closeMenu()
+        self.start_save = true
+        binser.writeFile('abelon/data/savedata/save.dat', c)
+        love.event.quit(0)
+    end
     local next = function(c)
         self:closeMenu()
         self:beginTurn()
@@ -450,11 +456,11 @@ function Battle:openBattleStartMenu()
     )
     local settings = self.player:mkSettingsMenu()
     local restart = MenuItem:new('Restart chapter', {}, 'Start the chapter over',
-        nil, die,
+        nil, pass,
         "Are you SURE you want to restart the chapter? You will lose ALL \z
          progress made during the chapter."
     )
-    local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, die,
+    local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, save,
         "Save current progress and close the game?"
     )
     local m = { wincon, settings, restart, quit, begin }
@@ -588,7 +594,12 @@ function Battle:openEnemyMenu(sp)
 end
 
 function Battle:openOptionsMenu()
-    local die = function(c) love.event.quit(0) end
+    local save = function(c)
+        self:closeMenu()
+        self.start_save = false
+        binser.writeFile('abelon/data/savedata/save.dat', c)
+        love.event.quit(0)
+    end
     local endfxn = function(c)
         self:closeMenu()
         self:openEndTurnMenu()
@@ -603,7 +614,7 @@ function Battle:openOptionsMenu()
         'Start the battle over', nil, pass,
         "Start the battle over from the beginning?"
     )
-    local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, die,
+    local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, save,
         "Save battle state and close the game?"
     )
     local m = { wincon, settings, restart, quit, end_turn }
@@ -883,11 +894,11 @@ function Battle:playAction()
         end
     end
     local attack_dir = UP
-    if attack and attack.aim == DIRECTIONAL_AIM then
+    if attack and attack.aim['type'] == DIRECTIONAL then
         attack_dir = computeDir(c_attack, c_move1)
     end
     local assist_dir = UP
-    if assist and assist.aim == DIRECTIONAL_AIM then
+    if assist and assist.aim['type'] == DIRECTIONAL then
         assist_dir = computeDir(c_assist, c_move2)
     end
 
@@ -1441,7 +1452,7 @@ function Battle:getAttackAngles(e, sp, sk)
     end
 
     -- Add transposed attacks
-    if sk.aim == DIRECTIONAL_AIM then
+    if sk.aim['type'] == DIRECTIONAL then
         addTransposedAttack({ ex, ey - 1 }, UP)
         addTransposedAttack({ ex, ey + 1 }, DOWN)
         addTransposedAttack({ ex - 1, ey }, LEFT)
@@ -1676,7 +1687,7 @@ function Battle:renderSkillRange(clr)
 
     -- Get direction to point the skill
     local dir = UP
-    if sk.aim == DIRECTIONAL_AIM then
+    if sk.aim['type'] == DIRECTIONAL then
         local o = self:getCursor(2)
         dir = ite(c[1] > o[1], RIGHT,
                   ite(c[1] < o[1], LEFT,

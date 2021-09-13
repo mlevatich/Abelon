@@ -312,7 +312,7 @@ end
 
 function Sprite:mkLearnable(sk_id, sk_item)
     sk_item.hover_desc = 'Learn ' .. sk_item.name
-    if find(self.skills, skills[sk_id]) then
+    if find(mapf(function(s) return s.id end, self.skills), sk_id) then
         sk_item.setPen = function(c)
             love.graphics.setColor(unpack(DISABLE))
         end

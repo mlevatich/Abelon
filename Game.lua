@@ -9,24 +9,30 @@ Game = class('Game')
 function Game:initialize()
 
     -- Track current chapter
-    self.chapter_id = 0
     self.chapter = nil
 
-    -- TODO title screen stuff
+    -- TODO: title screen stuff
 
-    -- Start first chapter
-    self:nextChapter()
+    local save_path = 'data/savedata/save.dat'
+    if love.filesystem.getInfo(save_path) then
 
-    -- TODO: on reload
-    -- set sfx volume
-    -- set text volume
+        -- Read the chapter from save file
+        local res, _ = binser.readFile('abelon/' .. save_path)
+        self.chapter = res[1]
 
-    -- TODO: make sure that there is no menu open when reloading into a battle
-    -- start, and that the menu is opened AFTER the reload. Menu items have
-    -- lots of upvalues, so there can't be an open menu on a reload.
+        -- Reset volume levels and clear any lingering inputs
+        self.chapter:setSfxVolume(self.chapter.sfx_volume)
+        -- self.chapter:setTextVolume(self.chapter.text_volume)
+        self.chapter.scene_inputs = {}
+        self.chapter.battle_inputs = {}
 
-    local res, len = binser.deserialize(binser.serialize(self.chapter))
-    self.chapter = res[1]
+        -- If in a battle, reopen the closed menu
+        if self.chapter.battle and self.chapter.battle.start_save then
+            self.chapter.battle:openBattleStartMenu()
+        end
+    else
+        self:nextChapter()
+    end
 end
 
 -- Clear all sprites from the current map and change the current map
@@ -35,13 +41,15 @@ function Game:nextChapter()
     -- Stop existing chapter if there is one
     if self.chapter then
         self.chapter:endChapter()
+
+        -- TODO if last chapter, roll credits!
+
+        -- Start new chapter
+        self.chapter = Chapter:new(self.chapter.id + 1)
+    else
+        -- Start first chapter!
+        self.chapter = Chapter:new(1)
     end
-
-    -- TODO if last chapter, roll credits!
-
-    -- Start new chapter
-    self.chapter_id = self.chapter_id + 1
-    self.chapter = Chapter:new(self.chapter_id)
 end
 
 -- Update game state

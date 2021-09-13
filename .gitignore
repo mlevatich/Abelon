@@ -2,6 +2,7 @@
 ##############
 utilities/tmp_layout.bmp
 utilities/tmp_map.txt
+*.dat
 
 # Compiled source #
 ###################

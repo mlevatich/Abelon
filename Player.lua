@@ -70,9 +70,13 @@ function Player:openInventory()
 end
 
 function Player:mkQuitMenu()
-    local die = function(c) love.event.quit(0) end
+    local save = function(c)
+        self:changeMode('free')
+        binser.writeFile('abelon/data/savedata/save.dat', c)
+        love.event.quit(0)
+    end
     return MenuItem:new('Quit', {
-        MenuItem:new('Save and quit', {}, nil, nil, die,
+        MenuItem:new('Save and quit', {}, nil, nil, save,
             "Save current progress and close the game?"
         ),
         MenuItem:new('Restart chapter', {}, nil, nil, pass,
