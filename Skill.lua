@@ -472,7 +472,7 @@ skills = {
          health remaining.",
         'Executioner', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
-        { { T } }, FREE_AIM(100, ENEMY), 1,
+        { { T } }, FREE_AIM(100), 1,
         ENEMY, Scaling:new(1000, 'force', 0),
         nil, nil,
         { ['br'] = function(a, a_a, b, b_a, st) return b.health <= 10 end }
@@ -593,7 +593,7 @@ skills = {
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
           { T, T, T },
-          { T, T, T } }, FREE_AIM(3, ALL), 3,
+          { T, T, T } }, FREE_AIM(3), 3,
         ALLY, Scaling:new(0, 'affinity', -1.0)
     ),
     ['haste'] = Skill:new('haste', 'Haste',

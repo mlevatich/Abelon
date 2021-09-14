@@ -161,9 +161,7 @@ SELECT      = 7
 END_ACTION  = 8
 DIRECTIONAL_AIM = { ['type'] = DIRECTIONAL }
 SELF_CAST_AIM   = { ['type'] = SELF_CAST }
-FREE_AIM        = function(s, t)
-                      return { ['type'] = FREE, ['scale'] = s, ['target'] = t }
-                  end
+FREE_AIM        = function(s) return { ['type'] = FREE, ['scale'] = s } end
 
 -- Buff or debuff?
 BUFF   = 1

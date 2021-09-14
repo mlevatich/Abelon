@@ -1690,15 +1690,78 @@ function Battle:getTargetDirection()
     return dir
 end
 
+function Battle:outlineTile(tx, ty, edges, clr)
+    local x1 = (self.origin_x + tx - 1) * TILE_WIDTH
+    local y1 = (self.origin_y + ty - 1) * TILE_HEIGHT
+    local x2 = x1 + TILE_WIDTH
+    local y2 = y1 + TILE_HEIGHT
+    local sh = 0.3
+    local newclr = { clr[1] - sh, clr[2] - sh, clr[3] - sh, 1 }
+    if self.grid[ty] and self.grid[ty][tx] then
+        love.graphics.setColor(unpack(newclr))
+        if not next(edges) then
+            if not self.grid[ty + 1] or not self.grid[ty + 1][tx] then
+                love.graphics.line(x1, y2, x2, y2)
+            end
+            if not self.grid[ty - 1] or not self.grid[ty - 1][tx] then
+                love.graphics.line(x1, y1, x2, y1)
+            end
+            if not self.grid[ty][tx + 1] then
+                love.graphics.line(x2, y1, x2, y2)
+            end
+            if not self.grid[ty][tx - 1] then
+                love.graphics.line(x1, y1, x1, y2)
+            end
+        else
+            for i = 1, #edges do
+                local e = edges[i]
+                if     e == UP   then love.graphics.line(x1, y1, x2, y1)
+                elseif e == DOWN then love.graphics.line(x1, y2, x2, y2)
+                elseif e == LEFT then love.graphics.line(x1, y1, x1, y2)
+                else                  love.graphics.line(x2, y1, x2, y2)
+                end
+            end
+        end
+
+    end
+end
+
 function Battle:renderSkillRange(clr)
+
+    -- What skill?
+    local c = self:getCursor()
+    local sk = self:getSkill()
 
     -- Get direction to point the skill
     local dir = self:getTargetDirection()
 
     -- Render red squares given by the skill range
-    local tiles = self:skillRange(self:getSkill(), dir, self:getCursor())
+    local tiles = self:skillRange(sk, dir, c)
     for i = 1, #tiles do
         self:shadeSquare(tiles[i][1], tiles[i][2], clr, 1)
+    end
+
+    -- For bounded free aim skills, render the boundary
+    if sk.aim['type'] == FREE and sk.aim['scale'] < 100 then
+        local t = self:getCursor(2)
+        for x = 0, sk.aim['scale'] do
+            for y = 0, sk.aim['scale'] - x do
+                local l = t[1] - x
+                local r = t[1] + x
+                local d = t[2] + y
+                local u = t[2] - y
+                if x + y == sk.aim['scale'] then
+                    self:outlineTile(r, d, { DOWN, RIGHT }, clr)
+                    self:outlineTile(l, d, { DOWN, LEFT }, clr)
+                    self:outlineTile(r, u, { UP, RIGHT }, clr)
+                    self:outlineTile(l, u, { UP, LEFT }, clr)
+                end
+                self:outlineTile(r, d, {}, clr)
+                self:outlineTile(l, d, {}, clr)
+                self:outlineTile(r, u, {}, clr)
+                self:outlineTile(l, u, {}, clr)
+            end
+        end
     end
 end
 

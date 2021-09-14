@@ -31,10 +31,6 @@ SECTION: COMBAT ENGINE EXTENSIONS
 
 #60:
 
-For free aim, the cursor can be on any space given by the FREE_AIM field
-(intersect a diamond of size "scale" with the targets given by "target").
-FREE_AIM moves should render an outline of the move's range
-
 While a sprite's action is playing out, what they're doing should render in the
 top right. Just the ability name and icons.
 
