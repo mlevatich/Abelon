@@ -11,9 +11,6 @@ choose difficulty)
 Implement game start scene, implement ??? for sprites whose names are not known
 to the player. Learning a name is a scene event.
 
-For title screen music, use the voice memo on my phone: Time Slows. Tentative
-track name: The Lonely Knight
-
 #48:
 
 Game guide shows up immediately on starting new game, and accessible from
@@ -21,7 +18,7 @@ inventory
 
 Combat guide accessible from battle begin menu or options.
 
-#?:
+#59:
 
 Chapter end trigger. Displays a chapter 1 endcard, bridge scene, and chapter 2
 start card (Teaser). Kicks you back to the title screen
@@ -30,52 +27,33 @@ start card (Teaser). Kicks you back to the title screen
 
 
 
-SECTION: COMBAT SECOND PASS
+SECTION: COMBAT ENGINE EXTENSIONS
 
-#?:
-
-(Battle interfaces!)
+#60:
 
 Text highlighting for descriptions. Should work like a string formatting
 function passed to mkEle. weapon damage is orange, spell damage is purple,
 attributes each have their own color, sprite names are colored, numbers are
 colored.
 
-Try to minimize the amount of text. Replace text with pictures as much as
-possible? Come up with icons?
-
-When attacking or assisting, the targets that will be affected should be
-rendered, not the tile that the cursor is on.
-
-When sprites gain exp, render exp splash.
-
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. While a sprite's action is playing out, what
-they're doing should render in the top right. Just the ability name and icons.
-
 For free aim, the cursor can be on any space given by the FREE_AIM field
 (intersect a diamond of size "scale" with the targets given by "target").
 FREE_AIM moves should render an outline of the move's range
 
-#?:
+While a sprite's action is playing out, what they're doing should render in the
+top right. Just the ability name and icons.
 
-(Combat and balancing second draft!)
+When sprites gain exp, render exp splash. The idea of a "splash" animation
+could be re-used for skill animations.
 
-Turn limits: every battle should have a turn limit loss condition, to prevent
-EXP farming
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered.
 
-Potential level up issues: you gain more exp on higher difficulties because you
-take more damage. Potential exp gain from taking damage in chapter 1 is up to
-90 (3 uses of blessed mist) + 3 battles of everyone losing all hp is like 200
-Solution to level up issues: bonus experience for a faster finish! You get more
-exp for dragging out battles and tanking and healing a lot, so to balance that
-out, grant experience for each turn between the turns completed in and the turn
-limit. Display these numbers on the victory menu, and do the level ups in
-between the victory menu and the victory scene
-Should offer about 20 per turn to each unit, to be worth it? Need to raise exp
-req to level up to account for this
-Additionally bonus EXP for how healthy each unit is at the end? To discourage
-eating damage for no reason
+Try to minimize the amount of text. Replace text with pictures as much as
+possible? Come up with icons? Might not be anything to do here, that's fine.
+Currently it's not that bad.
+
+#61:
 
 improve AI algorithm - use other plans! In particular, enemies shouldn't
 interfere with each other. If one enemy has only a single path to attack their
@@ -84,13 +62,66 @@ needs to in order to attack its own target. To minimize interference in general,
 the strongest enemies should take their turns first, and the enemies who start
 farther away from the allies should also be prioritized.
 
+#62:
+
+Turn limits: every battle should have a turn limit loss condition, to prevent
+EXP farming
+
+Bonus experience for a faster finish! You get more exp for dragging out battles
+and tanking and healing a lot, so to balance that out, grant experience for each
+turn between the turns completed in and the turn limit. Should offer about 20
+per turn to each unit, to be worth it? Need to raise exp req to level up to
+account for this.
+
+Additionally, offer bonus EXP for how healthy each unit is at the end, to
+discourage eating damage for no reason.
+
+Display these numbers on the victory menu, and do the level ups in between the
+victory menu and the victory scene.
+
+#69:
+
 Ally base stats should be extremely lopsided to start, because they will
 even out over time. Kath can have more reaction, less HP, Abelon more HP,
 Elaine starts with 0 focus and no spells? Interesting idea. Elaine starts at
 level 2, with 3 skills (observe, 1 attack, 1 assist)
 
-Finding Elaine should be a battle. Race a wolf to get to her! Once all this
-QoL stuff is done, can mess around with implementing that.
+Add elaine sprite
+
+Discover Elaine if you head north.
+
+Finding Elaine should be a battle. Race a wolf to get to her! Not only is it
+a race, the wolf only targets her. Kath can get in the way, but Abelon is further
+behind, and you need to kill it before it gets to Elaine.
+
+Once she's saved and the battle is over, find her the right medicine to heal her,
+and she'll join the party!
+
+
+
+
+
+SECTION: MAP WORK
+
+#57:
+
+Fix screen tearing - each map has a background color instead of black that
+blends in well with the tiles.
+
+Split forest into three maps (west, south, north) with slightly different
+tilesets/lighting/coloring
+
+And flowers, logs, plants and such to forest
+
+Redo forest tileset to use 2x2 trees
+
+#9:
+
+Expand lighting engine. Flickering, smoothing, obstacle detection, proper color
+computation.
+
+Add point lights to the forest to test: blocking, animated, torch-in-ground
+sprite, facing either left or right.
 
 
 
@@ -115,14 +146,18 @@ Skill animations for all basic skills.
 
 Abelon-idle
 Kath-idle
+Elaine-idle
 
 Kath-walk
+Elaine-walk
 
 Abelon-combat
 Kath-combat
+Elaine-combat
 
 Abelon-combat-run
 Kath-combat-run
+Elaine-combat-run
 
 Two mostly identical wolf sprites.
 
@@ -156,33 +191,16 @@ Kath-assist
 Kath-hurt
 Kath-death
 
+Elaine-combat-entry-exit
+Elaine-weapon
+Elaine-spell
+Elaine-assist
+Elaine-hurt
+Elaine-death
+
 Wolf-weapon
 Wolf-hurt
 Wolf-death
-
-
-
-
-
-SECTION: MAP WORK
-
-#57:
-
-Fix screen tearing - each map has a background color instead of black that
-blends in well with the tiles.
-
-Split forest into three maps (west, south, north) with slightly different
-tilesets/lighting/coloring
-
-And flowers, logs, plants and such to forest
-
-Redo forest tileset to use 2x2 trees
-
-#9:
-
-Expand lighting engine
-
-Add point lights to the forest to test
 
 
 
@@ -220,20 +238,26 @@ Mute ally turn start, enemy turn start, victory, defeat menus
 
 SECTION: MUSIC TRACKS
 
-#?:
+#63:
+
+For title screen music, use the voice memo on my phone: Time Slows. Tentative
+track name: The Lonely Knight. Experiment with slow crescendos!
+
+#64:
 
 Defeat theme: Despair - Short theme that plays during the battle loss scene.
 
-#?:
+#65:
 
 Enemy approaches theme - for rising action before a fight! This should play for
 most of the forest.
 
-#?:
+#66:
 
-Basic battle theme - for the three non-boss encounters
+Second battle theme - for the three non-boss encounters (or the boss encounter
+if it's more epic than the first theme)
 
-#?:
+#67:
 
 Better forest theme - more tense investigation, less funeral march
 
@@ -243,15 +267,27 @@ Better forest theme - more tense investigation, less funeral march
 
 SECTION: CHAPTER 1 IMPLEMENTATION
 
+#68:
+
 Finish script - Do this before even looking at the below scenarios! Because
 I might decide I want something different as I write the script.
 
-implement Elaine scenario
+#70:
 
 implement Ghoul scenario (objective is rout or escape)
 
+#71:
+
 implement Deer scenario
+
+#72:
 
 Implement crystal wolf scenario (objective is rout and defend)
 
+#73:
+
 Make executable
+
+#74:
+
+Pre-alpha closed release

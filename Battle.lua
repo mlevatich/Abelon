@@ -94,10 +94,6 @@ function Battle:initialize(battle_id, player, chapter)
         self.participants[i]:changeBehavior('battle')
     end
     self.player:changeMode('battle')
-
-    -- Start the first turn
-    self.start_save = false
-    self:openBattleStartMenu()
 end
 
 -- Put participants on grid
@@ -1677,7 +1673,7 @@ function Battle:renderAssistSpaces()
     end
 end
 
-function Battle:renderSkillRange(clr)
+function Battle:getTargetDirection()
 
     -- Get skill and cursor info
     local c = self:getCursor()
@@ -1691,9 +1687,16 @@ function Battle:renderSkillRange(clr)
                   ite(c[1] < o[1], LEFT,
                       ite(c[2] > o[2], DOWN, UP)))
     end
+    return dir
+end
+
+function Battle:renderSkillRange(clr)
+
+    -- Get direction to point the skill
+    local dir = self:getTargetDirection()
 
     -- Render red squares given by the skill range
-    local tiles = self:skillRange(sk, dir, c)
+    local tiles = self:skillRange(self:getSkill(), dir, self:getCursor())
     for i = 1, #tiles do
         self:shadeSquare(tiles[i][1], tiles[i][2], clr, 1)
     end
@@ -1806,82 +1809,135 @@ function Battle:mkOuterHoverBox(w)
     return {}, 0
 end
 
-function Battle:mkInnerHoverBox()
-
-    -- Check for a sprite
-    local c = self:getCursor()
-    local sp = self.grid[c[2]][c[1]].occupied
+function Battle:mkTileHoverBox(tx, ty)
+    local sp = self.grid[ty][tx].occupied
+    if not sp then return nil, nil, nil, nil end
     local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
-    if sp then
 
-        -- Box contains sprite's name and status
-        local name_str = sp.name
-        local hp_str = sp.health .. "/" .. sp.attributes['endurance']
-        local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
+    -- Box contains sprite's name and status
+    local name_str = sp.name
+    local hp_str = sp.health .. "/" .. sp.attributes['endurance']
+    local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
 
-        -- Compute box width from longest status
-        local statuses = self.status[sp:getId()]['effects']
-        local longest_status = 0
-        for i = 1, #statuses do
+    -- Compute box width from longest status
+    local statuses = self.status[sp:getId()]['effects']
+    local longest_status = 0
+    for i = 1, #statuses do
 
-            -- Space (in characters) between two strings in hover box
-            local buf = 3
+        -- Space (in characters) between two strings in hover box
+        local buf = 3
 
-            -- Length of duration string
-            local d = statuses[i].duration
-            local dlen = ite(d < 2, 6, ite(d < 10, 7, 8))
+        -- Length of duration string
+        local d = statuses[i].duration
+        local dlen = ite(d < 2, 6, ite(d < 10, 7, 8))
 
-            -- Length of buff string
-            local b = statuses[i].buff
-            local blen = #b:toStr()
+        -- Length of buff string
+        local b = statuses[i].buff
+        local blen = #b:toStr()
 
-            -- Combine them all to get character size
-            longest_status = math.max(longest_status, dlen + blen + buf)
-        end
-        w = math.max(w, longest_status * CHAR_WIDTH + BOX_MARGIN)
+        -- Combine them all to get character size
+        longest_status = math.max(longest_status, dlen + blen + buf)
+    end
+    w = math.max(w, longest_status * CHAR_WIDTH + BOX_MARGIN)
 
-        -- Add sprite basic info
-        local sp_eles = {
-            mkEle('text', sp.name, HALF_MARGIN, HALF_MARGIN),
-            mkEle('text', hp_str, w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
-                  HALF_MARGIN + LINE_HEIGHT + 3),
-            mkEle('text', ign_str, w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
-                  HALF_MARGIN + LINE_HEIGHT * 2 + 9),
-            mkEle('image', icons[str_to_icon['endurance']],
-                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, icon_texture),
-            mkEle('image', icons[str_to_icon['focus']],
-                  HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2 + 6, icon_texture)
-        }
+    -- Add sprite basic info
+    local sp_eles = {
+        mkEle('text', sp.name, HALF_MARGIN, HALF_MARGIN),
+        mkEle('text', hp_str, w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
+              HALF_MARGIN + LINE_HEIGHT + 3),
+        mkEle('text', ign_str, w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
+              HALF_MARGIN + LINE_HEIGHT * 2 + 9),
+        mkEle('image', icons[str_to_icon['endurance']],
+              HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, icon_texture),
+        mkEle('image', icons[str_to_icon['focus']],
+              HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2 + 6, icon_texture)
+    }
 
-        -- Add sprite statuses
-        local stat_eles = {}
-        local y = HALF_MARGIN + LINE_HEIGHT * 3 + BOX_MARGIN
-        for i = 1, #statuses do
-            local cy = y + LINE_HEIGHT * (i - 1)
-            local b = statuses[i].buff
-            local d = statuses[i].duration
-            local dur = d .. ite(d > 1, ' turns', ' turn')
-            table.insert(stat_eles, mkEle('text', dur,
-                w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
-            ))
-            local str = b:toStr()
-            table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
-        end
+    -- Add sprite statuses
+    local stat_eles = {}
+    local y = HALF_MARGIN + LINE_HEIGHT * 3 + BOX_MARGIN
+    for i = 1, #statuses do
+        local cy = y + LINE_HEIGHT * (i - 1)
+        local b = statuses[i].buff
+        local d = statuses[i].duration
+        local dur = d .. ite(d > 1, ' turns', ' turn')
+        table.insert(stat_eles, mkEle('text', dur,
+            w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
+        ))
+        local str = b:toStr()
+        table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+    end
 
-        -- Concat info with statuses
-        local h = BOX_MARGIN + HALF_MARGIN + LINE_HEIGHT
-                * (#sp_eles - 2 + #stat_eles / 2)
-        if next(statuses) ~= nil then
-            h = h + HALF_MARGIN
-        end
-        local clr = ite(self:isAlly(sp), { 0, 0.1, 0.1 }, { 0.1, 0, 0 })
-        return concat(sp_eles, stat_eles), w, h, clr
-    else
+    -- Concat info with statuses
+    local h = BOX_MARGIN + HALF_MARGIN + LINE_HEIGHT
+            * (#sp_eles - 2 + #stat_eles / 2)
+    if next(statuses) ~= nil then
+        h = h + HALF_MARGIN
+    end
+    local clr = ite(self:isAlly(sp), { 0, 0.1, 0.1 }, { 0.1, 0, 0 })
+    return concat(sp_eles, stat_eles), w, h, clr
+end
 
-        -- Box contains 'Empty'
+function Battle:mkInnerHoverBox()
+    local c = self:getCursor()
+    local hbox, bw, bh, bclr = self:mkTileHoverBox(c[1], c[2])
+    if not hbox then
+        local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
         local h = BOX_MARGIN + LINE_HEIGHT
         local clr = { 0, 0, 0 }
         return { mkEle('text', 'Empty', HALF_MARGIN, HALF_MARGIN) }, w, h, clr
+    end
+    return hbox, bw, bh, bclr
+end
+
+function Battle:renderTargetHoverBoxes(cam_x, cam_y)
+
+    -- Get skill range
+    local dir    = self:getTargetDirection()
+    local sk     = self:getSkill()
+    local c      = self:getCursor()
+    local sp     = self:getSprite()
+    local tiles  = self:skillRange(sk, dir, c)
+
+    -- Iterate over tiles to see which ones need to render boxes
+    local max_y = cam_y + VIRTUAL_HEIGHT
+                - BOX_MARGIN * 2 - FONT_SIZE - LINE_HEIGHT
+    local cur_y = cam_y + BOX_MARGIN
+    for i = 1, #tiles do
+
+        -- Switch tile of current sprite with prospective tile it's moving to
+        local t = self.grid[tiles[i][1]][tiles[i][2]].occupied
+        local move_c = self:getCursor(2)
+        if t == sp then
+            tiles[i][1] = move_c[2]
+            tiles[i][2] = move_c[1]
+        elseif tiles[i][1] == move_c[2] and tiles[i][2] == move_c[1] then
+            local y, x = self:findSprite(sp:getId())
+            tiles[i][1] = y
+            tiles[i][2] = x
+        end
+        t = self.grid[tiles[i][1]][tiles[i][2]].occupied
+
+        -- If there's a sprite on the tile and the skill affects that sprite,
+        -- render the sprite's hover box
+        if t and sk:hits(sp, t, self.status) then
+            local box, w, h, clr = self:mkTileHoverBox(tiles[i][2], tiles[i][1])
+
+            -- Only render if there's room for the whole box on screen
+            if cur_y + h <= max_y then
+                local cur_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - w
+                table.insert(clr, RECT_ALPHA)
+                love.graphics.setColor(unpack(clr))
+                love.graphics.rectangle('fill', cur_x, cur_y, w, h)
+                self:renderBoxElements(box, cur_x, cur_y)
+                cur_y = cur_y + h + BOX_MARGIN
+            else
+                local cur_x = cam_x + VIRTUAL_WIDTH
+                            - BOX_MARGIN - CHAR_WIDTH * 3
+                renderString("...", cur_x, cur_y)
+                break
+            end
+        end
     end
 end
 
@@ -2011,10 +2067,15 @@ function Battle:renderOverlay(cam_x, cam_y)
         if s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
 
             -- Make and render hover boxes
-            local ibox, w, ih, clr = self:mkInnerHoverBox()
-            local obox, oh = self:mkOuterHoverBox(w)
-            self:renderHoverBoxes(cam_x, cam_y, ibox, w, ih, obox, oh, clr)
+            if s == STAGE_TARGET then
+                self:renderTargetHoverBoxes(cam_x, cam_y)
+            else
+                local ibox, w, ih, clr = self:mkInnerHoverBox()
+                local obox, oh = self:mkOuterHoverBox(w)
+                self:renderHoverBoxes(cam_x, cam_y, ibox, w, ih, obox, oh, clr)
+            end
 
+            -- Render what turn it is in the lower right
             local turn_str = 'Turn ' .. self.turn
             renderString(turn_str,
                 cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
@@ -2028,7 +2089,7 @@ function Battle:renderOverlay(cam_x, cam_y)
         end
     end
 
-    -- Render menu if there is one, otherwise battle text
+    -- Render menu if there is one
     if s == STAGE_MENU then
         local m = self:getMenu()
         m:render(cam_x, cam_y, self.chapter)

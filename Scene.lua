@@ -94,11 +94,11 @@ function Scene:processResult(result)
     if result['state'] then
         self.chapter.state[result['state']] = true
     end
-    if result['do'] then
-        result['do'](self.chapter)
-    end
     if result['callback'] then
         self.chapter.callbacks[self.id] = result['callback']
+    end
+    if result['do'] then
+        result['do'](self.chapter)
     end
 end
 

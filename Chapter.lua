@@ -47,9 +47,9 @@ function Chapter:initialize(id)
     self.current_music = nil
 
     -- Volume levels
-    self.music_volume = OFF
-    self.sfx_volume   = OFF
-    self.text_volume  = OFF
+    self.music_volume = HIGH
+    self.sfx_volume   = HIGH
+    self.text_volume  = HIGH
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
 
@@ -247,8 +247,11 @@ function Chapter:setTextVolume(vol)
 end
 
 function Chapter:launchBattle(b_id)
+    self.current_scene = nil
     self.battle = Battle:new(b_id, self.player, self)
+    self.battle.start_save = true
     self:saveBattle()
+    self.battle:openBattleStartMenu()
 end
 
 -- Store player inputs to a scene, to be processed on update

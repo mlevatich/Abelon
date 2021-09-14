@@ -269,7 +269,7 @@ scripts = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
             wait(0.5),
-            focus(1, 100),
+            focus(2, 100),
             say(1, 2, false,
                 "Urgh. Damn, hurts........ But I refuse... to........"
             )

@@ -77,6 +77,13 @@ function Skill:use(a, b, c, d, e, f, g)
     end
 end
 
+function Skill:hits(caster, target, status)
+    local team = status[target:getId()]['team']
+    return (self.type == ASSIST and team == ALLY)
+        or (self.type ~= ASSIST and team == self.affects)
+        or (caster == target and self.modifiers['self'])
+end
+
 function Skill:assist(attrs)
     return mapf(function(b) return mkBuff(attrs, b) end, self.buff_templates)
 end
@@ -100,6 +107,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
     local exp_gain = 0
 
     -- Temporary attributes and special effects for the caster
+    local sp_team = status[sp:getId()]['team']
     local sp_stat = status[sp:getId()]['effects']
     local sp_tmp_attrs = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
 
@@ -109,6 +117,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
 
         -- Temporary attributes and special effects for the target
         local t = ts[i]
+        local t_team = status[t:getId()]['team']
         local t_stat = status[t:getId()]['effects']
         local t_ass = ts_assists[i]
         local t_tmp_attrs = mkTmpAttrs(t.attributes, t_stat, t_ass)
@@ -119,7 +128,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
         -- If attacker is an enemy and target has forbearance, the target
         -- switches to Kath
         if hasSpecial(t_stat, t_ass, 'forbearance')
-        and status[sp:getId()]['team'] == ENEMY then
+        and sp_team == ENEMY then
             local s_kath = status['kath']
             local loc = s_kath['location']
             t = s_kath['sp']
@@ -129,8 +138,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
         end
 
         -- Only hit targets passing the team filter
-        local team = ite(status[t:getId()]['team'] == ALLY, ENEMY, ALLY)
-        if (team ~= affects or (t == sp and modifiers['self']))
+        local oppo_team = ite(t_team == ALLY, ENEMY, ALLY)
+        if (oppo_team ~= affects or (t == sp and modifiers['self']))
         and (not modifiers['br']
         or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status))
         then
@@ -168,7 +177,10 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
                 dryrun_dmg[i]['flat'] = dealt
                 dryrun_dmg[i]['percent'] = dealt / pre_hp
 
-                exp_gain = exp_gain + abs(dealt)
+                -- Allies gain exp for damage dealt to enemies
+                if sp_team == ALLY and t_team == ENEMY then
+                    exp_gain = exp_gain + abs(dealt)
+                end
 
                 -- Determine if target is hurt, or dead
                 if t.health == 0 then
@@ -177,9 +189,9 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
                     table.insert(hurt, t)
                 end
 
-                -- If the target is an ally (and didn't die), gain exp for
-                -- taking damage
-                if not dryrun and status[t:getId()]['team'] == ALLY
+                -- If the target is an ally hit by an enemy and didn't die,
+                -- gain exp for taking damage
+                if not dryrun and sp_team == ENEMY and t_team == ALLY
                 and t.health > 0
                 then
                     exp_dealt = math.max(0, math.floor(dealt / 2))
@@ -194,9 +206,12 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
                     local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
                     addStatus(t_stat, Effect:new(b, ts_effects[j][2]))
 
-                    -- EXP gain for negative statuses applied
+                    -- Allies gain exp for applying negative status to enemies
+                    -- or applying positive statuses to allies
                     local exp = 0
-                    if b.type == DEBUFF then
+                    if (b.type == DEBUFF and sp_team == ALLY and t_team == ENEMY)
+                    or (b.type == BUFF and sp_team == ALLY and t_team == ALLY)
+                    then
                         exp = 10
                         if b.attr ~= 'special' then exp = abs(b.val) end
                     end
@@ -217,18 +232,17 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
             local b = mkBuff(sp_tmp_attrs, sp_effects[j][1])
             addStatus(sp_stat, Effect:new(b, sp_effects[j][2]))
 
-            -- EXP gain for positive statuses applied
+            -- Allies gain exp for applying positive status to themselves
             local exp = 0
-            if b.type == BUFF then
-                exp = ite(b.attr == 'special', 10, abs(b.val))
+            if b.type == BUFF and sp_team == ALLY then
+                exp = 10
+                if b.attr ~= 'special' then exp = abs(b.val) end
             end
             exp_gain = exp_gain + exp
         end
 
         -- If the attacker is an ally, gain exp
-        if status[sp:getId()]['team'] == ALLY then
-            lvlups[sp:getId()] = sp:gainExp(exp_gain)
-        end
+        if sp_team == ALLY then lvlups[sp:getId()] = sp:gainExp(exp_gain) end
 
         -- Return which targets were hurt/killed
         return hurt, dead, lvlups
