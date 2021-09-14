@@ -31,11 +31,6 @@ SECTION: COMBAT ENGINE EXTENSIONS
 
 #60:
 
-Text highlighting for descriptions. Should work like a string formatting
-function passed to mkEle. weapon damage is orange, spell damage is purple,
-attributes each have their own color, sprite names are colored, numbers are
-colored.
-
 For free aim, the cursor can be on any space given by the FREE_AIM field
 (intersect a diamond of size "scale" with the targets given by "target").
 FREE_AIM moves should render an outline of the move's range

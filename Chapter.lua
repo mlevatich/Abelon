@@ -47,9 +47,9 @@ function Chapter:initialize(id)
     self.current_music = nil
 
     -- Volume levels
-    self.music_volume = HIGH
-    self.sfx_volume   = HIGH
-    self.text_volume  = HIGH
+    self.music_volume = OFF
+    self.sfx_volume   = OFF
+    self.text_volume  = OFF
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
 

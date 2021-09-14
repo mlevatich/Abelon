@@ -1947,7 +1947,9 @@ function Battle:renderBoxElements(box, base_x, base_y)
         if e['type'] == 'text' then
             local clr = ite(e['color'], e['color'], WHITE)
             love.graphics.setColor(unpack(clr))
-            renderString(e['data'], base_x + e['x'], base_y + e['y'], true)
+            renderString(e['data'],
+                base_x + e['x'], base_y + e['y'], true, e['auto_color']
+            )
         else
             love.graphics.setColor(unpack(WHITE))
             love.graphics.draw(

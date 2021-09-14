@@ -1139,12 +1139,12 @@ function Sprite:_checkMapCollisions()
     -- Perform up-down move if it's small enough
     if above_condition then
         local y_move = map:tileAt(self.x, self.y - 1).y * TILE_HEIGHT
-        if abs(y_move - self.y) <= 3 then
+        if abs(y_move - self.y) <= 2 then
             self.y = y_move
         end
     elseif below_condition then
         local y_move = (map:tileAt(self.x, self.y + h).y - 1) * TILE_HEIGHT - h
-        if abs(y_move - self.y) <= 3 then
+        if abs(y_move - self.y) <= 2 then
             self.y = y_move
         end
     end
@@ -1152,12 +1152,12 @@ function Sprite:_checkMapCollisions()
     -- perform left-right move if it's small enough
     if left_condition then
         local x_move = map:tileAt(self.x - 1, self.y).x * TILE_WIDTH
-        if abs(x_move - self.x) <= 3 then
+        if abs(x_move - self.x) <= 2 then
             self.x = x_move
         end
     elseif right_condition then
         local x_move = (map:tileAt(self.x + w, self.y).x - 1) * TILE_WIDTH - w
-        if abs(x_move - self.x) <= 3 then
+        if abs(x_move - self.x) <= 2 then
             self.x = x_move
         end
     end

@@ -272,7 +272,7 @@ function Skill:mkSkillBox(itex, icons, with_skilltrees, with_prio)
         mkEle('image', icons[self.type],
             HALF_MARGIN + 25, 7, itex),
         mkEle('text', splitByCharLimit(self.desc, 28),
-            desc_x, BOX_MARGIN + LINE_HEIGHT - 3),
+            desc_x, BOX_MARGIN + LINE_HEIGHT - 3, nil, true),
         mkEle('text', {'Cost: ' .. self.cost},
             req_x + 5, req_y + LINE_HEIGHT * 4 + HALF_MARGIN),
         mkEle('text', {'Scaling:'},
@@ -430,7 +430,7 @@ skills = {
 
     -- ABELON
     ['sever'] = Skill:new('sever', 'Sever',
-        "Slice at an enemy's exposed limbs. Deals (Force * 1.0) weapon damage \z
+        "Slice at an enemy's exposed limbs. Deals (Force * 1.0) Weapon damage \z
          to an enemy next to Abelon and lowers their Force by 2.",
         'Executioner', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
@@ -449,7 +449,7 @@ skills = {
     ),
     ['punish'] = Skill:new('punish', 'Punish',
         "Exploit a brief weakness with a precise stab. Deals 10 + (Force * \z
-         1.0) weapon damage only if the enemy is impaired or debuffed.",
+         1.0) Weapon damage only if the enemy is impaired or debuffed.",
         'Executioner', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Veteran', 1 }, { 'Executioner', 1 } },
         { { F, F, F },
@@ -460,8 +460,8 @@ skills = {
         { ['br'] = function(a, a_a, b, b_a, st) return isDebuffed(b, st) end }
     ),
     ['conflagration'] = Skill:new('conflagration', 'Conflagration',
-        "Scour the battlefield with unholy fire. Deals 30 spell \z
-         damage to all enemies in a line across the entire map.",
+        "Scour the battlefield with unholy fire. Deals 30 Spell \z
+         damage to all enemies in a line across the entire field.",
         'Demon', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 5,
@@ -491,8 +491,8 @@ skills = {
         nil, { { { 'reaction', Scaling:new(0, 'focus', -1.0) }, 2 } }
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible',
-        "Unleash a scorching miasma. Abelon and nearby enemies suffer \z
-         (Force * 2.0) spell damage (cannot kill Abelon).",
+        "Unleash a scorching ignaeic miasma. Abelon and nearby enemies suffer \z
+         (Force * 2.0) Spell damage (cannot kill Abelon).",
         'Demon', SPELL, MANUAL, str_to_icon['force'],
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, F, T, F, F, F },
@@ -508,7 +508,7 @@ skills = {
     ),
     ['guard_blindspot'] = Skill:new('guard_blindspot', 'Guard Blindspot',
         "Protect an adjacent ally from wounds to the back. Adds \z
-         (Affinity * 1.0) to ally's Reaction.",
+         (Affinity * 1.0) to the assisted ally's Reaction.",
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
@@ -538,7 +538,7 @@ skills = {
 
     -- KATH
     ['sweep'] = Skill:new('sweep', 'Sweep',
-        "Slash in a wide arc. Deals (Force * 0.8) weapon damage to enemies in \z
+        "Slash in a wide arc. Deals (Force * 0.8) Weapon damage to enemies in \z
          front of Kath, and grants 3 Reaction until his next turn.",
         'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
@@ -561,7 +561,7 @@ skills = {
         }
     ),
     ['javelin'] = Skill:new('javelin', 'Javelin',
-        "Kath hurls a javelin at an enemy, dealing (Force * 1.2) weapon \z
+        "Kath hurls a javelin at an enemy, dealing (Force * 1.2) Weapon \z
          damage.",
         'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 0 } },
@@ -571,7 +571,7 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 1.2)
     ),
     ['enrage'] = Skill:new('enrage', 'Enrage',
-        "Enrage nearby enemies with a mist of ignea, so that their next \z
+        "Enrage nearby enemies with an ignaeic fog, so that their next \z
          actions will target Kath (whether or not they can reach him).",
         'Defender', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
@@ -585,7 +585,7 @@ skills = {
         ENEMY, nil,
         nil, { { { 'special', 'enrage', DEBUFF }, 1 } }
     ),
-    ['blessed_mist'] = Skill:new('blessed_mist', 'Blessed Mist',
+    ['stitching_mist'] = Skill:new('stitching_mist', 'Stitching Mist',
         "Infuse the air to close wounds. Allies in the area recover \z
          (Affinity * 1.0) health. Can target a square within three spaces of \z
          Kath.",
@@ -597,7 +597,7 @@ skills = {
         ALLY, Scaling:new(0, 'affinity', -1.0)
     ),
     ['haste'] = Skill:new('haste', 'Haste',
-        "Kath raises the agility of allies around him by 10.",
+        "Kath raises the Agility of allies around him by 10.",
         'Cleric', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 1 } },
         { { F, F, T, F, F },
@@ -609,7 +609,7 @@ skills = {
         nil, { { { 'agility', Scaling:new(10, 'force', 0) }, 1 } }
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance',
-        "Kath receives all attacks meant for an adjacent ally.",
+        "Kath receives all attacks meant for an adjacent assisted ally.",
         'Defender', ASSIST, MANUAL, str_to_icon['endurance'],
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
@@ -617,8 +617,8 @@ skills = {
         { { 'special', 'forbearance', BUFF } }
     ),
     ['invigorate'] = Skill:new('invigorate', 'Invigorate',
-        "Kath renews allies near him with a spell. Assisted allies gain \z
-         (Affinity * 1.0) Force",
+        "Kath renews allies near him with a cantrip. Allies on the assist gain \z
+         (Affinity * 1.0) Force.",
         'Cleric', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 1 } },
         { { T, F, T },
@@ -629,7 +629,7 @@ skills = {
     ),
     ['hold_the_line'] = Skill:new('hold_the_line', 'Hold the Line',
         "Kath forms a wall with his allies, raising the Reaction of assisted \z
-         allies by (Reaction * 0.7)",
+         allies by (Reaction * 0.7).",
         'Hero', ASSIST, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
@@ -637,7 +637,7 @@ skills = {
         { { 'reaction', Scaling:new(0, 'reaction', 0.7) } }
     ),
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel',
-        "Kath casts a powerful protective spell. Assisted allies cannot \z
+        "Kath casts a powerful protective ward. Allies on the assist cannot \z
          drop below 1 health for the remainder of the turn.",
         'Cleric', ASSIST, MANUAL, str_to_icon['empty'],
         { { 'Defender', 2 }, { 'Hero', 0 }, { 'Cleric', 2 } },
@@ -656,7 +656,7 @@ skills = {
     -- ENEMY
     ['bite'] = Skill:new('bite', 'Bite',
         "Leap at an adjacent enemy and bite into them. Deals \z
-         (Force * 1.0) weapon damage to an enemy next to the user.",
+         (Force * 1.0) Weapon damage to an enemy next to the user.",
         'Enemy', WEAPON, KILL, str_to_icon['force'],
         {},
         { { T } }, DIRECTIONAL_AIM, 0,

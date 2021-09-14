@@ -44,17 +44,40 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     return frames
 end
 
-function renderString(s, x, y, custom_pen)
+function renderString(s, x, y, custom_pen, auto_color)
     if not custom_pen then
         love.graphics.setColor(unpack(WHITE))
     end
+    local char_color = {}
+    if auto_color then
+        for i = 1, #s do char_color[i] = WHITE end
+        for k, clr in pairs(AUTO_COLOR) do
+            local st, ed = s:find(k)
+            while st and ed do
+                for i = st, ed do char_color[i] = clr end
+                st, ed = s:find(k, ed)
+            end
+        end
+    end
     for i = 1, #s do
+        local c = s:sub(i, i)
+        if auto_color and c ~= ' ' and c ~= '*' and
+        not (tonumber(c) or tonumber(s:sub(i,i+1) or tonumber(s:sub(i,i+2))))
+        then
+            love.graphics.setColor(unpack(char_color[i]))
+        end
         love.graphics.print(s:sub(i, i), x + CHAR_WIDTH * (i - 1), y)
     end
 end
 
-function mkEle(t, data, x, y, extra)
-    local ele = { ['type'] = t, ['data'] = data, ['x'] = x, ['y'] = y }
+function mkEle(t, data, x, y, extra, auto_color)
+    local ele = {
+        ['type'] = t,
+        ['data'] = data,
+        ['x'] = x,
+        ['y'] = y,
+        ['auto_color'] = auto_color
+    }
     ele[ite(t == 'image', 'texture', 'color')] = extra
     return ele
 end

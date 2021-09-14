@@ -59,11 +59,22 @@ BOX_HEIGHT = TEXT_MARGIN_Y * (LINES_PER_PAGE + 3)
            + BOX_MARGIN
 
 -- Text colors
-DISABLE   = { 1,     1,   1, 0.5 }
-HIGHLIGHT = { 0.7,   1,   1,   1 }
-RED       = { 1,   0.7, 0.7,   1 }
-GREEN     = { 0.7,   1, 0.7,   1 }
-WHITE     = {   1,   1,   1,   1 }
+DISABLE           = { 1,     1,   1, 0.5 }
+HIGHLIGHT         = { 0.7,   1,   1,   1 }
+RED               = { 1,   0.7, 0.7,   1 }
+GREEN             = { 0.7,   1, 0.7,   1 }
+WHITE             = {   1,   1,   1,   1 }
+AUTO_COLOR        = {
+    ['Weapon']    = {   1,   1, 0.5,   1 }, -- Yellow
+    ['Spell']     = { 0.8, 0.4,   1,   1 }, -- Purple
+    ['Assist']    = { 0.7,   1, 0.7,   1 }, -- Light green
+    ['Endurance'] = { 0.3, 0.3,   1,   1 }, -- Blue
+    ['Focus']     = {   1, 0.2, 0.2,   1 }, -- Red
+    ['Force']     = {   1, 0.6, 0.2,   1 }, -- Orange
+    ['Affinity']  = { 0.6,   1, 0.2,   1 }, -- Yellow green
+    ['Reaction']  = { 0.2, 0.7, 0.4,   1 }, -- Dark green
+    ['Agility']   = { 0.2, 0.7,   1,   1 }, -- Light blue
+}
 
 -- Direction enum
 LEFT  = -1
@@ -113,23 +124,23 @@ ATTRIBUTE_DESC = {
     },
     {
         ['id'] = 'focus', ['name'] = 'Focus',
-        ['desc'] = "Intense concentration is the heart of spellcasting. \z
+        ['desc'] = "Intense concentration is the core of ignaeic aptitude. \z
         Every point of Focus raises the character's maximum ignea by one."
     },
     {
         ['id'] = 'force', ['name'] = 'Force',
         ['desc'] = "Channel destructive intent. High Force improves many \z
-        offensive weapon skills and spells."
+        offensive Weapon and Spell skills."
     },
     {
         ['id'] = 'affinity', ['name'] = 'Affinity',
         ['desc'] = "Connect to and synergize with allies. High Affinity \z
-        amplifies the effects of many assists."
+        amplifies the effects of many Assist skills."
     },
     {
         ['id'] = 'reaction', ['name'] = 'Reaction',
         ['desc'] = "Stay alert. Turn deadly strikes into glancing blows. \z
-        Received weapon damage is reduced by one for every two points of \z
+        Received Weapon damage is reduced by one for every two points of \z
         Reaction."
     },
     {

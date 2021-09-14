@@ -257,7 +257,7 @@ function Menu:renderHoverDescription(cam_x, cam_y)
             local desc_y = cam_y + b2 + LINE_HEIGHT * 7 + PORTRAIT_SIZE
             local sdesc, _ = splitByCharLimit(desc, 32)
             for i = 1, #sdesc do
-                renderString(sdesc[i], desc_x, desc_y + LINE_HEIGHT * (i - 1))
+                renderString(sdesc[i], desc_x, desc_y + LINE_HEIGHT * (i - 1), false, true)
             end
         else
             local desc_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
@@ -308,7 +308,7 @@ function Menu:renderMenuItems(x, y, c)
                     b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, 0, 1, 1, 0, 0
                 )
                 renderString(a['name'], b + x + 27,
-                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE
+                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, false, true
                 )
                 incr = 2
                 pen = true
@@ -470,7 +470,7 @@ function Menu:renderHoverBox(cam_x, cam_y, h_box)
             local msg = e['data']
             for j = 1, #msg do
                 local cy = y + e['y'] + LINE_HEIGHT * (j - 1)
-                renderString(msg[j], x + e['x'], cy, true)
+                renderString(msg[j], x + e['x'], cy, true, e['auto_color'])
             end
         elseif e['type'] == 'image' then
             love.graphics.setColor(unpack(WHITE))
