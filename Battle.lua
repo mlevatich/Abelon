@@ -79,6 +79,7 @@ function Battle:initialize(battle_id, player, chapter)
     self.shading = 0.2
     self.shade_dir = 1
     self.action_in_progress = nil
+    self.skill_in_use = nil
     self.levelup_queue = {}
 
     -- Music
@@ -852,10 +853,17 @@ function Battle:kill(sp)
     self.status[sp:getId()]['alive'] = false
 end
 
-function Battle:pathToWalk(sp, path)
+function Battle:pathToWalk(sp, path, next_sk)
     local move_seq = {}
+    if #path == 0 then
+        table.insert(move_seq, function(d)
+            self.skill_in_use = next_sk
+            d()
+        end)
+    end
     for i = 1, #path do
         table.insert(move_seq, function(d)
+            self.skill_in_use = next_sk
             return sp:walkToBehaviorGeneric(function()
                 self:moveSprite(sp, path[i][2], path[i][1])
                 d()
@@ -908,7 +916,7 @@ function Battle:playAction()
         { sp_y, sp_x },
         { c_move1[2], c_move1[1] }
     )
-    local seq = self:pathToWalk(sp, move1_path)
+    local seq = self:pathToWalk(sp, move1_path, attack)
 
     -- Attack
     table.insert(seq, function(d)
@@ -956,7 +964,7 @@ function Battle:playAction()
         { c_move1[2], c_move1[1] },
         { c_move2[2], c_move2[1] }
     )
-    seq = concat(seq, self:pathToWalk(sp, move2_path))
+    seq = concat(seq, self:pathToWalk(sp, move2_path, assist))
 
     -- Assist
     table.insert(seq, function(d)
@@ -986,6 +994,7 @@ function Battle:playAction()
     -- Register behavior sequence with sprite
     sp:behaviorSequence(seq, function()
             self.action_in_progress = nil
+            self.skill_in_use = nil
             sp:changeBehavior('battle')
         end
     )
@@ -1623,6 +1632,32 @@ function Battle:renderLens(clr)
     )
 end
 
+function Battle:renderSkillInUse(cam_x, cam_y)
+    local sk = self.skill_in_use
+    if not sk then return end
+    local str_w = #sk.name * CHAR_WIDTH
+    local w = str_w + 55 + BOX_MARGIN
+    local h = LINE_HEIGHT + BOX_MARGIN
+    local x = cam_x + VIRTUAL_WIDTH - w - BOX_MARGIN
+    local y = cam_y + BOX_MARGIN
+    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
+    love.graphics.rectangle('fill', x, y, w, h)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(
+        icon_texture,
+        icons[sk:treeToIcon()],
+        x + HALF_MARGIN + str_w + 8, y + HALF_MARGIN,
+        0, 1, 1, 0, 0
+    )
+    love.graphics.draw(
+        icon_texture,
+        icons[sk.type],
+        x + HALF_MARGIN + str_w + 33, y + HALF_MARGIN,
+        0, 1, 1, 0, 0
+    )
+    renderString(sk.name, x + HALF_MARGIN, y + HALF_MARGIN + 3)
+end
+
 function Battle:renderSpriteImage(cx, cy, x, y, sp)
     if cx ~= x or cy ~= y then
         love.graphics.setColor(1, 1, 1, 0.5)
@@ -2151,6 +2186,8 @@ function Battle:renderOverlay(cam_x, cam_y)
             if s ~= STAGE_MENU then
                 self:renderBattleText(cam_x, cam_y)
             end
+        elseif s == STAGE_WATCH then
+            self:renderSkillInUse(cam_x, cam_y)
         end
     end
 

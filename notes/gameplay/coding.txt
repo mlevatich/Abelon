@@ -31,18 +31,12 @@ SECTION: COMBAT ENGINE EXTENSIONS
 
 #60:
 
-While a sprite's action is playing out, what they're doing should render in the
-top right. Just the ability name and icons.
-
-When sprites gain exp, render exp splash. The idea of a "splash" animation
-could be re-used for skill animations.
-
 When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered.
+a heal splash should be rendered. This should happen as the damage is dealt.
+The idea of a "splash" animation could be re-used for skill animations.
 
-Try to minimize the amount of text. Replace text with pictures as much as
-possible? Come up with icons? Might not be anything to do here, that's fine.
-Currently it's not that bad.
+When sprites gain exp, render exp splash. This should happen on a delay, so
+the exp splash renders after the relevant action has just finished playing out.
 
 #61:
 
