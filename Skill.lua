@@ -629,12 +629,12 @@ skills = {
     ),
     ['hold_the_line'] = Skill:new('hold_the_line', 'Hold the Line',
         "Kath forms a wall with his allies, raising the Reaction of assisted \z
-         allies by (Reaction * 0.7).",
+         allies by (Reaction * 0.5).",
         'Hero', ASSIST, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(0, 'reaction', 0.7) } }
+        { { 'reaction', Scaling:new(0, 'reaction', 0.5) } }
     ),
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel',
         "Kath casts a powerful protective ward. Allies on the assist cannot \z

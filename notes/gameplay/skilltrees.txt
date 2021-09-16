@@ -10,6 +10,7 @@ Uther: Miner, Shadow, Rogue
 Gaheris: Elementalist, Scholar, Empath
 
 skill ideas:
+first aid: Lester skill, heals an adjacent ally by 0.5 * Agility, costs 0 ignea
 in shadow: passive ability - if no assists, enemies wont target you
 pinpoint: find a weak spot. Very specific range required.
 assassinate: if pinpoint was used last turn, and you have at least 3 assists,

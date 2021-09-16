@@ -40,7 +40,7 @@ function Battle:initialize(battle_id, player, chapter)
     self.origin_y = tile_origin[2]
 
     -- Battle grid
-    local grid_index = 13
+    local grid_index = 14
     local grid_dim = readArray(data[grid_index], tonumber)
     self.grid_w = grid_dim[1]
     self.grid_h = grid_dim[2]
@@ -62,11 +62,13 @@ function Battle:initialize(battle_id, player, chapter)
         self:readEntities(data, 5)
     )
     self.enemy_action = nil
-    self:adjustStatsForDifficulty(MASTER)
 
     -- Win conditions and loss conditions
     self.win  = readArray(data[7], function(s) return wincons[s]  end)
     self.lose = readArray(data[8], function(s) return losscons[s] end)
+    self.turnlimits = readArray(data[9], tonumber)
+    if next(self.turnlimits) then table.insert(self.lose, {}) end
+    self:adjustDifficultyFrom(MASTER)
 
     -- Battle cam starting location
     self.battle_cam_x = self.chapter.camera_x
@@ -84,7 +86,7 @@ function Battle:initialize(battle_id, player, chapter)
 
     -- Music
     self.chapter:stopMusic()
-    self.chapter.current_music = readField(data[9])
+    self.chapter.current_music = readField(data[10])
 
     -- Action stack
     self.suspend_stack = {}
@@ -133,8 +135,11 @@ function Battle:readEntities(data, idx)
     return t
 end
 
-function Battle:adjustStatsForDifficulty(old)
-    local factor = 3 * (old - self.chapter.difficulty)
+function Battle:adjustDifficultyFrom(old)
+
+    -- Adjust enemy stats
+    local new = self.chapter.difficulty
+    local factor = 3 * (old - new)
     for i = 1, #self.participants do
         local sp = self.participants[i]
         if not self:isAlly(sp) then
@@ -147,6 +152,27 @@ function Battle:adjustStatsForDifficulty(old)
             end
             sp.health = math.min(sp.health, attrs['endurance'])
             sp.ignea = math.min(sp.ignea, attrs['focus'])
+        end
+    end
+
+    -- Adjust turn limit, if there is one
+    if next(self.turnlimits) then
+        self.turnlimit = self.turnlimits[new]
+        self.lose[#self.lose] = { self.turnlimit .. ' turns pass',
+            function(b) return ite(b.turn > b.turnlimit, 'turnlimit', false) end
+        }
+
+        -- Stupid hack to refresh objectives box
+        if self.stack then
+            self:closeMenu()
+            self:openBattleStartMenu()
+            local m = self:getMenu()
+            m:hover(DOWN)
+            m:forward()
+            m:hover(DOWN)
+            m:hover(DOWN)
+            m:forward()
+            for i = 1, new - 1 do m:hover(DOWN) end
         end
     end
 end

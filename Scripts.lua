@@ -290,6 +290,21 @@ scripts = {
         ['result'] = {}
     },
 
+    ['1-1-turnlimit-defeat'] = {
+        ['ids'] = {'kath', 'abelon'},
+        ['events'] = {
+            wait(0.5),
+            focus(2, 100),
+            lookDir(1, RIGHT),
+            lookAt(2, 1),
+            say(1, 2, false,
+                "Damn, we've lost too much time here already! We'll never \z
+                 make it to the north gate in time. It's all over..."
+            )
+        },
+        ['result'] = {}
+    },
+
     ['1-1-victory'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {

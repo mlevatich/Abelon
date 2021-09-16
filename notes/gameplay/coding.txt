@@ -11,6 +11,8 @@ choose difficulty)
 Implement game start scene, implement ??? for sprites whose names are not known
 to the player. Learning a name is a scene event.
 
+Keep music and volume settings on hitting chapter/battle restart
+
 #48:
 
 Game guide shows up immediately on starting new game, and accessible from
@@ -29,15 +31,6 @@ start card (Teaser). Kicks you back to the title screen
 
 SECTION: COMBAT ENGINE EXTENSIONS
 
-#60:
-
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. This should happen as the damage is dealt.
-The idea of a "splash" animation could be re-used for skill animations.
-
-When sprites gain exp, render exp splash. This should happen on a delay, so
-the exp splash renders after the relevant action has just finished playing out.
-
 #61:
 
 improve AI algorithm - use other plans! In particular, enemies shouldn't
@@ -49,27 +42,14 @@ farther away from the allies should also be prioritized.
 
 #62:
 
-Turn limits: every battle should have a turn limit loss condition, to prevent
-EXP farming
-
 Bonus experience for a faster finish! You get more exp for dragging out battles
 and tanking and healing a lot, so to balance that out, grant experience for each
-turn between the turns completed in and the turn limit. Should offer about 20
-per turn to each unit, to be worth it? Need to raise exp req to level up to
-account for this.
+turn between the turns completed in and the turn limit. 15exp.
 
-Additionally, offer bonus EXP for how healthy each unit is at the end, to
-discourage eating damage for no reason.
-
-Display these numbers on the victory menu, and do the level ups in between the
+Display this gain on the victory menu, and do the level ups in between the
 victory menu and the victory scene.
 
 #69:
-
-Ally base stats should be extremely lopsided to start, because they will
-even out over time. Kath can have more reaction, less HP, Abelon more HP,
-Elaine starts with 0 focus and no spells? Interesting idea. Elaine starts at
-level 2, with 3 skills (observe, 1 attack, 1 assist)
 
 Add elaine sprite
 
@@ -126,6 +106,13 @@ Insert appropriate hooks for skill animations to play at the right points in
 battle (fill in with a universal default).
 
 Skill animations for all basic skills.
+
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. This should happen as the damage is dealt.
+The idea of a "splash" animation could be re-used for skill animations.
+
+When sprites gain exp, render exp splash. This should happen on a delay, so
+the exp splash renders after the relevant action has just finished playing out.
 
 #51:
 

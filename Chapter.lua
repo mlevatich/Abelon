@@ -218,7 +218,7 @@ end
 function Chapter:setDifficulty(d)
     local old = self.difficulty
     self.difficulty = d
-    if self.battle then self.battle:adjustStatsForDifficulty(old) end
+    if self.battle then self.battle:adjustDifficultyFrom(old) end
 end
 
 function Chapter:startMapMusic()
