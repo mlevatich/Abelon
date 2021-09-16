@@ -3,12 +3,18 @@ paragraph separately for your own sanity)
 
 SECTION: GAME ENTRY-EXIT PROCEDURES
 
-#16:
-
 Keep music and volume settings on hitting chapter/battle restart
 
+Learning a skill doesn't pull you out of the inventory.
+
+Settings: add turn auto-end
+
+Battle begin menu: add party to this menu, so that skills are learnable
+
 Quitting the game without saving mid-battle and restarting should return the
-player to the BEGINNING of the battle, not to their last mid-battle save.
+player to the BEGINNING of the battle, not to their last mid-battle save
+
+#16:
 
 Title screen v0 (continue (if save file detected), new game ->
 choose difficulty)
@@ -22,6 +28,8 @@ Game guide shows up immediately on starting new game, and accessible from
 inventory
 
 Combat guide accessible from battle begin menu or options.
+
+Post battle levelup / skilltree guide should show up after the first battle
 
 #59:
 

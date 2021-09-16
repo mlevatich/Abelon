@@ -90,11 +90,13 @@ function LevelupMenu(sp, n)
         "Each level up grants a skill point. Skill points can be spent in the \z
          inventory after battle to learn new skills."
     ))
-    local m = Menu:new(nil, m_items, BOX_MARGIN, BOX_MARGIN, true)
+    local w = VIRTUAL_WIDTH - BOX_MARGIN * 2 - 220
+    local h = VIRTUAL_HEIGHT - BOX_MARGIN * 2
+    local m = Menu:new(nil, m_items, (VIRTUAL_WIDTH - w) / 2, BOX_MARGIN, true)
 
     -- Customize
-    m.width   = VIRTUAL_WIDTH - BOX_MARGIN * 2 - 220
-    m.height  = VIRTUAL_HEIGHT - BOX_MARGIN * 2
+    m.width   = w
+    m.height  = h
     m.window  = 7
     m.custom  = 'lvlup'
     m.sp      = sp
@@ -247,12 +249,15 @@ function Menu:renderHoverDescription(cam_x, cam_y)
         local desc = selection.hover_desc
 
         if self.custom == 'lvlup' then
-            local b2 = BOX_MARGIN * 2
-            local desc_x = cam_x + b2
-            local desc_y = cam_y + b2 + LINE_HEIGHT * 7 + PORTRAIT_SIZE
+            local x = cam_x + self.rel_x
+            local y = cam_y + self.rel_y
+            local desc_x = x + BOX_MARGIN
+            local desc_y = y + BOX_MARGIN + LINE_HEIGHT * 7 + PORTRAIT_SIZE
             local sdesc, _ = splitByCharLimit(desc, 32)
             for i = 1, #sdesc do
-                renderString(sdesc[i], desc_x, desc_y + LINE_HEIGHT * (i - 1), false, true)
+                renderString(sdesc[i],
+                    desc_x, desc_y + LINE_HEIGHT * (i - 1), false, true
+                )
             end
         else
             local desc_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
@@ -265,7 +270,6 @@ end
 
 function Menu:renderMenuItems(x, y, c)
 
-    -- If this is a confirm message with one option, it is not rendered
     if self.custom == 'lvlup' then
 
         -- Render header
@@ -335,6 +339,7 @@ function Menu:renderMenuItems(x, y, c)
             y_cur + LINE_HEIGHT
         )
 
+    -- If this is a confirm message with one option, it is not rendered
     elseif not (self.confirm_msg and #self.menu_items == 1) then
 
         -- Render each menu item
