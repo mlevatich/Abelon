@@ -268,8 +268,9 @@ scripts = {
     ['1-1-kath-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
+            focus(1, 170),
             wait(0.5),
-            focus(2, 100),
+            lookAt(2, 1),
             say(1, 2, false,
                 "Urgh. Damn, hurts........ But I refuse... to........"
             )
@@ -280,8 +281,8 @@ scripts = {
     ['1-1-abelon-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
+            focus(1, 170),
             wait(0.5),
-            focus(2, 100),
             lookAt(1, 2),
             say(1, 2, false,
                 "Abelon, no! NO!"
@@ -293,13 +294,13 @@ scripts = {
     ['1-1-turnlimit-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
+            focus(1, 170),
             wait(0.5),
-            focus(2, 100),
             lookDir(1, RIGHT),
             lookAt(2, 1),
             say(1, 2, false,
-                "Damn, we've lost too much time here already! We'll never \z
-                 make it to the north gate in time. It's all over..."
+                "Damn, we've lost too much time here already, we'll never \z
+                 make it to the north gate in time! It's all over..."
             )
         },
         ['result'] = {}

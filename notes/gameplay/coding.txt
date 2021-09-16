@@ -42,14 +42,7 @@ farther away from the allies should also be prioritized.
 
 #62:
 
-Bonus experience for a faster finish! You get more exp for dragging out battles
-and tanking and healing a lot, so to balance that out, grant experience for each
-turn between the turns completed in and the turn limit. 15exp.
-
-Display bexp gain on the victory menu, and do the level ups in between the
-victory menu and the victory scene.
-
-Defeat menu shouldn't move the battle camera off of Abelon
+Do bexp level ups in between the victory menu and the victory scene
 
 #69:
 
@@ -60,6 +53,9 @@ Discover Elaine if you head north.
 Finding Elaine should be a battle. Race a wolf to get to her! Not only is it
 a race, the wolf only targets her. Kath can get in the way, but Abelon is further
 behind, and you need to kill it before it gets to Elaine.
+
+Elaine is an ally unit for the purposes of the battle, but has status debuffs
+that make her unable to move, attack, or assist
 
 Once she's saved and the battle is over, find her the right medicine to heal her,
 and she'll join the party!

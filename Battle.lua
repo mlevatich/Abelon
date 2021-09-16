@@ -446,6 +446,8 @@ function Battle:checkWinLose()
             local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
             self:suspend(scene_id, function()
                 self.stack = {}
+                self.battle_cam_x = self.chapter.camera_x
+                self.battle_cam_y = self.chapter.camera_y
                 self:openDefeatMenu()
             end)
             return true
