@@ -389,7 +389,9 @@ scripts = {
             focus(1, 100),
             waitForEvent('camera')
         },
-        ['result'] = {}
+        ['result'] = {
+            ['do'] = function(c) c:healAll() end
+        }
     },
 
     ['medallion-use'] = {

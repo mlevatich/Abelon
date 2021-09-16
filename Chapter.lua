@@ -266,6 +266,13 @@ function Chapter:battleInput(up, down, left, right, f, d)
     }
 end
 
+function Chapter:healAll()
+    for i = 1, #self.player.party do
+        local sp = self.player.party[i]
+        sp.health = sp.attributes['endurance']
+    end
+end
+
 -- Start scene with the given scene id
 function Chapter:launchScene(s_id, returnToBattle)
     self.player:changeMode('scene')
