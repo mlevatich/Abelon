@@ -5,13 +5,16 @@ SECTION: GAME ENTRY-EXIT PROCEDURES
 
 #16:
 
+Keep music and volume settings on hitting chapter/battle restart
+
+Quitting the game without saving mid-battle and restarting should return the
+player to the BEGINNING of the battle, not to their last mid-battle save.
+
 Title screen v0 (continue (if save file detected), new game ->
 choose difficulty)
 
 Implement game start scene, implement ??? for sprites whose names are not known
 to the player. Learning a name is a scene event.
-
-Keep music and volume settings on hitting chapter/battle restart
 
 #48:
 
@@ -39,10 +42,6 @@ target, the acting enemy shouldn't get in the way of that path unless it
 needs to in order to attack its own target. To minimize interference in general,
 the strongest enemies should take their turns first, and the enemies who start
 farther away from the allies should also be prioritized.
-
-#62:
-
-Do bexp level ups in between the victory menu and the victory scene
 
 #69:
 

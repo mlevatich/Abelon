@@ -67,7 +67,7 @@ function Menu:initialize(parent, menu_items, x, y, forced, confirm_msg, clr)
     self:initSubmenus()
 end
 
-function LevelupMenu(sp, n, interrupting)
+function LevelupMenu(sp, n)
 
     -- Increment function
     local incrAttr = function(i)
@@ -75,12 +75,7 @@ function LevelupMenu(sp, n, interrupting)
             sp.attributes[i] = sp.attributes[i] + 1
             if i == 'endurance' then sp.health = sp.health + 1 end
             if i == 'focus'     then sp.ignea  = sp.ignea  + 1 end
-            c.battle:closeMenu()
-            c.battle:push({
-                ['stage'] = STAGE_WATCH,
-                ['sp'] = interrupting,
-                ['views'] = {}
-            })
+            c.battle.stack[#c.battle.stack]['menu'] = nil
         end
     end
 

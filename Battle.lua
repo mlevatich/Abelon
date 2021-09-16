@@ -247,8 +247,11 @@ function Battle:getCursor(n)
 end
 
 function Battle:getMenu()
-    local st = self.stack[#self.stack]
-    return st['menu']
+    if next(self.stack) ~= nil then
+        local st = self.stack[#self.stack]
+        return st['menu']
+    end
+    return nil
 end
 
 function Battle:getSprite()
@@ -509,20 +512,27 @@ function Battle:openBattleStartMenu()
 end
 
 function Battle:openVictoryMenu()
-    local m = { MenuItem:new('Continue', {}, 'Finish the battle', nil,
+    self:awardBonusExp()
+    local desc = ite(self.render_bexp and self.render_bexp > 0,
+        'Award bonus exp', 'Finish the battle'
+    )
+    local m = { MenuItem:new('Continue', {}, desc, nil,
         function(c)
             self.render_bexp = false
-            -- TODO: if levelup queue is non empty, handle levelups as a result from
-            -- this menu
-            -- Maybe make use of STAGE_LEVELUP, where the stack element has an
-            -- 'interrupting' doneAction? idk.
-            self.chapter:launchScene(self.id .. '-victory')
-            self.chapter:startMapMusic()
-            self.chapter.battle = nil
+            c.battle:getMenu().menu_items[1].hover_desc = 'Finish the battle'
+            if next(self.levelup_queue) then
+                self:push({
+                    ['stage'] = STAGE_LEVELUP,
+                    ['views'] = {}
+                })
+            else
+                self.chapter:launchScene(self.id .. '-victory')
+                self.chapter:startMapMusic()
+                self.chapter.battle = nil
+            end
         end
     )}
     local v = { "     V I C T O R Y     " }
-    self:awardBonusExp()
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN), {})
 end
 
@@ -538,7 +548,7 @@ end
 
 function Battle:openEndTurnMenu()
     self.stack = {}
-    local m = { MenuItem:new('End turn', {}, nil, nil,
+    local m = { MenuItem:new('End turn', {}, 'Begin enemy phase', nil,
         function(c)
             self:closeMenu()
             self:endTurn()
@@ -550,7 +560,7 @@ end
 
 function Battle:openBeginTurnMenu()
     self.stack = {}
-    local m = { MenuItem:new('Begin turn', {}, nil, nil,
+    local m = { MenuItem:new('Begin turn', {}, 'Begin ally phase', nil,
         function(c)
             self:closeMenu()
             self:turnRefresh()
@@ -667,15 +677,15 @@ function Battle:openOptionsMenu()
     self:openMenu(Menu:new(nil, m, BOX_MARGIN, BOX_MARGIN, false), {})
 end
 
-function Battle:openLevelupMenu(sp, n, interrupting)
+function Battle:openLevelupMenu(sp, n)
     local m = { MenuItem:new('Level up', {}, nil, nil,
         function(c)
-            self:closeMenu()
-            self:openMenu(LevelupMenu(sp, n, interrupting), {})
+            self.stack[#self.stack]['menu'] = LevelupMenu(sp, n)
         end
     )}
     local l = { "     L E V E L   U P     " }
-    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN), {})
+    local menu = Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN)
+    self.stack[#self.stack]['menu'] = menu
 end
 
 function Battle:endAction(used_assist)
@@ -1156,6 +1166,7 @@ function Battle:update(keys, dt)
 
     -- Control determined by stage
     local s     = self:getStage()
+    local m     = self:getMenu()
     local d     = keys['d']
     local f     = keys['f']
     local up    = keys['up']
@@ -1163,7 +1174,7 @@ function Battle:update(keys, dt)
     local left  = keys['left']
     local right = keys['right']
 
-    if s == STAGE_MENU then
+    if m then
 
         -- Menu navigation
         local m = self:getMenu()
@@ -1177,8 +1188,9 @@ function Battle:update(keys, dt)
         end
 
         if done then self:closeMenu() end
+    end
 
-    elseif s == STAGE_FREE then
+    if s == STAGE_FREE then
 
         -- Free map navagation
         local x, y = self:newCursorPosition(up, down, left, right)
@@ -1269,6 +1281,14 @@ function Battle:update(keys, dt)
         -- Clean up after actions are performed
         if not self.action_in_progress then
 
+            if next(self.levelup_queue) then
+                self:push({
+                    ['stage'] = STAGE_LEVELUP,
+                    ['views'] = {}
+                })
+                return
+            end
+
             -- Check triggers
             if self:checkTriggers(END_ACTION) then
                 return
@@ -1278,17 +1298,6 @@ function Battle:update(keys, dt)
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
-
-            -- Check levelups
-            local k, v = next(self.levelup_queue)
-            if k then
-                self:openLevelupMenu(self.status[k]['sp'], v, sp)
-                self.levelup_queue[k] = self.levelup_queue[k] - 1
-                if self.levelup_queue[k] == 0 then
-                    self.levelup_queue[k] = nil
-                end
-                return
-            end
 
             -- Check win and loss
             if self:checkWinLose() then return end
@@ -1331,6 +1340,22 @@ function Battle:update(keys, dt)
                 if all_enemies_acted and enemies_alive then
                     self:beginTurn()
                 end
+            end
+        end
+
+    elseif s == STAGE_LEVELUP then
+
+        -- Check levelups
+        if not m then
+            local k, v = next(self.levelup_queue)
+            if k then
+                self:openLevelupMenu(self.status[k]['sp'], v)
+                self.levelup_queue[k] = self.levelup_queue[k] - 1
+                if self.levelup_queue[k] == 0 then
+                    self.levelup_queue[k] = nil
+                end
+            else
+                self:pop()
             end
         end
     end
@@ -2242,13 +2267,6 @@ function Battle:renderOverlay(cam_x, cam_y)
                 self:renderHoverBoxes(cam_x, cam_y, ibox, w, ih, obox, oh, clr)
             end
 
-            -- Render what turn it is in the lower right
-            local turn_str = 'Turn ' .. self.turn
-            renderString(turn_str,
-                cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
-                cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
-            )
-
             -- Render battle text if not in a menu
             if s ~= STAGE_MENU then
                 self:renderBattleText(cam_x, cam_y)
@@ -2259,10 +2277,19 @@ function Battle:renderOverlay(cam_x, cam_y)
     end
 
     -- Render menu if there is one
-    if s == STAGE_MENU then
-        local m = self:getMenu()
+    local m = self:getMenu()
+    if m then
         m:render(cam_x, cam_y, self.chapter)
         if self.render_bexp then self:renderBexp(cam_x, cam_y) end
+    end
+
+    -- Render what turn it is in the lower right
+    if s and s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
+        local turn_str = 'Turn ' .. self.turn
+        renderString(turn_str,
+            cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
+            cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
+        )
     end
 end
 
