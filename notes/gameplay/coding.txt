@@ -46,10 +46,10 @@ Bonus experience for a faster finish! You get more exp for dragging out battles
 and tanking and healing a lot, so to balance that out, grant experience for each
 turn between the turns completed in and the turn limit. 15exp.
 
-Defeat menu shouldn't move the battle camera off of Abelon
-
 Display bexp gain on the victory menu, and do the level ups in between the
 victory menu and the victory scene.
+
+Defeat menu shouldn't move the battle camera off of Abelon
 
 #69:
 

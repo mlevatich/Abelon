@@ -63,7 +63,7 @@ function Chapter:initialize(id)
     self.player = nil
 
     -- Difficulty level
-    self.difficulty = MASTER
+    self.difficulty = NORMAL
 
     -- State of a chapter a dictionary of strings that correspond to different
     -- chapter events and determine quest progress, cinematic triggers, and

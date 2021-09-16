@@ -82,6 +82,7 @@ function Battle:initialize(battle_id, player, chapter)
     self.shade_dir = 1
     self.action_in_progress = nil
     self.skill_in_use = nil
+    self.render_bexp = false
     self.levelup_queue = {}
 
     -- Music
@@ -462,6 +463,22 @@ function Battle:checkWinLose()
     return false
 end
 
+function Battle:awardBonusExp()
+    local bexp = 0
+    if self.turnlimit then
+        bexp = bexp + (self.turnlimit - self.turn) * 15
+        self.render_bexp = bexp
+    end
+    for i = 1, #self.participants do
+        local sp = self.participants[i]
+        if self:isAlly(sp) then
+            local lvlups = sp:gainExp(bexp)
+            if lvlups > 0 then self.levelup_queue[sp:getId()] = lvlups end
+        end
+    end
+    return bexp
+end
+
 function Battle:openBattleStartMenu()
     local save = function(c)
         self:closeMenu()
@@ -492,12 +509,18 @@ end
 function Battle:openVictoryMenu()
     local m = { MenuItem:new('Continue', {}, 'Finish the battle', nil,
         function(c)
+            self.render_bexp = false
+            -- TODO: if levelup queue is non empty, handle levelups as a result from
+            -- this menu
+            -- Maybe make use of STAGE_LEVELUP, where the stack element has an
+            -- 'interrupting' doneAction? idk.
             self.chapter:launchScene(self.id .. '-victory')
             self.chapter:startMapMusic()
             self.chapter.battle = nil
         end
     )}
     local v = { "     V I C T O R Y     " }
+    self:awardBonusExp()
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN), {})
 end
 
@@ -2143,6 +2166,22 @@ function Battle:renderBattleText(cam_x, cam_y)
     renderString(hover_str, x, y)
 end
 
+function Battle:renderBexp(x, y)
+    local bexp = self.render_bexp
+    local saved = self.turnlimit - self.turn
+    local msg1 = saved .. " turns saved * 15 exp"
+    local msg2 = bexp .. " bonus exp"
+
+    local computeX = function(s)
+        return x + VIRTUAL_WIDTH - BOX_MARGIN - #s * CHAR_WIDTH
+    end
+    local base_y = y + BOX_MARGIN
+    love.graphics.setColor(unpack(DISABLE))
+    renderString(msg1, computeX(msg1), base_y, true)
+    love.graphics.setColor(unpack(HIGHLIGHT))
+    renderString(msg2, computeX(msg2), base_y + LINE_HEIGHT, true)
+end
+
 function Battle:renderGrid()
 
     -- Draw grid at fixed position
@@ -2221,6 +2260,7 @@ function Battle:renderOverlay(cam_x, cam_y)
     if s == STAGE_MENU then
         local m = self:getMenu()
         m:render(cam_x, cam_y, self.chapter)
+        if self.render_bexp then self:renderBexp(cam_x, cam_y) end
     end
 end
 
