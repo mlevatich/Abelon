@@ -42,12 +42,13 @@ binser.register(Chapter)
 function love.load()
 
     -- Set up a screen with the virtual width and height
+    local WINDOW_WIDTH, WINDOW_HEIGHT = love.window.getDesktopDimensions()
     push:setupScreen(
         VIRTUAL_WIDTH,
         VIRTUAL_HEIGHT,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
-        { fullscreen = false, resizable = true }
+        { fullscreen = true, resizable = true }
     )
     love.window.setTitle('Abelon')
 

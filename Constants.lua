@@ -10,10 +10,6 @@ ARR = 2
 TILE_WIDTH     = 32
 TILE_HEIGHT    = 32
 
--- Actual window resolution
-WINDOW_WIDTH   = 1280
-WINDOW_HEIGHT  = 720
-
 -- Apparent game resolution
 VIRTUAL_WIDTH  = 864
 VIRTUAL_HEIGHT = 486

@@ -45,8 +45,8 @@ SECTION: MAP WORK
 
 #57:
 
-Fix screen tearing - each map has a background color instead of black that
-blends in well with the tiles.
+Fix screen tearing - 33 x 33 tiles with the extra pixels on the bottom and right
+sides of the tile (since rendering is done from the top left)
 
 Split forest into three maps (west, south, north) with slightly different
 tilesets/lighting/coloring

@@ -245,9 +245,9 @@ function Map:applyLightSources()
             -- For each tile, add the light coming from every source on the map
             local alpha = self.lit
             local total = {
-                ['r'] = self.ambient[1]/255,
-                ['g'] = self.ambient[2]/255,
-                ['b'] = self.ambient[3]/255
+                ['r'] = self.ambient[1] / 255,
+                ['g'] = self.ambient[2] / 255,
+                ['b'] = self.ambient[3] / 255
             }
             for i=1, #self.lights do
 
@@ -338,5 +338,5 @@ for i = 1, #map_ids do
     local map = map_graphics[n][tileset]
     local img_file = 'graphics/tilesets/' .. n .. '/' .. tileset .. '.png'
     map['tilesheet'] = love.graphics.newImage(img_file)
-    map['quads'] = generateQuads(map['tilesheet'], TILE_WIDTH, TILE_HEIGHT)
+    map['quads'] = generateQuads(map['tilesheet'], TILE_WIDTH+1, TILE_HEIGHT+1)
 end
