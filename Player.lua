@@ -187,6 +187,24 @@ function Player:mkSettingsMenu()
                 MenuItem:new('High', {}, nil, nil, sv('t', HIGH), nil, iv('t', HIGH))
             }, 'Set text volume')
         }, 'Change audio settings'),
+        MenuItem:new('Turn end', {
+            MenuItem:new('Auto', {},
+                "Turn automatically ends after all allies have acted",
+                nil, function(c) c.turn_autoend = true end, nil,
+                function(c)
+                    clr = ite(c.turn_autoend, HIGHLIGHT, WHITE)
+                    love.graphics.setColor(unpack(clr))
+                end
+            ),
+            MenuItem:new('Manual', {},
+                "'End turn' must be selected from the options menu",
+                nil, function(c) c.turn_autoend = false end, nil,
+                function(c)
+                    clr = ite(c.turn_autoend, WHITE, HIGHLIGHT)
+                    love.graphics.setColor(unpack(clr))
+                end
+            )
+        }, 'Change turn ending behavior in battle'),
         self:mkDifficultyMenu()
     }, 'View settings and information')
 end

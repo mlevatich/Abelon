@@ -514,13 +514,10 @@ end
 
 function Battle:openVictoryMenu()
     self:awardBonusExp()
-    local desc = ite(self.render_bexp and self.render_bexp > 0,
-        'Award bonus exp', 'Finish the battle'
-    )
+    local desc = 'Finish the battle'
     local m = { MenuItem:new('Continue', {}, desc, nil,
         function(c)
             self.render_bexp = false
-            c.battle:getMenu().menu_items[1].hover_desc = 'Finish the battle'
             if next(self.levelup_queue) then
                 self:push({
                     ['stage'] = STAGE_LEVELUP,
@@ -1320,7 +1317,7 @@ function Battle:update(keys, dt)
                     ally_phase_over = false
                 end
             end
-            if ally_phase_over then
+            if ally_phase_over and self.chapter.turn_autoend then
                 self:openEndTurnMenu()
             else
 

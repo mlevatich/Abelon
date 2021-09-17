@@ -46,7 +46,8 @@ function Chapter:initialize(id)
     self.map_to_music = {}
     self.current_music = nil
 
-    -- Volume levels
+    -- Settings
+    self.turn_autoend = true
     self.music_volume = OFF
     self.sfx_volume   = OFF
     self.text_volume  = OFF
