@@ -1,15 +1,13 @@
 What to do next, organized into sections and issues! (please commit each
 paragraph separately for your own sanity)
 
-SECTION: GAME ENTRY-EXIT PROCEDURES
+SECTION: ENGINE WORK
 
-Keep music and volume settings on hitting chapter/battle restart
-
-Learning a skill doesn't pull you out of the inventory.
+#MISC:
 
 Settings: add turn auto-end
 
-Battle begin menu: add party to this menu, so that skills are learnable
+Keep music, volume, and turn auto-end settings on hitting chapter/battle restart
 
 Quitting the game without saving mid-battle and restarting should return the
 player to the BEGINNING of the battle, not to their last mid-battle save
@@ -31,16 +29,13 @@ Combat guide accessible from battle begin menu or options.
 
 Post battle levelup / skilltree guide should show up after the first battle
 
+All three of these should share a single custom menu type, 'large_popup' or
+something, which is passed elements just like a hover box.
+
 #59:
 
 Chapter end trigger. Displays a chapter 1 endcard, bridge scene, and chapter 2
 start card (Teaser). Kicks you back to the title screen
-
-
-
-
-
-SECTION: COMBAT ENGINE EXTENSIONS
 
 #61:
 
@@ -50,22 +45,6 @@ target, the acting enemy shouldn't get in the way of that path unless it
 needs to in order to attack its own target. To minimize interference in general,
 the strongest enemies should take their turns first, and the enemies who start
 farther away from the allies should also be prioritized.
-
-#69:
-
-Add elaine sprite
-
-Discover Elaine if you head north.
-
-Finding Elaine should be a battle. Race a wolf to get to her! Not only is it
-a race, the wolf only targets her. Kath can get in the way, but Abelon is further
-behind, and you need to kill it before it gets to Elaine.
-
-Elaine is an ally unit for the purposes of the battle, but has status debuffs
-that make her unable to move, attack, or assist
-
-Once she's saved and the battle is over, find her the right medicine to heal her,
-and she'll join the party!
 
 
 
@@ -88,10 +67,32 @@ Redo forest tileset to use 2x2 trees
 #9:
 
 Expand lighting engine. Flickering, smoothing, obstacle detection, proper color
-computation.
+computation (see note on phone).
 
 Add point lights to the forest to test: blocking, animated, torch-in-ground
 sprite, facing either left or right.
+
+
+
+
+
+SECTION: COMBAT ENGINE EXTENSIONS
+
+#69:
+
+Add elaine sprite
+
+Discover Elaine if you head north.
+
+Finding Elaine should be a battle. Race a wolf to get to her! Not only is it
+a race, the wolf only targets her. Kath can get in the way, but Abelon is further
+behind, and you need to kill it before it gets to Elaine.
+
+Elaine is an ally unit for the purposes of the battle, but has status debuffs
+that make her unable to move, attack, or assist
+
+Once she's saved and the battle is over, find her the right medicine to heal her,
+and she'll join the party!
 
 
 

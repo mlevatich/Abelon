@@ -499,6 +499,7 @@ function Battle:openBattleStartMenu()
         'View victory and defeat conditions', self:buildObjectivesBox()
     )
     local settings = self.player:mkSettingsMenu()
+    local party = self.player:mkPartyMenu()
     local restart = MenuItem:new('Restart chapter', {}, 'Start the chapter over',
         nil, function(c) c:reloadChapter() end,
         "Are you SURE you want to restart the chapter? You will lose ALL \z
@@ -507,7 +508,7 @@ function Battle:openBattleStartMenu()
     local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, save,
         "Save current progress and close the game?"
     )
-    local m = { wincon, settings, restart, quit, begin }
+    local m = { wincon, party, settings, restart, quit, begin }
     self:openMenu(Menu:new(nil, m, BOX_MARGIN, BOX_MARGIN, true), {})
 end
 

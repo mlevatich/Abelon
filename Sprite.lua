@@ -322,7 +322,39 @@ function Sprite:mkLearnable(sk_id, sk_item)
         end
         sk_item.action = function(c)
             self:learn(sk_id)
-            c.player:changeMode('free')
+            local m = nil
+            if c.player.open_menu then
+                c.player:openInventory()
+                m = c.player.open_menu
+            else
+                c.battle:closeMenu()
+                c.battle:openBattleStartMenu()
+                m = c.battle:getMenu()
+            end
+
+            -- Stupid
+            m:hover(DOWN)
+            m:forward()
+            for i = 1, #c.player.party do
+                if c.player.party[i] == self then break end
+                m:hover(DOWN)
+            end
+            m:forward()
+            m:hover(DOWN)
+            m:forward()
+            local skt = self.skill_trees
+            local k = 1
+            while k <= #skt do
+                if skt[k]['name'] == skills[sk_id].tree_id then break end
+                m:hover(DOWN)
+                k = k + 1
+            end
+            m:forward()
+            local sks = self.skill_trees[k]['skills']
+            for i = 1, #sks do
+                if sks[i].id == sk_id then break end
+                m:hover(DOWN)
+            end
         end
         local cm, _ = splitByCharLimit(
             "Spend one skill point to learn " .. sk_item.name .. "?",
@@ -414,8 +446,8 @@ function Sprite:buildAttributeBox(tmp_attrs)
         return icons[str_to_icon[self.skill_trees[i]['name']]]
     end
     local learnedIn = function(tn)
-        local tree = self.skill_trees[tn]['skills']
-        return filter(function(s) return find(self.skills, s) end, tree)
+        local name = self.skill_trees[tn]['name']
+        return #filter(function(s) return s.tree_id == name end, self.skills)
     end
     local aC = function(s)
         local old = self.attributes
@@ -478,12 +510,12 @@ function Sprite:buildAttributeBox(tmp_attrs)
             mkEle('image', icon(1), skills_ind - 25, line(2), icon_texture),
             mkEle('image', icon(2), skills_ind - 25, line(4), icon_texture),
             mkEle('image', icon(3), skills_ind - 25, line(6), icon_texture),
-            mkEle('text', {tostring(#learnedIn(1))},
-                skills_ind + indent2,       line(3)),
-            mkEle('text', {tostring(#learnedIn(2))},
-                skills_ind + indent2,       line(5)),
-            mkEle('text', {tostring(#learnedIn(3))},
-                skills_ind + indent2,       line(7))
+            mkEle('text', {tostring(learnedIn(1))},
+                skills_ind + indent2, line(3)),
+            mkEle('text', {tostring(learnedIn(2))},
+                skills_ind + indent2, line(5)),
+            mkEle('text', {tostring(learnedIn(3))},
+                skills_ind + indent2, line(7))
         })
     end
 

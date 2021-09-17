@@ -60,13 +60,17 @@ function Player:openInventory()
 
     -- Make menu
     local inv_ch = mapf(function(sp) return sp:toItem() end, self.inventory)
-    local party_ch = mapf(function(sp) return sp:toPartyMember() end, self.party)
-
     local inv_m = MenuItem:new('Items', inv_ch, 'View possessions')
-    local party_m = MenuItem:new('Party', party_ch, 'View traveling companions')
 
-    -- Open inventory menu
-    self:openMenu({ inv_m, party_m, self:mkSettingsMenu(), self:mkQuitMenu() })
+    -- Open inventory menu(
+    self:openMenu(
+        { inv_m, self:mkPartyMenu(), self:mkSettingsMenu(), self:mkQuitMenu() }
+    )
+end
+
+function Player:mkPartyMenu()
+    local party = mapf(function(sp) return sp:toPartyMember() end, self.party)
+    return MenuItem:new('Party', party, 'View traveling companions')
 end
 
 function Player:mkQuitMenu()
