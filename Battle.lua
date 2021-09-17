@@ -169,9 +169,9 @@ function Battle:adjustDifficultyFrom(old)
             self:openBattleStartMenu()
             local m = self:getMenu()
             m:hover(DOWN)
+            m:hover(DOWN)
             m:forward()
-            m:hover(DOWN)
-            m:hover(DOWN)
+            m:hover(UP)
             m:forward()
             for i = 1, new - 1 do m:hover(DOWN) end
         end
@@ -487,7 +487,6 @@ end
 function Battle:openBattleStartMenu()
     local save = function(c)
         self:closeMenu()
-        self.start_save = true
         c:saveAndQuit()
     end
     local next = function(c)
@@ -651,8 +650,7 @@ end
 function Battle:openOptionsMenu()
     local save = function(c)
         self:closeMenu()
-        self.start_save = false
-        c:saveAndQuit()
+        c:quicksave()
     end
     local endfxn = function(c)
         self:closeMenu()
@@ -663,13 +661,14 @@ function Battle:openOptionsMenu()
     )
     local end_turn = MenuItem:new('End turn', {}, 'End your turn', nil, endfxn)
     local settings = self.player:mkSettingsMenu()
-    table.remove(settings.children) -- Delete difficulty setting
+    table.remove(settings.children)
     local restart = MenuItem:new('Restart battle', {},
         'Start the battle over', nil, function(c) c:reloadBattle() end,
         "Start the battle over from the beginning?"
     )
-    local quit = MenuItem:new('Save and quit', {}, 'Quit the game', nil, save,
-        "Save battle state and close the game?"
+    local quit = MenuItem:new('Suspend game', {},
+        'Suspend battle state and quit', nil, save,
+        "Create a temporary save and close the game?"
     )
     local m = { wincon, settings, restart, quit, end_turn }
     self:openMenu(Menu:new(nil, m, BOX_MARGIN, BOX_MARGIN, false), {})
@@ -704,16 +703,23 @@ end
 function Battle:buildReadyingBox(sp)
 
     -- Start with basic skill box
-    local prep = self.status[sp:getId()]['prepare']
+    local stat = self.status[sp:getId()]
+    local prep = stat['prepare']
     local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false)
 
-    -- Add target priority
-    if prep['prio'][1] == FORCED then
-        prep['prio'][2] = self.status[prep['prio'][2]]['sp']:getName()
+    -- Update priority for this sprite (would happen later anyway)
+    if hasSpecial(stat['effects'], {}, 'enrage') then
+        prep['prio'] = { FORCED, 'kath' }
     end
-    hbox = concat(hbox, prep['sk']:mkPrioElements(prep['prio']))
 
-    -- add enemy order
+    -- Make prio elements
+    local send = { prep['prio'][1] }
+    if send[1] == FORCED then
+        send[2] = self.status[prep['prio'][2]]['sp']:getName()
+    end
+    hbox = concat(hbox, prep['sk']:mkPrioElements(send))
+
+    -- Add enemy order
     local o = 0
     for i = 1, #self.enemy_order do
         if self.enemy_order[i] == sp:getId() then o = i end

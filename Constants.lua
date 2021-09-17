@@ -21,6 +21,7 @@ VIRTUAL_HEIGHT = 486
 -- Saving and reloading constants
 SAVE_DIRECTORY = 'data/savedata/'
 AUTO_SAVE      = 'save.dat'
+QUICK_SAVE     = 'quicksave.dat'
 BATTLE_SAVE    = 'battle_save.dat'
 CHAPTER_SAVE   = 'chapter_save.dat'
 RELOAD_BATTLE  = 0

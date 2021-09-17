@@ -3,11 +3,6 @@ paragraph separately for your own sanity)
 
 SECTION: ENGINE WORK
 
-#MISC:
-
-Quitting the game without saving mid-battle and restarting should return the
-player to the BEGINNING of the battle, not to their last mid-battle save
-
 #16:
 
 Title screen v0 (continue (if save file detected), new game ->

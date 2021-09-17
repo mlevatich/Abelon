@@ -64,7 +64,7 @@ function Chapter:initialize(id)
     self.player = nil
 
     -- Difficulty level
-    self.difficulty = NORMAL
+    self.difficulty = MASTER
 
     -- State of a chapter a dictionary of strings that correspond to different
     -- chapter events and determine quest progress, cinematic triggers, and
@@ -90,6 +90,11 @@ end
 function Chapter:autosave(silent)
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. AUTO_SAVE, self)
     self.autosave_flash = ite(silent, 0, 1)
+end
+
+function Chapter:quicksave()
+    binser.writeFile('abelon/' .. SAVE_DIRECTORY .. QUICK_SAVE, self)
+    love.event.quit(0)
 end
 
 function Chapter:saveBattle()
@@ -250,7 +255,6 @@ end
 function Chapter:launchBattle(b_id)
     self.current_scene = nil
     self.battle = Battle:new(b_id, self.player, self)
-    self.battle.start_save = true
     self:saveBattle()
     self.battle:openBattleStartMenu()
 end
