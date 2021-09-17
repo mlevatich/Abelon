@@ -72,13 +72,26 @@ function Game:update(dt)
     local signal = self.chapter:update(dt)
 
     -- Detect and handle chapter change or reload
-    if signal == RELOAD_BATTLE then
-        self:loadSave(BATTLE_SAVE)
-        self.chapter.battle:openBattleStartMenu()
-    elseif signal == RELOAD_CHAPTER then
-        self:loadSave(CHAPTER_SAVE)
-    elseif signal == END_CHAPTER then
-        self:nextChapter()
+    if signal then
+
+        local set_ta = self.chapter.turn_autoend
+        local set_mv = self.chapter.music_volume
+        local set_sv = self.chapter.sfx_volume
+        local set_tv = self.chapter.text_volume
+        if signal == RELOAD_BATTLE then
+            self:loadSave(BATTLE_SAVE)
+            self.chapter.battle:openBattleStartMenu()
+        elseif signal == RELOAD_CHAPTER then
+            self:loadSave(CHAPTER_SAVE)
+        elseif signal == END_CHAPTER then
+            self:nextChapter()
+        end
+        self.chapter.turn_autoend = set_ta
+        self.chapter.music_volume = set_mv
+        self.chapter.sfx_volume   = set_sv
+        self.chapter.text_volume  = set_tv
+        self.chapter:setSfxVolume(set_sv)
+        -- self.chapter:setTextVolume(set_tv)
     end
 end
 

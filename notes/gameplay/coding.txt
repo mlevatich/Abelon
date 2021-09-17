@@ -5,10 +5,6 @@ SECTION: ENGINE WORK
 
 #MISC:
 
-Settings: add turn auto-end
-
-Keep music, volume, and turn auto-end settings on hitting chapter/battle restart
-
 Quitting the game without saving mid-battle and restarting should return the
 player to the BEGINNING of the battle, not to their last mid-battle save
 
@@ -93,6 +89,8 @@ that make her unable to move, attack, or assist
 
 Once she's saved and the battle is over, find her the right medicine to heal her,
 and she'll join the party!
+
+Update exp table to account for bonus exp
 
 
 

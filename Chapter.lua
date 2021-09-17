@@ -48,9 +48,9 @@ function Chapter:initialize(id)
 
     -- Settings
     self.turn_autoend = true
-    self.music_volume = OFF
-    self.sfx_volume   = OFF
-    self.text_volume  = OFF
+    self.music_volume = HIGH
+    self.sfx_volume   = HIGH
+    self.text_volume  = HIGH
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
 
