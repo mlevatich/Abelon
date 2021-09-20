@@ -24,7 +24,7 @@ function Player:initialize(sp)
 
     -- Abelon has different modes to account for the player's keyboard input
     self.modes = {
-        ['frozen'] = function(p) p:stillMode()  end,
+        ['frozen'] = function(p) p:frozenMode()  end,
         ['free']   = function(p) p:freeMode()   end,
         ['scene']  = function(p) p:sceneMode()  end,
         ['browse'] = function(p) p:browseMode() end,
@@ -414,7 +414,7 @@ function Player:isInteractive() return self.sp:isInteractive() end
 function Player:isBlocking() return self.sp:isBlocking() end
 function Player:toMenuItem() return self.sp:toMenuItem() end
 function Player:resetPosition(a, b) return self.sp:resetPosition(a, b) end
-function Player:move(a, b) return self.sp:stop(a, b) end
+function Player:move(a, b) return self.sp:move(a, b) end
 function Player:stop() return self.sp:stop() end
 function Player:updatePosition(a, b, c) return self.sp:updatePosition(a, b, c) end
 function Player:changeImpression(a) return self.sp:changeImpression(a) end

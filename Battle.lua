@@ -1012,8 +1012,7 @@ function Battle:playAction()
                         local did = dead[i]:getId()
                         local stat = self.status[did]
                         if stat['team'] == ENEMY then
-                            dead[i]:resetPosition(0, 0)
-                            dead[i]:changeBehavior('battle')
+                            self.chapter:getMap():dropSprite(did)
                         end
                     end)
                     return pass
@@ -2251,8 +2250,10 @@ function Battle:renderOverlay(cam_x, cam_y)
 
     -- Render healthbars below each sprite, and status markers above
     for i = 1, #self.participants do
-        self:renderHealthbar(self.participants[i])
-        self:renderStatus(self.participants[i])
+        if self.chapter:getMap():getSprite(self.participants[i]:getId()) then
+            self:renderHealthbar(self.participants[i])
+            self:renderStatus(self.participants[i])
+        end
     end
 
     -- No overlay if stack has no cursors

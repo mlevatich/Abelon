@@ -106,8 +106,12 @@ end
 function teleport(p1, tile_x, tile_y)
     return function(scene)
         local sp1 = scene.participants[p1]
-        local x, y = scene.chapter:getMap():tileToPixels(tile_x, tile_y)
+        local m = scene.chapter:getMap()
+        local x, y = m:tileToPixels(tile_x, tile_y)
         sp1:resetPosition(x, y)
+        if not m:getSprite(sp1:getId()) then
+            m:addSprite(sp1)
+        end
     end
 end
 
@@ -316,7 +320,7 @@ scripts = {
                 "*huff* *huff* Ach, they aren't so tough when it's just a \z
                  couple of the bastards."
             ),
-            walk(true, 2, 42, 70, 'walk'),
+            walk(true, 2, 42, 12, 'walk'),
             waitForEvent('walk'),
             face(1, 2),
             walkTo(true, 1, 2, LEFT, 'walk'),
@@ -373,7 +377,7 @@ scripts = {
                 "We'll have to keep an eye out for more wolves - I'll follow \z
                  behind you and watch our back."
             ),
-            walk(true, 2, 43, 68, 'walk'),
+            walk(true, 2, 43, 10, 'walk'),
             waitForEvent('walk'),
             lookDir(2, RIGHT),
             wait(0.5),
@@ -415,204 +419,13 @@ scripts = {
         ['events'] = {
             face(1, 2),
             focus(2, 100),
-            say(2, 1, true,
-                "Ho, Abelon! By Ignus, it's good to be alive! I must say, that \z
-                 was one of our closer brushes with death. But we made it, as we \z
-                 always do."
-            ),
-            choice({
-                {
-                    ['response'] = "Thanks to me",
-                    ['events'] = {
-                        say(2, 1, true,
-                            "Yes, that magic was... something, wasn't it. Where \z
-                             on Eruta did you discover such spells?"
-                        )
-                    },
-                    ['result'] = {}
-                },
-                {
-                    ['response'] = "Thanks to you",
-                    ['events'] = {
-                        say(2, 1, true,
-                            "Come Abelon, we've known each other too long for \z
-                             flattery. That strange magic of yours carried the \z
-                             day. Where on Eruta did you discover such spells?"
-                        )
-                    },
-                    ['result'] = {
-                        ['awareness'] = {0, 1},
-                        ['impressions'] = {-1, 1}
-                    }
-                },
-                {
-                    ['response'] = "We were lucky",
-                    ['events'] = {
-                        say(2, 1, true,
-                            "Lucky's one word for it. I would sooner credit those \z
-                             unholy spells you started slinging. Where on Eruta \z
-                             did you discover such magic?"
-                        )
-                    },
-                    ['result'] = {}
-                }
-            }),
-            focus(2, 50),
-            choice({
-                {
-                    ['response'] = "The Archives",
-                    ['events'] = {
-                        say(2, 1, false,
-                            "You jest! No one makes it through the Ash without a \z
-                             battalion and supplies, not to mention it's a week's \z
-                             journey. I would have caught wind of this \z
-                             expedition, surely!"
-                        )
-                    },
-                    ['result'] = {
-                        ['impressions'] = {0, 1},
-                        ['callback'] = 'kath-interact-base-callback2'
-                    }
-                },
-                {
-                    ['response'] = "My secret",
-                    ['events'] = {
-                        say(2, 2, false,
-                            "Abelon, that's... quite a thing to keep secret. Ah \z
-                             well. I know how you are when you've made up your \z
-                             mind."
-                        )
-                    },
-                    ['result'] = {
-                        ['impressions'] = {0, -1},
-                        ['callback'] = 'kath-interact-base-callback1'
-                    }
-                }
-            }),
-            br(function(c) return c.sprites['kath']:getImpression() > 50 end, {
-                say(2, 1, false,
-                    "I trust you, Abelon."
-                ),
-                say(2, 3, false,
-                    "Let me tell you a little bit about the history of the Kingdom."
-                ),
-                walk(true, 2, 50, 63, 'walk1'),
-                wait(2.5),
-                walk(true, 1, 48, 63, 'walk2'),
-                say(2, 3, true,
-                    "Do you know why the One Kingdom of Ebonach and Mistram is \z
-                     called Lefally?"
-                ),
-                choice({
-                    {
-                        ['response'] = "Yes",
-                        ['events'] = {
-                            say(2, 3, false,
-                                "Of course. Everyone does. Lefally, named after \z
-                                 the proud first city of Lefellen, standing \z
-                                 taller than the northern forest trees..."
-                            ),
-                            waitForEvent('walk1'),
-                            waitForEvent('walk2'),
-                            say(2, 2, false,
-                                "...In the place we now know as The Ash."
-                            ),
-                            lookAt(2, 1),
-                            say(2, 2, false,
-                                "But Abelon, you probably don't know this one. \z
-                                 The truth is, I was born in Lefellen, just \z
-                                 before the dragon attack. Before this whole \z
-                                 nightmare began..."
-                            )
-                        },
-                        ['result'] = {}
-                    },
-                    {
-                        ['response'] = "No",
-                        ['events'] = {
-                            say(2, 3, false,
-                                "Ebonach wasn't always the capital. Indeed, at \z
-                                 the beginning, it didn't exist. Lefally, named \z
-                                 after the proud city of Lefellen, standing \z
-                                 taller than the northern trees..."
-                            ),
-                            waitForEvent('walk1'),
-                            waitForEvent('walk2'),
-                            waitForEvent('camera'),
-                            pan(0, -600, 200),
-                            say(2, 2, false,
-                                "...In the place we now know as The Ash."
-                            ),
-                            say(2, 2, false,
-                                "That cold, desolate wasteland, where the once \z
-                                 proud trees are now flattened, the city reduced \z
-                                 to rubble..."
-                            ),
-                            waitForEvent('camera'),
-                            wait(1),
-                            focus(2, 200),
-                            lookAt(2, 1),
-                            waitForEvent('camera'),
-                            say(2, 2, false,
-                                "I've kept this from you for a long time, but \z
-                                 the truth is, I was born in Lefellen, just \z
-                                 before the dragon attack. Before this whole \z
-                                 nightmare began..."
-                            )
-                        },
-                        ['result'] = {}
-                    }
-                }),
-                wait(0.2),
-                lookDir(2, RIGHT),
-                wait(0.5),
-                lookDir(2, LEFT),
-                wait(1),
-                say(2, 1, false,
-                    "...Well, that was a nice stroll. I've said all I need to, \z
-                     for now."
-                ),
-            },
-            {
-                say(2, 3, false,
-                    "I don't trust you, Abelon."
-                )
-            }),
-            focus(1, 100),
-            waitForEvent('camera')
+            say(2, 1, false,
+                "Ho, Abelon!"
+            )
         },
         ['result'] = {
             ['state'] = 'kath-interact-base'
         }
-    },
-
-    ['kath-interact-base-callback1'] = {
-        ['ids'] = {'abelon', 'kath'},
-        ['events'] = {
-            face(1, 2),
-            say(2, 3, false,
-                "You will tell me eventually, won't you? Or at \z
-                 least His Majesty? If we equipped our mages with \z
-                 those spells of yours, why,"
-            ),
-            say(2, 3, false,
-                "this city might survive the winter after all..."
-            )
-        },
-        ['result'] = {}
-    },
-
-    ['kath-interact-base-callback2'] = {
-        ['ids'] = {'abelon', 'kath'},
-        ['events'] = {
-            face(1, 2),
-            say(2, 1, false,
-                "I'll have to hear more about this trip of yours \z
-                 to the Ash, but perhaps it's best left for \z
-                 another time."
-            )
-        },
-        ['result'] = {}
     },
 
     ['book-interact-base'] = {
@@ -780,7 +593,7 @@ scripts = {
                 "Abelon! At last!"
             ),
             lookAt(1, 2),
-            walk(true, 2, 29, 73, 'walk'),
+            walk(true, 2, 29, 15, 'walk'),
             focus(1, 50),
             say(2, 3, false,
                 "By Ignus, what are you doing out here? The knights are pinned at \z
@@ -800,12 +613,12 @@ scripts = {
             waitForEvent('walk'),
             lookAt(2, 1),
             wait(1),
-            walk(false, 2, 28, 73, 'walk'),
+            walk(false, 2, 28, 15, 'walk'),
             waitForEvent('walk'),
             lookAt(2, 1),
-            teleport(3, 41, 69),
-            teleport(4, 42, 73),
-            teleport(5, 40, 72),
+            teleport(3, 41, 11),
+            teleport(4, 42, 15),
+            teleport(5, 40, 14),
             lookAt(3, 1),
             lookAt(4, 1),
             lookAt(5, 1),
@@ -898,7 +711,7 @@ scripts = {
                     ['result'] = {}
                 }
             }),
-            walk(true, 2, 33, 73, 'walk'),
+            walk(true, 2, 33, 15, 'walk'),
             waitForEvent('walk'),
             wait(0.5),
             say(2, 2, true,
@@ -909,7 +722,7 @@ scripts = {
             focus(2, 100),
             pan(100, -50, 100),
             wait(1),
-            walk(false, 1, 32, 72, 'walk'),
+            walk(false, 1, 32, 14, 'walk'),
             waitForEvent('camera'),
             waitForEvent('walk'),
             choice({

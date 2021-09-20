@@ -46,9 +46,9 @@ function love.load()
     push:setupScreen(
         VIRTUAL_WIDTH,
         VIRTUAL_HEIGHT,
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
-        { fullscreen = true, resizable = true }
+        1280,
+        720,
+        { fullscreen = false, resizable = true }
     )
     love.window.setTitle('Abelon')
 

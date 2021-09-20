@@ -1218,6 +1218,10 @@ function Sprite:updatePosition(dt, x_dst, y_dst)
     else
         self.y = post_y
     end
+
+    local w, h = self.chapter:getMap():getPixelDimensions()
+    self.x = math.max(math.min(self.x, w - self.w - 1), 1)
+    self.y = math.max(math.min(self.y, h - self.h - 1), 1)
 end
 
 -- Per-frame updates to a sprite's state

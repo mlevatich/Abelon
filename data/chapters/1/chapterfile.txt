@@ -1,9 +1,15 @@
-~~forest standard Dying-Forest
+~~west-forest standard Dying-Forest
 
-~abelon 24 73 P
-~kath 36 73 kath-interact-base
-~book 8 75 book-interact-base
-~medallion 13 70 medallion-interact-base
-~wolf1 1 1
-~wolf2 1 1
-~wolf3 1 1
+~abelon 24 15 P
+~kath 36 15 kath-interact-base
+~book 8 17 book-interact-base
+~medallion 13 12 medallion-interact-base
+~wolf1 60 1
+~wolf2 60 1
+~wolf3 60 1
+
+~~north-forest standard Dying-Forest
+
+~~south-forest standard Dying-Forest
+
+~~east-forest standard Dying-Forest

@@ -295,6 +295,7 @@ end
 function Map:renderTiles()
 
     -- Render all non-empty tiles
+    love.graphics.setColor(1, 1, 1, 1)
     local tilesheet = map_graphics[self.name][self.tileset]['tilesheet']
     local quads = map_graphics[self.name][self.tileset]['quads']
     for y=1, self.height do
@@ -327,7 +328,12 @@ end
 
 -- INITIALIZE GRAPHICAL DATA
 map_graphics = {}
-local map_ids = { { 'forest', 'standard' }, { 'dungeon', 'standard' } }
+local map_ids = {
+    { 'west-forest',  'standard' },
+    { 'north-forest', 'standard' },
+    { 'south-forest', 'standard' },
+    { 'east-forest',  'standard' }
+}
 for i = 1, #map_ids do
     local n = map_ids[i][1]
     local tileset = map_ids[i][2]

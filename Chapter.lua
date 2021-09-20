@@ -346,7 +346,7 @@ function Chapter:performTransition()
 
     -- Move player from old map to new map
     self.maps[old_map]:dropSprite(self.player:getId())
-    self.maps[new_map]:addSprite(self.player)
+    self.maps[new_map]:addSprite(self.player.sp)
 
     -- If music is different for new map, stop old music and start new music
     local old_music = self.map_to_music[old_map]
@@ -374,6 +374,7 @@ function Chapter:updateTransition(transition)
     -- When fade out is complete, perform switch
     if self.alpha == 0 then
         self:performTransition()
+        self:updateCamera(100)
     end
 
     -- If in a transition, fade out
@@ -511,7 +512,6 @@ function Chapter:render()
     love.graphics.translate(-self.camera_x, -self.camera_y)
 
     -- Render the map tiles
-    love.graphics.setColor(1, 1, 1, self.alpha)
     self.current_map:renderTiles()
 
     -- Render battle grid
@@ -520,7 +520,6 @@ function Chapter:render()
     end
 
     -- Render sprites on map and lighting
-    love.graphics.setColor(1, 1, 1, self.alpha)
     self.current_map:renderSprites(self.camera_x, self.camera_y)
     self.current_map:renderLighting()
 
@@ -537,6 +536,7 @@ function Chapter:render()
         self.current_scene:render(self.camera_x, self.camera_y)
     end
 
+    -- Flash autosave message
     if self.autosave_flash > 0 then
         love.graphics.setColor({ 1, 1, 1, self.autosave_flash })
         local str = 'Game saved'
@@ -545,4 +545,10 @@ function Chapter:render()
             self.camera_y + BOX_MARGIN, true
         )
     end
+
+    -- Fade in/out
+    love.graphics.setColor(0, 0, 0, 1 - self.alpha)
+    love.graphics.rectangle('fill', self.camera_x, self.camera_y,
+        VIRTUAL_WIDTH, VIRTUAL_HEIGHT
+    )
 end

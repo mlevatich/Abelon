@@ -45,15 +45,11 @@ SECTION: MAP WORK
 
 #57:
 
-Fix screen tearing - 33 x 33 tiles with the extra pixels on the bottom and right
-sides of the tile (since rendering is done from the top left)
-
-Split forest into three maps (west, south, north) with slightly different
-tilesets/lighting/coloring
-
-And flowers, logs, plants and such to forest
+And flowers, logs, plants, path, blood stain and such to forest
 
 Redo forest tileset to use 2x2 trees
+
+slightly different tilesets/lighting/coloring for the four maps
 
 #9:
 
