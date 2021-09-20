@@ -1347,6 +1347,38 @@ sprite_data = {
         ['y'] = 137,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'forniese',
+        ['w'] = 22,
+        ['h'] = 24,
+        ['y'] = 152,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'colblossom',
+        ['w'] = 31,
+        ['h'] = 19,
+        ['y'] = 176,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'grass',
+        ['w'] = 31,
+        ['h'] = 19,
+        ['y'] = 195,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'grass2',
+        ['w'] = 31,
+        ['h'] = 19,
+        ['y'] = 214,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
     }
 }
 sprite_graphics = {}
