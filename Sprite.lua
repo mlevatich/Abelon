@@ -1339,6 +1339,14 @@ sprite_data = {
         ['y'] = 84,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'shafe',
+        ['w'] = 23,
+        ['h'] = 15,
+        ['y'] = 137,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
     }
 }
 sprite_graphics = {}

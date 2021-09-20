@@ -8,6 +8,19 @@
 ~wolf2 60 1
 ~wolf3 60 1
 
+~shafe 8 9
+~shafe 5 22
+~shafe 12 19
+~shafe 20 19
+~shafe 28 16
+~shafe 37 16
+~shafe 45 13
+~shafe 46 22
+~shafe 47 3
+~shafe 64 7
+~shafe 65 7
+~shafe 68 17
+
 ~~north-forest standard Dying-Forest
 
 ~~south-forest standard Dying-Forest
