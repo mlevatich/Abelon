@@ -1,25 +1,28 @@
 ~~west-forest standard Dying-Forest
 
-~abelon 24 15 R P
+~abelon 23 15 R P
 ~kath 33 15 L kath-interact-base
 ~book 8 17 R book-interact-base
 ~medallion 13 12 R medallion-interact-base
 ~bloodstain 41 1 R
+~log 53 11 L
+~log 18 22 L
+~log 11 7 R
+~log 65 19 R
 ~wolf1 60 1 R
 ~wolf2 60 1 R
 ~wolf3 60 1 R
-
-~shafe 8 9   R
-~shafe 5 22  L
+~shafe 8 9 R
+~shafe 5 22 L
 ~shafe 12 19 R
 ~shafe 20 19 L
 ~shafe 28 16 R
 ~shafe 37 16 L
 ~shafe 45 13 R
 ~shafe 46 22 L
-~shafe 47 3  R
-~shafe 64 7  L
-~shafe 65 7  R
+~shafe 47 3 R
+~shafe 64 7 L
+~shafe 65 7 R
 ~shafe 68 17 L
 ~forniese 16 14 L
 ~forniese 34 12 R

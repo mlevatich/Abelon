@@ -45,8 +45,6 @@ SECTION: MAP WORK
 
 #57:
 
-logs, blood stain sprites
-
 Redo forest tileset to use 2x2 trees (and 1x2 trees so you can still do vertical
 walls), a path with 1 fullpath tile, 2 path sides, and 8 path corners (4 in
 corners, 4 out corners). Additionally, use 2 tiles for the base. The crowded one

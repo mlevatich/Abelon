@@ -1359,7 +1359,7 @@ sprite_data = {
     {
         ['id'] = 'colblossom',
         ['w'] = 31,
-        ['h'] = 19,
+        ['h'] = 21,
         ['y'] = 176,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
@@ -1367,16 +1367,16 @@ sprite_data = {
     {
         ['id'] = 'grass',
         ['w'] = 31,
-        ['h'] = 19,
-        ['y'] = 195,
+        ['h'] = 21,
+        ['y'] = 197,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
     },
     {
         ['id'] = 'grass2',
         ['w'] = 31,
-        ['h'] = 19,
-        ['y'] = 214,
+        ['h'] = 21,
+        ['y'] = 218,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
     },
@@ -1384,10 +1384,19 @@ sprite_data = {
         ['id'] = 'bloodstain',
         ['w'] = 288,
         ['h'] = 352,
-        ['y'] = 233,
+        ['y'] = 239,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
-    }
+    },
+    {
+        ['id'] = 'log',
+        ['w'] = 80,
+        ['h'] = 28,
+        ['y'] = 591,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    },
+
 }
 sprite_graphics = {}
 for i = 1, #sprite_data do
