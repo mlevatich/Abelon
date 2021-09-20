@@ -1379,6 +1379,14 @@ sprite_data = {
         ['y'] = 214,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'bloodstain',
+        ['w'] = 288,
+        ['h'] = 352,
+        ['y'] = 233,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
     }
 }
 sprite_graphics = {}

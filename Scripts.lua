@@ -418,14 +418,13 @@ scripts = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
             face(1, 2),
-            focus(2, 100),
-            say(2, 1, false,
-                "Ho, Abelon!"
+            say(2, 2, false,
+                "The decision's yours, Abelon. We don't have time to discuss. \z
+                 Ach, but if all of this blood does belong to a person, I'm \z
+                 certain abandoning them is as good as a death sentence..."
             )
         },
-        ['result'] = {
-            ['state'] = 'kath-interact-base'
-        }
+        ['result'] = {}
     },
 
     ['book-interact-base'] = {
