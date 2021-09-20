@@ -157,12 +157,14 @@ function Chapter:load()
             current_sp_id = fields[1]
             local init_x = (tonumber(fields[2]) - 1) * TILE_WIDTH
             local init_y = (tonumber(fields[3]) - 1) * TILE_HEIGHT
-            local first_interaction = fields[4]
+            local dir    = fields[4]
+            local first_interaction = fields[5]
 
             -- Initialize sprite object and set its starting position
             local new_sp = Sprite:new(current_sp_id, self)
             self.sprites[current_sp_id] = new_sp
             new_sp:resetPosition(init_x, init_y)
+            new_sp.dir = ite(dir == 'R', RIGHT, LEFT)
 
             -- Add sprite this sprite to the map on which it appears
             self.maps[current_map_name]:addSprite(new_sp)

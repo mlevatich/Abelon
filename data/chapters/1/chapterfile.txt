@@ -1,25 +1,25 @@
 ~~west-forest standard Dying-Forest
 
-~abelon 24 15 P
-~kath 36 15 kath-interact-base
-~book 8 17 book-interact-base
-~medallion 13 12 medallion-interact-base
-~wolf1 60 1
-~wolf2 60 1
-~wolf3 60 1
+~abelon 24 15 R P
+~kath 36 15 L kath-interact-base
+~book 8 17 R book-interact-base
+~medallion 13 12 R medallion-interact-base
+~wolf1 60 1 R
+~wolf2 60 1 R
+~wolf3 60 1 R
 
-~shafe 8 9
-~shafe 5 22
-~shafe 12 19
-~shafe 20 19
-~shafe 28 16
-~shafe 37 16
-~shafe 45 13
-~shafe 46 22
-~shafe 47 3
-~shafe 64 7
-~shafe 65 7
-~shafe 68 17
+~shafe 8 9   R
+~shafe 5 22  L
+~shafe 12 19 R
+~shafe 20 19 L
+~shafe 28 16 R
+~shafe 37 16 L
+~shafe 45 13 R
+~shafe 46 22 L
+~shafe 47 3  R
+~shafe 64 7  L
+~shafe 65 7  R
+~shafe 68 17 L
 
 ~~north-forest standard Dying-Forest
 
