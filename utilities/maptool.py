@@ -10,11 +10,11 @@ mapping = {
     (100, 100, 100):  2,
     (200, 200, 200):  3,
     (255, 0, 0):      4,
-    (0, 0, 150):      5,
+    (150, 0, 0):      5,
     (0, 255, 0):      6,
     (0, 150, 0):      7,
     (0, 0, 255):      8,
-    (150, 0, 0):      9,
+    (0, 0, 150):      9,
     (255, 255, 0):   'A',
     (150, 150, 0):   'B',
     (255, 0, 255):   'C',
@@ -33,8 +33,6 @@ im = Image.open(sys.argv[1])
 pix = im.load()
 w, h = im.size
 with open('map.txt', 'w') as map_file:
-    map_file.write(str(w) + ' ' + str(h))
-    map_file.write("\n")
     for y in range(h):
         for x in range(w):
             pixel = pix[x,y]

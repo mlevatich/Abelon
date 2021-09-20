@@ -34,7 +34,7 @@ function Map:initialize(name, tileset, lighting)
         local l = lines[y]
         self.tiles[y - 2] = {}
         for x = 1, self.width do
-            local tile_id = tonumber(l:sub(x, x))
+            local tile_id = tonumber(l:sub(x, x), 30)
             self.tiles[y - 2][x] = tile_id
         end
     end
