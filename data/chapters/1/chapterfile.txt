@@ -74,6 +74,17 @@
 ~grass2 71 15 R
 ~grass2 71 9 L
 ~grass2 20 15 L
+~rock 7 23 L
+~rock 12 18 R
+~rock 11 17 L
+~rock 25 16 R
+~rock 37 17 L
+~rock 30 14 R
+~rock 48 25 L
+~rock 54 10 R
+~rock 60 11 L
+~rock 45 12 R
+~rock 41 8 L
 
 
 ~~north-forest standard Dying-Forest

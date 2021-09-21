@@ -1396,6 +1396,14 @@ sprite_data = {
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
     },
+    {
+        ['id'] = 'rock',
+        ['w'] = 20,
+        ['h'] = 16,
+        ['y'] = 619,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    }
 
 }
 sprite_graphics = {}
