@@ -45,15 +45,12 @@ SECTION: MAP WORK
 
 #57:
 
-Thin out trees on the sides a little, make them sag a little more
+Probably a good idea to have small rock sprite! Rocks are common in forests.
 
 Add to tileset: a path with 1 fullpath tile, 2 path sides,
-and 8 path corners (4 in corners, 4 out corners). Additionally, use 2 tiles for
-the base ground. The crowded one with sticks goes next to the trees, and a
-sparser one as you move away from the trees.
+and 8 path corners (4 in corners, 4 out corners).
 
-slightly different tilesets/lighting/coloring for the four maps (e.g. north
-map has a dusting of ash on the tiles, south map is slightly more green)
+Vary tiles used for the base ground
 
 Fill in black lines to avoid quad bleeding
 
@@ -66,7 +63,9 @@ light but a log doesn't), proper color computation (see note on phone).
 Add point lights to the forest to test: blocking, animated, torch-in-ground
 sprite, facing either left or right.
 
-
+slightly different tilesets/lighting/coloring for the four maps (e.g. north
+map has a dusting of ash on the tiles, darker ambient light, south map is
+slightly more green and bright)
 
 
 
@@ -211,6 +210,9 @@ Mute ally turn start, enemy turn start, victory, defeat menus
 
 
 SECTION: MUSIC TRACKS
+
+Fade is quieter than it should be. Make sure tracks don't change volume!
+There are still things to improve about the first fight theme right now.
 
 #63:
 
