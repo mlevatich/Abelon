@@ -1414,6 +1414,14 @@ sprite_data = {
             ['out'] = { 0 }
         },
         ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'bloodrite',
+        ['w'] = 156,
+        ['h'] = 128,
+        ['y'] = 666,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
     }
 }
 sprite_graphics = {}
