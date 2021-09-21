@@ -45,6 +45,8 @@ SECTION: MAP WORK
 
 #57:
 
+Blood rite
+
 Add to tileset: a path with 1 fullpath tile, 2 path sides,
 and 8 path corners (4 in corners, 4 out corners).
 

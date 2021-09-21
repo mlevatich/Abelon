@@ -5,6 +5,10 @@
 ~book 8 17 R book-interact-base
 ~medallion 13 12 R medallion-interact-base
 ~bloodstain 41 1 R
+~torch 14 16 R
+~torch 14 20 R
+~torch 9 16 L
+~torch 9 20 L
 ~log 53 11 L
 ~log 18 22 L
 ~log 11 8 R

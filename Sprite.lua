@@ -1398,13 +1398,23 @@ sprite_data = {
     },
     {
         ['id'] = 'rock',
-        ['w'] = 20,
+        ['w'] = 23,
         ['h'] = 16,
         ['y'] = 619,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'torch',
+        ['w'] = 22,
+        ['h'] = 31,
+        ['y'] = 635,
+        ['animations'] = {
+            ['idle'] = { 1, 2, 3, 4, 5, 6, 7, 8 },
+            ['out'] = { 0 }
+        },
+        ['versions'] = { 'standard' }
     }
-
 }
 sprite_graphics = {}
 for i = 1, #sprite_data do
