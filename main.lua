@@ -83,7 +83,7 @@ end
 function love.update(dt)
 
     dt = math.min(dt, 1 / 60)
-    -- dt = dt / 4 -- DEBUG
+    -- dt = dt / 2 -- DEBUG
 
     -- Update everything in the game
     game:update(dt)

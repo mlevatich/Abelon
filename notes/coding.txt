@@ -54,17 +54,19 @@ north forest
 east forest
 south forest
 
+Slightly different tilesets for the four maps (e.g. north map has a dusting of
+ash on the tiles)
+
+Fill in black lines to avoid quad bleeding
+
 #9:
 
 Expand lighting engine. Flickering, smoothing, obstacle detection (sprite
 parameter deciding whether it blocks light may be needed. e.g. abelon blocks
-light but a log doesn't), proper color computation (see note on phone).
+light but a log doesn't), proper color computation (see note on phone). Look up
+lua/love shaders
 
-slightly different tilesets/lighting for the four maps (e.g. north
-map has a dusting of ash on the tiles, darker ambient light, south map is
-slightly more green and bright)
 
-Fill in black lines to avoid quad bleeding
 
 
 
@@ -120,7 +122,6 @@ Abelon-idle
 Kath-idle
 Elaine-idle
 
-Kath-walk
 Elaine-walk
 
 Abelon-combat
