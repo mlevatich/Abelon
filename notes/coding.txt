@@ -118,10 +118,9 @@ the exp splash renders after the relevant action has just finished playing out.
 
 #51:
 
-Abelon-idle
 Kath-idle
-Elaine-idle
 
+Elaine-idle
 Elaine-walk
 
 Abelon-combat
