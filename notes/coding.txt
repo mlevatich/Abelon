@@ -1,41 +1,29 @@
 What to do next, organized into sections and issues! (please commit each
 paragraph separately for your own sanity)
 
-SECTION: ENGINE WORK
+SECTION: GAME ENTRY-EXIT PROCEDURES
 
 #16:
 
 Title screen v0 (continue (if save file detected), new game ->
-choose difficulty)
+choose difficulty). Title screen should have controls in one corner
 
 Implement game start scene, implement ??? for sprites whose names are not known
 to the player. Learning a name is a scene event.
 
 #48:
 
-Game guide shows up immediately on starting new game, and accessible from
-inventory
+Tutorial information should appear on the right side of the screen, in the
+middle. Tutorial paragraphs are given in the script. They are also accessible
+from the settings menu in a "tutorial" menu.
 
-Combat guide accessible from battle begin menu or options.
-
-Post battle levelup / skilltree guide should show up after the first battle
-
-All three of these should share a single custom menu type, 'large_popup' or
-something, which is passed elements just like a hover box.
+One more tutorial than whats in the script happens in the Elaine section, to
+tell you about your items, using them, and presenting them.
 
 #59:
 
 Chapter end trigger. Displays a chapter 1 endcard, bridge scene, and chapter 2
 start card (Teaser). Kicks you back to the title screen
-
-#61:
-
-improve AI algorithm - use other plans! In particular, enemies shouldn't
-interfere with each other. If one enemy has only a single path to attack their
-target, the acting enemy shouldn't get in the way of that path unless it
-needs to in order to attack its own target. To minimize interference in general,
-the strongest enemies should take their turns first, and the enemies who start
-farther away from the allies should also be prioritized.
 
 
 
@@ -45,9 +33,11 @@ SECTION: MAP WORK
 
 #57:
 
-Add to tileset: a path with 1 fullpath tile, 2 path sides,
-and 8 path corners (4 in corners, 4 out corners). Add to west forest and vary
-tiles used for the base ground to conform around path
+fullpath: smaller stones
+fullpath: more moss, dirt specks
+4 path sides, 8 path corners
+conform ground tiles around path
+move sprites out of the way of path
 
 Updated, populated maps for:
 north forest
@@ -56,7 +46,6 @@ south forest
 
 Slightly different tilesets for the four maps (e.g. north map has a dusting of
 ash on the tiles)
-
 Fill in black lines to avoid quad bleeding
 
 #9:
@@ -65,30 +54,6 @@ Expand lighting engine. Flickering, smoothing, obstacle detection (sprite
 parameter deciding whether it blocks light may be needed. e.g. abelon blocks
 light but a log doesn't), proper color computation (see note on phone). Look up
 lua/love shaders
-
-
-
-
-
-SECTION: COMBAT ENGINE EXTENSIONS
-
-#69:
-
-Add elaine sprite
-
-Discover Elaine if you head north.
-
-Finding Elaine should be a battle. Race a wolf to get to her! Not only is it
-a race, the wolf only targets her. Kath can get in the way, but Abelon is further
-behind, and you need to kill it before it gets to Elaine.
-
-Elaine is an ally unit for the purposes of the battle, but has status debuffs
-that make her unable to move, attack, or assist
-
-Once she's saved and the battle is over, find her the right medicine to heal her,
-and she'll join the party!
-
-Update exp table to account for bonus exp
 
 
 
@@ -204,6 +169,12 @@ all skills
 
 Mute ally turn start, enemy turn start, victory, defeat menus
 
+#?:
+
+Explore "animation sound effects": looping sound effects associated with an
+animation and based on proximity to the sprite, like a crackling torch, or
+a person's footsteps. Not an easy task!!
+
 
 
 
@@ -247,17 +218,45 @@ SECTION: CHAPTER 1 IMPLEMENTATION
 Finish script - Do this before even looking at the below scenarios! Because
 I might decide I want something different as I write the script.
 
+#69:
+
+Add elaine sprite
+
+Discover Elaine if you head north.
+
+Finding Elaine should be a battle. Race a wolf to get to her! Not only is it
+a race, the wolf only targets her. Kath can get in the way, but Abelon is further
+behind, and you need to kill it before it gets to Elaine. Reinforcements show
+up as well, and you must defend Elaine.
+
+Elaine is an ally unit for the purposes of the battle, but has status debuffs
+that make her unable to move, attack, or assist
+
+Once she's saved and the battle is over, find her the right medicine to heal her,
+and she'll join the party!
+
+Update exp table to account for bonus exp
+
 #70:
 
-implement Ghoul scenario (objective is rout or escape)
+implement Lester scenario (objective is rout, optionally have Lester escape)
+
+improve AI algorithm - use other plans! In particular, enemies shouldn't
+interfere with each other. If one enemy has only a single path to attack their
+target, the acting enemy shouldn't get in the way of that path unless it
+needs to in order to attack its own target. To minimize interference in general,
+the strongest enemies should take their turns first, and the enemies who start
+farther away from the allies should also be prioritized.
 
 #71:
 
-implement Deer scenario
+implement Shanti/Ceryl scenario
 
 #72:
 
-Implement crystal wolf scenario (objective is rout and defend)
+Implement Ceryl death scenario (objective is survive)
+
+Implement chapter conclusion scenario
 
 #73:
 

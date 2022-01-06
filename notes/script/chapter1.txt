@@ -2,216 +2,436 @@
 CHAPTER 1: The Forest Stirs
 ***************************
 
+*******
+SUMMARY
+*******
 
+A monster attack has come from the north and west of Ebonach in the early
+hours of the morning – wolves. The drawbridges over the moats were somehow let
+down and sabotaged overnight, allowing the wolves passage into the city. Abelon,
+Kath, and a small group of their most skilled fighters were dispatched to the
+north to hold the enemy off at the bridge, which acts as a chokepoint. Jericho
+and the main army was sent to the wide bridge at the city's western entrance,
+where the enemy was strongest.
 
-*****
-NOTES
-*****
+Captains Abelon and Kath, along with Abelon's knights Shanti and Ceryl, and
+Kath's knight Lester, fight at the bridge and drive back the wolves. They move
+towards the forest as the city guard repairs the broken drawbridge behind them.
+At this point, Abelon commands that the others retreat across the bridge, but
+that he has a matter to attend to in the forest. Kath protests that Abelon will
+not survive the forest alone and that they should all retreat together, but
+Abelon insists, and strikes out into the trees as the other knights go back
+across the bridge. It's not long, however, before a fearful Kath and Ceryl
+decide to disobey the senior captain and go after him, and Lester and Shanti
+follow behind.
 
-In the forest to the north of Ebonach.
+Abelon, unbeknownst to the others, was in possession of a ritual text given to
+him by the late Cardinal at the moment of her execution. The Cardinal told him
+that the ritual would give him the power he needed to protect Ebonach, the power
+of a demon. The ritual's instructions specified an old clearing in the forest,
+and Abelon felt that, with the nearby wolves defeated, this was his best and
+only chance to perform the ritual safely without exposing his comrades to
+danger. He quickly makes his way to the clearing and begins a ritual lost to
+folklore known as a blood rite.
 
-A monster attack has come from the north and west – wolves. Abelon, Kath, and some of the knights were dispatched to
-the north, where the enemy was strongest, but they have struggled to repel the monsters.
+Kath, Ceryl, Lester, and Shanti tread cautiously into the forest, several
+minutes behind Abelon. They soon encounter a wolf, which Lester volunteers to
+fend off. Kath moves west, while Shanti and Ceryl move east in search of Abelon.
 
-Amidst the fighting, Abelon disappears. Kath notices, and leaves the fighting to look for him. Abelon,
-feeling the situation to be dire, left to find a spot to cast an incantation from his book. In a clearing
-to the west, having shaken the wolves off his trail, Abelon begins the ritual, hoping to return to the fight
-with renewed power and turn the tide.
+As Abelon completes the ritual, he loses control of his own body, and the player
+takes control. Moving east slightly, you meet up with a panicked Kath. You feel
+a rumbling earthquake before being approached by wolves.
 
-injured hunter, either look for wornfleet leaves, or go to lester the healer to get them.
+After fending off the wolves, Kath notices a blood trail from one of their
+mouths, leading north. Could it be Lester? There's a choice between
+investigating it and continuing east to the knights. Reaching turn limits
+causes a game over in which Kath comments that they're too late.
 
-Further option to confuse kath by commenting on how much he knows about medicine.
+If you move north, you find Elaine, a hunter who was injured and is unable to
+move. A wolf is approaching her. You and Kath rush to save her, and after
+dealing with the wolf, Kath realizes she is poisoned by a wolf bite. Kath heals
+her, but she is paralyzed by the poison and can't move. Kath suggests a salve
+made from Wornfleet leaves, which he sends you to get while he guards Elaine,
+or alternatively points out that Lester has some and if they reach him he could
+cure her. Wornfleet is found to the north-west - Kath will stop you if you
+try to move north east. If you personally save Elaine with Wornfleet, she will
+fight with you. Whichever battle is her first, she will comment on it. If you
+save Elaine, Shanti and Lester start off the next two fights with much lower
+health, because you took longer to get to them. If you never meet Elaine, she
+will die. If you meet her and then proceed to Lester, you will instruct him to
+go to her after the battle. He and Elaine will join the next fight in the
+middle.
 
-costume change when the hunter is healed
+Heading east from the clearing, you meet up with Lester, who is heading off some
+wolves and some kind of sentient stone monster with rocks of ignea sticking out
+of it. Lester is panicked, he says the monster forced him further north away
+from Shanti and Ceryl, and it appeared when the earthquake happened. Also it's
+using magic to create ignaeic explosions, even though no monster has ever been
+known to use magic. You fight off the enemies. If you want to save Elaine, you
+need to get Lester to escape left before the battle ends, as Kath explains.
 
-present leaves to hunter
+After this point, Elaine is dead, and stumbling on her will confirm as much.
 
-many dialogue choices when talking to kath/lester.
+After defeating the enemies, you need to move east and find Shanti and Ceryl,
+who are fighting wolves of their own. If you approach from the north-west, the
+party comments that you took the long way around and Shanti and Ceryl have lower
+health, but you start in a more advantageous position. If you approach from the
+south-west, the fight begins as normal. If Lester was sent to get Elaine, the
+two will arrive healthy as reinforcements from the north-west during the fight.
+Otherwise Lester joins at the start (and Elaine if she is with you).
 
-find a medallion in the grass somewhere, not used till chapter 1
+After the fight, the party is all together again. There is brief conversation
+before everyone agrees to head south to the gate before more strange monsters
+arrive. Kath urges Abelon that whatever his business in the forest, he needs to
+finish it without straying too far.
 
-interact with environment to pick up leaves.
+Upon reaching the drawbridge, another earthquake occurs, and two stone monsters
+emerge by Ceryl. Lester screams at her to get back, but the monsters explode,
+sending her flying into a tree and killing her instantly. More wolves approach
+from behind the monsters, and the fight begins. The party must survive a number
+of turns until the drawbridge is brought down, so they can escape across.
 
-three battles – first wolf, then a few wolves, then the big fight. Second fight causes a level up.
-
-In the big fight, must kill all wolves, prevent them from entering city. More knights saved = bigger reward.
-
-If you personally save Elaine, and haven't done fight 2 yet, she will join you, making it a much easier fight. Whichever
-battle is her first, she will comment on it.
-
-Shanti - Field Alchemist. Has an extra-turn ability, and various effects. Send her to save Elaine. Wields an ignea lantern.
-Lester - Shadowblade. Uses electrical magic and an enchanted dagger to assassinate foes.
-Elaine - Hunter. Uses a bow and the terrain to her advantage, out-positioning enemies.
-
-In the final fight, all three might be there if you save Elaine quickly. You can send Shanti after her to rescue her.
-If you take too long saving Elaine, Lester will be dead, and if you don't rescue Elaine during the battle, she will
-be dead. Whoever is in the battle cannot die without triggering a fail state, so at least two will survive.
-
-If you go straight to the knights without finding Elaine: (3 generic, 4 controlled, easy fight) - ELAINE DIES
-If you find Elaine but leave her: (2 generic, 4 controlled, medium fight) - ELAINE DIES
-If you send Shanti after Elaine to save her: (2 generic, 4 controlled, hard fight) - SAVED ALL 3
-If you save her in one leaf: (1 generic, 5 controlled, hard fight) - SAVED ALL 3
-If you save her in two leaves: (1 generic, 4 controlled, extremely hard fight) - LESTER DIES
-If you ever fight the wolves by the deer: (0 generic, 3/4 controlled, impossible fight) - LESTER DIES
-
-In the big fight, the boss wolf has ignea crystals embedded in him. Cause for concern.
-
-If you save Elaine before the final battle she will fight with you, making some special comments during her first fight.
-
-Quest States: hunter status, fighting knights status, abelon spell
-
-Info-drops:
-Further north is a ruined city
-We're in a kingdom
-Monster attacks are especially frequent
-There's another attack from the West
-Kingdom is strapped due to attacks
-
-
+When the party escapes across the bridge, the battle ends, and a tense argument
+occurs over the blame for Ceryl's death and their inability to recover her body.
+The chapter ends as the party enters Ebonach and a mysterious voice lashes out
+in anger, demanding to be released.
 
 ******
 SCRIPT
 ******
 
-SCENE: PROLOGUE
-
 // black screen
 
-???: "...and no........y this ri......power unto......ummon thee................all of us!"
+???: "...and no........y this ri......power unto......mon thee.............
+      ...all of us!"
 
-// Slow fade in to Abelon standing in the middle of a summoning circle drawn in blood, in a clearing in a forest.
-// An open book lies on the ground nearby. The player gains control without any fanfare.
+// Slow fade in to Abelon standing in the middle of a summoning circle drawn in
+// blood, in a clearing in a forest. An open book lies on the ground nearby.
 
-- Interact - Book - "An open book lies on the ground, full of strange drawings and hastily scrawled paragraphs.
-                     The writing is faded and barely legible, and the pages practically crumble to dust at the
-                     slightest touch."
+// A wolf stands to the east of Abelon. A battle begins without any fanfare.
+// The battle preparation menu is skipped, and assists are disabled for this
+// battle.
 
-// Moving to the east through the clearing entrance, out of sight of the summoning circle,
-// triggers the following cinematic
+(Battle: Basic tutorial)
+Tutorial: "Use the arrow keys to navigate around the battle grid and between
+           menu options. Press F to confirm a selection on the grid or
+           in a menu. Press D to cancel a selection."
 
-???: "Abelon! At last!"
+Tutorial: "Selecting an enemy allows you to view information about the enemy."
+
+Tutorial: "Selecting an ally allows you to move them, choose an attack, aim the
+           attack, use the remainder of their movement, and then confirm the
+           entire action."
+
+Tutorial: "Until the action is confirmed, you can back out of any selection by
+           pressing D. Once you confirm, the chosen ally will perform their
+           action all at once."
+
+Tutorial: "Move yourself towards the enemy and aim an attack at it to damage it.
+           Read the descriptions of your attacks and spells and pick the best
+           option for the circumstances."
+
+// Enemy phase 1 ends. The wolf needs two hits to kill Abelon, so you can't die
+// yet, or have killed the wolf yet.
+
+(Battle: Phases tutorial)
+Tutorial: "Each ally may act only once during the ally phase. Once all allies
+           have acted, the ally phase will end and all enemies on the
+           battlefield will move and attack you. Then the ally phase begins
+           again."
+
+Tutorial: "An ally or enemy dies when their health, visible underneath them,
+           reaches zero. Keep your allies alive and defeat all enemies to win
+           the battle."
+
+DEFEAT
+
+// After the defeat of the wolf, the player gains control and can move around.
+
+(Navigating the World tutorial)
+Tutorial: "Move around the world using the arrow keys. Press F to interact
+           with nearby people or objects."
+
+Tutorial: "Press E to open your inventory, where you can see and use the items
+           you carry in your pack, inspect your traveling companions, change
+           your settings, and read any of these tutorials."
+
+- Book - "An open book lies on the ground, full of strange drawings and hastily
+          scrawled paragraphs. The writing is faded and barely legible, and the
+          pages practically crumble to dust at the slightest touch."
+
+// Moving to the east through the clearing entrance, out of sight of the
+// summoning circle, triggers the following cinematic
+
+???: "Abelon! There you are! And you're still alive, thank Eruta."
 
 // Kath enters from the east and begins speaking to Abelon
 
-???: "By Ignus, what are you doing out here? The knights are pinned at the north gate, to the man,
-      and suddenly you disappear! Come, we must return to the fight. Without our steel, the beasts might
-      finally break through to the gilded district...ach, we'd all be in for it then."
+???: "Before you lay into me, yes, I heard your instructions perfectly clearly.
+      The rest of us would cross the drawbridge and you would go back into the
+      woods because you had some "matter to attend to"."
 
-???: "Wait, your arm. You're wounded. Let me see that."
+???: "But I'll remind you that you don't actually outrank me and I'm well
+      within my rights to save you from your own terrible mistakes. By Ignus,
+      what's gotten into you? How many times during training did you tell me it
+      was a death sentence to enter the north forest alone?"
 
-// A red glow briefly surrounds Abelon. His wound is healed.
+A: You were to not interfere
 
-???: "I'll have none of your usual protests about bandages and such, that sword arm of yours is well worth my ignea.
-      Did one of the wolves follow you here? Did you kill it?"
-
-A: No, I'm alone
-
-    ???: "You're...well, what got your arm then? Hold on, what's all that behind you?"
-
-    A: A ritual
-
-        ???: "That sign in the earth is your work, then? Which explains your arm, but...a blood rite, Abelon? I've
-              only ever heard of them in stories...The kinds of stories that don't end well."
-
-        ???: "Whatever you've done, I dearly hope it will help us live to see daylight. We've wasted too much time
-              talking already. If you're not in danger here, we need to reinforce our soldiers, immediately. Come on!"
-
-    A: I don't know (Kath +1 awareness)
-
-        ???: "Hm, well I don't remember seeing it when I was last on salvage to the Ash...but it's a curiosity for
-              another time. If you're not in danger here, we need to reinforce our soldiers, immediately. Come on!"
+    ???: "Brush me off when your life isn't on the line, Abelon. I don't much
+          care what your reasons are, the monsters are too dangerous for any one
+          person, your considerable skill aside."
 
 A: Who are you? (Kath +2 awareness)
 
-    ???: "...What?"
+    ???: "...What? Listen, brush me off when your life isn't on the line,
+          Abelon. The monsters are too dangerous for any one person, your
+          considerable skill aside."
 
-    ???: "Whatever's happened to you here, it's of less importance than the battle at the gate. Come, we must
-          reinforce our soldiers immediately!"
+// Kath pauses
+
+???: "And look, you're wounded! Damn your pride, you've already proven me right.
+      Let me see that."
+
+// A red glow briefly surrounds Abelon. His wound is healed.
+
+???: "I'll have none of your usual protests about bandages and such, that sword
+      arm of yours is well worth my ignea... Speaking of which, I have a few
+      rocks for you, if you've room to carry them."
+
+A: I don't need them
+
+    ???: "Then your pack is still full. That's good news."
+
+A: Thanks, I'll take them
+
+    ???: "Right, here you go. Ach, dropped one. Damn things are so small these
+          days..."
+
+    // Abelon's ignea is restored
+
+A: Rocks? (Kath +1 awareness)
+
+    ???: "Yes, rocks, and I'm starting to think one hit you on the head - rocks
+          of Ignea, Abelon, what else would I be talking about? Here, take
+          them."
+
+    // Abelon's ignea is restored
+
+???: "The bridge guards had some on hand, so the four of us shared them. We ran
+      into a lone wolf at the crossroads north of the bridge. Lester engaged it
+      and the rest of us split up to keep looking for you. I ran west from
+      there, and here we are."
+
+A: I'm grateful for the assistance (Kath +1 awareness, Kath +1 impression)
+
+    ???: "Amazing. You're grateful, after you explicitly told us not to follow
+          you. Do remind me to tell Lester I caught Executioner Abelon playing
+          hard-to-get like some young lover at the Academy. He'll be in
+          stitches."
+
+    ???: "Anyway, have you finished out here? The sooner we reunite with the
+          other three, the less danger we'll all be in."
+
+A: I didn't ask for your assistance (Kath -1 impression)
+
+    ???: "Unbelievable... you really think you're invincible, don't you? We're
+          all out in the forest now, whether you like it or not, so are you
+          finished here? The sooner we reunite with the other three, the less
+          danger we'll all be in."
+
+// Dialogue continues
+
+A: I need more time (Kath -1 impression)
+
+    ???: "We've minutes at most, Abelon, before monsters are drawn here by our
+          presence. I can't force you to leave now, but whatever you're doing
+          here, it had better be worth it. Find me when you're ready."
+
+    // Dialogue ends. Kath moves to block the way east, so that you must talk
+    // to him to proceed, but you can continue to explore the clearing.
+
+A: We must find them immediately
+
+    ???: "Then we're finally in agreement, thank Eruta."
+
+// Talk to Kath again after ending the conversation, or continue from the
+// answer above
+
+???: "Let's hurry. Whatever spell or ritual it was that you performed here, you
+      can save your explanation for His Majesty."
+
+// A violent earthquake suddenly shakes the ground for a few seconds.
+
+???: "By Ignus! That must have been the worst one since... I don't even
+      remember!"
+
+A: What just happened? (Kath +1 awareness)
+
+    ???: "What, don't tell me, even now, you aren't accustomed to the tremors?
+          You've spent more time in Mistram than I have, and from what I hear
+          it's every other day by the mountains!"
+
+A: Strongest one in my lifetime
+
+    ???: "Really? Ach, all of this is giving me a terrible feeling in the pit
+          of my stomach..."
+
+A: I've felt worse
+
+    ???: "Truly? But they weren't so common back when you were my age, surely."
+
+???: "Any more powerful than that and the taller buildings in the city will be
+      in danger, don't you think? Although... I can't speak for you, but I
+      wouldn't miss that ugly statue of old Sinclair, if it did come tumbling
+      down. Or maybe the Academy building will collapse, ha!"
+
+// Kath pauses
+
+???: "It seems like there won't be any aftershocks. Let's go."
 
 // Kath takes a few steps east, and suddenly stops
 
-???: "Ah. They must have followed me here. I'm sorry, Abelon."
+???: "*sigh*... I suppose we both knew this wasn't going to be easy."
 
-// The screen pans to the right, revealing two creatures that look like rabid wolves, facing towards the two knights.
-// A trail of blood on the ground starts at one of them and goes offscreen.
+// The camera pans to reveal three wolves as Abelon walks to Kath's side
 
-A: You shouldn't have come, then (Kath -2 impression)
+???: "One of them has blood dribbling from his mouth, you see there? He's
+      gotten to something before us. Hold on, who else but us... that couldn't
+      have been the one we left Lester to fight, could it? Don't tell me he..."
 
-    ???: "Well, a word of warning before running off might have accomplished as much! I suppose if I had vanished
-          in the middle of a battle, you wouldn't have spared me a second thought, then. Cold and calculating
-          to the last, our veteran captain is...Let's finish these beasts off quickly, so we can reach the knights."
+A: You think he's dead?
 
-A: Nothing we can't handle (Kath +1 impression)
+    ???: "Not dead, he couldn't be. Any of those three is more than capable of
+          dealing with a mangy, rabid mutt. But that's exactly what makes me
+          worry. Something must have happened..."
 
-    ???: "Now there's the grizzled old knight I remember! You had me worried for a moment. Let's finish them off
-          quickly so we can reach the knights!"
+A: He's fine. Have a little faith (Kath +1 impression)
+
+    ???: "Hah! You, cheering me up? Now I've seen it all."
+
+    ???: "But you're right, of course. After all, what kind of captain would
+          I be if one of my finest couldn't stand up to some pathetic,
+          frothing dog? There must be another explanation."
+
+???: "Though there won't be time to dwell on it. Draw your sword already,
+      Abelon, they look like they're about to charge!"
 
 -- Begin battle
 
-*Turn 1 start*
+// Ally phase 1
 
-    ???: "Right, let's do the usual song and dance, then. The young upstart will take his orders from the grumpy
-          old man."
+???: "Right, let's do the usual song and dance, then. The young upstart will
+      take his orders from the grumpy old man."
 
-*Enemy turn 1 start*
+(Battle: Assists tutorial)
+Tutorial: "After using an attack or spell and finishing their movement, an ally
+           may additionally use an 'Assist' skill, which is aimed at some set of
+           grid tiles."
 
-    Kath: "Here they come!"
+Tutorial: "For the remainder of the turn (ally and enemy phase), any ally
+           standing on an assisted grid tile benefits from the effects of
+           the assist skill."
 
-*Turn 2 start*
+Tutorial: "Position allies to attack from tiles with offensive assists, and
+           end their actions on tiles with defensive assists. With three or more
+           allies, one unit can even benefit from multiple assists at the same
+           time."
 
-    Kath: "Let's only use as much ignea as we need to. I shouldn't have to remind you, we've nowhere to reignite here
-           in the forest, and we'll need as much power as we can spare when we return to the gates."
+// Select Kath
 
-*Select Kath*
+Kath: "Captain Kath of Ebonach, at your command!"
 
-    Kath: "Captain Kath of Lefellen, at your command!"
+// Enemy phase 1
 
-*First wolf killed*
+Kath: "Here they come!"
 
-    Kath: "That wolf won't be standing up again, at the very least. Forward! Aflame and alert, as they say."
+// Ally phase 2
 
-*When Abelon uses a demonic spell for the first time*
+Kath: "Let's only use as much ignea as we need to. I shouldn't have to remind
+       you we've a limited supply with us here in the forest, and there's no
+       telling how many monsters stand between us and the drawbridge."
 
-    Kath: "By Ignus, what the hell did you just do, Abelon? I've never seen such unbelievable magic!"
+(Battle: Ignea tutorial)
+Tutorial: "Many powerful skills consume some amount of Ignea, shown in the
+           'Cost' section of their description. Ignea is a precious stone, and
+           each unit in battle has a limited supply, shown in their Attributes."
 
-    A: A reward from the blood rite (Kath +1 impression)
+Tutorial: "Be careful with these skills – it may be a long time and multiple
+           battles before you can acquire more Ignea."
 
-        Kath: "Amazing...perhaps your little detour was worth the trouble after all."
+// Ally phase 3
 
-    A: A secret spell of mine (Kath -1 impression)
+(Battle: Attributes tutorial)
+Tutorial: "The capabilities of a unit are summarized by their 'Attributes'."
 
-        Kath: "Oh really? I seem to recall a great many dire situations which this 'secret spell' of yours would have
-               resolved in short order. But you've never been one for sharing, have you..."
+Tutorial: "Endurance determines a unit's maximum health, and Focus determines
+           their maximum Ignea usage - how efficiently they can use the supply
+           of stones they have."
 
-    *If not in final fight*
+Tutorial: "Force determines the effectiveness of many attacks and spells, and
+           Affinity determines the effectiveness of many assists."
 
-        Kath: "Do save your ignea for our reunion with the knights, though. I suspect we'll need that spell again
-               when the real fight begins, and even I can tell that unholy fire was no cheap cantrip."
+Tutorial: "Every two points of Reaction mitigates one point of Weapon Damage.
+           Spell Damage, however, always bypasses Reaction."
 
-*Kath dies*
+Tutorial: "Every five points of Agility confers one grid tile of movement in
+           battle."
 
-    Kath: "Urgh. Damn, hurts........ But I refuse... to........"
+// First wolf killed
 
-    FAIL STATE
+Kath: "That wolf won't be standing up again, at the very least. Forward!
+       Aflame and alert, as they say."
 
-*Abelon dies*
+// When Abelon uses Conflagration or Crucible for the first time
 
-    Kath: "Abelon, no! NO!"
+Kath: "By Ignus, what the hell did you just do, Abelon? I've never seen
+       such unbelievable magic!"
 
-    FAIL STATE
+A: You think I came out here for nothing? (Kath +1 impression)
 
-*Victory*
+    Kath: "Ha... ha ha ha! I still can't fathom why you didn't share your
+           plans with the rest of us, but I suppose the one thing I
+           should've known better than to do was doubt Captain Abelon!"
 
-    Kath: *huff* *huff* Ach, they aren't so tough when it's just a couple of the bastards.
+A: A secret spell of mine (Kath -1 impression)
 
-    A: Nice bladework (Kath +1 impression, +1 awareness)
+    Kath: "Oh really? I seem to recall a great many dire situations which
+           this 'secret spell' of yours would have resolved in short order.
+           But you've never been one for sharing, have you..."
 
-        Kath: "Why, a compliment? From you? I must have really outdone myself this time, or else you took a blow to
-               the head."
+*If not in final fight*
 
-    A: They didn't stand a chance
+    Kath: "Do save your ignea for our reunion with the knights, though. We
+           might need that spell again on our way to the drawbridge, and
+           even I can tell that unholy fire was no cheap cantrip."
 
-        Kath: "No indeed, they didn't. I don't envy anyone or anything at the wrong end of your sword."
+// Kath dies
+
+Kath: "Urgh. Damn, hurts........ But I refuse... to........"
+
+DEFEAT
+
+// Abelon dies
+
+Kath: "Abelon, no! NO!"
+
+DEFEAT
+
+// Victory
+
+Kath: "*huff* *huff* Ach, they aren't so tough when it's just a couple of the
+       bastards."
+
+A: Nice bladework (Kath +1 impression, +1 awareness)
+
+    Kath: "Why, a compliment? From you? I must have really outdone myself this
+           time, or else you took a blow to the head."
+
+A: They didn't stand a chance
+
+    Kath: "No indeed, they didn't. I don't envy anyone or anything at the wrong
+           end of your sword."
 
 -- End battle
 
@@ -219,194 +439,88 @@ A: Nothing we can't handle (Kath +1 impression)
 
     Kath: "Let me see your wounds."
 
-    // Kath approaches Abelon. A red glow surrounds Abelon and Kath as they are healed.
+    // Kath approaches Abelon. A red glow surrounds Abelon and Kath as they are
+    // healed.
 
 *If Abelon is healthy*
 
     Kath: "And not a scratch on you! Your skills never fail to impress, truly."
 
-Kath: "Now then, thankfully you didn't wander off too far from the fighting. The north gate is just ahead to the east,
-       first right turn on this path. We'll have to keep an eye out for more wolves – I'll follow behind you and watch
-       our back."
+Kath: "Let's see... This blood is fresh, and the trail's visible, at least.
+       Tracking it will be slow going, but it should take us straight to
+       whatever the beast took a bite out of."
 
-// Kath walks forward, and stops at the bleeding wolf's original location
+Kath: "More than likely it's some poor animal, a deer maybe. The wolf Lester
+       distracted was further east of here. And the blood couldn't be Ceryl or
+       Shanti's, they had gone the other way at the crossroads."
 
-Kath: "But look here. This trail of blood came dribbling from that wolf's mouth...he must have gotten to something
-       before he found us. It could be someone wounded in need of help, but following it will lead us away from Ebonach
-       and lose us time...damn!"
+Kath: "But could Lester have finished off that wolf and then followed after me?
+       By Ignus, if it is a person's blood, we'd be leaving them for dead... but
+       if it comes to nothing, we'd waste too much time! More monsters could
+       surround us even further from the bridge. Damn... damn! You make the
+       call, Abelon."
 
-// The player gains control of Abelon, and Kath follows behind. The player may choose to go north following the blood,
-// or continue east towards the north gate.
+// The player gains control of Abelon. The player may choose to go north
+// following the blood, or continue east towards the crossroads.
 
+(Experience and Learning tutorial)
+Tutorial: "In battle, allies gain experience from dealing damage, receiving
+           damage, healing and buffing their allies, and debuffing or impairing
+           enemies. All allies also gain experience for finishing battles
+           quickly, when there is a turn limit."
 
+Tutorial: "After gaining enough experience, an ally will level up, improving
+           each of their attributes by one. You also choose one attribute to be
+           improved by an extra point."
 
-SCENE: WITHIN EARSHOT
+Tutorial: "Each level up additionally grants the ally one skill point, which
+           can be spent in the inventory to learn a new skill to use in battle."
 
-// If the player continues east after the first fight, or after dealing with the hunter, or even on approach from
-// the east side after fighting the battle with the deer, the following scene plays.
+Tutorial: "Every ally practices three 'Disciplines'. Each of their skills falls
+           into a discipline. An ally's strength in a particular discipline
+           is measured by the number of skills they've learned in that
+           discipline."
 
-// A cutscene begins and the screen pans slightly downward.
+Tutorial: "In addition to using up a skill point, each skill has discipline
+           requirements that the ally must meet in order to learn it."
 
-???: "Stand tall! Don't let a single one– Aagh!"
+// If you talk to Kath
 
-???: "If you've got ignea left, launch a bolt on my signal! Ready...aim..."
+Kath: "The decision's yours. Your intuition has saved us enough times before."
 
-???: "Where are the captains?"
+// If you proceed north immediately until Elaine is in sight. She is by the
+// trees.
 
-???: "Hyaaaaaah!"
+Kath: "There, do you see that? At the edge of the trees. It looks like..."
 
-// The screen pans up again.
+A: A person
 
-Kath: "From the sound of it, we haven't been overrun yet. Good.
+    Kath: "Yes, a girl! But it doesn't look like Shanti or Ceryl."
 
-// The screen pans towards the enemies
+A: An animal
 
-Kath: "But ach, ghouls on top of wolves? This just gets worse and worse. Let's cut our way through!"
+    Kath: ""
 
-A: Who's commanding the knights? (Kath -1 impression)
+********
+SNIPPETS
+********
 
-    Kath: "Eruta only knows, after you abandoned them and I had to come chasing after you..."
+???: "And with any luck, one day we'll get a taste of the peace and tranquility
+      you old geezers are always rattling on about. Ah, but I suspect there'll
+      be plenty of terrifying monsters standing between us and that day."
 
-    *If told Kath about ritual*
+Lester: "But if executioner Abelon is in good spirits and the charming Kath is
+         caught sulking, people will think Eruta's turned upside down! More than
+         it already has, anyway."
 
-        Kath: "Let's hope that ritual of yours was worth it. Ready your sword."
+Kath: "The charming Kath? I'm charming now? Am I charming, Abelon?"
 
-    *If not told Kath about the ritual*
+A: Positively captivating
 
-        Kath: "King Sinclair will expect an explanation from you, you know, if we make it out of this alive.
-               Ready your sword."
+    Lester: "Captain, I'm hearing a touch of sarcasm. It's coming from Captain
+             Abelon's general direction."
 
-A: I shouldn't have left (Kath +1 impression, +1 awareness)
+    Kath: "Now that you mention it, I do believe you're right, Lester, I'm
+           hearing it too."
 
-    *if Kath awareness >= 3*
-
-        Kath: "Abelon, you... something's different about you, I swear it. But now's not the time for that, is it...
-               ready your sword."
-
-    *if Kath awareness < 3*
-
-        Kath: "But then, why did... I suppose now's not the time for that, is it? Ready your sword."
-
--- Begin battle
-
-*Turn 1 start*
-
-    Kath: "By Ignus, one of those ghouls somehow got hold of a rock of ignea! By the size, that'd be...good for a
-           cantrip or two, unignited. Keep light on your feet, if that thing lands a spell on you it'll pierce right
-           through your armor."
-
-*Turn 2 start*
-
-    Kath: "The risen dead...ach, no matter how many times I see it, it still makes my blood run cold. There must have
-           been a graveyard here, at some point in the past. The Despair leaves nothing sacred..."
-
-    A: It wasn't always this way
-
-        Kath: "And with any luck, one day I'll get a taste of the peace and tranquility you old geezers are always
-               rattling on about. Ach, but I suspect there'll be plenty of ghouls standing between me and that day.
-               Forward!"
-
-    A: We'll get through it (Kath +1 impression, +1 awareness)
-
-        Kath: "Hah! You, cheering me up? Now I've seen it all."
-
-        Kath: "But if executioner Abelon is in good spirits and the charming Kath is caught sulking, people will think
-               Eruta's turned upside down! More than it already has, anyway. Forward!"
-
-*Victory*
-
-    Kath: "Ach, what a nightmare, fighting those things. The wolves, I can stomach, but ghouls are another matter.
-           Let's hope there are no more of them at the gates."
-
--- End battle
-
-
-
-SCENE: THE CRYSTAL WOLF
-
-TODO
-
-
-
-SCENE: THE HUNTER
-
-TODO
-
-
-
-SCENE: THE HUNTED
-
-// In the northeast of the forest, three wolves have cornered an injured deer. The scene can be approached from
-// the west or the south. In either case, the following scene will trigger.
-
-*All scenarios*
-
-- Interact - Medallion - "A bronze medallion on a string, smeared with dirt. The image of a round shield over a
-                          longsword is engraved in the metal."
-
-    Text: "Pick it up?"
-
-        A: Yes
-
-            Text: "You brush the dirt off the medallion and put it in your pack"
-
-            (gain 1 bronze medallion)
-
-        A: No
-
-            Text: "You leave the medallion on the ground"
-
-// The screen pans towards the wolves
-
-*If the crystal wolf is not yet defeated*
-
-    Kath: "Hm, that deer looks to be about done for. Let's turn around while the wolves are distracted. We've no
-           business here, the knights need our help."
-
-    // Abelon gains control again. If you approach closer, a battle will trigger.
-
-    -- Begin battle
-
-    *Turn 1 start*
-
-        (Kath impression -1)
-
-        Kath: "Abelon, this is a mistake...but they've already noticed us. We'll have to fight!"
-
-    *Victory*
-
-        Kath: "Ach, this is bad...we've been gone far too long. Leave the deer. Come on, to the north gate!"
-
-    -- End battle
-
-    - Interact - Deer - "A young deer, with a gash across the stomach. Its chest rises and falls erratically.
-                         It's clearly having trouble breathing."
-
-        (Kath impression -1)
-
-        Kath: "Abelon, what are you doing? I said leave the deer!"
-
-*If the crystal wolf is defeated, but the area was already visited*
-
-    -- Begin battle
-
-    *Turn 1 start*
-
-        Kath: "Now that we know the capital is secure, we can take care of the rest of the wolves. We need to make sure
-               the forest is safe for hunters, else we'll lose a vital food source."
-
-    *Victory*
-
-        Kath: "*huff* That should be the last of them. Let's return to Ebonach. The king will be glad to know we've
-               been successful."
-
-        Kath: "Ach, shame about that deer, though. Poor thing never stood a chance."
-
-*If the crystal wolf is defeated, and the area was not already visited*
-
-    Kath: "" TODO
-
-*If the crystal wolf is defeated, and the wolves were already killed*
-
-    This state cannot be reached – if the wolves here are fought before the crystal wolf the battle with the crystal
-    wolf is unwinnable – most of the knights are dead.
+A: Not on your life

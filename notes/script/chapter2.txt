@@ -20,7 +20,7 @@ in the process), knights in the barracks, Gaheris, Mona, a school instructor,
 the watchers, etc. The mystery leads you to this truth:
 
 Turns out it's just a group of kids behind it, who got the idea from their
-parents to sabotage the city after the killing of the cardinal. Luci knows these
+parents to sabotage the city after the killing of the Cardinal. Luci knows these
 kids, says they're worthless and to kill them. Kath says that's overly harsh
 and Luci learned it from Abelon. The kids put up a fight when you crash their
 hideout. Injuring any of them ends the fight, as does killing one (Abelon
@@ -47,48 +47,62 @@ their own hands and sabotaged the gate.
 There's a plot to kill the king afoot. You can't outright find out about it, but
 you can discover hints which only make sense after hearing the full story later.
 
-The early choices involve the fishermen catching corrupted fish, Luci and
-Gaheris's research, the Order of Watchers hating you, and Kath and the King.
+Abelon must inform Ceryl's family of her death. A service is held. The palpable
+absence of the Cardinal, and the recent disbanding of the Watchers, the primary
+religious organization in Ebonach, makes the organization of the service rather
+awkward.
 
-Abelon doesn't appreciate you working with the Watchers or the Fisherman, or
-sparing the thieves. These are not things he would do, and others comment on it.
-Abelon likes you if you help Sinclair, work with Kath, hang out in the barracks,
-and focus on killing monsters and protecting the city.
+Gaheris is stuck between doing research and helping students and knights in
+training to understand ignea. He resents this additional work that takes him
+away from his research. When you first speak with him, he's grading exams. He's
+quite fond of the student Luci, who has started working with him as a research
+assistant, on top of being a knight-in-training. She's extremely bright, a
+prodigy.
+
+The fishermen at the docks are finding bits of ignea in the fish they catch,
+which is obviously a problem when it comes to feeding people.
+
+Food in Ebonach comes from farmland to the south that must be defended from
+monsters constantly as a huge wall is under construction around the land. This
+is where most of the knights' energy is spent. Food also comes from fish in the
+sea to the east. To the north is a forest containing the old path to Lefally,
+but the forest is long since overrun and nobody goes there these days. To the
+west is the Sonder, a rugged open plain between Ebonach and Mistram.
 
 Jericho is the royal tactician, a smart and ruthless commander who is
 nevertheless consumed with guilt at the costs of victory. He was appointed at
 the beginning of the Despair due to the need to escape encounters with fewer
 casualties. In chapter 2 we learn that he defended the west gate from attacking
-wolves and ghouls, and made a desperation play to bring down part of the
-ramparts on top of the enemy, killing some of the knights in order to win the
-day. He feels guilty about this, but everyone knows it was the only way to win.
+wolves, and made a desperation play to bring down part of the ramparts on top
+of the enemy, killing some of the knights in order to win the day. He feels
+guilty about this, but everyone knows it was the only way to win.
 
 Mona is around. Perhaps she's with the watchers? She's looking for her daughter.
 
-Shanti hates Jericho for getting her brother Jonathan killed. She is filled with
-anger and unwilling to compromise, but is skilled and intelligent. She's one of
+Shanti is filled with anger, especially over her best friend Ceryl's death, and
+is unwilling to compromise. She is skilled and intelligent. She's one of
 Abelon's knights.
 
 Lester, a young prankster knight, acts like a sibling to Luci orphaned in the
 barracks, and has a big heart for others, but is careless with regard to his
 own safety. He's one of Kath's knights. He's a Hellshun.
 
-If you saved Elaine and told her about the deer, she teaches her younger
-sister to hunt and decides to join the knights. She is kind but inexperienced,
+If you saved Elaine, she joins the knights. She is kind but inexperienced,
 emotion-driven, and afraid of combat.
 
 Luci acts as a red herring for Mona's daughter in chapters 2 and 3.
 
-Late in the chapter, you decide who to bring with you, between Shanti, Lester
-(if he's alive), and Elaine (if she's alive).
+Late in the chapter, you decide who to bring with you, between Shanti, Lester,
+and Elaine (if she's alive).
 
-Learn: Abelon is the oldest and most experienced commander, which is why the
-others take orders from you.
+Slowly learn during chapter 2 that Abelon executed the Cardinal just a day ago
+on the orders of King Sinclair, and formally disbanded the Order of the
+Watchers, causing mass confusion.
 
-Learn: Some of the archives were moved to the castle library after the dragon
-attack.
-
-Learn: What did Abelon do? (he executed the Cardinal)
+To close out the chapter, the king sends you on a mission to Mistram, along
+with a convoy of food. Mona joins you, seeking safe passage to her home in
+Mistram. Luci sneaks aboard the convoy. You are permitted to bring a knight
+along, either Shanti, Lester, or Elaine.
 
 Other citizens in the capital:
 The blacksmith
@@ -99,12 +113,9 @@ The servants
 The thieves
 The orphans (children under the care of the knights at the barracks, until
 someone else is willing to take them in)
-The healer (Sinclair's brother – a greedy fool who overcharges his patients)
-The knights
-The gatekeepers (they have a grim responsibility – to communicate a warning of
-monster attack at all costs)
-The Order of Watchers (a secretive organization)
-The fishermen (they've been pulling some strange corruption...)
+The doctor
+The other knights
+The gatekeepers
 
 
 

@@ -1,51 +1,67 @@
 King Eon Sinclair. TODO
 
-Gaheris, the kingdom's premier mage and researcher, is working on techniques for suppressing the monster incursions,
-and researching why this is happening in the first place. His discoveries are beginning to lead him somewhere shocking
+Gaheris, the kingdom's premier mage and researcher, is working on techniques for
+suppressing the monster incursions, and researching why this is happening in the
+first place. His discoveries are beginning to lead him somewhere shocking
 and horrifying. TODO
 
-Uther, an able-bodied miner from the Ignea village, is fed up with poor treatment from Opal's guard – he has convinced
-fellow miners, and some (but not all) villagers to stage an uprising against the guard. With the guard defeated,
-their plan is to bring it under their dominion, halt ignea shipments to the capital, and redirect them towards
-powering the soldiers and miners to defend the village. Uther reasons that it is no longer prudent to continue
-bringing Ignea across the dangerous Sonder and that the capital must fall, so that remaining humans can survive.
-The miners have recently discovered a cave leading from the mountains to the gulf, where they can fish enough to
-stay fed without further shipments from the capital. The capital can't risk being undefended, and so cannot send
-enough knights to take back the village. He plans to tell Kath of the plot, so that Kath and those
-close to him can move from the capital to the village before shipments stop. He knows Kath is sympathetic to the
+Uther, an able-bodied miner from the Ignea village, is fed up with poor
+treatment from Opal's guard – he has convinced fellow miners, and some (but not
+all) villagers to stage an uprising against the guard. With the guard defeated,
+their plan is to bring it under their dominion, halt ignea shipments to the
+capital, and redirect them towards powering the soldiers and miners to defend
+the village. Uther reasons that it is no longer prudent to continue bringing
+Ignea across the dangerous Sonder and that the capital must fall, so that
+remaining humans can survive. The miners have recently discovered a cave leading
+from the mountains to the gulf, where they can fish enough to stay fed without
+further shipments from the capital. The capital can't risk being undefended,
+and so cannot send enough knights to take back the village. He plans to tell
+Kath of the plot, so that Kath and those close to him can move from the capital
+to the village before shipments stop. He knows Kath is sympathetic to the
 miners and believes he will join the cause.
 
-Mona, a widow who is the village's most adept healer, has been taking care of the guards, and recently, the miners.
-In her capacity as healer, she has noticed strange blemishes on the miners, and just recently, has begun to see ignea
-crystals protruding from their flesh, inflicting them with an illness of the mind that causes them to behave
-erratically. This has only just occurred as the story begins, and the villagers are not widely aware that this is
-happening. But these incidents are rapidly accelerating. Mona is a brave woman who was married to a famous knight.
-The knight and his brother were conscripted to jointly command the northern village, which had become leaderless
-just when the monsters were just beginning to grow more violent (some 30 years ago). Mona demanded that her husband
-take their young son Kath with him, so that he would not grow up in the mines (which were beginning to see more and
-more use around the time).
+Mona, a widow who is the village's most adept healer, has been taking care of
+the guards, and recently, the miners. In her capacity as healer, she has noticed
+strange blemishes on the miners, and just recently, has begun to see ignea
+crystals protruding from their flesh, inflicting them with an illness of the
+mind that causes them to behave erratically. This has only just occurred as the
+story begins, and the villagers are not widely aware that this is happening. But
+these incidents are rapidly accelerating. Mona is a brave woman who was married
+to a famous knight. The knight and his brother were conscripted to jointly
+command the northern village, which had become leaderless just when the monsters
+were just beginning to grow more violent (some 30 years ago). Mona demanded that
+her husband take their young son Kath with him, so that he would not grow up in
+the mines (which were beginning to see more and more use around the time).
 
-Opal, the knight captain leading the kingdom guard currently defending the mining village, continues to work the
-miners harder, though she feels guilty about doing so. She doesn't believe she has any other choice, and would join
-in the mining herself except that the entire guard is needed to maintain the village garrison, stave off repeated
-monster attacks, and defend shipments. Opal represents the steadfast refusal to compromise. She wants to save
-everyone and serve her king, but is tortured by the sacrifices that must be made.
+Opal, the knight captain leading the kingdom guard currently defending the
+mining village, continues to work the miners harder, though she feels guilty
+about doing so. She doesn't believe she has any other choice, and would join
+in the mining herself except that the entire guard is needed to maintain the
+village garrison, stave off repeated monster attacks, and defend shipments. Opal
+represents the steadfast refusal to compromise. She wants to save everyone and
+serve her king, but is tortured by the sacrifices that must be made.
 
-Kath, newly minted knight captain and longtime friend of Abelon, is outwardly cheery in the face of grim events,
-but he feels turmoil inside. He feels the need to be a hero for the capital, since he is the most beloved knight
-captain. He was born in the forgotten village in the northern forests,
-ten years before it was obliterated by dragons in an attack that killed his father and aunt and uncle (Uther's
-parents). Kath was the sole survivor. He made his way to Ebonach.
+Kath, newly minted knight captain and longtime friend of Abelon, is outwardly
+cheery in the face of grim events, but he feels turmoil inside. He feels the
+need to be a hero for the capital, since he is the most beloved knight
+captain. He was born in the forgotten village in the northern forests, ten years
+before it was obliterated by dragons in an attack that killed his father and
+aunt and uncle (Uther's parents). Kath was the sole survivor. He made his way to
+Ebonach.
 
-Luci is Gaheris's young protege, who was previously an orphan the knights taught to fight.
-The knights call her Luci, but no one knows her real name, and her past is shrouded in mystery.
+Luci is Gaheris's young protege, who was previously an orphan the knights taught
+to fight. The knights call her Luci, but no one knows her real name, and her
+past is shrouded in mystery.
 
-Abelon, knight captain and executioner, born and raised in the capital, has decided to take matters into his own hands,
-and summon power from the demons of the earth.
+Abelon, knight captain and executioner, born and raised in the capital, has
+decided to take matters into his own hands, and summon power from the demons of
+the earth.
 
 Shanti.
 
 Lester.
+
+Ceryl.
 
 Elaine.
 
