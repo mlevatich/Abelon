@@ -96,14 +96,17 @@ str_to_icon = {
     ['Defender'] = 4,
     ['Hero'] = 5,
     ['Cleric'] = 6,
-    ['endurance'] = 10,
-    ['focus'] = 11,
-    ['force'] = 12,
-    ['affinity'] = 13,
-    ['reaction'] = 14,
-    ['agility'] = 15,
-    ['Enemy'] = 16,
-    ['empty'] = 18
+    ['Huntress'] = 7,
+    ['Apprentice'] = 8,
+    ['Sniper'] = 9,
+    ['endurance'] = 13,
+    ['focus'] = 14,
+    ['force'] = 15,
+    ['affinity'] = 16,
+    ['reaction'] = 17,
+    ['agility'] = 18,
+    ['Enemy'] = 19,
+    ['empty'] = 21
 }
 
 EFFECT_NAMES = {
