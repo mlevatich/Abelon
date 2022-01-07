@@ -10,7 +10,7 @@ Awareness: 0
 Discard: no
 Present:
 Level: 1
-Attributes: endurance:13 focus:0 force:8 affinity:8 reaction:0 agility:12
+Attributes: endurance:13 focus:0 force:8 affinity:8 reaction:1 agility:11
 Skilltrees: Huntress:hunting_shot,knife_toss,terrain_survey,lay_traps,butcher,camouflage,snare Apprentice:observe,ignea_arrowtips,mimic,exploding_shot,harmonize,flight Sniper:precise_shot,farsight,cover_fire,volley,seeking_arrow,one_in_million
 Skills: observe
 Description: The huntress Elaine. EOS

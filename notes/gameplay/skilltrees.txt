@@ -6,20 +6,32 @@ Lester: Martyr, Watcher, Assassin
 Mona: Healer, Hellshun, Saint
 Lucille: Warlock, Ranger, Trickster
 Opal: Commander, Brawler, Duelist
-Uther: Miner, Shadow, Rogue
+Uther: Miner, Slayer, Rogue
 Gaheris: Elementalist, Scholar, Empath
 
 skill ideas:
 
 LESTER
 first aid: Lester skill, heals an adjacent ally by 0.5 * Agility, costs 0 ignea
-in shadow: passive ability - if no assists, enemies wont target you
 pinpoint: find a weak spot. Very specific range required.
 assassinate: if pinpoint was used last turn, and you have at least 3 assists,
-ability instantly kills target. Otherwise it does nothing.
+does 10 + Force x 3 weapon damage
+overload: high spell damage, cost to self, cost to ignea, scale with force
+bounty: assist skill costing small ignea from watcher, scale with affinity
+thrown dagger: low damage free ranged attack from assassin, no scaling
+in shadow: passive ability - if no assists, enemies wont target you
+free assist from martyr that costs health, scales with affinity
+free weak assist from watcher, scales with reaction
+
+SHANTI
+searing_light: spell costing moderate ignea, scales with force. moderate range
+detonate: spell costing high ignea, scales with focus. short range
+heavy_swing: attack adjacent enemy for no cost, scales with force
+shine: no cost assist, provides small unique effect in a large radius, scales with affinity
+hypnotize: moderate cost assist, heavily improves force for nearby ally, scales minimally with affinity
 
 ELAINE
-hunting shot (0,0,0): hit a diagonal enemy for 10 + Force * 0.5 weapon damage.
+hunting shot (0,0,0): hit a diagonal enemy for 8 + Force * 0.5 weapon damage.
 knife toss (0,0,0): hit an enemy 2 tiles away for 16 weapon damage.
 lay traps (1,0,0): debuff the enemies in a 2x3 area in front of Elaine.
 butcher (3,0,0): hit an adjacent enemy for 30 weapon damage.

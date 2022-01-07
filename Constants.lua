@@ -110,7 +110,10 @@ EFFECT_NAMES = {
     ['guardian_angel'] = "Resist Death",
     ['forbearance']    = "Kath's Shield",
     ['enrage']         = "Targeting Kath",
-    ['stun']           = "Stunned"
+    ['stun']           = "Stunned",
+    ['observe']        = "Observing",
+    ['hidden']         = "Hidden",
+    ['flight']         = "Flight"
 }
 
 ATTRIBUTE_DESC = {

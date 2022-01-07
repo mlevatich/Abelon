@@ -13,6 +13,8 @@ to the player. Learning a name is a scene event.
 
 #48:
 
+Implement re-written script
+
 Tutorial information should appear on the right side of the screen, in the
 middle. Tutorial paragraphs are given in the script. They are also accessible
 from the settings menu in a "tutorial" menu.
@@ -82,11 +84,6 @@ When sprites gain exp, render exp splash. This should happen on a delay, so
 the exp splash renders after the relevant action has just finished playing out.
 
 #51:
-
-Kath-idle
-
-Elaine-idle
-Elaine-walk
 
 Abelon-combat
 Kath-combat
@@ -215,27 +212,44 @@ SECTION: CHAPTER 1 IMPLEMENTATION
 
 #68:
 
-Finish script - Do this before even looking at the below scenarios! Because
-I might decide I want something different as I write the script.
+Finish script
 
 #69:
 
-Add elaine sprite
+Writing:
+Implement Elaine's skills
+Write Elaine scene into script
 
-Discover Elaine if you head north.
+Art:
+Draw Elaine icons
+Draw Elaine sprite
+Draw Elaine portrait
 
-Finding Elaine should be a battle. Race a wolf to get to her! Not only is it
-a race, the wolf only targets her. Kath can get in the way, but Abelon is further
-behind, and you need to kill it before it gets to Elaine. Reinforcements show
-up as well, and you must defend Elaine.
+Animations:
+Fix the stupid wolf animation flickering
+Kath-idle, Elaine-idle, Elaine-walk, Elaine-Downed, Elaine-Getup
 
-Elaine is an ally unit for the purposes of the battle, but has status debuffs
-that make her unable to move, attack, or assist
+Finish #57, #48
 
-Once she's saved and the battle is over, find her the right medicine to heal her,
-and she'll join the party!
+Implement Elaine battle. Race a wolf to get to her! Not only is it a race, the
+wolf only targets her. Kath can get in the way, but Abelon is further behind,
+and you need to kill it before it gets to Elaine. Reinforcements show
+up as well, and you must defend Elaine. Elaine is an ally unit for the purposes
+of the battle, but starts at 1hp and has status debuffs that make her unable to
+move, and the only skill she knows is Observe. Observe grants her a small amount
+of Exp, which causes her to level up to level 2, so she can learn her first
+attacking skill after the battle, but she should not gain any other experience
+during the fight.
 
-Update exp table to account for bonus exp
+Once she's saved and the battle is over, find her the right medicine to heal
+her, and she'll join the party!
+
+Update exp table to account for bonus exp, and to make Elaine's and Abelon's
+growth curves fair. Either Abelon or Kath, but probably not both, should level
+up in the second battle. Elaine should level up once each battle if you use her.
+Potentially she could get from 2 to 4 in her first real battle.
+
+Test out Elaine's skills in a mock battle
 
 #70:
 

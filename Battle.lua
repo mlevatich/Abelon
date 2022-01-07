@@ -769,7 +769,10 @@ function Battle:mkUsable(sp, sk_menu)
     local ignea_spent = sk.cost
     local sk2 = self:getSkill()
     if sk2 then ignea_spent = ignea_spent + sk2.cost end
-    if sp.ignea >= ignea_spent then
+    local obsrv = hasSpecial(self.status[sp:getId()]['effects'], {}, 'observe')
+    if sp.ignea < ignea_spent or (sk.id == 'observe' and obsrv) then
+        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
+    else
         sk_menu.setPen = function(c) love.graphics.setColor(unpack(WHITE)) end
         sk_menu.action = function(c)
             local c = self:getCursor()
@@ -802,8 +805,6 @@ function Battle:mkUsable(sp, sk_menu)
                 }
             })
         end
-    else
-        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
     end
 end
 
@@ -1272,7 +1273,12 @@ function Battle:update(keys, dt)
 
             if f then
                 if sk.type ~= ASSIST then
-                    self:selectTarget()
+                    local c_cur = self:getCursor()
+                    local t = self.grid[c_cur[2]][c_cur[1]].occupied
+                    local can_obsv = t and self:isAlly(t) and t.id ~= 'elaine'
+                    if not (sk.id == 'observe' and not can_obsv) then
+                        self:selectTarget()
+                    end
                 else
                     self:endAction(true)
                 end
@@ -2006,7 +2012,7 @@ function Battle:mkTileHoverBox(tx, ty)
 
         -- Length of duration string
         local d = statuses[i].duration
-        local dlen = ite(d < 2, 6, ite(d < 10, 7, 8))
+        local dlen = ite(d == math.huge, 0, ite(d < 2, 6, ite(d < 10, 7, 8)))
 
         -- Length of buff string
         local b = statuses[i].buff
@@ -2037,7 +2043,10 @@ function Battle:mkTileHoverBox(tx, ty)
         local cy = y + LINE_HEIGHT * (i - 1)
         local b = statuses[i].buff
         local d = statuses[i].duration
-        local dur = d .. ite(d > 1, ' turns', ' turn')
+        local dur = ''
+        if d ~= math.huge then
+            dur = d .. ite(d > 1, ' turns', ' turn')
+        end
         table.insert(stat_eles, mkEle('text', dur,
             w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
         ))
