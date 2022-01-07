@@ -1,0 +1,16 @@
+// Sprite attributes
+
+Name: Lester
+Depth: 5
+Interactive: yes
+Blocking: yes
+Resting: idle
+Impression: 50
+Awareness: 0
+Discard: no
+Present:
+Level: 4
+Attributes: endurance:18 focus:4 force:8 affinity:11 reaction:12 agility:20
+Skilltrees: Martyr:overload Watcher:first_aid,bounty Assassin:pinpoint,assassinate,in_shadow
+Skills: first_aid,pinpoint,assassinate,bounty,overload
+Description: The knight Lester. EOS
