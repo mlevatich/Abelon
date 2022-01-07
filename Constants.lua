@@ -85,27 +85,26 @@ ADEPT  = 2
 MASTER = 3
 
 -- Skill types
-ASSIST = 7
-WEAPON = 8
-SPELL  = 9
-
+ASSIST = 1
+WEAPON = 2
+SPELL  = 3
 str_to_icon = {
-    ['Demon'] = 1,
-    ['Veteran'] = 2,
-    ['Executioner'] = 3,
-    ['Defender'] = 4,
-    ['Hero'] = 5,
-    ['Cleric'] = 6,
-    ['Huntress'] = 7,
-    ['Apprentice'] = 8,
-    ['Sniper'] = 9,
-    ['endurance'] = 13,
-    ['focus'] = 14,
-    ['force'] = 15,
-    ['affinity'] = 16,
-    ['reaction'] = 17,
-    ['agility'] = 18,
-    ['Enemy'] = 19,
+    ['endurance'] = 4,
+    ['focus'] = 5,
+    ['force'] = 6,
+    ['affinity'] = 7,
+    ['reaction'] = 8,
+    ['agility'] = 9,
+    ['Enemy'] = 10,
+    ['Demon'] = 11,
+    ['Veteran'] = 12,
+    ['Executioner'] = 13,
+    ['Defender'] = 14,
+    ['Hero'] = 15,
+    ['Cleric'] = 16,
+    ['Huntress'] = 17,
+    ['Apprentice'] = 18,
+    ['Sniper'] = 19,
     ['empty'] = 21
 }
 

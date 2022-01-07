@@ -1422,6 +1422,14 @@ sprite_data = {
         ['y'] = 666,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'elaine',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['y'] = 794,
+        ['animations'] = living,
+        ['versions'] = { 'standard' }
     }
 }
 sprite_graphics = {}

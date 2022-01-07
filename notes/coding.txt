@@ -217,13 +217,8 @@ Finish script
 #69:
 
 Writing:
-Implement Elaine's skills
 Write Elaine scene into script
-
-Art:
-Draw Elaine icons
-Draw Elaine sprite
-Draw Elaine portrait
+Tweak Elaine portrait and sprite
 
 Animations:
 Fix the stupid wolf animation flickering

@@ -414,6 +414,35 @@ scripts = {
         ['result'] = {}
     },
 
+    ['elaine-interact-base'] = {
+        ['ids'] = {'abelon', 'elaine'},
+        ['events'] = {
+            face(1, 2),
+            say(2, 1, false,
+                "My name's Elaine. It's nice to meet you! Shall I join your \z
+                 party?"
+            )
+        },
+        ['result'] = {
+            ['callback'] = 'elaine-interact-callback',
+            ['do'] = function(c)
+                local elaine = c.sprites['elaine']
+                c.player:joinParty(elaine)
+            end
+        }
+    },
+
+    ['elaine-interact-callback'] = {
+        ['ids'] = {'abelon', 'elaine'},
+        ['events'] = {
+            face(1, 2),
+            say(2, 1, false,
+                "I'm ready to go when you are!"
+            )
+        },
+        ['result'] = {}
+    },
+
     ['kath-interact-base'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {

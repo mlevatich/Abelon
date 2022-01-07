@@ -2,6 +2,7 @@
 
 ~abelon 12 17 R P
 ~kath 33 15 L kath-interact-base
+~elaine 12 12 L elaine-interact-base
 ~book 9 17 R book-interact-base
 ~medallion 8 15 R medallion-interact-base
 ~bloodrite 10 16 R
