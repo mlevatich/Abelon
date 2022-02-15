@@ -13,8 +13,6 @@ to the player. Learning a name is a scene event.
 
 #48:
 
-Implement re-written script
-
 Tutorial information should appear on the right side of the screen, in the
 middle. Tutorial paragraphs are given in the script. They are also accessible
 from the settings menu in a "tutorial" menu.
@@ -36,7 +34,7 @@ SECTION: MAP WORK
 #57:
 
 fullpath: smaller stones
-fullpath: more moss, dirt specks
+fullpath: more moss and dirt, this shit is overgrown
 4 path sides, 8 path corners
 conform ground tiles around path
 move sprites out of the way of path
@@ -54,8 +52,7 @@ Fill in black lines to avoid quad bleeding
 
 Expand lighting engine. Flickering, smoothing, obstacle detection (sprite
 parameter deciding whether it blocks light may be needed. e.g. abelon blocks
-light but a log doesn't), proper color computation (see note on phone). Look up
-lua/love shaders
+light but a log doesn't), proper color computation. Look up lua/love shaders
 
 
 
@@ -184,7 +181,7 @@ There are still things to improve about the first fight theme right now.
 #63:
 
 For title screen music, use the voice memo on my phone: Time Slows. Tentative
-track name: The Lonely Knight. Experiment with slow crescendos!
+track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass.
 
 #64:
 
@@ -197,8 +194,8 @@ most of the forest.
 
 #66:
 
-Second battle theme - for the three non-boss encounters (or the boss encounter
-if it's more epic than the first theme)
+Second battle theme - for the last encounter, after Ceryl dies. This just got
+much more serious.
 
 #67:
 
@@ -216,28 +213,26 @@ Finish script
 
 #69:
 
-Writing:
 Write Elaine scene into script
-Tweak Elaine portrait and sprite
 
-Animations:
 Fix the stupid wolf animation flickering
+Tweak Elaine portrait and sprite
 Kath-idle, Elaine-idle, Elaine-walk, Elaine-Downed, Elaine-Getup
 
-Finish #57, #48
+Implement rewritten beginning of script
 
-Implement Elaine battle. Race a wolf to get to her! Not only is it a race, the
-wolf only targets her. Kath can get in the way, but Abelon is further behind,
-and you need to kill it before it gets to Elaine. Reinforcements show
-up as well, and you must defend Elaine. Elaine is an ally unit for the purposes
-of the battle, but starts at 1hp and has status debuffs that make her unable to
-move, and the only skill she knows is Observe. Observe grants her a small amount
-of Exp, which causes her to level up to level 2, so she can learn her first
-attacking skill after the battle, but she should not gain any other experience
-during the fight.
+Finish #57
 
-Once she's saved and the battle is over, find her the right medicine to heal
-her, and she'll join the party!
+Implement Elaine script.
+
+Implement Elaine battle. Defend her from wolves! Keep them away. Reinforcements
+arrive twice, once from next to Elaine (with a warning from her), and once from
+further away. The battle ends automatically after a certain number of turns and
+all wolves flee. Elaine is an ally unit for the purposes of the battle, but
+starts at 1hp and has status debuffs that make her unable to move, and the only
+skill she knows is Observe. Observe grants her a small amount of Exp, which
+causes her to level up to level 2, so she can learn her first attacking skill
+after the battle, but she cannot gain any other experience during the fight.
 
 Update exp table to account for bonus exp, and to make Elaine's and Abelon's
 growth curves fair. Either Abelon or Kath, but probably not both, should level

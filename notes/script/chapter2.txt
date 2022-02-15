@@ -10,9 +10,14 @@ NOTES
 
 Kath can act as a narrator in the first half when Abelon doesn't talk much.
 
-Discover: Who the hell sabotaged the gates and risked the monsters getting in
+Discover: Who the hell sabotaged the bridges and risked the monsters getting in
 from the north and west? Find them and bring them to justice. Something to do
 with the plot to kill the king? Is Jericho behind it?
+
+The chapter starts as it's mid-morning, and you enter the city. You and Kath
+have an audience with the King later in the day, which will trigger by Kath
+approaching you once you've talked to enough people in the city. When you talk
+to the king, the conversation will change based on what exactly you learned.
 
 Following the various leads of this investigation is the central activity of
 Chapter 1. You consult adults in all districts (receiving sidequests from them
@@ -47,27 +52,38 @@ their own hands and sabotaged the gate.
 There's a plot to kill the king afoot. You can't outright find out about it, but
 you can discover hints which only make sense after hearing the full story later.
 
-Abelon must inform Ceryl's family of her death. A service is held. The palpable
-absence of the Cardinal, and the recent disbanding of the Watchers, the primary
-religious organization in Ebonach, makes the organization of the service rather
-awkward.
+Abelon must inform the dead knight's family of her death. A service is held.
+The palpable absence of the Cardinal, and the recent disbanding of the
+Watchers, the primary religious organization in Ebonach, makes the organization
+of the service rather awkward. Lester is your contact for this if he's alive,
+otherwise it's Kath, who is mourning Lester. This leads into more information
+about the Watchers and Hellshuns, and a potential lead for the sabotage case.
 
 Gaheris is stuck between doing research and helping students and knights in
 training to understand ignea. He resents this additional work that takes him
 away from his research. When you first speak with him, he's grading exams. He's
 quite fond of the student Luci, who has started working with him as a research
 assistant, on top of being a knight-in-training. She's extremely bright, a
-prodigy.
+prodigy. You come to him initially to tell him about the weird new stone
+monsters, but this conversation starts one of your leads in the sabotage
+mystery.
+
+You can discuss the sabotage work with the craftsmen. It is rather shoddy. You
+can also discuss defense mechanisms, since they suggest one which is closed by
+default, rather than open (like a drawbridge). Learn more about the Southwall
+project.
 
 The fishermen at the docks are finding bits of ignea in the fish they catch,
-which is obviously a problem when it comes to feeding people.
+which is obviously a problem when it comes to feeding people. Somewhat humorous.
+Can you eat ignea?
 
 Food in Ebonach comes from farmland to the south that must be defended from
-monsters constantly as a huge wall is under construction around the land. This
-is where most of the knights' energy is spent. Food also comes from fish in the
-sea to the east. To the north is a forest containing the old path to Lefally,
-but the forest is long since overrun and nobody goes there these days. To the
-west is the Sonder, a rugged open plain between Ebonach and Mistram.
+monsters constantly as a huge wall called the Southwall is under construction
+around the land. This is where most of the knights' energy is spent. Food also
+comes from fish in the sea to the east. To the north is a forest containing the
+old path to Lefellen, but the forest is long since overrun and nobody goes
+there these days. To the west is the Sonder, a rugged open plain between
+Ebonach and Mistram.
 
 Jericho is the royal tactician, a smart and ruthless commander who is
 nevertheless consumed with guilt at the costs of victory. He was appointed at
@@ -77,30 +93,37 @@ wolves, and made a desperation play to bring down part of the ramparts on top
 of the enemy, killing some of the knights in order to win the day. He feels
 guilty about this, but everyone knows it was the only way to win.
 
-Mona is around. Perhaps she's with the watchers? She's looking for her daughter.
+Mona is around. She is nominally in Ebonach to participate in a nature service
+held by the Watchers, which is canceled, but she also longs for her daughter
+and husband who were both killed in Lefellen. She yearns to find some trace of
+them in the city.
 
-Shanti is filled with anger, especially over her best friend Ceryl's death, and
-is unwilling to compromise. She is skilled and intelligent. She's one of
-Abelon's knights.
+Shanti is a skilled and intelligent mage of about 40. She's one of Abelon's
+knights.
 
-Lester, a young prankster knight, acts like a sibling to Luci orphaned in the
+Lester, a prankster knight, acts like a sibling to Luci orphaned in the
 barracks, and has a big heart for others, but is careless with regard to his
-own safety. He's one of Kath's knights. He's a Hellshun.
+own safety. He's one of Kath's knights, and also Kath's best friend. He's a
+Hellshun.
 
-If you saved Elaine, she joins the knights. She is kind but inexperienced,
-emotion-driven, and afraid of combat.
+If you saved Elaine, there is an optional questl ine for her to join the
+knights. She is kind but inexperienced, emotion-driven, and afraid of combat.
+You will also investigate her and her family as part of the sabotage mystery,
+whether she is alive or dead.
 
-Luci acts as a red herring for Mona's daughter in chapters 2 and 3.
+Luci acts as a red herring for Mona's daughter in chapters 2 and 3. She is
+incredibly talented as a student but cold and ruthless, which she picked up
+from Abelon. She knows something about the sabotage case.
 
 Late in the chapter, you decide who to bring with you, between Shanti, Lester,
-and Elaine (if she's alive).
+and Elaine.
 
 Slowly learn during chapter 2 that Abelon executed the Cardinal just a day ago
 on the orders of King Sinclair, and formally disbanded the Order of the
 Watchers, causing mass confusion.
 
 To close out the chapter, the king sends you on a mission to Mistram, along
-with a convoy of food. Mona joins you, seeking safe passage to her home in
+with a caravan of food. Mona joins you, seeking safe passage to her home in
 Mistram. Luci sneaks aboard the convoy. You are permitted to bring a knight
 along, either Shanti, Lester, or Elaine.
 

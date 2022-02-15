@@ -14,16 +14,16 @@ north to hold the enemy off at the bridge, which acts as a chokepoint. Jericho
 and the main army was sent to the wide bridge at the city's western entrance,
 where the enemy was strongest.
 
-Captains Abelon and Kath, along with Abelon's knights Shanti and Ceryl, and
+Captains Abelon and Kath, along with Abelon's knight Shanti, and
 Kath's knight Lester, fight at the bridge and drive back the wolves. They move
 towards the forest as the city guard repairs the broken drawbridge behind them.
 At this point, Abelon commands that the others retreat across the bridge, but
 that he has a matter to attend to in the forest. Kath protests that Abelon will
 not survive the forest alone and that they should all retreat together, but
 Abelon insists, and strikes out into the trees as the other knights go back
-across the bridge. It's not long, however, before a fearful Kath and Ceryl
-decide to disobey the senior captain and go after him, and Lester and Shanti
-follow behind.
+across the bridge. It's not long, however, before a fearful Kath and Shanti
+decide to disobey the senior captain and go after him, and Lester follows
+behind.
 
 Abelon, unbeknownst to the others, was in possession of a ritual text given to
 him by the late Cardinal at the moment of her execution. The Cardinal told him
@@ -34,9 +34,9 @@ only chance to perform the ritual safely without exposing his comrades to
 danger. He quickly makes his way to the clearing and begins a ritual lost to
 folklore known as a blood rite.
 
-Kath, Ceryl, Lester, and Shanti tread cautiously into the forest, several
-minutes behind Abelon. They soon encounter a wolf, which Lester volunteers to
-fend off. Kath moves west, while Shanti and Ceryl move east in search of Abelon.
+Kath, Lester, and Shanti tread cautiously into the forest, several minutes
+behind Abelon. They soon encounter a wolf, which Lester volunteers to fend off.
+Kath moves west, while Shanti moves east in search of Abelon.
 
 As Abelon completes the ritual, he loses control of his own body, and the player
 takes control. Moving east slightly, you meet up with a panicked Kath. You feel
@@ -47,52 +47,109 @@ mouths, leading north. Could it be Lester? There's a choice between
 investigating it and continuing east to the knights. Reaching turn limits
 causes a game over in which Kath comments that they're too late.
 
-If you move north, you find Elaine, a hunter who was injured and is unable to
-move. A wolf is approaching her. You and Kath rush to save her, and after
-dealing with the wolf, Kath realizes she is poisoned by a wolf bite. Kath heals
-her, but she is paralyzed by the poison and can't move. Kath suggests a salve
-made from Wornfleet leaves, which he sends you to get while he guards Elaine,
-or alternatively points out that Lester has some and if they reach him he could
-cure her. Wornfleet is found to the north-west - Kath will stop you if you
-try to move north east. If you personally save Elaine with Wornfleet, she will
-fight with you. Whichever battle is her first, she will comment on it. If you
-save Elaine, Shanti and Lester start off the next two fights with much lower
-health, because you took longer to get to them. If you never meet Elaine, she
-will die. If you meet her and then proceed to Lester, you will instruct him to
-go to her after the battle. He and Elaine will join the next fight in the
-middle.
+Moving north vs moving east creates two branching scenarios here:
+
+EAST:
 
 Heading east from the clearing, you meet up with Lester, who is heading off some
 wolves and some kind of sentient stone monster with rocks of ignea sticking out
-of it. Lester is panicked, he says the monster forced him further north away
-from Shanti and Ceryl, and it appeared when the earthquake happened. Also it's
-using magic to create ignaeic explosions, even though no monster has ever been
-known to use magic. You fight off the enemies. If you want to save Elaine, you
-need to get Lester to escape left before the battle ends, as Kath explains.
+of it. Lester is panicked, he says the monster forced him further west away
+from Shanti, and it appeared when the earthquake happened. Also it's using magic
+to create ignaeic explosions, even though no monster has ever been known to use
+magic. You fight off the enemies. You can't move backwards until finding Shanti,
+because Lester has already headed off to the east to find her, and Kath says
+you need to follow him.
 
-After this point, Elaine is dead, and stumbling on her will confirm as much.
+Moving further east, you find Shanti fighting off wolves of her own. She is
+cornered and in trouble. Abelon, Kath, and Lester must move quickly to save her,
+a battle. Reinforcements arrive during the battle when an earthquake strikes,
+and more stone monsters appear, though Lester is able to warn the party to avoid
+the imminent explosion.
 
-After defeating the enemies, you need to move east and find Shanti and Ceryl,
-who are fighting wolves of their own. If you approach from the north-west, the
-party comments that you took the long way around and Shanti and Ceryl have lower
-health, but you start in a more advantageous position. If you approach from the
-south-west, the fight begins as normal. If Lester was sent to get Elaine, the
-two will arrive healthy as reinforcements from the north-west during the fight.
-Otherwise Lester joins at the start (and Elaine if she is with you).
+When the battle is done, the reunited group talks for a bit. Kath realizes the
+blood trail he and Abelon found earlier must not belong to a knight, and the
+group goes to investigate. They find Elaine, dead. They somberly take her
+amulet, by way of identification, resolving to find out her identity and hold
+a service on their return to the city.
 
-After the fight, the party is all together again. There is brief conversation
-before everyone agrees to head south to the gate before more strange monsters
-arrive. Kath urges Abelon that whatever his business in the forest, he needs to
-finish it without straying too far.
+Heading south, the group reaches the bridge. They are ambushed behind by more
+monsters, and Kath orders the guards to quickly lower the bridge. The group
+must survive the onslaught until the bridge comes down, at which point they
+cross and have a tense conversation.
 
-Upon reaching the drawbridge, another earthquake occurs, and two stone monsters
-emerge by Ceryl. Lester screams at her to get back, but the monsters explode,
-sending her flying into a tree and killing her instantly. More wolves approach
-from behind the monsters, and the fight begins. The party must survive a number
-of turns until the drawbridge is brought down, so they can escape across.
+The chapter ends as the party enters Ebonach and a mysterious voice lashes out
+in anger, demanding to be released.
 
-When the party escapes across the bridge, the battle ends, and a tense argument
-occurs over the blame for Ceryl's death and their inability to recover her body.
+NORTH:
+
+If you move north, you find Elaine, a hunter who was injured and is unable to
+move. Kath begins healing her, and the two of you are attacked. You defend
+Elaine, and Kath finishes healing her, but she is paralyzed by wolf poison and
+can't move. Kath suggests a salve made from Wornfleet leaves, which he sends
+you to get while he guards Elaine, or alternatively points out that Lester has
+some and if they reach him he could cure her. Wornfleet is found to the
+north-west - Kath will stop you if you try to move north east.
+
+Another branching scenario is created here: whether you make the salve yourself,
+or go to get Lester.
+
+MAKE THE SALVE:
+
+If you personally save Elaine with Wornfleet, she will fight with you. The group
+moves southeast to find Lester. He is in the same situation as before, but is
+critically injured due to the time taken to heal Elaine. You must save him and
+dispatch the foes in Elaine's first ever monster battle.
+
+The group runs on to find Shanti, as in the EAST scenario above, but they are
+much later this time. Just as they reach Shanti, who has already cut through
+some monsters, the earthquake strikes, and stone monsters appear next to her.
+Lester shouts at her to run, but she is surrounded - the monsters explode,
+killing her instantly. Her body flies east and monsters swarm after it. A battle
+ensues in which Shanti is a single turn from death, across the map, with no
+way to save her. The objective is to rout or escape, but the group clearly can
+only escape. The group is forced to flee before the monsters turn on them, with
+all four feeling torn and guilty over abandoning Shanti, but knowing she is
+dead for certain.
+
+They encounter two stone monsters and must fight them off.
+
+Heading south, the group reaches the bridge. They are ambushed behind by more
+monsters, and Kath orders the guards to quickly lower the bridge. The group
+must survive the onslaught until the bridge comes down, at which point they
+cross and have a tense conversation.
+
+The chapter ends as the party enters Ebonach and a mysterious voice lashes out
+in anger, demanding to be released.
+
+GO GET LESTER:
+
+If you leave Elaine paralyzed to go get Lester, she will protest, but Kath says
+they can't move her on account of the poison, and that monsters should avoid the
+area for the next several minutes. They find Lester engaged in battle as in the
+EAST scenario, and order him to escape to the left. This is a win condition for
+this battle – Lester must escape in time.
+
+Lester leaves and you dispatch the foes. Kath insists that you can't go back
+now, and that you should trust Lester to do his job and save Elaine. Your job
+is to reach Shanti as quickly as possible. You head east.
+
+Reaching Shanti, you find that she is cornered and overwhelmed, as before, but
+she cuts a path through the enemies using a powerful spell, and runs towards
+you. Monsters follow behind her, and the three decide to flee until they meet
+up with Lester and Elaine. As they run, an earthquake strikes and stone monsters
+emerge to block their path. Elaine is on the other side of them. They must
+fight, but with many enemies at their heels, it looks grim. Soon into the battle,
+Lester emerges from the north, and all enemies switch to targeting him.
+Reinforcements appear near him. Within two turns, he will die. The party must
+escape before then, leaving him for dead. After talking to Elaine, Kath realizes
+Lester distracted the entire mob of enemies, at the cost of his life.
+The four somberly continue south.
+
+Heading south, the group reaches the bridge. They are ambushed behind by more
+monsters, and Kath orders the guards to quickly lower the bridge. The group
+must survive the onslaught until the bridge comes down, at which point they
+cross and have a tense conversation.
+
 The chapter ends as the party enters Ebonach and a mysterious voice lashes out
 in anger, demanding to be released.
 
@@ -176,7 +233,7 @@ Tutorial: "Press E to open your inventory, where you can see and use the items
       what's gotten into you? How many times during training did you tell me it
       was a death sentence to enter the north forest alone?"
 
-A: You were to not interfere
+A: You were to not interfere (Abelon +1 impression)
 
     ???: "Brush me off when your life isn't on the line, Abelon. I don't much
           care what your reasons are, the monsters are too dangerous for any one
@@ -218,10 +275,14 @@ A: Rocks? (Kath +1 awareness)
 
     // Abelon's ignea is restored
 
-???: "The bridge guards had some on hand, so the four of us shared them. We ran
-      into a lone wolf at the crossroads north of the bridge. Lester engaged it
-      and the rest of us split up to keep looking for you. I ran west from
-      there, and here we are."
+???: "Gunnar, the bridge guard, had some on hand, so the three of us shared them.
+      Though he had nothing to say about how the drawbridge had come down in
+      the first place... Apparently the knight whose shift followed his never
+      arrived, and Gunnar left his post to go looking for the man."
+
+???: "Anyway, we ran into a lone wolf at the crossroads north of the bridge.
+      Lester engaged it and Shanti and I split up to keep looking for you. I
+      ran west from there, and here we are."
 
 A: I'm grateful for the assistance (Kath +1 awareness, Kath +1 impression)
 
@@ -231,18 +292,18 @@ A: I'm grateful for the assistance (Kath +1 awareness, Kath +1 impression)
           stitches."
 
     ???: "Anyway, have you finished out here? The sooner we reunite with the
-          other three, the less danger we'll all be in."
+          other two, the less danger we'll all be in."
 
 A: I didn't ask for your assistance (Kath -1 impression)
 
     ???: "Unbelievable... you really think you're invincible, don't you? We're
           all out in the forest now, whether you like it or not, so are you
-          finished here? The sooner we reunite with the other three, the less
+          finished here? The sooner we reunite with the other two, the less
           danger we'll all be in."
 
 // Dialogue continues
 
-A: I need more time (Kath -1 impression)
+A: I need more time (Kath -1 impression, Abelon -1 impression)
 
     ???: "We've minutes at most, Abelon, before monsters are drawn here by our
           presence. I can't force you to leave now, but whatever you're doing
@@ -388,7 +449,7 @@ Kath: "That wolf won't be standing up again, at the very least. Forward!
 Kath: "By Ignus, what the hell did you just do, Abelon? I've never seen
        such unbelievable magic!"
 
-A: You think I came out here for nothing? (Kath +1 impression)
+A: You think I came out here for nothing? (Kath +1 impression, Abelon +1 impression)
 
     Kath: "Ha... ha ha ha! I still can't fathom why you didn't share your
            plans with the rest of us, but I suppose the one thing I
@@ -402,7 +463,7 @@ A: A secret spell of mine (Kath -1 impression)
 
 *If not in final fight*
 
-    Kath: "Do save your ignea for our reunion with the knights, though. We
+    Kath: "Do save your Ignea for the reunion with our knights, though. We
            might need that spell again on our way to the drawbridge, and
            even I can tell that unholy fire was no cheap cantrip."
 
@@ -451,8 +512,8 @@ Kath: "Let's see... This blood is fresh, and the trail's visible, at least.
        whatever the beast took a bite out of."
 
 Kath: "More than likely it's some poor animal, a deer maybe. The wolf Lester
-       distracted was further east of here. And the blood couldn't be Ceryl or
-       Shanti's, they had gone the other way at the crossroads."
+       distracted was further east of here. And the blood couldn't be Shanti's,
+       she had gone the other way at the crossroads."
 
 Kath: "But could Lester have finished off that wolf and then followed after me?
        By Ignus, if it is a person's blood, we'd be leaving them for dead... but
@@ -488,39 +549,848 @@ Tutorial: "In addition to using up a skill point, each skill has discipline
 
 Kath: "The decision's yours. Your intuition has saved us enough times before."
 
-// If you proceed north immediately until Elaine is in sight. She is by the
-// trees.
+// If you proceed north immediately until Elaine is barely in sight. She is by
+// the trees.
 
-Kath: "There, do you see that? At the edge of the trees. It looks like..."
+Kath: "There, do you see that? At the edge of the trees. It looks like a
+       girl!"
 
-A: A person
+A: One of our knights (Kath +1 awareness)
 
-    Kath: "Yes, a girl! But it doesn't look like Shanti or Ceryl."
+    Kath: "Actually... no, I don't think so - see that orange? It looks like
+           hair, that couldn't be Shanti. But what would anyone else be
+           doing..."
 
-A: An animal
+A: Not one of ours
 
-    Kath: ""
+    Kath: "You're right, none of ours has orange hair like she does. But what
+           would anyone else be doing..."
 
-********
-SNIPPETS
-********
+Kath: "...By Ignus. She crossed the drawbridge, Abelon. She may have been
+       involved in the sabotage."
 
-???: "And with any luck, one day we'll get a taste of the peace and tranquility
-      you old geezers are always rattling on about. Ah, but I suspect there'll
-      be plenty of terrifying monsters standing between us and that day."
+// Dialogue continues
 
-Lester: "But if executioner Abelon is in good spirits and the charming Kath is
-         caught sulking, people will think Eruta's turned upside down! More than
-         it already has, anyway."
+A: Too much blood. She's dead (Abelon +1 impression, Elaine -1 impression)
 
-Kath: "The charming Kath? I'm charming now? Am I charming, Abelon?"
+    Kath: "Maybe so, but if there's even a faint heartbeat, my spells could
+           stitch her together."
 
-A: Positively captivating
+        A: Using how much Ignea?
 
-    Lester: "Captain, I'm hearing a touch of sarcasm. It's coming from Captain
-             Abelon's general direction."
+            Kath: "...too much, I suppose you're thinking. But I can't just
+                   leave her for dead. You got us into this mess, so I
+                   ought to have a turn at being reckless."
 
-    Kath: "Now that you mention it, I do believe you're right, Lester, I'm
-           hearing it too."
+            // Pause
 
-A: Not on your life
+            Kath: "...You've told me enough times that the Kingdom's survival
+                   requires sacrifices. But I swear I won't be the one to make
+                   them."
+
+            A: Who will? (Kath +1 awareness)
+
+                Kath: "You. Just as you always have. Unless you've had a change
+                       of heart?"
+
+            A: I will (Abelon +2 impression)
+
+                Kath: "Yes. But not this time."
+
+            // Dialogue continues
+
+            A: And if we die for helping her?
+
+                Kath: "Then Ebonach's hopes die with us. And I know you won't
+                       let that happen. So let's get on with it."
+
+            A: I won't stop you (Kath +1 impression)
+
+                Kath: "Hah! You know me better than you let on, Abelon. I'll
+                       get closer. Watch my back."
+
+        A: The blood will draw monsters
+
+            Kath: "And if it does, we'll fight them off, as is our speciality."
+
+            // Pause
+
+            Kath: "...You've told me enough times that the Kingdom's survival
+                   requires sacrifices. But I swear I won't be the one to make
+                   them."
+
+            A: Who will? (Kath +1 awareness)
+
+                Kath: "You. Just as you always have. Unless you've had a change
+                       of heart?"
+
+            A: I will (Abelon +2 impression)
+
+                Kath: "Yes. But not this time."
+
+            // Dialogue continues
+
+            A: And if we die for helping her?
+
+                Kath: "Then Ebonach's hopes die with us. And I know you won't
+                       let that happen. So let's get on with it."
+
+            A: I won't stop you (Kath +1 impression)
+
+                Kath: "Hah! You know me better than you let on, Abelon. I'll
+                       get closer. Watch my back."
+
+        A: You'd better work fast (Kath +1 impression, Kath +1 awareness)
+
+            Kath: "As if I wouldn't! You know, back when I manned the Southwall,
+                   injured knights would come to me before even seeing a healer.
+                   Me, a knight-in-training! Just watch."
+
+        // Kath approaches Elaine. Abelon steps forward a little but hangs back.
+
+A: We need to get closer (Kath +1 impression, Kath +2 awareness, Elaine +1 impression)
+
+    Kath: "I was expecting you to protest. But yes, it's worth the risk,
+           even if the blood may draw monsters. Even if she's already dead...
+           Watch my back."
+
+    // Kath approaches Elaine. Abelon follows closely behind.
+
+// When Kath reaches Elaine
+
+Kath: "Goodness, she's torn apart. This is a wolf's work for certain. And they
+       usually strike to kill. Ach, and she scarcely looks older than Lucille.
+       But..."
+
+// Pause
+
+Kath: "........."
+
+// Pause
+
+???: "..."
+
+Kath: "She's alive! Barely. I think I can get her back on her feet, but it's
+       going to take time. And most of my Ignea. I'll just...dump out my pack
+       here, I suppose."
+
+// Kath loses some Ignea
+
+    A: I'll keep watch. Hurry
+
+        Kath: "Naturally."
+
+    A: You won't have enough left to reach the bridge (Kath -1 impression)
+
+        Kath: "Oh, stow your complaints! You think I'm not well appraised
+               of the risk I'm taking? I don't wish for near-dead children to
+               appear in my path, Abelon, but nor will I leave them to their
+               fate. I have no choice!"
+
+    A: *if Abelon followed Kath* Take some of mine (Kath +1 impression)
+
+        Kath: "Truth be told, I was going to ask. Better both of us be low than
+               one of us be dry. Thanks."
+
+        // Abelon loses some Ignea, Kath gains some
+
+    A: *if Abelon followed Kath* Whatever it takes to save her (Kath +1 impression, Kath +2 awareness)
+
+        (Kath awareness < 6)
+        Kath: "Whatever it takes? You only extend that concern to the city, the
+               Kingdom, and the King himself, last I checked."
+
+        (Kath awareness >= 6)
+        Kath: "Whatever it takes? You only extend that concern to the city, the
+               Kingdom, and the King himself, last I checked. Something's
+               different about you Abelon, I swear it..."
+
+Kath: "...Right. 'For deep gashes, as made by claws or swords, slowly guide a
+       fist of thumb-sized stones over the length of the wound, while channeling
+       power gently into the wrist and reading the listed incantation...
+
+// Kath starts healing Elaine
+
+Kath: "...Keep the ignea rocks at a steady, low level of activation, and replace
+       with new stones when half depleted. Repeat motion until wound closes'...
+       Hm, I wonder if I could recite all of the healing scripts from memory."
+
+A: Impressive recollection. (Kath +1 impression)
+
+    Kath: "On the topic of my memory, old man, I haven't forgotten my first
+           caravan, when you told the other knights, 'Kath ought to make an easy
+           meal for the monsters - he won't notice his head's being chewed off
+           until he realizes he can't see his manuscript'."
+
+    A: And it was true, at the time
+
+        Kath: "Perhaps, perhaps not. But the knoweldge has served me well since."
+
+    A: I said such a thing? (Kath +1 awareness)
+
+        Kath: "You did, and everyone laughed their heads off about it. I didn't
+               mind that it was at my expense, of course. I suspect I only
+               remember it because it was the first time I heard you make a joke
+               about anything."
+
+A: You learned something at the Academy after all.
+
+    Kath: "Not so! Sitting at a desk never taught me a thing. Manning the
+           Southwall and running caravans was when it all started to stick."
+
+A: Are you just showing off? (Kath -1 impression)
+
+    Kath: "No, I'm trying to remind myself of the specifics of one of five
+           hundred ignaeic spellcasting methods pulled from twenty different
+           manuscripts. Unless you'd rather I make a mistake and set her on
+           fire?"
+
+A: ... (Abelon +1 impression)
+
+Kath: "...Anyway, deep breaths. Let's see..."
+
+Kath: "......"
+
+Kath: "......"
+
+Kath: "............"
+
+Kath: "...That's the big one across her stomach mended... Let's see her head...
+       skull seems to be intact, but she slammed into something. Probably
+       knocked her out."
+
+A: The tree?
+
+    Kath: "Most likely."
+
+A: You're efficient. (Kath +1 impression, Kath +1 awareness)
+
+    Kath: "Are you surprised? You've watched me do this before."
+
+A: This is... unpleasant to watch. (Abelon -1 impression)
+
+    Kath: "Trust me, I agree. You're welcome to avert your eyes."
+
+Kath: "......"
+
+Kath: "......"
+
+Kath: "............"
+
+// The camera pans around, revealing nothing in particular.
+
+A: Something's not right...
+
+    Kath: "That intuition of yours? Damn... Any idea how long we have before
+           they're upon us?"
+
+A: We're not alone. Can you sense it? (Abelon +1 impession)
+
+    Kath: "I can't. How much time do I have?"
+
+A: Not long. A few minutes.
+
+    Kath: "Then it might come to a fight. The girl has a bow and quiver, maybe
+           she can help somehow if I wake her up."
+
+A: Focus on the girl - I'll defend you both. (Kath +1 impression)
+
+    Kath: "I appreciate the gesture, but like hell you will. The rest of her
+           wounds aren't immediately fatal. We'll defend her together, if it
+           comes to that."
+
+???: "......."
+
+Kath: "Aha!"
+
+???: "Who...?"
+
+Kath: "We're with the Knights of Ebonach. My name is-"
+
+???: "M-Monster! There's a monster, where did it- Ah!"
+
+Kath: "Careful! Dont whip your head around like that, you have a deep
+       laceration on your neck. I'm still healing you."
+
+???: "But..."
+
+A: We killed the wolf. (Kath +1 impression)
+
+A: You're safe. (Elaine +1 impression)
+
+    Kath: "As safe as one can be in the North Forest."
+
+A: ... (Abelon +1 impression)
+
+    Kath: "You were attacked by a wolf, yes. Don't worry, we killed it."
+
+???: "I was... there was... it was chasing me, and I was running... what
+      happened?"
+
+A: You don't know?
+
+    TODO
+
+A: We found you unconscious.
+
+    TODO
+
+A: We found you covered in blood.
+
+    ???: "Covered in... Oh. Oh goddess. Is this... m-my blood?"
+
+    Kath: "Yes."
+
+    ???: "There's so much. It's l-like when we used to visit the butcher...
+          But... I'm not dead?"
+
+    A: Yes. You were very lucky.
+
+        TODO
+
+    A: You would be, if not for us.
+
+        TODO
+
+    A: You don't remember. A mercy.
+
+        ???: "I remember looking back at the monster, and... a-and it was
+              getting closer to me... But... then what?"
+
+        Kath: "Perhaps while you were looking behind you, you ran into a tree,
+               or tripped, and the blow knocked you unconscious. That's the
+               story I'm seeing in the wounds on your head and face."
+
+        ???: "I don't understand. There's far more blood than that."
+
+        Kath: "You were being chased at the time, and we didn't find you fast
+               enough, I'm afraid..."
+
+        A: The wolf ripped you apart (All -1 impression)
+
+            Kath: "I wouldn't have put it so viscerally, but yes. Essentially."
+
+        A: ...
+
+            ???: "Oh..."
+
+        ???: "............"
+
+        Kath: "As he said, it's probably a mercy that you don't remember."
+
+???: "Then... I'm alive because you arrived to heal me."
+
+Kath: "And because your fanged assailant didn't finish his work. He left you
+       alive. My best guess is the earthquake spooked him and sent him running.
+       Straight into us two knights, as it happened."
+
+???: "Knights of Ebonach... You saved me, both of you."
+
+Kath: "Well, that's an ongoing effort. I'm going to move your right leg now."
+
+???: "O-ow!"
+
+Kath: "While we three have time to chat, there are questions we urgently need
+       answered."
+
+A: Who are you? Why are you here?
+
+A: ... (Kath +1 awareness)
+
+    Kath: "...Abelon? ...Never mind. Miss, we need to know who you are, and why
+           you're in the North Forest."
+
+Elaine: "Um... My name is Elaine. Elaine of Ebonach."
+
+A: And? What are you doing here?
+
+    Elaine: "I... I, um..."
+
+    Kath: "Listen to me. We aren't the only Knights of Ebonach in the forest
+           right now. We're split apart, and in great danger. Do you know why?"
+
+A: It's good to meet you. (Abelon -1 impression, Kath +1 awareness)
+
+    Elaine: "And you. Thank you. For saving-"
+
+    Kath: "Hold on. You didn't finish. What on Eruta are you doing out here? I'm
+           sure you're aware of why I'm asking this. Aren't you?"
+
+Elaine: "..."
+
+Kath: "Only a few hours ago, the whole of Ebonach awoke to disaster. Both the
+       northern and western drawbridges were lowered in the night, the ropes
+       cut, the guards missing. Before sunrise, monsters had begun crossing into
+       the city."
+
+Kath: "The knights mobilized to secure the streets, and then we ventured out to
+       defend the bridges while our craftsmen repaired them. We won our battles
+       here in the forest, but we've no word on how Jericho's company fares on
+       the Sonder. For all we know, they've been overrun already."
+
+Kath: "And here you are outside of our walls. Even though civilians are never
+       let through to the forest while the bridge is under guard, including
+       during the repair. Do you understand me, Elaine?"
+
+A: You sabotaged the bridges, or you helped those who did (Elaine -2 impression)
+
+    Elaine: "No! I didn't... I..."
+
+A: You crossed the broken, unguarded bridge and didn't warn anyone (Kath +2 impression)
+
+    Elaine: "I... I only..."
+
+A: Kath, there's another explanation
+
+    Kath: "...Is there?"
+
+// The camera pans around to reveal two approaching wolves
+
+A: Now you've done it... (Kath -1 impression)
+
+A: Kath. On our flanks.
+
+Kath: "By Ignus... We'll have to delay this conversation a little longer.
+       Elaine, I'm not finished stitching you together yet, so you'll need to
+       hold still while I and Abelon here scare off some wolves."
+
+A: Scare off? (Kath +1 impression)
+
+    Kath: "Yes, that's what we do, isn't it? Scare off monsters. You're
+           fantastically scary, has anyone ever told you that, Abelon?"
+
+    A: Yes, you
+
+        Kath: "Ach, right. Well don't take it personally, it's one of your
+               charms."
+
+    A: ... (Abelon +1 impression)
+
+        Kath: "...Right, not the time for chatter."
+
+A: Won't take long
+
+    Kath: "...One way or the other, yes."
+
+Elaine: "D-did you say Abelon?"
+
+Kath: "Say, Elaine, you wouldn't happen to know any spells you could conjure up
+       using that pile of rocks I set down next to you, would you?"
+
+A: Are we trusting her? (Abelon +1 impression)
+
+    Kath: "Do we have a choice?"
+
+A: You really think she knows magic?
+
+Elaine: "W-what? Rocks?"
+
+Kath: "Ach, I thought not. Hm. In that case, just..."
+
+// Kath turns and steps towards the wolves
+
+Kath: "Watch and learn."
+
+A: Playing the hero, are we?
+
+    Kath: "One of us has to, and by Ignus, Abelon, it isn't going to be
+           you. Or Opal, for that matter. Forward!"
+
+A: Let's take the left first
+
+    Kath: "Agreed."
+
+// Fight!
+
+// Ally phase 1
+
+Kath: "They're here for Elaine, they can sense that she's weak. If we can just
+       keep them at bay long enough, they'll change their minds and leave us
+       alone. Hopefully."
+
+// Ally phase 2
+
+Elaine: "A hunter is always... *huff* *huff* A hunter is always learning
+         from..."
+
+A: Are you alright? (Kath +1 awareness)
+
+A: ...
+
+    Kath: Everything all right over there?
+
+Elaine: "Ignore me! Trying to... distract myself from the pain."
+
+Elaine: "If I could just use my bow! Curse these stupid arms, they won't move!"
+
+Kath: "Elaine. I was serious earlier - watch Abelon and I. There's a rhythm to
+       fighting monsters. We will need that bow of yours once you're healed,
+       should we have another run-in, and learning something here could save
+       your life on our way to the drawbridge."
+
+Elaine: "Right... right. A hunter is always learning from everything around
+         them. If I live through this, grandad, I'll tell you how right you
+         were about that!"
+
+// Ally phase 3
+
+Elaine: "Uhh... There's, there's one coming this way towards me, from the trees!
+         Help! Help me!"
+
+Kath: "From behind us too? We'll have to kill it as soon as it breaks into the
+       clearing. Stay close to Elaine, Abelon!"
+
+// Kath dies
+
+Kath: "Urgh. Damn, hurts........ But I refuse... to........"
+
+DEFEAT
+
+// Abelon dies
+
+Kath: "Abelon, no! NO!"
+
+DEFEAT
+
+// Elaine dies
+
+Elaine: "Aaaah!!"
+
+Kath: "Elaine! Ach, dammit!"
+
+DEFEAT
+
+// After the turn limit, the wolves flee. Victory!
+
+Kath: "That's it, run, hah! Back off! And tell your monstrous brethren, *huff*,
+       they're better off not picking a fight with the greatest knights in all
+       the kingdom!"
+
+A: The greatest knights?
+
+    Kath: "What, you disagree?"
+
+    A: I suppose not (Kath +1 impression)
+
+        Kath: "Precisely."
+
+    A: You aren't yet worthy of that title
+
+        Kath: "Bah! Says the old geezer to the youngest captain in the
+               kingdom's history. And it won't be long before I finally best
+               you in a proper duel, either. Time is on my side, Abelon."
+
+    A: I'm not quite worthy of that title (Kath +1 awareness, Abelon -1 impression)
+
+        Kath: "...Is that your attempt at a joke? If there isn't a knight in
+               Mistram or Ebonach who can match you in a duel, who exactly are
+               you competing with?"
+
+        Kath: "Unless you think being the greatest demands you also have
+               a winning personality. In which case, yes, you're dead last."
+
+A: Hurry and tend to Elaine (Elaine +1 impression)
+
+    Kath: "Of course. A few more incantations and she should be able to walk."
+
+A: We've spent too long here
+
+    Kath: "When you're right, you're right, Abelon. I'll have Elaine walking
+           upright in just a few more incantations. Then we'll track down our
+           subordinates."
+
+Elaine: "You said Abelon."
+
+A: That would be me
+
+A: ... (Abelon +1 impression)
+
+Kath: "Yes, first captain of the Knights of Ebonach, and right hand of His
+       Majesty the King. I'm Kath, by the way. Second captain. Ach, but you
+       said you're of Ebonach, so I suppose none of this is news to you?"
+
+Elaine: "............"
+
+Kath: "It won't be long now before I've closed all of your wounds. It might
+       hurt, but we clearly aren't safe outside the city walls, so I'm afraid
+       you'll have to run before you can walk, as it were."
+
+Elaine: "S-Sir Kath! And Sir Abelon! Oh my goddess, I didn't realize - forgive
+         my plain speech!"
+
+Kath: "...That's your worry right now? Ha ha!"
+
+A: Plain is easier (Elaine +1 impression)
+
+A: Well, now you know
+
+Elaine: "And my, my... complete helplessness! Ugh, I was crying out like a lost
+         child! Grandad would have my hide. Sir Kath, Sir Abelon, I'll fight! As
+         soon as I'm up! I could hit one of those wolves through the ear from
+         thirty paces!"
+
+A: Through the ear?
+
+    Elaine: "I only meant... It's just a... I won't actually do that. I'll hit
+             it, really. Sir."
+
+A: Just keep yourself alive, so this wasn't for nothing. (Kath +1 impression)
+
+    Elaine: "I'll do more than that, Sir Abelon. I'll lay down my life if I
+             have to!"
+
+A: Looking forward to seeing that. (Elaine +1 impression, Kath -1 impression)
+
+    Elaine: "Oh, you will, Sir Abelon! Er, that is... not through the ear.
+             Somewhere useful. Between the eyes! I'll lay down my life if I
+             have to."
+
+Kath: "Awfully eager of you, considering the state you were in when we arrived.
+       You would throw yourself at the same enemy which maimed you so badly
+       only minutes ago?"
+
+Elaine: "I... *gulp* I would, Sir Kath. I owe it to you both."
+
+Kath: "Remarkable courage... or stupidity. Elaine, close your eyes for a
+       moment."
+
+Elaine: "Um..."
+
+Kath: "...Good. Now picture, in your mind, that last encounter. The wolves. See
+       one turn its head towards you, look at you with its red eyes. It charges
+       at you. You're standing, bow in hand. What will you do?"
+
+Elaine: "I... Oh goddess."
+
+Kath: "Yes."
+
+Elaine: "But Sir Kath, you told me! You said you'd need my bow!"
+
+A: ...
+
+    Kath: "And we will. But understand, Elaine, that you cannot do what we do.
+           Should monsters block our path, you'll stay behind us and shoot, but
+           above that, you'll not draw attention and make yourself a target."
+
+A: You did say that. Why scare her now? (Kath -1 impression, Kath +1 awareness)
+
+    Kath: "Because she's reminding me far too much of Lester already. And of the
+           the young knights less fortunate than him, dreaming of renown, who
+           defended their first and last caravan to Mistram, killed on the
+           Sonder."
+
+    Kath: "Confidence belongs to the capable. I learned that from you, old man."
+
+        A: I've taught you something after all
+
+            Kath: "Then you should understand why I'm telling her this."
+
+        A: Poor choice for a role model
+
+            Kath: "Almost certainly, Abelon. But we can't help who we admire."
+
+    Kath: "We will need your bow, Elaine. But you cannot do what we do. Should
+           monsters block our path, you'll stay behind us and shoot, but above
+           that, you'll not draw attention and make yourself a target."
+
+A: We will. But you need to understand. (Kath +1 impression)
+
+    Kath: "You cannot do what we do. Should monsters block our path, you'll stay
+           behind us and shoot, but above that, you'll not draw attention
+           and make yourself a target."
+
+Elaine: "...I understand, Sir Kath. Sir Abelon. I felt embarassed, is all, and
+         guilty. I never imagined a captain of the knights would even speak to
+         me, much less that two would save my life. You have so many important
+         duties..."
+
+A: And this is one of them
+
+A: And this is the most important one (Kath +1 impression, +1 awareness)
+
+Kath: "You've but one precious life, which we saved at great cost. Now is no
+       time to be reckless."
+
+Kath: "Besides, you've already spent your luck. We were only trying to regroup
+       with the other members of our company, and it was entirely by chance that
+       we came across you."
+
+A: And it's time you tell us why you're here.
+
+    TODO: grill her a little bit before being stopped by Kath. You can tell
+    Kath it's urgent, but he disagrees, even though it matters a lot to him to
+    (because she isn't going anywhere). You'll talk more later in the chapter.
+
+A: Kath, she's healthy enough to move. We ought to leave. (Elaine +1 impression)
+
+    Kath: "Indeed, it's only scrapes and bruises left on you now, Elaine. Time
+           enough for those in the city. Take my hand."
+
+Elaine: "...Ah!"
+
+Kath: "You'll have to be tougher than that Elaine. Or did I miss one of your
+       injuries? I was thorough enough..."
+
+Elaine: "That's not it, Sir Kath. I feel fine, but... I can't move. When you
+         tried to pull me up just now, I felt a shock. It was... as though my
+         body resisted it."
+
+A: Difficulty moving is expected. Push through it. (Abelon +1 impression)
+
+    Kath: "No, Abelon, this is worse. Paralysis after a wolf bite? Goddess, if
+           it's not one thing, it's another..."
+
+A: What do you make of it, Kath? (Kath +1 impression)
+
+    Kath: "Paralysis after a wolf bite? Goddess, if it's not one thing, it's
+           another..."
+
+Kath: "You were infected. Some wolves carry a lethal venom in their bite."
+
+Elaine: "W-What? ...Lethal?"
+
+A: Without a salve. Kath, are you carrying it? (Kath +1 impression)
+
+    Kath: "No, but Lester has Wornfleet salve in his medical kit. If we could
+           only find him..."
+
+A: Ridiculous. Our knights need us. Kath, leave her. (Kath -1 impression, Elaine -2 impression, Abelon +1 impression)
+
+    Kath: "And abandon our only lead as to how the drawbridge was sabotaged?
+           I'd expect you to show more sense than that, old man, whether or not
+           you particularly care for her life."
+
+    A: Fine. Then how can we cure her? (Kath +1 awareness)
+
+        Kath: "Wornfleet salve applied to the wound will expel the venom. I
+               thought you knew that... Lester carries it in his medical kit -
+               if we find him, we can save Elaine, but..."
+
+    A: Solving that mystery means nothing if we all die out here. (Abelon +1 impression)
+
+        Kath: "And we won't, if we keep our wits about us. She only needs
+               Wornfleet salve applied to her bite wounds. Lester has it in his
+               medical kit, so it won't cost us much time to cure her, if we
+               can only find him. But..."
+
+A: ...
+
+    Kath: "Without a particular salve of Wornfleet leaves, yes. Unfortunately I
+           don't carry any, and I don't know a spell that can act as a
+           substitute. It's Lester who has some in his medical kit. If we could
+           only find him..."
+
+// Elaine slowly stands, as though with great difficulty
+
+*If you said to leave her behind*
+
+    Elaine: "S-Sir Abelon, you're r-right... I've... *huff* burdened you
+             enough..."
+
+*Otherwise*
+
+    Elaine: "I... *huff* I can't b-bear... h-how useless I've been... tch!"
+
+Kath: "...! How did you just...?"
+
+Elaine: "I'll... w-walk with you... to your knight... Lester..."
+
+A: No, you will not. Sit down. (Kath +1 impression, Elaine -1 impression)
+
+    Elaine: "...No! I'm f-fine, I can-"
+
+    Kath: "Sit. Down. However courageous you think you're being, you'll be out
+           cold before you take five steps. Moving your muscles will accelerate
+           the spread of venom and kill you."
+
+A: Good. We can be on our way. (Kath -1 impression, Elaine +1 impression)
+
+    Kath: "Abelon, you fool, if she starts moving about on her feet the venom
+           will spread and kill her! Sit back down, Elaine."
+
+A: ... (Abelon +1 impression)
+
+    Kath: "Elaine, sit back down."
+
+    Elaine: "...No! I'm f-fine, I can-"
+
+    Kath: "Sit. Down. However courageous you think you're being, you'll be out
+           cold before you take five steps. Moving your muscles will accelerate
+           the spread of venom and kill you."
+
+Elaine: "I... I see. Helpless again... Some huntress I am..."
+
+// Elaine sits
+
+*If you didn't say "good, we can be on our way"*
+
+A: We will find Lester, and direct him to you. You remain here. (Kath +1 impression)
+
+    Elaine: "...So the most I can do is lean against this tree and wait for my
+             death? Another wolf will find me before your knight does... And I'm
+             defenseless."
+
+    Kath: "You've endured much already, Elaine, and I'm sorry " TODO
+
+*If you didn't say "No you will not."*
+
+A: What, then, if she cannot move? (Kath +1 awareness)
+
+    Kath: "Deferring to me...? I suggest we leave Elaine, find Lester, and have
+           him take the cure to her here. He will be more than capable of
+           protecting her."
+
+    Elaine: "...So the most I can do is lean against this tree and wait for my
+             death? Another wolf will find me before your knight does... And I'm
+             defenseless."
+
+    TODO
+
+*If Abelon learned Purge*
+
+A: There's a spell I learned in that ritual I'd like to try. (Kath +1 awareness)
+
+    TODO
+
+*If you didn't say to leave her behind, and Elaine impression > 0*
+
+A: Kath, we must not leave her. She may be attacked again. (Elaine +2 impression)
+
+    Kath: "And what do you suggest, old man? There's no saving her without a
+           Wornfleet salve."
+
+        *If Abelon learned Purge*
+
+        A: I've learned a spell. From the ritual. Let me try. (Kath +1 awareness)
+
+            TODO
+
+        A: We make the salve. Wornfleet grows, just to the north. (Kath +2 awareness)
+
+            Kath: "Abelon, you... You would walk even deeper into the forest?
+                   If I had the leaves... Ach, I don't have any tools, but I
+                   suppose I could chew them up... it could work."
+
+            TODO
+
+        A: ...
+
+            Kath: "We leave her, find Lester, and direct him here to cure
+                   Elaine. It's the best option we have."
+
+            TODO
+
+A: ... (Abelon +1 impression)
+
+    TODO
+
+
+
+TODO: Elaine is healed, and is going to fight with us!
+
+TODO: after the battle, insert options to mistrust Elaine if you didn't say
+"Kath, there's another explanation". Kath will say there's no choice but to
+trust her.
+
+TODO: Once we get to Lester, it's time to start having some impression checks.
+Things should change. Perhaps you should even collect some different items.
