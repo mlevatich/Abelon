@@ -1,6 +1,6 @@
-*******************************
-CHAPTER 2: The City in Darkness
-*******************************
+*************************************
+CHAPTER 2: Sabotage in the Black City
+*************************************
 
 
 
@@ -21,8 +21,25 @@ to the king, the conversation will change based on what exactly you learned.
 
 Following the various leads of this investigation is the central activity of
 Chapter 1. You consult adults in all districts (receiving sidequests from them
-in the process), knights in the barracks, Gaheris, Mona, a school instructor,
-the watchers, etc. The mystery leads you to this truth:
+in the process), knights in the barracks (the gatekeepers), Gaheris, Mona, a
+school instructor, the watchers, etc. The mystery leads you to this truth:
+
+Regarding the sabotage case, the reason Elaine was in the forest was to hunt,
+and she crossed the unguarded drawbridge on the mistaken assumption that it
+was left open for her by the absent gatekeeper, with whom she is romantically
+involved. The absent gatekeeper is missing for most of the chapter, since he
+was incapacitated somehow by the perpetrators, but you can talk to the boy who
+was on shift and went looking for him. All three of them (Elaine and the two
+gatekeeper boys) are good friends. The remaining gatekeeper is concerned for
+his missing friend, and reveals that his friend specifically requested to have
+the early morning shift, a swap. This is a mystery unless Elaine is around to
+reveal her hunting arrangement - her boyfriend lowers the bridge for her some
+early mornings so she can enter the forest and hunt game for her little sister's
+birthday. It is largely the only place to do so. This shocks the party, since
+the north forest is so dangerous - if Elaine makes regular trips there, how is
+it that she hasn't died? This is due to the talisman she wears, which is its own
+mystery. A talisman which repels monsters? And why was it missing / broken when
+she was last in the forest? Hmm.
 
 Turns out it's just a group of kids behind it, who got the idea from their
 parents to sabotage the city after the killing of the Cardinal. Luci knows these
@@ -106,7 +123,7 @@ barracks, and has a big heart for others, but is careless with regard to his
 own safety. He's one of Kath's knights, and also Kath's best friend. He's a
 Hellshun.
 
-If you saved Elaine, there is an optional questl ine for her to join the
+If you saved Elaine, there is an optional quest line for her to join the
 knights. She is kind but inexperienced, emotion-driven, and afraid of combat.
 You will also investigate her and her family as part of the sabotage mystery,
 whether she is alive or dead.

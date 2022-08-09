@@ -1,6 +1,6 @@
-*************************
-CHAPTER 5: Secrets in Ash
-*************************
+************************
+CHAPTER 5: Doomed to Ash
+************************
 
 
 
@@ -8,17 +8,35 @@ CHAPTER 5: Secrets in Ash
 NOTES
 *****
 
-Gaheris is accompanied by the knight you didn't bring with you in chapter 1. If you saved all three, it will be whichever
-knight you didn't order as backup to the Sonder on the doomed reinforcements mission (if there was only one choice
-at this point, that knight would be reassigned to guard Gaheris to the Ash, and wouldn't have died on the reinforcements
-mission).
+The low point in the story. Traverse the canyon, starving, fending off monsters
+and a drake, until you stumble on the archives.
 
-Go back to the capital, stopping by the archives on the way, and meeting up with Gaheris.
+You succeed in the landslide plan,
+but block the party's path back to Mistram, so you must travel north through the
+bottom of the ravine, searching for food and fleeing from a Drake (you can
+also kill it, which Kath says will doom the world when it's mother finds out and
+takes revenge, but this consequence never arises throughout the entire story).
+Concerned only with survival, you fight monsters for food until reaching the
+Archives west of Lefally, which mysteriously seems to have been recently
+visited. Nobody except maybe Kath even knew this building existed. You run
+unexpectedly into Gaheris, who shares his supply caravan with you and tells you
+he was sent by the king.
 
-Need to discover something new that even the King doesn't know – combine your knowledge with his,
-to make the trip worthwhile.
+You should run desperately low on ignea here.
 
-Abelon is talking about as much as the player by this point.
+Learn here that Mona is Kath's mother, and that Kath is a woman, and from
+Lefally.
+
+Gaheris is accompanied by the knight you didn't bring with you in chapter 1. Both
+join your party at the archives.
+
+Need to discover something new that even the King doesn't know – combine your
+knowledge with his, to make the trip worthwhile. Exploring the archives gives
+you a MOSTLY complete picture of the story and the history of the Kingdom.
+
+Oops, you weren't supposed to kill the messenger.
+
+Abelon is talking about as much as the player by this point. Perhaps a little less.
 
 
 

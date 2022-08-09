@@ -1,12 +1,35 @@
-***************************
-CHAPTER 7: The Waking World
-***************************
+*****************************************
+CHAPTER 7: The Cardinal and the Caretaker
+*****************************************
 
 
 
 *****
 NOTES
 *****
+
+Gaheris knows the secrets came from the past, so he goes to the ash archives by Lefellen. Big drain on kingdom
+resources, but the king allows it (why?), upsetting everyone. In chapter 6, return home from ash after meeting up
+with Gaheris, to find that the place is under attack. He found out the world is waking,  and we need to put it to
+sleep by stopping the Messenger. He says it was defeated by the power of a demon inhabiting a great knight
+but corrupting him, saving the world but turning the knight towards darkness. But the book of incantations for
+summoning the demon was missing from the archives (because Abelon retrieved it before the story began).
+
+To progress from this point, the player must retrieve the book of incantations from the summoning site.
+If you've been good to Abelon, he'll let you read his diary hidden under the books.
+Otherwise, he'll do it himself and leave the diary behind. If you've been good,
+he'll also tell Gaheris that the demon was actually kind. Learning we have the demon on our side convinces
+Gaheris we have a chance, but we need to confront the King to find out why he wanted the Caretaker and
+Cardinals dead, but allowed Gaheris to investigate the archives.
+
+Abelon makes a decision for you towards the end in a dramatic moment.
+
+The late choices are about Kath, Gaheris, the King, and the Watchers, and Jericho.
+
+Jericho is distraught over having led a doomed expedition, and is filled with hatred towards the messenger. He is not
+ok with caring for it.
+
+Abelon takes more control by this point in the story.
 
 Abelon has basically taken control entirely by this point. If you make a decision, it is because he trusts you
 and lets you.
@@ -18,6 +41,12 @@ A tragic character to the end.
 
 A cool "power trip" idea for the final boss is when you're in dire straits, you suddenly get infinite
 ignea and can go nuts.
+
+Another fun power trip idea is for every character to have access to a "blowout"
+ability that has a massive effect but prevents them from using ignea for the
+rest of the game. This may be a bit hard to execute. But if the eventual
+trajectory of the plot is for no one to use ignea anymore, it could be
+thematically resonant.
 
 Abelon has some choice over who the next cardinal and caretaker will be. The options depend on impressions as well.
 

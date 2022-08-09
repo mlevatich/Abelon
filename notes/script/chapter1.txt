@@ -363,7 +363,7 @@ A: I've felt worse
 
 A: You think he's dead?
 
-    ???: "Not dead, he couldn't be. Any of those three is more than capable of
+    ???: "Not dead, he couldn't be. Either of those two is more than capable of
           dealing with a mangy, rabid mutt. But that's exactly what makes me
           worry. Something must have happened..."
 
@@ -582,6 +582,8 @@ A: Too much blood. She's dead (Abelon +1 impression, Elaine -1 impression)
                    leave her for dead. You got us into this mess, so I
                    ought to have a turn at being reckless."
 
+            LABEL -A-
+
             // Pause
 
             Kath: "...You've told me enough times that the Kingdom's survival
@@ -613,32 +615,7 @@ A: Too much blood. She's dead (Abelon +1 impression, Elaine -1 impression)
 
             Kath: "And if it does, we'll fight them off, as is our speciality."
 
-            // Pause
-
-            Kath: "...You've told me enough times that the Kingdom's survival
-                   requires sacrifices. But I swear I won't be the one to make
-                   them."
-
-            A: Who will? (Kath +1 awareness)
-
-                Kath: "You. Just as you always have. Unless you've had a change
-                       of heart?"
-
-            A: I will (Abelon +2 impression)
-
-                Kath: "Yes. But not this time."
-
-            // Dialogue continues
-
-            A: And if we die for helping her?
-
-                Kath: "Then Ebonach's hopes die with us. And I know you won't
-                       let that happen. So let's get on with it."
-
-            A: I won't stop you (Kath +1 impression)
-
-                Kath: "Hah! You know me better than you let on, Abelon. I'll
-                       get closer. Watch my back."
+            GOTO -A-
 
         A: You'd better work fast (Kath +1 impression, Kath +1 awareness)
 
@@ -671,7 +648,7 @@ Kath: "........."
 ???: "..."
 
 Kath: "She's alive! Barely. I think I can get her back on her feet, but it's
-       going to take time. And most of my Ignea. I'll just...dump out my pack
+       going to take time. And most of my Ignea. I'll just... dump out my pack
        here, I suppose."
 
 // Kath loses some Ignea
@@ -788,16 +765,16 @@ A: We're not alone. Can you sense it? (Abelon +1 impession)
 
     Kath: "I can't. How much time do I have?"
 
-A: Not long. A few minutes.
+    A: Not long. A few minutes.
 
-    Kath: "Then it might come to a fight. The girl has a bow and quiver, maybe
-           she can help somehow if I wake her up."
+        Kath: "Then it might come to a fight. The girl has a bow and quiver, maybe
+            she can help somehow if I wake her up."
 
-A: Focus on the girl - I'll defend you both. (Kath +1 impression)
+    A: Focus on the girl - I'll defend you both. (Kath +1 impression)
 
-    Kath: "I appreciate the gesture, but like hell you will. The rest of her
-           wounds aren't immediately fatal. We'll defend her together, if it
-           comes to that."
+        Kath: "I appreciate the gesture, but like hell you will. The rest of her
+            wounds aren't immediately fatal. We'll defend her together, if it
+            comes to that."
 
 ???: "......."
 
@@ -829,11 +806,29 @@ A: ... (Abelon +1 impression)
 
 A: You don't know?
 
-    TODO
+    LABEL -B-
 
-A: We found you unconscious.
+    ???: "I remember looking back at the monster, and... a-and it was
+            getting closer to me... But... then what?"
 
-    TODO
+    Kath: "Perhaps while you were looking behind you, you ran into a tree,
+            or tripped, and the blow knocked you unconscious. That's the
+            story I'm seeing in the wounds on your head and face."
+
+    ???: "I don't understand. There's far more blood than that."
+
+    Kath: "You were being chased at the time, and we didn't find you fast
+            enough, I'm afraid..."
+
+    A: The wolf ripped you apart (All -1 impression)
+
+        Kath: "I wouldn't have put it so viscerally, but yes. Essentially."
+
+    A: ...
+
+        ???: "Oh..."
+
+    ???: "............"
 
 A: We found you covered in blood.
 
@@ -846,35 +841,15 @@ A: We found you covered in blood.
 
     A: Yes. You were very lucky.
 
-        TODO
+        GOTO -B-
 
     A: You would be, if not for us.
 
-        TODO
+        GOTO -B-
 
     A: You don't remember. A mercy.
 
-        ???: "I remember looking back at the monster, and... a-and it was
-              getting closer to me... But... then what?"
-
-        Kath: "Perhaps while you were looking behind you, you ran into a tree,
-               or tripped, and the blow knocked you unconscious. That's the
-               story I'm seeing in the wounds on your head and face."
-
-        ???: "I don't understand. There's far more blood than that."
-
-        Kath: "You were being chased at the time, and we didn't find you fast
-               enough, I'm afraid..."
-
-        A: The wolf ripped you apart (All -1 impression)
-
-            Kath: "I wouldn't have put it so viscerally, but yes. Essentially."
-
-        A: ...
-
-            ???: "Oh..."
-
-        ???: "............"
+        GOTO -B-
 
         Kath: "As he said, it's probably a mercy that you don't remember."
 
@@ -1001,6 +976,9 @@ A: Let's take the left first
     Kath: "Agreed."
 
 // Fight!
+// Elaine begins the battle with 1 hp and two negative statuses: one is a 
+// stat reduction to her agility preventing her from moving (lasting infinity
+// turns), and the other is wolf venom, which can be cleansed with Purge.
 
 // Ally phase 1
 
@@ -1039,6 +1017,13 @@ Elaine: "Uhh... There's, there's one coming this way towards me, from the trees!
 
 Kath: "From behind us too? We'll have to kill it as soon as it breaks into the
        clearing. Stay close to Elaine, Abelon!"
+
+// Abelon uses Purge on Elaine
+
+Elaine: "Huh? I feel..."
+
+Kath: "Abelon, what was that? What are you doing? I've never seen that spell
+       before."
 
 // Kath dies
 
@@ -1185,7 +1170,7 @@ A: You did say that. Why scare her now? (Kath -1 impression, Kath +1 awareness)
 
             Kath: "Then you should understand why I'm telling her this."
 
-        A: Poor choice for a role model
+        A: Poor choice for a role model (Kath +1 impression)
 
             Kath: "Almost certainly, Abelon. But we can't help who we admire."
 
@@ -1225,6 +1210,49 @@ A: Kath, she's healthy enough to move. We ought to leave. (Elaine +1 impression)
 
     Kath: "Indeed, it's only scrapes and bruises left on you now, Elaine. Time
            enough for those in the city. Take my hand."
+
+*If Abelon used Purge during the battle*
+
+    Elaine: "...I can move!"
+
+    Kath: "Did you think you wouldn't be able to, after I stitched you up? Why,
+           I'm nearly offended."
+
+    Elaine: "No, I only meant... Um... Even after I woke up, my body
+             felt frozen, until Sir Abelon used a spell on me while you were
+             fighting those wolves."
+
+    Kath: "Right, that. What exactly did you do to her, old man?"
+
+    A: She was envenomated. I cured her. (Elaine +1 impression, Kath +1 impression, Kath +1 awareness)
+
+        Kath: "So if I understand correctly, you not only discerned that she
+               was infected, but then purged the venom with a spell I've never 
+               even seen before, all while we were under attack by monsters."
+
+        Kath: "...Some days, I wonder why His Majesty still retains you as a captain, 
+               as inconsiderate and unpleasant as you are, but when we step onto
+               the battlefield I remember. Your prescience, your reflexes... you
+               could be the Kingdom's hero, if you only wanted to."
+
+    A: I'm not sure. I followed my intuition. (Kath +2 awareness)
+
+        Kath: "She's saying you cured her of something, and you don't even know
+               what you were doing? None of this adds up."
+
+        *If Kath awareness >= 8*
+
+            Kath: "The way you speak, it's like your memory is faltering. And your
+                   actions have been... uncharacteristic. Ever since this ritual
+                   of yours. It's almost as though..."
+
+    Kath: "But I'm getting distracted. If you're fully recovered, Elaine, then
+           there's nothing more for us here. We ought to reunite with Lester and
+           Shanti immediately. Stay close to Abelon and I."
+
+    GOTO -G-
+
+*Otherwise*
 
 Elaine: "...Ah!"
 
@@ -1295,7 +1323,9 @@ Kath: "...! How did you just...?"
 
 Elaine: "I'll... w-walk with you... to your knight... Lester..."
 
-A: No, you will not. Sit down. (Kath +1 impression, Elaine -1 impression)
+A: No, you will not. Sit down. (Kath +1 impression)
+
+    LABEL -C-
 
     Elaine: "...No! I'm f-fine, I can-"
 
@@ -1312,11 +1342,7 @@ A: ... (Abelon +1 impression)
 
     Kath: "Elaine, sit back down."
 
-    Elaine: "...No! I'm f-fine, I can-"
-
-    Kath: "Sit. Down. However courageous you think you're being, you'll be out
-           cold before you take five steps. Moving your muscles will accelerate
-           the spread of venom and kill you."
+    GOTO -C-
 
 Elaine: "I... I see. Helpless again... Some huntress I am..."
 
@@ -1326,11 +1352,34 @@ Elaine: "I... I see. Helpless again... Some huntress I am..."
 
 A: We will find Lester, and direct him to you. You remain here. (Kath +1 impression)
 
+    LABEL -D-
+
     Elaine: "...So the most I can do is lean against this tree and wait for my
              death? Another wolf will find me before your knight does... And I'm
              defenseless."
 
-    Kath: "You've endured much already, Elaine, and I'm sorry " TODO
+    Kath: "I'm sure it appears that way to you, but you aren't in immediate danger.
+           The scent of their own blood will make monsters wary of approaching the
+           road here for a little while, at least."
+
+    Kath: "And our knight Lester... well, maybe "reliable" is not the right word, 
+           but he's swift and resilient. He'll keep you safe."
+
+    Elaine: "......"
+
+    Elaine: "Just... please, promise someone will come for me."
+
+    A: You have our word (Elaine + 1 impression)
+
+        Elaine: "Then I will wait."
+
+        Kath: "Good."
+
+    A: We cannot make such guarantees (Abelon +1 impression)
+
+        Elaine: "...Grandad... Charim... Oh, what an idiot I've been..."
+
+    GOTO -G-
 
 *If you didn't say "No you will not."*
 
@@ -1340,17 +1389,66 @@ A: What, then, if she cannot move? (Kath +1 awareness)
            him take the cure to her here. He will be more than capable of
            protecting her."
 
-    Elaine: "...So the most I can do is lean against this tree and wait for my
-             death? Another wolf will find me before your knight does... And I'm
-             defenseless."
-
-    TODO
+    GOTO -D-
 
 *If Abelon learned Purge*
 
 A: There's a spell I learned in that ritual I'd like to try. (Kath +1 awareness)
 
-    TODO
+    LABEL -E-
+
+    Kath: "Full of surprises today, aren't you? If you think it'll work,
+           I'm not about to stop you."
+
+    // Regain control of Abelon.
+
+    // Talking to Kath
+
+    Kath: "Well? Pull out your ignea, and let's see this cantrip of yours."
+
+    // Talking to Elaine
+
+    Elaine: "Will it hurt? I mean, um... Goddess, I sound like a child.
+             Just do it. Er... please. Sir Abelon."
+
+    // Attempting to leave the area
+
+    Kath: "Abelon? Where are you going? Weren't you suggesting you'd cure
+           her with a spell? Or did I misunderstand?"
+
+    // Using Purge on Elaine
+
+    // Tutorial disappears. A glow surrounds Abelon and Elaine. Elaine slowly stands.
+
+    Elaine: "I feel... fine, all of the sudden. Wow."
+
+    Kath: "I'm not one to doubt you, Abelon, but I'm almost in disbelief that
+           that worked. Closing wounds with ignea is one thing, but expelling
+           disease or venom is... well, it's almost unheard of!"
+
+    *If Abelon already used Conflagration or Crucible*
+
+        Kath: "Between this and those scorching flames from earlier, I'm more
+               and more curious about this ritual of yours."
+
+    *Otherwise*
+
+        Kath: "I'm more and more curious about this ritual of yours."
+
+    Kath: "If you're sure it worked, Elaine, then there's nothing more for us
+           here. We ought to reunite with Lester and Shanti immediately. Stay
+           close to Abelon and I."
+
+    GOTO -G-
+
+    LABEL -F-
+
+    (Contextual actions tutorial)
+    Tutorial: "In some situations, it may be appropriate to use an item or cast
+               a spell on a particular location or target."
+
+    Tutorial: "Move next to the target and open your inventory. Navigate to 
+               the spell or item, select it, and "Use" it."
 
 *If you didn't say to leave her behind, and Elaine impression > 0*
 
@@ -1363,7 +1461,7 @@ A: Kath, we must not leave her. She may be attacked again. (Elaine +2 impression
 
         A: I've learned a spell. From the ritual. Let me try. (Kath +1 awareness)
 
-            TODO
+            GOTO -E-
 
         A: We make the salve. Wornfleet grows, just to the north. (Kath +2 awareness)
 
@@ -1371,26 +1469,61 @@ A: Kath, we must not leave her. She may be attacked again. (Elaine +2 impression
                    If I had the leaves... Ach, I don't have any tools, but I
                    suppose I could chew them up... it could work."
 
-            TODO
+            TODO: Item pickup tutorial. Then item use tutorial (-F-).
 
         A: ...
 
             Kath: "We leave her, find Lester, and direct him here to cure
                    Elaine. It's the best option we have."
 
-            TODO
+            GOTO -D-
 
+A: We could carry her
+
+    Kath: "That's still too dangerous - we would be moving her muscles around. 
+           She needs to stay still until she's cured."
+
+    Kath: "I think the best course is for us to leave Elaine, find Lester, and 
+           have him take the cure to her here. He will be more than capable of
+           protecting her."
+
+    GOTO -D-
+    
 A: ... (Abelon +1 impression)
 
-    TODO
+    Kath: "What to do... perhaps the best course is to leave Elaine, find 
+           Lester, and have him take the cure to her here. He will be more 
+           than capable of protecting her. Abelon, your thoughts?"
 
+    A: It puts Elaine at risk
 
+        Kath: "Ach, but we've no other reasonable choice. We can't move her."
 
-TODO: Elaine is healed, and is going to fight with us!
+    A: It puts us at risk (Kath -1 impression, Abelon -1 impression)
+
+        Kath: "I fail to see how. If anything, Elaine is the one in danger."
+
+    A: I agree
+
+        Kath: "Hearing that does wonders for my confidence."
+
+    GOTO -D-
+
+LABEL -G-
+
+Kath: "Lester had engaged a wolf at the crossroads. Assuming he
+       killed it, he would have starting coming this way. If we 
+       take the path southeast towards the gate, we should find him."
+
+// Regain control
 
 TODO: after the battle, insert options to mistrust Elaine if you didn't say
-"Kath, there's another explanation". Kath will say there's no choice but to
-trust her.
+"Kath, there's another explanation". Bring it back to the bridge issue.
+Kath will say there's no choice but to trust her.
+
+TODO: Head southeast! In some cases, Elaine has joined the
+party. In other cases, she remains still. Prompts for talking to her in both cases.
+Prompts for talking to Kath. Heading north prompts Kath to stop you.
 
 TODO: Once we get to Lester, it's time to start having some impression checks.
 Things should change. Perhaps you should even collect some different items.

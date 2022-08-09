@@ -1,12 +1,38 @@
-******************
-CHAPTER 4: Mistram
-******************
+**********************
+CHAPTER 4: Mining Hope
+**********************
 
 
 
 *****
 NOTES
 *****
+
+The previous chapter (3) is mostly character driven, although you do learn some
+new plot details, indirectly. This chapter should be very plot-driven. On the
+immediate level, the people of Mistram are on the verge of finding new ways to
+fight the despair, though they need to overcome infighting. You get hints as to
+the bigger picture of Eruta as well, and why the despair is happening, with the
+crumbling cavern incident, among other things. And you start to get an idea of
+why the King sent you to Mistram. After all, it's chapter 4 now - things ought
+to start moving very quickly (as though the player is approaching a conclusion,
+to make the events of the end of the chapter more unexpected and drastic).
+
+I have a better idea for the final battle of this chapter and the following
+events.
+
+The messenger shows
+up suddenly, trampling everything and moving towards Mistram. You defend the
+East gates, but it becomes obvious the thing cannot be stopped. You distract it
+and lead it slightly to the North, away from the village, but you don't know
+how to get away from it or stop it from attacking Mistram if it loses interest
+in you. One of Uther or Opal comes with you, while the other stays to organize
+an evacuation. A caravan will lead all Mistram to Ebonach. Another earthquake
+strikes, and based on that and the events of the chapter (mining tunnel
+collapse), someone gets the idea to trap the messenger in a manually triggered
+landslide in the icy canyon to the north. This is obviously near-suicidal, but
+the messenger is a force of nature, and no one has any better ideas. The landslide
+comes down and we fade to black. The chapter ends.
 
 At some point, Abelon begs to have some control. You can agree, or tell him his
 choices are wrong. The latter ultimately turns him against you, while the former
@@ -24,8 +50,6 @@ Opal and the guard.
 
 Abelon likes you if you side with the guard, and doesn't like if you side with
 the miners. If you unify them, he comes to understand a little more.
-
-Learn here that Mona is Kath's mother, and that Kath is a woman.
 
 At some point, you have the option of having Ebonach soldiers cross the Sonder
 for some reason, led by Jericho. It is hinted that the expedition will be

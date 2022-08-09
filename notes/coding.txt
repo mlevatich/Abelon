@@ -1,6 +1,8 @@
 What to do next, organized into sections and issues! (please commit each
 paragraph separately for your own sanity)
 
+Right now: look at #69 below
+
 SECTION: GAME ENTRY-EXIT PROCEDURES
 
 #16:
@@ -17,8 +19,11 @@ Tutorial information should appear on the right side of the screen, in the
 middle. Tutorial paragraphs are given in the script. They are also accessible
 from the settings menu in a "tutorial" menu.
 
-One more tutorial than whats in the script happens in the Elaine section, to
-tell you about your items, using them, and presenting them.
+#?:
+
+Support GOTOs in scenes for sane script-writing.
+
+Use a better format than a text file for writing a branching story?
 
 #59:
 
@@ -53,6 +58,8 @@ Fill in black lines to avoid quad bleeding
 Expand lighting engine. Flickering, smoothing, obstacle detection (sprite
 parameter deciding whether it blocks light may be needed. e.g. abelon blocks
 light but a log doesn't), proper color computation. Look up lua/love shaders
+
+Alternate, darken with patterns of black pixels over tiles?
 
 
 
@@ -194,8 +201,7 @@ most of the forest.
 
 #66:
 
-Second battle theme - for the last encounter, after Ceryl dies. This just got
-much more serious.
+Second battle theme - for the last encounter. This just got much more serious.
 
 #67:
 
@@ -213,15 +219,28 @@ Finish script
 
 #69:
 
-Write Elaine scene into script
+TODOS in chapter1.txt to finish off elaine scenario
 
 Fix the stupid wolf animation flickering
-Tweak Elaine portrait and sprite
-Kath-idle, Elaine-idle, Elaine-walk, Elaine-Downed, Elaine-Getup
+
+Finish #57
+
+Finish #16
+
+Finish #48
+
+Finish the issue below 48 in GAME ENTRY EXIT
+
+Kath-idle
+Kath-heal
+Screen shake
 
 Implement rewritten beginning of script
 
-Finish #57
+
+
+Tweak Elaine portrait and sprite
+Elaine-idle, Elaine-walk, Elaine-Downed, Elaine-Getup
 
 Implement Elaine script.
 
@@ -243,7 +262,7 @@ Test out Elaine's skills in a mock battle
 
 #70:
 
-implement Lester scenario (objective is rout, optionally have Lester escape)
+implement Lester scenario (version with and version without Elaine)
 
 improve AI algorithm - use other plans! In particular, enemies shouldn't
 interfere with each other. If one enemy has only a single path to attack their
@@ -254,11 +273,16 @@ farther away from the allies should also be prioritized.
 
 #71:
 
-implement Shanti/Ceryl scenario
+implement Shanti scenario (four versions: saved lester and elaine quickly so
+Shanti is saveable, Saved Elaine out of battle so Shanti dies, sent lester to 
+Elaine and he dies, or skipped Elaine)
 
 #72:
 
-Implement Ceryl death scenario (objective is survive)
+Implement visiting Elaine's corpse scenario
+
+Implement bridge battle scenario (four versions: Lester dead, Shanti dead,
+Elaine dead, all alive) (objective is survive)
 
 Implement chapter conclusion scenario
 
