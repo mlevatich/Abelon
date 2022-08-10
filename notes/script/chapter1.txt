@@ -1002,9 +1002,18 @@ Elaine: "Ignore me! Trying to... distract myself from the pain."
 Elaine: "If I could just use my bow! Curse these stupid arms, they won't move!"
 
 Kath: "Elaine. I was serious earlier - watch Abelon and I. There's a rhythm to
-       fighting monsters. We will need that bow of yours once you're healed,
+       fighting monsters. We might need that bow of yours once you're healed,
        should we have another run-in, and learning something here could save
        your life on our way to the drawbridge."
+
+*If you didn't say "Kath, there's another explanation"*
+
+A: Letting her hold a bow would be foolish (Abelon +1 impression)
+
+    Kath: "Hm. Personally, I'd feel more foolish if we confiscated it only to
+           be killed by monsters. We'll agree to disagree."
+
+A: ...
 
 Elaine: "Right... right. A hunter is always learning from everything around
          them. If I live through this, grandad, I'll tell you how right you
@@ -1107,12 +1116,30 @@ Kath: "...That's your worry right now? Ha ha!"
 
 A: Plain is easier (Elaine +1 impression)
 
+    LABEL -I-
+
+    Elaine: "And my, my... complete helplessness! Ugh, I was crying out like a lost
+            child! Grandad would have my hide."
+
 A: Well, now you know
 
-Elaine: "And my, my... complete helplessness! Ugh, I was crying out like a lost
-         child! Grandad would have my hide. Sir Kath, Sir Abelon, I'll fight! As
-         soon as I'm up! I could hit one of those wolves through the ear from
-         thirty paces!"
+    GOTO -I-
+
+*If you didn't say "Kath, there's another explanation"*
+
+A: Drop the act. You're an enemy of the Kingdom (Abelon +1 impression, Elaine -1 impression)
+
+    Elaine: "No! I... Please, I understand what this looks like, but I have
+             nothing to do with the broken bridge! Just let me explain!"
+
+    Kath: "Abelon, I think it's better we trust her for now. We don't have time
+           to listen to her explanation out here, and it's not as though she 
+           can do us much harm. Even if she is up to something."
+
+    Elaine: "I'm not! Let me use my bow, and I'll prove it."
+
+Elaine: "Sir Kath, Sir Abelon, I'll fight! As soon as I'm up! I could hit one of 
+         those wolves through the ear from thirty paces!"
 
 A: Through the ear?
 
@@ -1124,15 +1151,23 @@ A: Just keep yourself alive, so this wasn't for nothing. (Kath +1 impression)
     Elaine: "I'll do more than that, Sir Abelon. I'll lay down my life if I
              have to!"
 
+*If you didn't say "Kath, there's another explanation"*
+
+A: As if we'd trust you with a weapon (Abelon +1 impression, Elaine -1 impression)
+
+    Elaine: "But..."
+
+*If you didn't say "Drop the act"*
+
 A: Looking forward to seeing that. (Elaine +1 impression, Kath -1 impression)
 
     Elaine: "Oh, you will, Sir Abelon! Er, that is... not through the ear.
              Somewhere useful. Between the eyes! I'll lay down my life if I
              have to."
 
-Kath: "Awfully eager of you, considering the state you were in when we arrived.
-       You would throw yourself at the same enemy which maimed you so badly
-       only minutes ago?"
+Kath: "Awfully eager of you, Elaine, considering the state you were in when 
+       we arrived. You would throw yourself at the same enemy which maimed 
+       you so badly only minutes ago?"
 
 Elaine: "I... *gulp* I would, Sir Kath. I owe it to you both."
 
@@ -1157,7 +1192,16 @@ A: ...
            Should monsters block our path, you'll stay behind us and shoot, but
            above that, you'll not draw attention and make yourself a target."
 
-A: You did say that. Why scare her now? (Kath -1 impression, Kath +1 awareness)
+A: I don't need help from a child (Abelon +1 impression, Elaine -1 impression, Kath -1 impression)
+
+    Kath: "That's not what I'm getting at, old man. Personally, I think the
+           assistance could prove useful, so long as she's prepared."
+
+    Kath: "Understand, Elaine, that you cannot do what we do.
+           Should monsters block our path, you'll stay behind us and shoot, but
+           above that, you'll not draw attention and make yourself a target."
+
+A: Kath, you did say that. Why scare her now? (Kath -1 impression, Kath +1 awareness)
 
     Kath: "Because she's reminding me far too much of Lester already. And of the
            the young knights less fortunate than him, dreaming of renown, who
@@ -1177,6 +1221,9 @@ A: You did say that. Why scare her now? (Kath -1 impression, Kath +1 awareness)
     Kath: "We will need your bow, Elaine. But you cannot do what we do. Should
            monsters block our path, you'll stay behind us and shoot, but above
            that, you'll not draw attention and make yourself a target."
+
+*If you didn't say "Drop the act" or "Letting her hold a bow would be foolish" or
+"As if we would trust you with a weapon"*
 
 A: We will. But you need to understand. (Kath +1 impression)
 
@@ -1200,11 +1247,42 @@ Kath: "Besides, you've already spent your luck. We were only trying to regroup
        with the other members of our company, and it was entirely by chance that
        we came across you."
 
-A: And it's time you tell us why you're here.
+A: And it's time you tell us why you're here. (Abelon +1 impression)
 
-    TODO: grill her a little bit before being stopped by Kath. You can tell
-    Kath it's urgent, but he disagrees, even though it matters a lot to him to
-    (because she isn't going anywhere). You'll talk more later in the chapter.
+    Elaine: "...Ugh. You found me here in the forest, so you must already 
+             know. I did cross the bridge. It had been lowered..."
+
+    A: That makes you guilty. (Elaine -1 impression)
+
+        Elaine: "Let me finish!"
+
+    A: ...
+
+    Elaine: "I crossed the bridge, yes, but I had no idea it was sabotaged!"
+
+    A: Nonsense. The bridge is never lowered. You must have known. (Abelon +1 impression)
+
+        Elaine: "I didn't. Because... I was expecting it to be lowered."
+
+    A: You were expecting the bridge to be lowered? (Kath +1 impression)
+    
+        Elaine: "I... I was."
+
+    Kath: "You intended to come to the forest. Not only were you expecting
+            it to be lowered, you were expecting it to be completely 
+            unguarded. Is that right?"
+
+    Elaine: "...Yes."
+
+    Kath: "...By law, civilians are not to enter the North Forest. And the 
+           bridge is never, ever to be unguarded. I trust you understand what 
+           this admission means for you?"
+
+    Elaine: "...I do..."
+
+    Kath: "Then we'll not dwell on it further. There's more to this story,
+           obviously, but we can't be jabbering on about it while our
+           knights are in danger. Take my hand, Elaine."
 
 A: Kath, she's healthy enough to move. We ought to leave. (Elaine +1 impression)
 
@@ -1238,7 +1316,7 @@ A: Kath, she's healthy enough to move. We ought to leave. (Elaine +1 impression)
     A: I'm not sure. I followed my intuition. (Kath +2 awareness)
 
         Kath: "She's saying you cured her of something, and you don't even know
-               what you were doing? None of this adds up."
+               what you were doing? None of this adds up..."
 
         *If Kath awareness >= 8*
 
@@ -1249,6 +1327,8 @@ A: Kath, she's healthy enough to move. We ought to leave. (Elaine +1 impression)
     Kath: "But I'm getting distracted. If you're fully recovered, Elaine, then
            there's nothing more for us here. We ought to reunite with Lester and
            Shanti immediately. Stay close to Abelon and I."
+
+    Elaine: "O-ok. I'll keep my bow at the ready, Sir Kath."
 
     GOTO -G-
 
@@ -1369,7 +1449,7 @@ A: We will find Lester, and direct him to you. You remain here. (Kath +1 impress
 
     Elaine: "Just... please, promise someone will come for me."
 
-    A: You have our word (Elaine + 1 impression)
+    A: You have our word (Elaine +1 impression)
 
         Elaine: "Then I will wait."
 
@@ -1439,6 +1519,8 @@ A: There's a spell I learned in that ritual I'd like to try. (Kath +1 awareness)
            here. We ought to reunite with Lester and Shanti immediately. Stay
            close to Abelon and I."
 
+    Elaine: "O-ok. I'll keep my bow at the ready, Sir Kath."
+
     GOTO -G-
 
     LABEL -F-
@@ -1448,7 +1530,8 @@ A: There's a spell I learned in that ritual I'd like to try. (Kath +1 awareness)
                a spell on a particular location or target."
 
     Tutorial: "Move next to the target and open your inventory. Navigate to 
-               the spell or item, select it, and "Use" it."
+               the spell or item, select it, and "Use" it. To show an item to
+               a person, select "Present"."
 
 *If you didn't say to leave her behind, and Elaine impression > 0*
 
@@ -1465,11 +1548,116 @@ A: Kath, we must not leave her. She may be attacked again. (Elaine +2 impression
 
         A: We make the salve. Wornfleet grows, just to the north. (Kath +2 awareness)
 
-            Kath: "Abelon, you... You would walk even deeper into the forest?
+            Kath: "Abelon, you would walk even deeper into the forest?
                    If I had the leaves... Ach, I don't have any tools, but I
                    suppose I could chew them up... it could work."
 
-            TODO: Item pickup tutorial. Then item use tutorial (-F-).
+            Kath: "All right, I'm convinced. I'll keep watch here while you
+                   find the leaves. Just... Stay clear of monsters. We can't 
+                   afford another drawn-out engagement this far from the city 
+                   walls.
+
+            // Regain control
+
+            // On talking to Kath
+
+                Kath: "I'm surprised you remembered that Wornfleet grows around here.
+                    Even I'd forgotten. When is the last time you've been this far 
+                    into the forest?"
+
+                Kath: "...Nevermind, no time for chatter. I trust you also remember what 
+                    the plant looks like? A golden stem, with jagged, brown leaves.
+                    I need the leaves, at least four or five of them."
+
+            // On talking to Elaine
+
+                Elaine: "Wornfleet... The one with the brown leaves?"
+
+                A: You know of it?
+
+                    Elaine: "I only noticed how ugly it was. The blue flowers with
+                            the bell-shaped blooms that grow here make better 
+                            decorations. O-or, that's what someone told me, at
+                            least! I wouldn't know!"
+
+                    Kath: "Hmm..." // Kath learns something here
+
+                    // Callback when talking to Elaine again
+
+                    Elaine: "Goddess, Elaine, keep your stupid mouth shut..."
+
+                A: It counteracts the venom (Elaine +1 impression)
+
+                    Elaine: "...I always thought the Knights of Ebonach only knew
+                            how to fight. But you instantly knew just the medicine 
+                            that would cure me, and where to find it. It's... 
+                            I'm... grateful you found me."
+
+                    // Callback when talking to Elaine again
+
+                    Elaine: "Did you find the leaves yet?"
+
+            // On trying to exit south
+
+                Kath: "Isn't the Wornfleet further north, where there's more
+                    ash in the soil?"
+
+            // On trying to exit north
+
+                Kath: "It's too risky to go that far, Abelon!"
+
+            // On examining Wornfleet
+
+                Plant: "A plant with three disheveled brown leaves and a wiry
+                golden stem pokes out from a patch of sticks and earth, drooping to
+                one side as if tired."
+
+                LABEL -H-
+
+                A: Pick the leaves
+
+                    _: "You bend down and pull several leaves off the plant. They 
+                        detach with little resistance."
+
+                    // Gain -Leaves- item
+
+                    GOTO -F-
+
+                A: Leave it
+
+                    // Callback when interacting with the plant again
+
+                    Plant: "The small, leafy plant is unmoving."
+
+                    GOTO -H-
+
+            // On presenting -Leaves- to Kath
+
+                Kath: "This should be enough."
+
+                // Kath moves to Elaine
+
+                Kath: "With apologies for the indelicacy, I'll just... chew
+                       these to extract the salve..."
+
+                Elaine: "..."
+
+                Kath: "...Eugh, tastes awful. But it should work. I can see 
+                the bite wound on your shoulder; hold still."
+
+                // Kath applies the salve
+
+                Kath: "It won't be instant, of course, but luckily for us 
+                       Wornfleet works quickly. Hence the name. Abelon, go
+                       on ahead to find Lester and we'll be behind you."
+
+                Elaine: "I think it's starting to work... Oh, what a relief
+                         to feel my arms move freely! Thank you, Sir Kath! 
+                         And Sir Abelon!"
+
+                (Elaine +1 impression)
+
+                GOTO -G-
 
         A: ...
 
@@ -1512,18 +1700,43 @@ A: ... (Abelon +1 impression)
 LABEL -G-
 
 Kath: "Lester had engaged a wolf at the crossroads. Assuming he
-       killed it, he would have starting coming this way. If we 
+       killed it, he would have started coming this way. If we 
        take the path southeast towards the gate, we should find him."
 
 // Regain control
 
-TODO: after the battle, insert options to mistrust Elaine if you didn't say
-"Kath, there's another explanation". Bring it back to the bridge issue.
-Kath will say there's no choice but to trust her.
+// If you try to go northeast
 
-TODO: Head southeast! In some cases, Elaine has joined the
-party. In other cases, she remains still. Prompts for talking to her in both cases.
-Prompts for talking to Kath. Heading north prompts Kath to stop you.
+Kath: "Whatever you're investigating over there, we'd best save it for 
+       another day, old man. We need to get out of the north forest."
 
-TODO: Once we get to Lester, it's time to start having some impression checks.
-Things should change. Perhaps you should even collect some different items.
+// Talking to Kath
+
+Kath: "Let's hurry southeast along the path. The sooner we find Lester
+       and Shanti, the sooner we can cross back into the city and put 
+       this whole mess behind us."
+
+// Talking to Elaine (poisoned)
+
+Elaine: "...Please hurry..."
+
+// Talking to Elaine (healed)
+
+Elaine: "Sir Abelon, thank you for saving me. I'm not sure what I can do
+         to help the Knights of Ebonach, but I've got my bow, and I know 
+         my way around a hunt, at least."
+
+A: A battle is not a hunt
+
+    Elaine: "I learned that much watching you cut down those wolves. I'll
+             watch closely and be careful, just like Sir Kath told me.
+             A-and whatever your orders, sir, I'll follow them."
+
+A: It's something. Help us where you're able. (Elaine +1 impression)
+
+    Elaine: "Of course! I won't forget what you and Sir Kath have done
+             for me. Even if today I've been a burden, someday in the
+             future, I'll repay you. Somehow..."
+
+// Once we get to Lester, it's time to start having some impression checks.
+// Things should change. Perhaps you should even collect some different items.
