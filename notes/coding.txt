@@ -219,10 +219,6 @@ Finish script
 
 #69:
 
-TODOS in chapter1.txt to finish off elaine scenario
-
-Fix the stupid wolf animation flickering
-
 Finish #57
 
 Finish #16

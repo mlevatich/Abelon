@@ -1683,6 +1683,8 @@ A: ... (Abelon +1 impression)
            Lester, and have him take the cure to her here. He will be more 
            than capable of protecting her. Abelon, your thoughts?"
 
+    *If Elaine impression >= 3*
+
     A: It puts Elaine at risk
 
         Kath: "Ach, but we've no other reasonable choice. We can't move her."
@@ -1737,6 +1739,12 @@ A: It's something. Help us where you're able. (Elaine +1 impression)
     Elaine: "Of course! I won't forget what you and Sir Kath have done
              for me. Even if today I've been a burden, someday in the
              future, I'll repay you. Somehow..."
+
+A: I'm watching you. (Elaine -1 impression)
+
+    Elaine: "I know. I wouldn't expect any different, under the 
+             circumstances. You have no reason to trust me. But soon, 
+             I'll give you one."
 
 // Once we get to Lester, it's time to start having some impression checks.
 // Things should change. Perhaps you should even collect some different items.
