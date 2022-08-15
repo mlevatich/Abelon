@@ -38,10 +38,6 @@ SECTION: MAP WORK
 
 #57:
 
-move sprites out of the way of path
-
-Plants and such should render below battle grid and transparent sprites
-
 Updated, populated maps for:
 north forest
 east forest
