@@ -313,11 +313,23 @@ function Map:renderTiles()
     end
 end
 
-function Map:renderSprites(cam_x, cam_y)
+function Map:renderGroundSprites(cam_x, cam_y)
 
-    -- Render all of the sprites on the map
+    -- Render all sprites at or below ground depth
     for _, sp in pairs(self.sprites) do
-        sp:render(cam_x, cam_y)
+        if sp:getDepth() >= GROUND_DEPTH then
+            sp:render(cam_x, cam_y)
+        end
+    end
+end
+
+function Map:renderStandingSprites(cam_x, cam_y)
+
+    -- Render all sprites above ground depth
+    for _, sp in pairs(self.sprites) do
+        if sp:getDepth() < GROUND_DEPTH then
+            sp:render(cam_x, cam_y)
+        end
     end
 end
 

@@ -2237,7 +2237,11 @@ function Battle:renderGrid()
             end
         end
     end
+end
 
+function Battle:renderUnderlay()
+
+    -- Render green squares on assisted grid tiles
     self:renderAssistSpaces()
 
     -- Render views over grid if we aren't watching a scene

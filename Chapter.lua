@@ -522,8 +522,18 @@ function Chapter:render()
         self.battle:renderGrid()
     end
 
-    -- Render sprites on map and lighting
-    self.current_map:renderSprites(self.camera_x, self.camera_y)
+    -- Render ground sprites
+    self.current_map:renderGroundSprites(self.camera_x, self.camera_y)
+
+    -- Render battle underlay
+    if self.battle then
+        self.battle:renderUnderlay()
+    end
+
+    -- Render standing sprites
+    self.current_map:renderStandingSprites(self.camera_x, self.camera_y)
+
+    -- Apply lighting
     self.current_map:renderLighting()
 
     -- Render battle overlay

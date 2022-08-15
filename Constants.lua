@@ -200,6 +200,7 @@ HIGH = 1
 
 -- Misc
 PRESENT_DISTANCE = 4
+GROUND_DEPTH = 6
 
 -- Trigger vars
 DELETE = '__del__'

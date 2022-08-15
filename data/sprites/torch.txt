@@ -1,7 +1,7 @@
 // Sprite attributes
 
 Name: Torch
-Depth: 6
+Depth: 5
 Interactive: no
 Blocking: yes
 Resting: idle
