@@ -50,7 +50,7 @@ if len(sys.argv) != 2:
 im = Image.open(sys.argv[1])
 pix = im.load()
 w, h = im.size
-with open('map.txt', 'w') as map_file:
+with open(sys.argv[1][0:-4] + '.txt', 'w') as map_file:
     for y in range(h):
         for x in range(w):
             pixel = pix[x,y]

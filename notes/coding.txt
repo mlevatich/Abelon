@@ -38,11 +38,9 @@ SECTION: MAP WORK
 
 #57:
 
-fullpath: smaller stones
-fullpath: more moss and dirt, this shit is overgrown
-4 path sides, 8 path corners
-conform ground tiles around path
 move sprites out of the way of path
+
+Plants and such should render below battle grid and transparent sprites
 
 Updated, populated maps for:
 north forest
@@ -213,10 +211,6 @@ Better forest theme - more tense investigation, less funeral march
 
 SECTION: CHAPTER 1 IMPLEMENTATION
 
-#68:
-
-Finish script
-
 #69:
 
 Finish #57
@@ -227,13 +221,14 @@ Finish #48
 
 Finish the issue below 48 in GAME ENTRY EXIT
 
+In battle, HUD should show how much damage/healing you are about to do and what
+statuses you will apply to each enemy, when an attack is selected.
+
 Kath-idle
 Kath-heal
 Screen shake
 
 Implement rewritten beginning of script
-
-
 
 Tweak Elaine portrait and sprite
 Elaine-idle, Elaine-walk, Elaine-Downed, Elaine-Getup
@@ -281,6 +276,10 @@ Implement bridge battle scenario (four versions: Lester dead, Shanti dead,
 Elaine dead, all alive) (objective is survive)
 
 Implement chapter conclusion scenario
+
+#68:
+
+Last pass over script for consistency
 
 #73:
 
