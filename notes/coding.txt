@@ -211,11 +211,9 @@ SECTION: CHAPTER 1 IMPLEMENTATION
 
 Finish #57
 
-Finish #16
+Do GAME-ENTRY-EXIT section
 
-Finish #48
-
-Finish the issue below 48 in GAME ENTRY EXIT
+#63
 
 In battle, HUD should show how much damage/healing you are about to do and what
 statuses you will apply to each enemy, when an attack is selected.

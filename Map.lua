@@ -6,37 +6,32 @@ require 'Sprite'
 Map = class('Map')
 
 -- constructor for our map object
-function Map:initialize(name, tileset, lighting)
+function Map:initialize(name, tileset)
 
-    -- Read lines of map file
-    local map_file = 'Abelon/data/maps/' .. name .. '.txt'
-    local lines = readLines(map_file)
-
-    -- Set map and tile parameters
-    local meta = split(lines[1])
-    self.width = tonumber(meta[1])
-    self.height = tonumber(meta[2])
-
-    -- Read collideable tile ids
-    self.collide_tiles = {}
-    local collideable = mapf(tonumber, split(lines[2]))
-    for i = 1, #collideable do
-        self.collide_tiles[collideable[i]] = true
-    end
-
-    -- Map texture and tile array
+    -- Map texture
     self.name = name
     self.tileset = tileset
 
-    -- Read tiles from file
-    self.tiles = {}
-    for y = 3, self.height + 2 do
-        local l = lines[y]
-        self.tiles[y - 2] = {}
-        for x = 1, self.width do
-            local tile_id = tonumber(l:sub(x, x), 30)
-            self.tiles[y - 2][x] = tile_id
-        end
+    -- Sprites on the map
+    self.sprites = {}
+
+    -- Map files
+    local prefix = 'Abelon/data/maps/' .. name .. '/'
+    local meta_file = prefix .. 'meta.txt'
+    local map_file = prefix .. 'map.txt'
+    
+    -- Set map and tile parameters
+    local lines = readLines(meta_file)
+
+    local wh = split(lines[2])
+    self.width = tonumber(wh[1])
+    self.height = tonumber(wh[2])
+
+    -- Read collideable tile ids
+    self.collide_tiles = {}
+    local collideable = mapf(tonumber, split(lines[5]))
+    for i = 1, #collideable do
+        self.collide_tiles[collideable[i]] = true
     end
 
     -- Transition tiles gives the tiles on this map that move to a new map
@@ -44,7 +39,7 @@ function Map:initialize(name, tileset, lighting)
     -- and the location on that map to start at
     self.transition_tiles = {}
     self.transitions = {}
-    local idx = self.height + 5
+    local idx = 8
     while lines[idx] ~= '' do
 
         -- Transition tiles
@@ -86,8 +81,17 @@ function Map:initialize(name, tileset, lighting)
         idx = idx + 1
     end
 
-    -- Sprites on the map
-    self.sprites = {}
+    -- Read tiles from file
+    lines = readLines(map_file)
+    self.tiles = {}
+    for y = 1, self.height do
+        local l = lines[y]
+        self.tiles[y] = {}
+        for x = 1, self.width do
+            local tile_id = tonumber(l:sub(x, x), 30)
+            self.tiles[y][x] = tile_id
+        end
+    end
 end
 
 -- Retrieve sprites tied to this map

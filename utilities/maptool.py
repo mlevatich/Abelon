@@ -3,6 +3,8 @@
 
 import sys
 from PIL import Image
+from os import listdir
+from os.path import isfile, join
 
 # Mapping from colors to tile indices
 mapping = {
@@ -45,12 +47,14 @@ mapping = {
 # Read bmp file specified on the command line and write tile numbers to a
 # file according to pixel colors
 if len(sys.argv) != 2:
-    print("Usage: python3 maptool.py layout.bmp")
+    print("Usage: python3 abelon/utilities/maptool.py destination-dir")
     exit(1)
-im = Image.open(sys.argv[1])
+pth = 'abelon/utilities'
+fs = [ join(pth, f) for f in listdir(pth) if isfile(join(pth, f)) and f[-4:] == '.bmp' ]
+im = Image.open(fs[0])
 pix = im.load()
 w, h = im.size
-with open(sys.argv[1][0:-4] + '.txt', 'w') as map_file:
+with open('abelon/data/maps/' + sys.argv[1] + '/map.txt', 'w') as map_file:
     for y in range(h):
         for x in range(w):
             pixel = pix[x,y]

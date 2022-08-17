@@ -145,7 +145,7 @@ function Chapter:load()
             current_map_name = map_name
 
             -- Initialize map and tie it to chapter
-            self.maps[map_name] = Map:new(map_name, tileset, nil)
+            self.maps[map_name] = Map:new(map_name, tileset)
 
             -- Maps sharing a music track share a pointer to the audio
             self.map_to_music[map_name] = song_name

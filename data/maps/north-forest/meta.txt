@@ -1,0 +1,22 @@
+WIDTH / HEIGHT
+87 58
+
+COLLIDING TILES
+3 4 5 6 11 12
+
+TRANSITION DATA
+13 58 west-forest 47 3
+14 58 west-forest 48 3
+15 58 west-forest 49 3
+16 58 west-forest 50 3
+17 58 west-forest 51 3
+87 40 east-forest 3 31
+87 41 east-forest 3 32
+87 42 east-forest 3 33
+87 43 east-forest 3 34
+87 44 east-forest 3 35
+87 45 east-forest 3 36
+
+LIGHTING DATA
+0.0
+20 20 40
