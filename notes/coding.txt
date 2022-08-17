@@ -38,14 +38,13 @@ SECTION: MAP WORK
 
 #57:
 
-Updated, populated maps for:
-north forest
-east forest
-south forest
-
-Slightly different tilesets for the four maps (e.g. north map has a dusting of
-ash on the tiles)
+north forest sprites
+north forest tileset has a dusting of ash
 Fill in black lines to avoid quad bleeding
+east forest map
+east forest sprites
+south forest map
+south forest sprites
 
 #9:
 
@@ -211,12 +210,14 @@ SECTION: CHAPTER 1 IMPLEMENTATION
 
 Finish #57
 
-Do GAME-ENTRY-EXIT section
-
-#63
-
 In battle, HUD should show how much damage/healing you are about to do and what
-statuses you will apply to each enemy, when an attack is selected.
+statuses you will apply to each enemy/ally, when an attack is selected.
+
+When an assist is selected, HUD should show the effect that will apply to the
+assisted tiles
+
+Do GAME-ENTRY-EXIT section
+#63
 
 Kath-idle
 Kath-heal
