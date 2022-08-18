@@ -29,9 +29,9 @@ function Map:initialize(name, tileset)
 
     -- Read collideable tile ids
     self.collide_tiles = {}
-    local collideable = mapf(tonumber, split(lines[5]))
-    for i = 1, #collideable do
-        self.collide_tiles[collideable[i]] = true
+    for i = 1, #lines[5] do
+        local t = tonumber(lines[5]:sub(i, i), 30)
+        self.collide_tiles[t] = true
     end
 
     -- Transition tiles gives the tiles on this map that move to a new map

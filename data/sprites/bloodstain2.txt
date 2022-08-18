@@ -1,7 +1,7 @@
 // Sprite attributes
 
-Name: Grass2
-Depth: 7
+Name: Bloodstain2
+Depth: 6
 Interactive: no
 Blocking: no
 Resting: idle
@@ -13,4 +13,4 @@ Level: 0
 Attributes:
 Skilltrees:
 Skills:
-Description: A plant. EOS
+Description: A bloodstain. EOS

@@ -29,10 +29,10 @@ function mkSimpleTrigger(check, action)
 end
 
 scene_triggers = {
-    ['meet-kath'] = mkAreaTrigger('meet-kath', 'west-forest',
-        function(x) return x > 24 end,
-        function(y) return true end
-    )
+    -- ['meet-kath'] = mkAreaTrigger('meet-kath', 'west-forest',
+    --     function(x) return x > 24 end,
+    --     function(y) return true end
+    -- )
 }
 
 function mkUseTrigger(id, checks, actions)

@@ -1365,6 +1365,14 @@ sprite_data = {
         ['versions'] = { 'standard' }
     },
     {
+        ['id'] = 'wornfleet',
+        ['w'] = 18,
+        ['h'] = 26,
+        ['y'] = 1434,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    },
+    {
         ['id'] = 'grass',
         ['w'] = 31,
         ['h'] = 21,
@@ -1385,6 +1393,14 @@ sprite_data = {
         ['w'] = 288,
         ['h'] = 352,
         ['y'] = 239,
+        ['animations'] = inanimate,
+        ['versions'] = { 'standard' }
+    },
+    {
+        ['id'] = 'bloodstain2',
+        ['w'] = 416,
+        ['h'] = 608,
+        ['y'] = 825,
         ['animations'] = inanimate,
         ['versions'] = { 'standard' }
     },

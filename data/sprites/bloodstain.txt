@@ -13,4 +13,4 @@ Level: 0
 Attributes:
 Skilltrees:
 Skills:
-Description: A plant. EOS
+Description: A bloodstain. EOS

@@ -1,7 +1,7 @@
 // Sprite attributes
 
 Name: Grass
-Depth: 6
+Depth: 7
 Interactive: no
 Blocking: no
 Resting: idle

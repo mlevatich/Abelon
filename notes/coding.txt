@@ -1,7 +1,145 @@
 What to do next, organized into sections and issues! (please commit each
 paragraph separately for your own sanity)
 
-Right now: look at #69 below
+CHAPTER 1 IMPLEMENTATION CHECKLIST
+
+#?:
+
+    #57 / #16 / #63 / below:
+    In battle, HUD should show how much damage/healing you are about to do and what
+    statuses you will apply to each enemy/ally, when an attack is selected.
+    When an assist is selected, HUD should show the effect that will apply to the
+    assisted tiles
+
+    #48
+    #59
+
+    Screen shake: two versions, fast and slow
+
+    Implement rewritten beginning of script
+
+    #51
+    #52
+    #53
+    #4
+    #56
+    #67
+
+#69:
+
+    Finalize Elaine sprite, draft portrait
+
+    Elaine-idle
+    Elaine-walk
+    Elaine-downed
+    Elaine-getup
+    Elaine-combat-entry-exit
+    Elaine-combat
+    Elaine-combat-run
+    Elaine-weapon
+    Elaine-spell
+    Elaine-assist
+    Elaine-hurt
+    Elaine-death
+
+    Implement Elaine script.
+
+    Implement Elaine battle. Defend her from wolves! Keep them away. Reinforcements
+    arrive twice, once from next to Elaine (with a warning from her), and once from
+    further away. The battle ends automatically after a certain number of turns and
+    all wolves flee. Elaine is an ally unit for the purposes of the battle, but
+    starts at 1hp and has status debuffs that make her unable to move, and the only
+    skill she knows is Observe. Observe grants her a small amount of Exp, which
+    causes her to level up to level 2, so she can learn her first attacking skill
+    after the battle, but she cannot gain any other experience during the fight.
+
+    Update exp table to account for bonus exp, and to make Elaine's and Abelon's
+    growth curves fair. Either Abelon or Kath, but probably not both, should level
+    up in the second battle. Elaine should level up once each battle if you use her.
+    Potentially she could get from 2 to 4 in her first real battle.
+
+    Test out Elaine's skills in a mock battle
+
+    #64
+
+#70:
+
+    Finalize Lester sprite, draft portrait
+
+    Lester-idle
+    Lester-walk
+    Lester-combat-entry-exit
+    Lester-combat
+    Lester-combat-run
+    Lester-weapon
+    Lester-spell
+    Lester-assist
+    Lester-hurt
+    Lester-death
+
+    Stone sprite data and graphics
+
+    Write Lester scenarios (version with and version without Elaine)
+
+    implement Lester scenarios
+
+    #65
+
+#71:
+
+    Finalize Shanti sprite, draft portrait
+
+    Shanti-idle
+    Shanti-walk
+    Shanti-combat-entry-exit
+    Shanti-combat
+    Shanti-combat-run
+    Shanti-weapon
+    Shanti-spell
+    Shanti-assist
+    Shanti-hurt
+    Shanti-death
+
+    implement Shanti scenario (four versions: saved lester and elaine quickly so
+    Shanti is saveable, Saved Elaine out of battle so Shanti dies, sent lester to 
+    Elaine and he dies, or skipped Elaine)
+
+    #?: Improve AI algorithm
+    improve AI algorithm - use other plans! In particular, enemies shouldn't
+    interfere with each other. If one enemy has only a single path to attack their
+    target, the acting enemy shouldn't get in the way of that path unless it
+    needs to in order to attack its own target. To minimize interference in general,
+    the strongest enemies should take their turns first, and the enemies who start
+    farther away from the allies should also be prioritized.
+
+#72:
+
+    Implement visiting Elaine's corpse scenario (Lester saw her)
+
+    Boss sprite data and graphics
+
+    Implement bridge battle scenario (four versions: Lester dead, Shanti dead,
+    Elaine dead, all alive) (objective is survive)
+
+    #66
+
+    Implement chapter conclusion scenario
+
+#68:
+
+    Last pass over script for consistency
+
+    #?: Animation sound effects
+    #?: "splash" animations
+    #9: Lighting engine
+
+#73:
+
+    Make executable
+
+#74:
+
+    Pre-alpha closed release
 
 SECTION: GAME ENTRY-EXIT PROCEDURES
 
@@ -13,13 +151,13 @@ choose difficulty). Title screen should have controls in one corner
 Implement game start scene, implement ??? for sprites whose names are not known
 to the player. Learning a name is a scene event.
 
+Chapter 1 start card
+
 #48:
 
 Tutorial information should appear on the right side of the screen, in the
 middle. Tutorial paragraphs are given in the script. They are also accessible
 from the settings menu in a "tutorial" menu.
-
-#?:
 
 Support GOTOs in scenes for sane script-writing.
 
@@ -27,7 +165,7 @@ Use a better format than a text file for writing a branching story?
 
 #59:
 
-Chapter end trigger. Displays a chapter 1 endcard, bridge scene, and chapter 2
+Chapter end trigger. Displays a bridge scene (??? talks again), and chapter 2
 start card (Teaser). Kicks you back to the title screen
 
 
@@ -37,13 +175,9 @@ start card (Teaser). Kicks you back to the title screen
 SECTION: MAP WORK
 
 #57:
-
-north forest sprites
-north forest tileset has a dusting of ash
-Fill in black lines to avoid quad bleeding
-east forest map
+east forest map (ash-dusted)
 east forest sprites
-south forest map
+south forest map (green)
 south forest sprites
 
 #9:
@@ -73,22 +207,15 @@ battle (fill in with a universal default).
 
 Skill animations for all basic skills.
 
-When sprites take damage, a damage splash should be rendered. When they heal,
-a heal splash should be rendered. This should happen as the damage is dealt.
-The idea of a "splash" animation could be re-used for skill animations.
-
-When sprites gain exp, render exp splash. This should happen on a delay, so
-the exp splash renders after the relevant action has just finished playing out.
-
 #51:
+
+Kath-idle
+Kath-heal
 
 Abelon-combat
 Kath-combat
-Elaine-combat
-
 Abelon-combat-run
 Kath-combat-run
-Elaine-combat-run
 
 Two mostly identical wolf sprites.
 
@@ -122,16 +249,18 @@ Kath-assist
 Kath-hurt
 Kath-death
 
-Elaine-combat-entry-exit
-Elaine-weapon
-Elaine-spell
-Elaine-assist
-Elaine-hurt
-Elaine-death
-
 Wolf-weapon
 Wolf-hurt
 Wolf-death
+
+#?:
+
+When sprites take damage, a damage splash should be rendered. When they heal,
+a heal splash should be rendered. This should happen as the damage is dealt.
+The idea of a "splash" animation could be re-used for skill animations.
+
+When sprites gain exp, render exp splash. This should happen on a delay, so
+the exp splash renders after the relevant action has just finished playing out.
 
 
 
@@ -149,6 +278,7 @@ start game (from title screen)
 #56:
 
 SFX for:
+earthquake
 use weapon skill
 use spell
 use assist
@@ -175,10 +305,9 @@ a person's footsteps. Not an easy task!!
 
 SECTION: MUSIC TRACKS
 
-Fade is quieter than it should be. Make sure tracks don't change volume!
-There are still things to improve about the first fight theme right now.
-
 #63:
+
+Fade is quieter than it should be. Make sure tracks don't change volume!
 
 For title screen music, use the voice memo on my phone: Time Slows. Tentative
 track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass.
@@ -199,87 +328,3 @@ Second battle theme - for the last encounter. This just got much more serious.
 #67:
 
 Better forest theme - more tense investigation, less funeral march
-
-
-
-
-
-SECTION: CHAPTER 1 IMPLEMENTATION
-
-#69:
-
-Finish #57
-
-In battle, HUD should show how much damage/healing you are about to do and what
-statuses you will apply to each enemy/ally, when an attack is selected.
-
-When an assist is selected, HUD should show the effect that will apply to the
-assisted tiles
-
-Do GAME-ENTRY-EXIT section
-#63
-
-Kath-idle
-Kath-heal
-Screen shake
-
-Implement rewritten beginning of script
-
-Tweak Elaine portrait and sprite
-Elaine-idle, Elaine-walk, Elaine-Downed, Elaine-Getup
-
-Implement Elaine script.
-
-Implement Elaine battle. Defend her from wolves! Keep them away. Reinforcements
-arrive twice, once from next to Elaine (with a warning from her), and once from
-further away. The battle ends automatically after a certain number of turns and
-all wolves flee. Elaine is an ally unit for the purposes of the battle, but
-starts at 1hp and has status debuffs that make her unable to move, and the only
-skill she knows is Observe. Observe grants her a small amount of Exp, which
-causes her to level up to level 2, so she can learn her first attacking skill
-after the battle, but she cannot gain any other experience during the fight.
-
-Update exp table to account for bonus exp, and to make Elaine's and Abelon's
-growth curves fair. Either Abelon or Kath, but probably not both, should level
-up in the second battle. Elaine should level up once each battle if you use her.
-Potentially she could get from 2 to 4 in her first real battle.
-
-Test out Elaine's skills in a mock battle
-
-#70:
-
-implement Lester scenario (version with and version without Elaine)
-
-improve AI algorithm - use other plans! In particular, enemies shouldn't
-interfere with each other. If one enemy has only a single path to attack their
-target, the acting enemy shouldn't get in the way of that path unless it
-needs to in order to attack its own target. To minimize interference in general,
-the strongest enemies should take their turns first, and the enemies who start
-farther away from the allies should also be prioritized.
-
-#71:
-
-implement Shanti scenario (four versions: saved lester and elaine quickly so
-Shanti is saveable, Saved Elaine out of battle so Shanti dies, sent lester to 
-Elaine and he dies, or skipped Elaine)
-
-#72:
-
-Implement visiting Elaine's corpse scenario
-
-Implement bridge battle scenario (four versions: Lester dead, Shanti dead,
-Elaine dead, all alive) (objective is survive)
-
-Implement chapter conclusion scenario
-
-#68:
-
-Last pass over script for consistency
-
-#73:
-
-Make executable
-
-#74:
-
-Pre-alpha closed release
