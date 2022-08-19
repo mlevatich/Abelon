@@ -175,8 +175,6 @@ start card (Teaser). Kicks you back to the title screen
 SECTION: MAP WORK
 
 #57:
-east forest map (ash-dusted)
-east forest sprites
 south forest map (green)
 south forest sprites
 
