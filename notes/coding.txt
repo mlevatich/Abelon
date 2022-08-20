@@ -5,6 +5,7 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
 #?:
 
+    Tighten borders around sprites, re-order spritesheet
     #57 / #16 / #63 / below:
     In battle, HUD should show how much damage/healing you are about to do and what
     statuses you will apply to each enemy/ally, when an attack is selected.
@@ -116,7 +117,7 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
     Implement visiting Elaine's corpse scenario (Lester saw her)
 
-    Boss sprite data and graphics
+    Add the bridge, moat, and wall to the South Forest
 
     Implement bridge battle scenario (four versions: Lester dead, Shanti dead,
     Elaine dead, all alive) (objective is survive)
@@ -175,8 +176,8 @@ start card (Teaser). Kicks you back to the title screen
 SECTION: MAP WORK
 
 #57:
-south forest map (green)
-south forest sprites
+Shrubify south forest
+logs
 
 #9:
 

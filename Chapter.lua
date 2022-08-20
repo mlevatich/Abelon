@@ -133,7 +133,6 @@ function Chapter:load()
     -- Iterate over lines of chapter file
     local audio_sources = {}
     local current_map_name = nil
-    local current_sp_id = nil
     for i=1, #lines do
 
         -- Lines starting with ~~ denote a new map
@@ -145,7 +144,7 @@ function Chapter:load()
             current_map_name = map_name
 
             -- Initialize map and tie it to chapter
-            self.maps[map_name] = Map:new(map_name, tileset)
+            self.maps[map_name] = Map:new(map_name, tileset, self)
 
             -- Maps sharing a music track share a pointer to the audio
             self.map_to_music[map_name] = song_name
@@ -153,32 +152,23 @@ function Chapter:load()
         -- Lines starting with ~ denote a new sprite
         elseif lines[i]:sub(1,1) == '~' then
 
-            -- Collect sprite info from file
+            -- Collect sprite info from file.
+            -- Spawn sprite in map and add it to chapter's sprites
             local fields = split(lines[i]:sub(2))
-            current_sp_id = fields[1]
-            local init_x = (tonumber(fields[2]) - 1) * TILE_WIDTH
-            local init_y = (tonumber(fields[3]) - 1) * TILE_HEIGHT
-            local dir    = fields[4]
-            local first_interaction = fields[5]
-
-            -- Initialize sprite object and set its starting position
-            local new_sp = Sprite:new(current_sp_id, self)
-            self.sprites[current_sp_id] = new_sp
-            new_sp:resetPosition(init_x, init_y)
-            new_sp.dir = ite(dir == 'R', RIGHT, LEFT)
-
-            -- Add sprite this sprite to the map on which it appears
-            self.maps[current_map_name]:addSprite(new_sp)
+            local sp = self.maps[current_map_name]:spawnSprite(fields, self)
+            self.sprites[sp:getId()] = sp
 
             -- If the sprite is the player character, we make the current map
-            -- into the chapter's starting map, and initialize a player object
+            -- into the chapter's starting map, and initialize a player object.
+            -- Or if they have an initial interaction, register it.
+            local first_interaction = fields[5]
             if first_interaction then
                 if first_interaction == 'P' then
                     self.current_map = self.maps[current_map_name]
-                    self.player = Player:new(new_sp)
+                    self.player = Player:new(sp)
                     self:updateCamera(100)
                 else
-                    new_sp.interactive = first_interaction
+                    sp.interactive = first_interaction
                 end
             end
         end

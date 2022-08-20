@@ -6,7 +6,7 @@ require 'Sprite'
 Map = class('Map')
 
 -- constructor for our map object
-function Map:initialize(name, tileset)
+function Map:initialize(name, tileset, c)
 
     -- Map texture
     self.name = name
@@ -65,7 +65,7 @@ function Map:initialize(name, tileset)
     self.ambient = mapf(tonumber, split(lines[idx+3]))
     self.lights = {}
     idx = idx + 4
-    while idx <= #lines do
+    while lines[idx] ~= '' do
 
         -- Each line is a single light source
         local data = mapf(tonumber, split(lines[idx]))
@@ -78,6 +78,16 @@ function Map:initialize(name, tileset)
             ['b'] = data[5]/255,
             ['intensity'] = data[6]
         })
+        idx = idx + 1
+    end
+
+    -- Non-interactive sprites which are fixed to this map
+    idx = idx + 2
+    while idx <= #lines do
+        if lines[idx]:sub(1,1) == '~' then
+            local fields = split(lines[idx]:sub(2))
+            self:spawnSprite(fields, c)
+        end
         idx = idx + 1
     end
 
@@ -122,6 +132,26 @@ function Map:addSprite(sp)
 
     -- If no sprite had lower depth, insert at end
     self.sprites[#self.sprites+1] = sp
+end
+
+-- Create a sprite from string fields and add it to the map
+function Map:spawnSprite(fields, c)
+
+    -- Create sprite from ID
+    local sp = Sprite:new(fields[1], c)
+
+    -- Set position
+    local x = (tonumber(fields[2]) - 1) * TILE_WIDTH
+    local y = (tonumber(fields[3]) - 1) * TILE_HEIGHT
+    sp:resetPosition(x, y)
+
+    -- Set direction
+    local dir = fields[4]
+    sp.dir = ite(dir == 'R', RIGHT, LEFT)
+
+    -- Add to map
+    self:addSprite(sp)
+    return sp
 end
 
 -- Remove a sprite from this map
