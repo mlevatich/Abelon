@@ -1,5 +1,6 @@
 ~~west-forest standard Dying-Forest
 
+~abelon 12.5 17.5 R P
 ~kath 33 15 L kath-interact-base
 ~book 9 17 R book-interact-base
 ~medallion 8 15 R medallion-interact-base
@@ -21,5 +22,3 @@
 ~~east-forest standard Dying-Forest
 
 ~~south-forest standard Dying-Forest
-
-~abelon 5 14 R P

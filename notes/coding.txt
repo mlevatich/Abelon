@@ -5,8 +5,9 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
 #?:
 
+    player-near-sprite should only check chapter sprites
     Tighten borders around sprites, re-order spritesheet
-    #57 / #16 / #63 / below:
+    #16 / #63 / below:
     In battle, HUD should show how much damage/healing you are about to do and what
     statuses you will apply to each enemy/ally, when an attack is selected.
     When an assist is selected, HUD should show the effect that will apply to the
@@ -174,10 +175,6 @@ start card (Teaser). Kicks you back to the title screen
 
 
 SECTION: MAP WORK
-
-#57:
-Shrubify south forest
-logs
 
 #9:
 

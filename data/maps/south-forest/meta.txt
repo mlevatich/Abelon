@@ -23,6 +23,11 @@ LIGHTING DATA
 20 20 40
 
 FIXED SPRITES
+~log 29 25 R
+~log 43 51 R
+~log 40 8 L
+~log 35 43 L
+~log 6 26 L
 ~rock 43 8 L
 ~rock 44 8 R
 ~shafe 3 9 L
