@@ -3,14 +3,11 @@ require 'Constants'
 
 Animation = class('Animation')
 
--- Class constants
-ANIMATION_SPEED = 6.5
-
 -- Initialize a new set of frames
-function Animation:initialize(frames)
+function Animation:initialize(frames, speed)
 
     -- Time per frame and total time elapsed
-    self.interval = 1 / ANIMATION_SPEED
+    self.interval = 1 / speed
     self.timer = 0
 
     -- Images corresponding to each frame, index into frames

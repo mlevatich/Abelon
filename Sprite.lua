@@ -1282,17 +1282,17 @@ end
 
 -- INITIALIZE GRAPHICAL DATA
 living = {
-    ['idle'] = { 0, 1, 2, 3, 4, 5, 6, 7 },
-    ['walking'] = { 8, 9, 10, 11 },
-    ['weapon'] = { 7, 8, 7, 8, 7, 8, 7, 8 },
-    ['spell'] = { 7, 8, 7, 8, 7, 8, 7, 8 },
-    ['assist'] = { 7, 8, 7, 8, 7, 8, 7, 8 },
-    ['combat'] = { 8, 9, 10, 11 },
-    ['hurt'] = { 11, 11, 11, 11 },
-    ['death'] = { 12, 12, 12, 12 },
-    ['entry'] = { 0 }
+    ['idle'] = { 3.25, { 0, 1, 2, 3 } },
+    ['walking'] = { 6.5, { 4, 5, 6, 7 } },
+    ['weapon'] = { 6.5, { 3, 4, 3, 4, 3, 4, 3, 4 } },
+    ['spell'] = { 6.5, { 3, 4, 3, 4, 3, 4, 3, 4 } },
+    ['assist'] = { 6.5, { 3, 4, 3, 4, 3, 4, 3, 4 } },
+    ['combat'] = { 6.5, { 4, 5, 6, 7 } },
+    ['hurt'] = { 6.5, { 7, 7, 7, 7 } },
+    ['death'] = { 6.5, { 8, 8, 8, 8 } },
+    ['entry'] = { 6.5, { 0 } }
 }
-inanimate = { ['idle'] = { 0 } }
+inanimate = { ['idle'] = { 3.25, { 0 } } }
 sprite_data = {
     {
         ['id'] = 'abelon',
@@ -1436,10 +1436,9 @@ sprite_data = {
         ['h'] = 31,
         ['y'] = 635,
         ['animations'] = {
-            ['idle'] = { 1, 2, 3, 4, 5, 6, 7, 8 },
-            ['out'] = { 0 }
+            ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 } }
         },
-        ['versions'] = { 'standard' }
+        ['versions'] = { 'standard', 'out' }
     },
     {
         ['id'] = 'bloodrite',
@@ -1484,8 +1483,9 @@ for i = 1, #sprite_data do
             gj['versions'][v] = {}
             local y = data['y'] + (k - 1) * data['h']
             for name, frames in pairs(data['animations']) do
+                local spd, idxs = frames[1], frames[2]
                 gj['versions'][v][name] = Animation:new(
-                    getSpriteQuads(frames, gj['sheet'], data['w'], data['h'], y)
+                    getSpriteQuads(idxs, gj['sheet'], data['w'], data['h'], y), spd
                 )
             end
         end

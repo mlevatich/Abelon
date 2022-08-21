@@ -7,8 +7,6 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
     #16
     #63
-    -Give each animation it's own speed. Idle animations are half-speed and only
-    four frames.
     -Re-do Abelon and Kath animations using layers and new sprites
     -In battle, HUD should show how much damage/healing you are about to do and what
     statuses you will apply to each enemy/ally, when an attack is selected.
