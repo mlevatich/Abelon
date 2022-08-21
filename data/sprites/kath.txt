@@ -3,7 +3,7 @@
 Name: Kath
 Depth: 5
 Interactive: yes
-Blocking: yes
+Hitbox: 7,1,20,31
 Resting: wander
 Impression: 50
 Awareness: 0

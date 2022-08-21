@@ -5,21 +5,19 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
 #?:
 
-    player-near-sprite should only check chapter sprites
-    Tighten borders around sprites, re-order spritesheet
-    #16 / #63 / below:
-    In battle, HUD should show how much damage/healing you are about to do and what
+    #16
+    #63
+    -Give each animation it's own speed. Idle animations are half-speed and only
+    four frames.
+    -Re-do Abelon and Kath animations using layers and new sprites
+    -In battle, HUD should show how much damage/healing you are about to do and what
     statuses you will apply to each enemy/ally, when an attack is selected.
     When an assist is selected, HUD should show the effect that will apply to the
     assisted tiles
-
     #48
     #59
-
-    Screen shake: two versions, fast and slow
-
-    Implement rewritten beginning of script
-
+    -screen shake: two versions, fast and slow
+    -implement rewritten beginning of script
     #51
     #52
     #53
@@ -29,8 +27,7 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
 #69:
 
-    Finalize Elaine sprite, draft portrait
-
+    -finalize Elaine sprite, draft portrait
     Elaine-idle
     Elaine-walk
     Elaine-downed
@@ -43,10 +40,9 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
     Elaine-assist
     Elaine-hurt
     Elaine-death
+    -implement Elaine script
 
-    Implement Elaine script.
-
-    Implement Elaine battle. Defend her from wolves! Keep them away. Reinforcements
+    Elaine battle: Defend her from wolves! Keep them away. Reinforcements
     arrive twice, once from next to Elaine (with a warning from her), and once from
     further away. The battle ends automatically after a certain number of turns and
     all wolves flee. Elaine is an ally unit for the purposes of the battle, but

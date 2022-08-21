@@ -3,7 +3,7 @@
 Name: Blood sign
 Depth: 7
 Interactive: no
-Blocking: no
+Hitbox:
 Resting: idle
 Impression: 0
 Awareness: 0

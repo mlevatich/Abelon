@@ -3,7 +3,7 @@
 Name: Silver medallion
 Depth: 6
 Interactive: yes
-Blocking: no
+Hitbox:
 Resting: idle
 Impression: 0
 Awareness: 0

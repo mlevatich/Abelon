@@ -3,7 +3,7 @@
 Name: Elaine
 Depth: 5
 Interactive: yes
-Blocking: yes
+Hitbox: 7,1,20,31
 Resting: idle
 Impression: 50
 Awareness: 0

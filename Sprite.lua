@@ -76,7 +76,7 @@ function Sprite:initialize(id, chapter)
     self.interactive = readField(data[5], tobool)
 
     -- Can other sprites walk through/over this sprite?
-    self.blocking = readField(data[6], tobool)
+    self.hitbox = readArray(data[6], tonumber)
 
     -- Sprite's opinions
     self.impression = readField(data[8], tonumber)
@@ -149,7 +149,12 @@ end
 
 -- Is this sprite blocking?
 function Sprite:isBlocking()
-    return self.blocking
+    return #self.hitbox > 0
+end
+
+function Sprite:getHitboxRect()
+    local x, y = self.x + self.hitbox[1], self.y + self.hitbox[2]
+    return x, y, self.hitbox[3], self.hitbox[4]
 end
 
 function Sprite:getPtexture()
@@ -628,8 +633,7 @@ function Sprite:djikstra(graph, src, dst, depth)
         local sps = map:getSprites()
         for i = 1, #sps do
             if sps[i]:isBlocking() then
-                local x, y = sps[i]:getPosition()
-                local w, h = sps[i]:getDimensions()
+                local x, y, w, h = sps[i]:getHitboxRect()
                 local corners = {
                     map:tileAt(x, y),         map:tileAt(x + w - 1, y),
                     map:tileAt(x, y + h - 1), map:tileAt(x + w - 1, y + h - 1)
@@ -1032,30 +1036,30 @@ function Sprite:onTile(x, y)
 
     -- Check if the tile matches the tile at any corner of the sprite
     local map = self.chapter:getMap()
+    local sx, sy, w, h = self:getHitboxRect()
 
     -- Check northwest tile
-    local match, new_x, new_y = map:pixelOnTile(self.x, self.y, x, y)
+    local match, new_x, new_y = map:pixelOnTile(sx, sy, x, y)
     if match then
         return true, new_x, new_y
     end
 
     -- Check northeast tile
-    match, new_x, new_y = map:pixelOnTile(self.x + self.w, self.y, x, y)
+    match, new_x, new_y = map:pixelOnTile(sx + w, sy, x, y)
     if match then
-        return true, new_x - self.w, new_y
+        return true, new_x - w, new_y
     end
 
     -- Check southwest tile
-    match, new_x, new_y = map:pixelOnTile(self.x, self.y + self.h, x, y)
+    match, new_x, new_y = map:pixelOnTile(sx, sy + h, x, y)
     if match then
-        return true, new_x, new_y - self.h
+        return true, new_x, new_y - h
     end
 
     -- Check southeast tile
-    match, new_x, new_y = map:pixelOnTile(self.x + self.w,
-                                          self.y + self.h, x, y)
+    match, new_x, new_y = map:pixelOnTile(sx + w, sy + h, x, y)
     if match then
-        return true, new_x - self.w, new_y - self.h
+        return true, new_x - w, new_y - h
     end
 
     -- Return nil if no match
@@ -1064,10 +1068,14 @@ end
 
 -- Check if the given sprite is within an offset distance to self
 function Sprite:AABB(sp, offset)
-    local x_inside = (self.x < sp.x + sp.w + offset) and
-                     (self.x + self.w > sp.x - offset)
-    local y_inside = (self.y < sp.y + sp.h + offset) and
-                     (self.y + self.h > sp.y - offset)
+    local x, y, w, h  = self:getHitboxRect()
+    local x2, y2 = sp:getPosition()
+    local w2, h2 = sp:getDimensions()
+    if sp:isBlocking() then
+        x2, y2, w2, h2 = sp:getHitboxRect()
+    end
+    local x_inside = (x < x2 + w2 + offset) and (x + w > x2 - offset)
+    local y_inside = (y < y2 + h2 + offset) and (y + h > y2 - offset)
     return x_inside and y_inside
 end
 
@@ -1082,45 +1090,48 @@ function Sprite:_checkSpriteCollisions()
 
     -- Iterate over all active sprites
     for _, sp in ipairs(self.chapter:getActiveSprites()) do
-        if sp.name ~= self.name and sp.blocking then
+        if sp.name ~= self.name and sp:isBlocking() then
+
+            local x,  y,  w,  h  = self:getHitboxRect()
+            local x2, y2, w2, h2 = sp:getHitboxRect()
 
             -- Collision from right or left of target
             local x_move = nil
-            local y_inside = (self.y < sp.y + sp.h) and (self.y + self.h > sp.y)
-            local right_dist = self.x - (sp.x + sp.w)
-            local left_dist = sp.x - (self.x + self.w)
+            local y_inside = (y < y2 + h2) and (y + h > y2)
+            local right_dist = x - (x2 + w2)
+            local left_dist = x2 - (x + w)
             if y_inside and right_dist <= 0 and
-               right_dist > -sp.w/2 and self.dx < 0 then
-                x_move = sp.x + sp.w
+               right_dist > -w2/2 and self.dx < 0 then
+                x_move = x2 + w2
             elseif y_inside and left_dist <= 0 and
-                   left_dist > -sp.w/2 and self.dx > 0 then
-                x_move = sp.x - self.w
+                   left_dist > -w2/2 and self.dx > 0 then
+                x_move = x2 - w
             end
 
             -- Collision from below target or above target
             local y_move = nil
-            local x_inside = (self.x < sp.x + sp.w) and (self.x + self.w > sp.x)
-            local down_dist = self.y - (sp.y + sp.h)
-            local up_dist = sp.y - (self.y + self.h)
+            local x_inside = (x < x2 + w2) and (x + w > x2)
+            local down_dist = y - (y2 + h2)
+            local up_dist = y2 - (y + h)
             if x_inside and down_dist <= 0 and
-               down_dist > -sp.h/2 and self.dy < 0 then
-                y_move = sp.y + sp.h
+               down_dist > -h2/2 and self.dy < 0 then
+                y_move = y2 + h2
             elseif x_inside and up_dist <= 0 and
-                   up_dist > -sp.h/2 and self.dy > 0 then
-                y_move = sp.y - self.h
+                   up_dist > -h2/2 and self.dy > 0 then
+                y_move = y2 - h
             end
 
             -- Perform shorter move
             if x_move and y_move then
-                if abs(x_move - self.x) < abs(y_move - self.y) then
-                    self.x = x_move
+                if abs(x_move - x) < abs(y_move - y) then
+                    self.x = x_move - (x - self.x)
                 else
-                    self.y = y_move
+                    self.y = y_move - (y - self.y)
                 end
             elseif x_move then
-                self.x = x_move
+                self.x = x_move - (x - self.x)
             elseif y_move then
-                self.y = y_move
+                self.y = y_move - (y - self.y)
             end
         end
     end
@@ -1131,23 +1142,22 @@ function Sprite:_checkMapCollisions()
 
     -- Convenience variables
     local map = self.chapter:getMap()
-    local h = self.h
-    local w = self.w
+    local x, y, w, h = self:getHitboxRect()
 
     -- Check all surrounding tiles
-    local above_left = map:collides(map:tileAt(self.x, self.y - 1))
-    local above_right = map:collides(map:tileAt(self.x + w - 1, self.y - 1))
+    local above_left = map:collides(map:tileAt(x, y - 1))
+    local above_right = map:collides(map:tileAt(x + w - 1, y - 1))
 
-    local below_left = map:collides(map:tileAt(self.x, self.y + h))
-    local below_right = map:collides(map:tileAt(self.x + w - 1, self.y + h))
+    local below_left = map:collides(map:tileAt(x, y + h))
+    local below_right = map:collides(map:tileAt(x + w - 1, y + h))
 
-    local right = map:collides(map:tileAt(self.x + w, self.y + h / 2))
-    local right_above = map:collides(map:tileAt(self.x + w, self.y))
-    local right_below = map:collides(map:tileAt(self.x + w, self.y + h - 1))
+    local right = map:collides(map:tileAt(x + w, y + h / 2))
+    local right_above = map:collides(map:tileAt(x + w, y))
+    local right_below = map:collides(map:tileAt(x + w, y + h - 1))
 
-    local left = map:collides(map:tileAt(self.x - 1, self.y + h / 2))
-    local left_above = map:collides(map:tileAt(self.x - 1, self.y))
-    local left_below = map:collides(map:tileAt(self.x - 1, self.y + h - 1))
+    local left = map:collides(map:tileAt(x - 1, y + h / 2))
+    local left_above = map:collides(map:tileAt(x - 1, y))
+    local left_below = map:collides(map:tileAt(x - 1, y + h - 1))
 
     -- Conditions for a collision
     local above_condition = (above_left and above_right)
@@ -1170,27 +1180,27 @@ function Sprite:_checkMapCollisions()
 
     -- Perform up-down move if it's small enough
     if above_condition then
-        local y_move = map:tileAt(self.x, self.y - 1).y * TILE_HEIGHT
-        if abs(y_move - self.y) <= 2 then
-            self.y = y_move
+        local y_move = map:tileAt(x, y - 1).y * TILE_HEIGHT
+        if abs(y_move - y) <= 2 then
+            self.y = y_move - (y - self.y)
         end
     elseif below_condition then
-        local y_move = (map:tileAt(self.x, self.y + h).y - 1) * TILE_HEIGHT - h
-        if abs(y_move - self.y) <= 2 then
-            self.y = y_move
+        local y_move = (map:tileAt(x, y + h).y - 1) * TILE_HEIGHT - h
+        if abs(y_move - y) <= 2 then
+            self.y = y_move - (y - self.y)
         end
     end
 
     -- perform left-right move if it's small enough
     if left_condition then
-        local x_move = map:tileAt(self.x - 1, self.y).x * TILE_WIDTH
-        if abs(x_move - self.x) <= 2 then
-            self.x = x_move
+        local x_move = map:tileAt(x - 1, y).x * TILE_WIDTH
+        if abs(x_move - x) <= 2 then
+            self.x = x_move - (x - self.x)
         end
     elseif right_condition then
-        local x_move = (map:tileAt(self.x + w, self.y).x - 1) * TILE_WIDTH - w
-        if abs(x_move - self.x) <= 2 then
-            self.x = x_move
+        local x_move = (map:tileAt(x + w, y).x - 1) * TILE_WIDTH - w
+        if abs(x_move - x) <= 2 then
+            self.x = x_move - (x - self.x)
         end
     end
 end
@@ -1235,7 +1245,7 @@ function Sprite:update(dt)
     self:updateAnimation(dt)
 
     -- Handle collisions with walls or other sprites
-    if self.blocking then
+    if self:isBlocking() then
         self:checkCollisions()
     end
 end
