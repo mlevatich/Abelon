@@ -5,7 +5,7 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
 #?:
 
-    -Re-do Abelon and Kath animations using layers and new sprites
+    -Re-do Abelon and Kath animations using layers
     #16
     #59
     #63
@@ -128,6 +128,7 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
     #?: Animation sound effects
     #?: "splash" animations
     #9: Lighting engine
+    Portraits
 
 #73:
 
