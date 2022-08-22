@@ -1298,170 +1298,128 @@ sprite_data = {
         ['id'] = 'abelon',
         ['w'] = 31,
         ['h'] = 31,
-        ['y'] = 0,
-        ['animations'] = living,
-        ['versions'] = { 'standard', 'injured' }
+        ['animations'] = living
     },
     {
         ['id'] = 'kath',
         ['w'] = 31,
         ['h'] = 31,
-        ['y'] = 31,
-        ['animations'] = living,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'wolf1',
-        ['w'] = 31,
-        ['h'] = 31,
-        ['y'] = 106,
-        ['animations'] = living,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'wolf2',
-        ['w'] = 31,
-        ['h'] = 31,
-        ['y'] = 106,
-        ['animations'] = living,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'wolf3',
-        ['w'] = 31,
-        ['h'] = 31,
-        ['y'] = 106,
-        ['animations'] = living,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'medallion',
-        ['w'] = 20,
-        ['h'] = 22,
-        ['y'] = 62,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'book',
-        ['w'] = 25,
-        ['h'] = 22,
-        ['y'] = 84,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'shafe',
-        ['w'] = 23,
-        ['h'] = 15,
-        ['y'] = 137,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'forniese',
-        ['w'] = 22,
-        ['h'] = 24,
-        ['y'] = 152,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'colblossom',
-        ['w'] = 31,
-        ['h'] = 21,
-        ['y'] = 176,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'wornfleet',
-        ['w'] = 18,
-        ['h'] = 26,
-        ['y'] = 1434,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'grass',
-        ['w'] = 31,
-        ['h'] = 21,
-        ['y'] = 197,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'grass2',
-        ['w'] = 31,
-        ['h'] = 21,
-        ['y'] = 218,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'bloodstain',
-        ['w'] = 288,
-        ['h'] = 352,
-        ['y'] = 239,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'bloodstain2',
-        ['w'] = 416,
-        ['h'] = 608,
-        ['y'] = 825,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'log',
-        ['w'] = 80,
-        ['h'] = 28,
-        ['y'] = 591,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'rock',
-        ['w'] = 23,
-        ['h'] = 16,
-        ['y'] = 619,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
-    },
-    {
-        ['id'] = 'torch',
-        ['w'] = 22,
-        ['h'] = 31,
-        ['y'] = 635,
-        ['animations'] = {
-            ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 } }
-        },
-        ['versions'] = { 'standard', 'out' }
-    },
-    {
-        ['id'] = 'bloodrite',
-        ['w'] = 156,
-        ['h'] = 128,
-        ['y'] = 666,
-        ['animations'] = inanimate,
-        ['versions'] = { 'standard' }
+        ['animations'] = living
     },
     {
         ['id'] = 'elaine',
         ['w'] = 31,
         ['h'] = 31,
-        ['y'] = 794,
+        ['animations'] = living
+    },
+    {
+        ['id'] = 'lester',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['animations'] = living
+    },
+    {
+        ['id'] = 'shanti',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['animations'] = living
+    },
+    {
+        ['id'] = 'wolf',
+        ['w'] = 31,
+        ['h'] = 31,
         ['animations'] = living,
-        ['versions'] = { 'standard' }
+        ['n'] = 5
+    },
+    {
+        ['id'] = 'living_rock',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['animations'] = living,
+        ['n'] = 3
+    },
+    {
+        ['id'] = 'torch',
+        ['w'] = 22,
+        ['h'] = 31,
+        ['animations'] = { ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 } } }
+    },
+    {
+        ['id'] = 'medallion',
+        ['w'] = 20,
+        ['h'] = 22
+    },
+    {
+        ['id'] = 'book',
+        ['w'] = 25,
+        ['h'] = 22
+    },
+    {
+        ['id'] = 'log',
+        ['w'] = 80,
+        ['h'] = 28
+    },
+    {
+        ['id'] = 'rock',
+        ['w'] = 23,
+        ['h'] = 16
+    },
+    {
+        ['id'] = 'shafe',
+        ['w'] = 23,
+        ['h'] = 15
+    },
+    {
+        ['id'] = 'forniese',
+        ['w'] = 22,
+        ['h'] = 24
+    },
+    {
+        ['id'] = 'colblossom',
+        ['w'] = 31,
+        ['h'] = 21
+    },
+    {
+        ['id'] = 'grass',
+        ['w'] = 31,
+        ['h'] = 21
+    },
+    {
+        ['id'] = 'grass2',
+        ['w'] = 31,
+        ['h'] = 21
+    },
+    {
+        ['id'] = 'wornfleet',
+        ['w'] = 18,
+        ['h'] = 26
+    },
+    {
+        ['id'] = 'bloodrite',
+        ['w'] = 157,
+        ['h'] = 127
+    },
+    {
+        ['id'] = 'bloodstain',
+        ['w'] = 289,
+        ['h'] = 352
+    },
+    {
+        ['id'] = 'bloodstain2',
+        ['w'] = 416,
+        ['h'] = 608
     }
 }
 sprite_graphics = {}
+local sheet_y = 0
 for i = 1, #sprite_data do
     local data = sprite_data[i]
     local id = data['id']
     sprite_graphics[id] = {}
+    if data['versions']   == nil then data['versions']   = { 'standard' } end
+    if data['animations'] == nil then data['animations'] = inanimate      end
+    if data['n']          == nil then data['n']          = 0              end
+    for x = 1, data['n'] do sprite_graphics[id .. x] = sprite_graphics[id] end
     local g = sprite_graphics[id]
     local portrait_file = 'graphics/portraits/' .. id .. '.png'
     if love.filesystem.getInfo(portrait_file) then
@@ -1481,13 +1439,14 @@ for i = 1, #sprite_data do
         for k = 1, #sprite_data[i]['versions'] do
             local v = sprite_data[i]['versions'][k]
             gj['versions'][v] = {}
-            local y = data['y'] + (k - 1) * data['h']
             for name, frames in pairs(data['animations']) do
                 local spd, idxs = frames[1], frames[2]
                 gj['versions'][v][name] = Animation:new(
-                    getSpriteQuads(idxs, gj['sheet'], data['w'], data['h'], y), spd
+                    getSpriteQuads(idxs, gj['sheet'], data['w'], data['h'], sheet_y),
+                    spd
                 )
             end
+            sheet_y = sheet_y + (data['h'] + 1)
         end
     end
 end

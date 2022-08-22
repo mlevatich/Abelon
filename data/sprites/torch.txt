@@ -3,7 +3,7 @@
 Name: Torch
 Depth: 5
 Interactive: no
-Hitbox: 7,9,8,20
+Collides: 7,4,10,25
 Resting: idle
 Impression: 0
 Awareness: 0

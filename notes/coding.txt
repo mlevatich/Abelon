@@ -5,17 +5,17 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
 
 #?:
 
-    #16
-    #63
     -Re-do Abelon and Kath animations using layers and new sprites
+    #16
+    #59
+    #63
     -In battle, HUD should show how much damage/healing you are about to do and what
     statuses you will apply to each enemy/ally, when an attack is selected.
     When an assist is selected, HUD should show the effect that will apply to the
     assisted tiles
     #48
-    #59
-    -screen shake: two versions, fast and slow
     -implement rewritten beginning of script
+    -screen shake: two versions, fast and slow
     #51
     #52
     #53
@@ -149,6 +149,11 @@ to the player. Learning a name is a scene event.
 
 Chapter 1 start card
 
+#59:
+
+Chapter end trigger. Displays a bridge scene (??? talks again), and chapter 2
+start card (Teaser). Kicks you back to the title screen
+
 #48:
 
 Tutorial information should appear on the right side of the screen, in the
@@ -158,11 +163,6 @@ from the settings menu in a "tutorial" menu.
 Support GOTOs in scenes for sane script-writing.
 
 Use a better format than a text file for writing a branching story?
-
-#59:
-
-Chapter end trigger. Displays a bridge scene (??? talks again), and chapter 2
-start card (Teaser). Kicks you back to the title screen
 
 
 
