@@ -149,9 +149,11 @@ function Battle:adjustDifficultyFrom(old)
                 'endurance', 'focus', 'force', 'affinity', 'reaction'
             }
             for j = 1, #adjust do
-                attrs[adjust[j]] = math.max(0, attrs[adjust[j]] - factor)
+                local real = factor
+                if adjust[j] == 'endurance' then real = 2 * (old - new) end
+                attrs[adjust[j]] = math.max(0, attrs[adjust[j]] - real)
             end
-            sp.health = math.min(sp.health, attrs['endurance'])
+            sp.health = math.min(sp.health, attrs['endurance'] * 2)
             sp.ignea = math.min(sp.ignea, attrs['focus'])
         end
     end
@@ -1914,7 +1916,7 @@ end
 
 function Battle:renderHealthbar(sp)
     local x, y = sp:getPosition()
-    local ratio = sp.health / sp.attributes['endurance']
+    local ratio = sp.health / (sp.attributes['endurance'] * 2)
     y = y + sp.h + ite(self.pulse, 0, -1) - 1
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.rectangle('fill', x + 3, y, sp.w - 6, 3)
@@ -1999,7 +2001,7 @@ function Battle:mkTileHoverBox(tx, ty)
 
     -- Box contains sprite's name and status
     local name_str = sp.name
-    local hp_str = sp.health .. "/" .. sp.attributes['endurance']
+    local hp_str = sp.health .. "/" .. (sp.attributes['endurance'] * 2)
     local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
 
     -- Compute box width from longest status

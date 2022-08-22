@@ -3,33 +3,54 @@ paragraph separately for your own sanity)
 
 CHAPTER 1 IMPLEMENTATION CHECKLIST
 
-#?:
+-Kath idle, Kath walk
 
-    -Re-do Abelon and Kath animations using layers
-    #16
-    #59
-    #63
-    -In battle, HUD should show how much damage/healing you are about to do and what
-    statuses you will apply to each enemy/ally, when an attack is selected.
-    When an assist is selected, HUD should show the effect that will apply to the
-    assisted tiles
-    #48
-    -implement rewritten beginning of script
-    -screen shake: two versions, fast and slow
-    #51
-    #52
-    #53
-    #4
-    #56
-    #67
+-In battle, HUD should show how much damage/healing you are about to do and what
+statuses you will apply to each enemy/ally, when an attack is selected.
+When an assist is selected, HUD should show the effect that will apply to the
+assisted tiles
+#51
+#52
+#53
+
+#4
+#56
+-Add in skills from notes on phone
+
+#16
+#59
+#63
+
+#48
+-implement rewritten beginning of script
+-screen shake: two versions, fast and slow
+#64
 
 #69:
 
-    -finalize Elaine sprite, draft portrait
-    Elaine-idle
-    Elaine-walk
+    Elaine sprite
+    Draft portrait
     Elaine-downed
-    Elaine-getup
+    Elaine-idle
+
+    Implement Elaine script
+    -Elaine battle: Defend her from wolves! Keep them away. Reinforcements
+    arrive twice, once from next to Elaine (with a warning from her), and once from
+    further away. The battle ends automatically after a certain number of turns and
+    all wolves flee. Elaine is an ally unit for the purposes of the battle, but
+    starts at 1hp and has status debuffs that make her unable to move, and the only
+    skill she knows is Observe. Observe grants her a small amount of Exp, which
+    causes her to level up to level 2, so she can learn her first attacking skill
+    after the battle, but she cannot gain any other experience during the fight.
+    -Update exp table to account for bonus exp, and to make Elaine's and Abelon's
+    growth curves fair. Either Abelon or Kath, but probably not both, should level
+    up in the second battle. Elaine should level up once each battle if you use her.
+    Potentially she could get from 2 to 4 in her first real battle.
+    -Test out Elaine's skills in a mock battle
+
+    #67
+
+    Elaine-walk
     Elaine-combat-entry-exit
     Elaine-combat
     Elaine-combat-run
@@ -38,25 +59,8 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
     Elaine-assist
     Elaine-hurt
     Elaine-death
-    -implement Elaine script
-
-    Elaine battle: Defend her from wolves! Keep them away. Reinforcements
-    arrive twice, once from next to Elaine (with a warning from her), and once from
-    further away. The battle ends automatically after a certain number of turns and
-    all wolves flee. Elaine is an ally unit for the purposes of the battle, but
-    starts at 1hp and has status debuffs that make her unable to move, and the only
-    skill she knows is Observe. Observe grants her a small amount of Exp, which
-    causes her to level up to level 2, so she can learn her first attacking skill
-    after the battle, but she cannot gain any other experience during the fight.
-
-    Update exp table to account for bonus exp, and to make Elaine's and Abelon's
-    growth curves fair. Either Abelon or Kath, but probably not both, should level
-    up in the second battle. Elaine should level up once each battle if you use her.
-    Potentially she could get from 2 to 4 in her first real battle.
-
-    Test out Elaine's skills in a mock battle
-
-    #64
+    Elaine-getup
+    Elaine skill animations
 
 #70:
 
@@ -126,8 +130,11 @@ CHAPTER 1 IMPLEMENTATION CHECKLIST
     Last pass over script for consistency
 
     #?: Animation sound effects
+    #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite
+        parameter deciding whether it blocks light may be needed. e.g. abelon blocks
+        light but a log doesn't), proper color computation. Look up lua/love shaders.
+        Alternate, darken with patterns of black pixels over tiles?
     #?: "splash" animations
-    #9: Lighting engine
     Portraits
 
 #73:
@@ -169,20 +176,6 @@ Use a better format than a text file for writing a branching story?
 
 
 
-SECTION: MAP WORK
-
-#9:
-
-Expand lighting engine. Flickering, smoothing, obstacle detection (sprite
-parameter deciding whether it blocks light may be needed. e.g. abelon blocks
-light but a log doesn't), proper color computation. Look up lua/love shaders
-
-Alternate, darken with patterns of black pixels over tiles?
-
-
-
-
-
 SECTION: ANIMATION WORK
 
 #52:
@@ -200,9 +193,11 @@ Skill animations for all basic skills.
 
 #51:
 
+Kath-combat-entry-exit
 Kath-idle
 Kath-heal
 
+Abelon-combat-entry-exit
 Abelon-combat
 Kath-combat
 Abelon-combat-run
@@ -226,14 +221,12 @@ animation, and in some cases, no spell animation (e.g. for wolves)
 Insert appropriate hooks for combat animations to play at the right points in
 battle (fill in with a universal default).
 
-Abelon-combat-entry-exit
 Abelon-weapon
 Abelon-spell
 Abelon-assist
 Abelon-hurt
 Abelon-death
 
-Kath-combat-entry-exit
 Kath-weapon
 Kath-spell
 Kath-assist
@@ -269,20 +262,17 @@ start game (from title screen)
 #56:
 
 SFX for:
-earthquake
-use weapon skill
-use spell
-use assist
 battle cursor move
-battle select ally/enemy
-battle select target for move/attack/assist
-battle confirm end action
+Mute ally turn start, enemy turn start, victory, defeat menus
+battle select ally/enemy, target for move/attack/assist, confirm end action
 battle enemy turn start
 battle ally turn start
 level up
-all skills
-
-Mute ally turn start, enemy turn start, victory, defeat menus
+use weapon skill
+use spell
+use assist
+skills (can re-use liberally)
+earthquake
 
 #?:
 

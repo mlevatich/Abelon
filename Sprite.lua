@@ -93,7 +93,10 @@ function Sprite:initialize(id, chapter)
     self.skills = readArray(data[15], getSk)
     self.skill_points = 0
 
-    self.health = self.attributes['endurance']
+    self.health = 0
+    if self.attributes['endurance'] then
+        self.health = self.attributes['endurance'] * 2
+    end
     self.ignea = self.attributes['focus']
     self.level = readField(data[12], tonumber)
     self.exp = 0
@@ -443,7 +446,7 @@ function Sprite:buildAttributeBox(tmp_attrs)
     -- Creating some needed strings
     local lvl_str = 'Lvl: ' .. tostring(self.level)
     local hp_str  = 'Hp: '  .. tostring(self.health) .. '/'
-                            .. tostring(self.attributes['endurance'])
+                            .. tostring(self.attributes['endurance'] * 2)
     local ign_str = 'Ign: ' .. tostring(self.ignea) .. '/'
                             .. tostring(self.attributes['focus'])
     local exp_str = 'Exp: ' .. tostring(self.exp) .. '/' .. EXP_NEXT[self.level]
@@ -553,7 +556,7 @@ function Sprite:gainExp(e)
     for k, v in pairs(self.attributes) do
         self.attributes[k] = self.attributes[k] + levels
     end
-    self.health = self.health + levels
+    self.health = self.health + (levels * 2)
     self.ignea = self.ignea + levels
     return levels
 end

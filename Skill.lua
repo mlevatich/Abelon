@@ -166,7 +166,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
                 end
 
                 -- Deal damage or healing
-                local max_hp = t_tmp_attrs['endurance']
+                local max_hp = t_tmp_attrs['endurance'] * 2
                 local pre_hp = t.health
                 local n_hp = math.max(min, math.min(max_hp, t.health - dmg))
                 local dealt = pre_hp - n_hp
@@ -755,7 +755,7 @@ skills = {
                 best_attr = nil
                 hi = 0
                 for k,v in pairs(b.attributes) do
-                    if k ~= 'endurance' and v > hi then
+                    if v > hi then
                         hi = v
                         best_attr = k
                     end

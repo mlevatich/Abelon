@@ -267,7 +267,7 @@ end
 function Chapter:healAll()
     for i = 1, #self.player.party do
         local sp = self.player.party[i]
-        sp.health = sp.attributes['endurance']
+        sp.health = (sp.attributes['endurance'] * 2)
     end
 end
 

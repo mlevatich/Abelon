@@ -73,7 +73,7 @@ function LevelupMenu(sp, n)
     local incrAttr = function(i)
         return function(c)
             sp.attributes[i] = sp.attributes[i] + 1
-            if i == 'endurance' then sp.health = sp.health + 1 end
+            if i == 'endurance' then sp.health = sp.health + 2 end
             if i == 'focus'     then sp.ignea  = sp.ignea  + 1 end
             c.battle.stack[#c.battle.stack]['menu'] = nil
         end

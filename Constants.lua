@@ -122,7 +122,7 @@ ATTRIBUTE_DESC = {
     {
         ['id'] = 'endurance', ['name'] = 'Endurance',
         ['desc'] = "Withstand anything and everything. Every point of \z
-        Endurance raises the character's maximum health by one."
+        Endurance raises the character's maximum health by two."
     },
     {
         ['id'] = 'focus', ['name'] = 'Focus',

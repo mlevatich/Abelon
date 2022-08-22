@@ -352,7 +352,7 @@ scripts = {
             }),
             br(function(c)
                 local abelon = c.sprites['abelon']
-                return abelon.health == abelon.attributes['endurance']
+                return abelon.health == (abelon.attributes['endurance'] * 2)
             end, {
                 say(2, 1, false,
                     "And not a scratch on you! Your skills never fail to \z
