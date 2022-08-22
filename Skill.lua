@@ -628,7 +628,7 @@ skills = {
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 1 } },
         { { T, F, T },
           { F, F, F },
-          { T, F, T } }, SELF_CAST_AIM, 1,
+          { T, F, T } }, SELF_CAST_AIM, 2,
         nil, nil, nil, nil, nil,
         { { 'force', Scaling:new(0, 'affinity', 1.0) } }
     ),
