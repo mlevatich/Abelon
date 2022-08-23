@@ -3,8 +3,6 @@ paragraph separately for your own sanity)
 
 CHAPTER 1 IMPLEMENTATION CHECKLIST
 
--Kath idle, Kath walk
-
 -In battle, HUD should show how much damage/healing you are about to do and what
 statuses you will apply to each enemy/ally, when an attack is selected.
 When an assist is selected, HUD should show the effect that will apply to the
@@ -12,10 +10,10 @@ assisted tiles
 #51
 #52
 #53
+-Add in skills from notes on phone
 
 #4
 #56
--Add in skills from notes on phone
 
 #16
 #59
@@ -27,12 +25,10 @@ assisted tiles
 #64
 
 #69:
-
     Elaine sprite
     Draft portrait
     Elaine-downed
     Elaine-idle
-
     Implement Elaine script
     -Elaine battle: Defend her from wolves! Keep them away. Reinforcements
     arrive twice, once from next to Elaine (with a warning from her), and once from
@@ -47,12 +43,10 @@ assisted tiles
     up in the second battle. Elaine should level up once each battle if you use her.
     Potentially she could get from 2 to 4 in her first real battle.
     -Test out Elaine's skills in a mock battle
-
     #67
-
     Elaine-walk
     Elaine-combat-entry-exit
-    Elaine-combat
+    Elaine-combat-idle
     Elaine-combat-run
     Elaine-weapon
     Elaine-spell
@@ -63,32 +57,26 @@ assisted tiles
     Elaine skill animations
 
 #70:
-
-    Finalize Lester sprite, draft portrait
-
+    Lester sprite
+    draft portrait
     Lester-idle
     Lester-walk
     Lester-combat-entry-exit
-    Lester-combat
+    Lester-combat-idle
     Lester-combat-run
     Lester-weapon
     Lester-spell
     Lester-assist
     Lester-hurt
     Lester-death
-
     Stone sprite data and graphics
-
     Write Lester scenarios (version with and version without Elaine)
-
     implement Lester scenarios
-
     #65
 
 #71:
-
-    Finalize Shanti sprite, draft portrait
-
+    Shanti sprite
+    draft portrait
     Shanti-idle
     Shanti-walk
     Shanti-combat-entry-exit
@@ -99,11 +87,9 @@ assisted tiles
     Shanti-assist
     Shanti-hurt
     Shanti-death
-
     implement Shanti scenario (four versions: saved lester and elaine quickly so
     Shanti is saveable, Saved Elaine out of battle so Shanti dies, sent lester to 
     Elaine and he dies, or skipped Elaine)
-
     #?: Improve AI algorithm
     improve AI algorithm - use other plans! In particular, enemies shouldn't
     interfere with each other. If one enemy has only a single path to attack their
@@ -113,22 +99,15 @@ assisted tiles
     farther away from the allies should also be prioritized.
 
 #72:
-
     Implement visiting Elaine's corpse scenario (Lester saw her)
-
     Add the bridge, moat, and wall to the South Forest
-
     Implement bridge battle scenario (four versions: Lester dead, Shanti dead,
     Elaine dead, all alive) (objective is survive)
-
     #66
-
     Implement chapter conclusion scenario
 
 #68:
-
     Last pass over script for consistency
-
     #?: Animation sound effects
     #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite
         parameter deciding whether it blocks light may be needed. e.g. abelon blocks
@@ -138,12 +117,14 @@ assisted tiles
     Portraits
 
 #73:
-
     Make executable
 
 #74:
-
     Pre-alpha closed release
+
+
+
+
 
 SECTION: GAME ENTRY-EXIT PROCEDURES
 
@@ -178,6 +159,25 @@ Use a better format than a text file for writing a branching story?
 
 SECTION: ANIMATION WORK
 
+#51:
+
+Support animation on combat entry (bridges idle -> combat), and on for 
+combat exit (this can just be the combat entry animation played in reverse).
+For hostile entities, their combat entry and exit are just their idle
+animations, because their idle animation is their combat animation.
+
+Abelon-combat-entry-exit
+Abelon-combat-idle
+Abelon-combat-run (try same feet as walk but bump animation speed?)
+
+Kath-combat-entry-exit
+Kath-combat-idle
+Kath-combat-run
+
+Two mostly identical wolf sprites
+Wolf-idle (this doubles as Wolf-combat-idle)
+Wolf-walk (this doubles as Wolf-combat-run)
+
 #52:
 
 Every skill has an associated single-fire animation, with render position
@@ -186,40 +186,14 @@ sprite casting the skill. For some skills, the animation should play at every
 affected tile, for others, the animation should play centered on the cursor and
 affected by direction. This should be provided as an option.
 
-Insert appropriate hooks for skill animations to play at the right points in
-battle (fill in with a universal default).
-
 Skill animations for all basic skills.
-
-#51:
-
-Kath-combat-entry-exit
-Kath-idle
-Kath-heal
-
-Abelon-combat-entry-exit
-Abelon-combat
-Kath-combat
-Abelon-combat-run
-Kath-combat-run
-
-Two mostly identical wolf sprites.
-
-Wolf-combat (this doubles as Wolf-idle)
-Wolf-walk (this doubles as Wolf-combat-run)
 
 #53:
 
-Each sprite that battles has seven single-fire animations: one for weapon
-skills, one for spells, one for assists, one for being injured, one for dying,
-one for combat entry (bridges idle -> combat), and one for combat exit (this
-can just be the combat entry animation played in reverse). For hostile entities,
-their combat entry and exit are just their idle animations, because their idle
-animation is their combat animation. Hostile entities also have no assist
-animation, and in some cases, no spell animation (e.g. for wolves)
-
-Insert appropriate hooks for combat animations to play at the right points in
-battle (fill in with a universal default).
+Each sprite that battles has five single-fire animations: one for weapon
+skills, one for spells, one for assists, one for being injured, and one for 
+dying. Hostile entities have no assist animation, and in some cases, no spell 
+animation (e.g. for wolves).
 
 Abelon-weapon
 Abelon-spell
