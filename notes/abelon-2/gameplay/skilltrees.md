@@ -1,13 +1,9 @@
 Abelon: Demon, Veteran, Executioner
-Kath: Defender, Hero, Cleric
+Kath:   Defender, Hero, Cleric
 Elaine: Huntress, Apprentice, Sniper
-Shanti: Sorceress, Enchanter, Lanternfaire
-Lester: Martyr, Watcher, Assassin
-Mona: Healer, Hellshun, Saint
-Lucille: Warlock, Ranger, Trickster
-Opal: Commander, Brawler, Duelist
-Uther: Miner, Slayer, Rogue
-Gaheris: Elementalist, Scholar, Empath
+Shanti: Sorceress, Scholar
+Lester: Firebrand, Assassin
+Mona:   Caretaker
 
 skill ideas:
 
@@ -65,25 +61,26 @@ gain 4 + Affinity * 0.5 reaction.
 Cover fire (0,0,1): assist. Allies in a plus-sign set of tiles centered 3 tiles
 from elaine gain Affinity * 0.5 Force and Affinity * 0.5 Reaction.
 
+Living Rock: big phys aoe reduces agility
+Elaine: galeforce: push a huge wall of enemies a few spaces away
+Abelon: clutches: pull an enemy towards you (potentially lower its stats? Or dmg? Both?)
+Kath: shove: push an enemy or ally. Free
 
-Every character has three skill "paths" to choose from, named by nouns
+Have each skill have a potential displacement effect, which is either “slide” or “teleport” (controls animation) and specifies the distance/direction pushed as a function of skill direction and displacement from caster (so you could push “outward”). Enemies are pushed until they are stopped by a grid edge or another unit
+
+Shanti: Renewal: allies who kill an enemy while on the assist and end their turn on it have their turn refreshed.
+Abelon: Siphon: lifesteal by hitting an enemy
+Kath: riposte: kath retaliates against any weapon damage dealt to him
+Lester should have enrage, not Kath
+
+Every character has skill "paths" to choose from, named by nouns
 (e.g. Abelon has Veteran, Demon, and Executioner), with an associated icon and
 color.
 
 A skill in path X grants a point in path X, but may require a threshold of
 points from paths X Y or Z.
 
-Everyone will be about level 20 by the end of the game, and each level grants a
-skill (or rarely, a passive. A character might have 0-3 passives by the end).
-
-Characters are recruited at some level appropriate to where they arrive in the
-game, and get some number of starting skills and corresponding points.
-Essentially, they already have some skills "unlocked". However, the number of
-skills they start with may not be equal to their starting level – every
-character, at recruitment, only has 6-7 spells so as not to overwhelm the
-player, even if they start at a high level. Abelon will have 18-20 skills at
-the end of the game, while other characters will have fewer (Gaheris might have
-only 7-8).
+Each level grants a skill point to spend on a skill. Characters are recruited at some level appropriate to where they arrive in the game, and get some number of starting skills and corresponding points. Essentially, they already have some skills "unlocked". However, the number of skills they start with may not be equal to their starting level – every character, at recruitment, only has 6-7 skills so as not to overwhelm the player, even if they start at a high level. Abelon will have 13-15 skills at the end of the game, while other characters will have fewer (Mona may only have 7-8).
 
 The skill requirements should be designed such that a) there are enough choices
 with each level up (3 or 4 seems like a good number), b) a character will
