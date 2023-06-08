@@ -52,7 +52,7 @@ But I should consider that this is just not realistic for me, and it will hamper
 
 - Lester's hatred of Abelon stems from the execution of a family member on the king's orders. Lester became a knight to surpass Abelon and take his place as captain.
 
-- Kath’s dad Stefan is the old third knight captain. Friend of Abelon’s. Not a great dude, kinda like Abelon. Prioritized his home of Lefally over Kath, after helping him escape the dragon, Stefan went back into the blaze. Kath resolved to never do that, so he is kind. Kath hates that Abelon reminds him of his dad, but can't help but admire the old knight.
+- Kath’s dad Stefan is the old third knight captain. Friend of Abelon’s. Not a great dude, kinda like Abelon. Prioritized his home of Lefally over Kath, after helping him escape the giant monster, Stefan went back into the blaze. Kath resolved to never do that, so he is kind. Kath hates that Abelon reminds him of his dad, but can't help but admire the old knight.
 
 - At some point in Part 1, the party celebrates the turn of the new year over a campfire.
 
@@ -60,29 +60,99 @@ But I should consider that this is just not realistic for me, and it will hamper
 
 - The world has an ancient history. This can be learned from finding journals of the Caretaker deep in the archives, and speaking with the Caretaker.
 
-- After beating battle 12, the player can choose whether or not to continue to the ultimate battle or end the game with the expedition a success. Mona strenuously advises against continuing, almost but not quite to the point of fourth wall breaking (i.e. don't continue unless you are very, very skilled). Ending the game here causes a timeskip forward into a scene where an older Abelon speaks to the suddenly stirring demon as an old friend. Learning the truths in battle 13 and the ending the game results in the same timeskip and cutscene, but with some details changed to reflect a more "complete" golden path ending. Depending on the party's impressions of Abelon, their fates and the way he relays them in this scene may also be slightly different.
+- After beating 2-6, the player can choose whether or not to continue to the ultimate battle or end the game with the expedition a success. Mona strenuously advises against continuing, almost but not quite to the point of fourth wall breaking (i.e. don't continue unless you are very, very skilled). Ending the game here causes a timeskip forward into a scene where an older Abelon speaks to the suddenly stirring demon as an old friend. Learning the truths in battle 13 and the ending the game results in the same timeskip and cutscene, but with some details changed to reflect a more "complete" golden path ending. Depending on the party's impressions of Abelon, their fates and the way he relays them in this scene may also be slightly different.
 
 ## Plot Structure and Battles
 
+Battles present: Abelon 11, Kath 9, Elaine 9, Shanti 8, Lester 7, Mona 2
+
 ### Part 1
 
-- 0: Abelon (tutorial)
-- 1: Abelon, Kath (tutorial. Introducing the Hero, Kath)
-- 2 (BAD): Abelon, Kath, Shanti, Lester (Don't save Elaine. Kath is haunted, but Shanti and Lester weren't forced into a corner because we hurried.)
-- 3 (BAD): Abelon, Kath, Shanti, Lester (Abelon is waking up. He is muttering about a plan...)
-- 4 (BAD): Abelon (Timeskip forward, after Abelon kills the party. He falls alone to the horde, despite infinite Ignea and OP abilities)
-- 2: Abelon, Kath, Elaine (tricky situation, but we must save Elaine!)
-- 3: Abelon, Kath, Elaine, Shanti (Shanti is found, Lester is missing. Abelon is frustrated about Elaine, and his mission, but can do little. Shanti has made a discovery)
-- 4: Abelon, Kath, Elaine, Shanti OR Lester (Lester is found, but we have to decide what to prioritize. Abelon has his own opinions. Lester hates Abelon)
-- 5: Abelon, Elaine, Shanti, Lester (With the group together at last, and Abelon regaining some control, he ponders his mission. For this battle, Kath is occupied. Shanti connects some dots, and we discover a truth.)
-- 6: Abelon, Kath, Elaine, Shanti, Lester (Abelon, in frustration, decides to trust the party instead of killing them and tell them what is happening to him as he can't see a way forward otherwise. But crisis occurs)
+- 1-1: Abelon
+    - Abelon wakes up in the forest (roam, tutorial).
+    - finds a wolf near Elaine, kills it (battle, tutorial).
+    - Goes to sleep or kills everyone, triggering 1-2-a (roam).
+- 1-2: Abelon, Kath
+    - Kath wakes Abelon up, wolves. Elaine shows up mid fight (battle, tutorial 2).
+    - Kath and Abelon decide what to do with Elaine. Triggers 1-3-a if leave her behind (talk).
+- 1-3: Abelon, Kath, Elaine, Shanti
+    - The three go after Shanti and Lester (talk)
+    - find them in a predicament with mysterious stone monsters, Lester incapacitated (battle).
+    - Resolve the encounter, but Lester is unconscious. Need to heal him. Shanti made a small discovery. Discuss the mission with Elaine (talk).
+    - Follow trail of Shanti's discovery, find next place to go (roam).
+    - On finding it, Abelon briefly is able to talk to the player (as ???). Angry, confused, vague. Not clear that it is Abelon speaking (talk).
+- 1-4: Abelon, Kath, Elaine, Shanti, Lester
+    - Lester is awake, discuss Elaine outside the entrance (talk).
+    - Open entrance, triggers battle (battle).
+    - Make camp inside (roam).
+    - At night, Abelon speaks again. Saving Elaine affected him. Still angry, fighting for control, doesn't feel confident to take it (talk).
+- 1-5: Abelon, Elaine, Shanti, Lester
+    - TODO: seek the truth (roam)
+    - TODO: find trouble (battle)
+    - TODO: post mortem, big revelations; there's more going on here than just finding a ritual site (talk)
+- 1-6: Abelon, Elaine, Lester
+    - TODO: more truth-learning (talk)
+    - TODO: more trouble (battle)
+    - TODO: revelations (talk)
+    - Make camp. Realize it's the turn of the new year. Kath brought party favors! (roam).
+    - At night, Abelon ponders killing the party. Decides against it. Needs to know more. Frustrated. On the verge of gaining control. Addresses the demon directly, ponders it (talk).
+- 1-7: Abelon, Kath, Elaine, Shanti, Lester
+    - TODO: party makes their way to important-seeming site. Feel they are on the cusp of learning the truth. And performing the ritual. Realize there may be more at stake than then ritual. (talk)
+    - TODO: Abelon, in frustration, decides to trust the party instead of killing them and tell them what is happening to him as he can't see a way forward otherwise, asks for help (talk)
+    - TODO: Before we can learn much, disaster strikes (battle)
+    - TODO: Kath saves Abelon, party is split, Kath and Abelon thrown into cave below (talk)
 
 ### Part 2
 
-- 7: Abelon, Mona (Who is Abelon? Who is the player? What is the history here? Kath saved me...)
-- 8: Abelon, Kath (Kath, you saved me. There are things I need to tell you.)
-- 9: Abelon, Kath, Lester, Mona (Reuniting with Lester. His disdain for Abelon is strongest here.)
-- 10: Abelon, Kath, Elaine, Shanti, Lester (Reuniting with Shanti for a battle. Afterwards, it's time to come clean. Climactic memory scene with the King. Shanti is conflicted, Elaine is confused, and Lester leaves in disgust)
-- 11: Abelon, Kath, Elaine, Shanti (Elaine's time to shine. Going after Lester, her plan saves the day and her words move everyone – she is grateful for Abelon)
-- 12: Abelon, Kath, Elaine, Shanti, Lester, Mona (The party, united, faces their final challenge and learns the final hidden truths)
-- 13: Abelon, Kath, Elaine, Shanti, Lester, Mona (Some secrets are still buried... Uncover them if you dare. Free ignea refill for a crazy challenging optional prestige fight)
+- 2-1: Abelon, Kath
+    - Truths revealed in deep discussion while searching for exits. Kath's history, why he saved Abelon, the murder plot, Abelon's possession (talk, roam).
+    - monsters. Mona shows up to save the day (battle).
+    - Who the heck is Mona. Alive for so long! And has demon! (talk).
+- 2-2: Abelon, Kath, Mona
+    - Revelations through talking with Mona, mostly about the Demon and its role in helping the people of the past. Abelon is shocked to hear they were friends. Player may respond that it knows Mona (same demon) or doesn't (different demon) (talk).
+    - Investigate something (roam).
+    - Environmental battle, falling rocks and such. Mona left behind. Going outside from the cave (battle).
+- 2-3: Elaine, Shanti, Lester
+    - Find the others, they learned stuff too! Shanti will tell the story...
+    - Take control of Shanti, with Lester and Elaine, as they learn that there's something to be done here more important than any ritual. The ruins hold secrets about this giant monster, and the learn its true nature. They also chat, about themselves and about Abelon and Kath. NO roaming (talk).
+    - They also run into trouble! (battle)
+- 2-4: Abelon, Kath, Elaine, Shanti, Lester
+    - Abelon and Kath combine what they learned with the others. Now they know what must be done (talk).
+    - Put more puzzle pieces together, proactive battle that is forced because we're finding the truth (battle).
+    - Prepare to make camp because anything could happen (roam). 
+    - When settling down, in a moment alone, Abelon confides in the demon (talk).
+- 2-5: Abelon, Kath, Elaine, Shanti
+    - Before settling down, Abelon comes clean. Explains his possession, to much skepticism. Finally, the punchline: memory scene where king explains the murder plot to Abelon (talk).
+    - Astonishment. Abelon would have killed them all the first night if he hadn't been possessed. Lester gets pissed, not going to make camp with Abelon, runs (talk).
+    - Go after Lester in the dark (roam).
+    - Unintended monster battle in darkness, Elaine sticks up for Abelon in mid-battle cutaways (battle).
+    - Lester and Abelon fight (talk).
+- 2-6: Abelon, Kath, Elaine, Shanti, Lester, Mona
+    - Mona arrives and shares the rest of her knowledge, confirming much of what they've learned and shedding additional light on the Messenger and its history. She expresses shame that she did not know it was wrecking the world. She believes she can summon it here, but the heroes must pacify it (talk).
+    - Make camp and prepare for the final battle. After going to sleep, Abelon talks to the demon frankly, finally. Expresses his pain. The player may say sorry, which Abelon finds as a great comfort, because it confirms that the demon is something close to humans, or at least understands them. Either way, he expresses gratitude (roam).
+    - Final battle (battle)
+    - Post mortem, final truths and reflections (talk).
+    - Option to pack up and go home, or proceed to final final challenge. Can check on everyone to see what they're thinking of doing. Some secrets are still buried (roam).
+    - If not doing final challenge, fast-forward to epilogue (talk)
+- 2-7: Abelon, Kath, Elaine, Shanti, Lester, Mona
+    - If choose to do final challenge, full ignea refill, do battle (battle)
+    - Talk about victory (talk)
+    - fast-forward to epilogue scene (talk)
+
+### Bad path
+
+- 1-2-a: Abelon
+    - Same as 1-5-a
+- 1-3-a: Abelon, Kath, Shanti, Lester
+    - The two go after Shanti and Lester (talk)
+    - Find them in a predicament with mysterious stone monsters (battle).
+    - Resolve the encounter. Shanti made a small discovery (talk).
+    - Follow trail of Shanti's discovery, find next place to go (roam).
+    - On finding it Abelon briefly is able to talk to the player (as ???). Confident, Demon understands him, prepared to proceed (talk).
+- 1-4-a: Abelon, Kath, Shanti, Lester
+    - Discuss the next place to go (talk).
+    - It's underground, opening pathway triggers a fight (battle).
+    - Make camp (roam).
+    - At night, Abelon talks to the player. Understanding. Says he can control the power. Wakes up, kills everyone (talk).
+- 1-5-a: Abelon
+    - Timeskip forward. Abelon falls alone to the horde, despite infinite Ignea and OP abilities (battle).
