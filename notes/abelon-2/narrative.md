@@ -10,13 +10,13 @@ The game is divided into two parts. Each part consists of seven chapters. Each c
 
 A medallion can be found on the ground at any point during 1-1. It's use is not clear at this point.
 
-**Battle:** The player immediately finds a wolf near an unconscious Elaine and dispatch it in the tutorial battle.
+**Battle:** The player immediately finds a wolf near an unconscious Elaine and dispatchs it in the tutorial battle.
 
-**Roam:** Interacting with Elaine prompts you only to shake her, which does nothing. The player comes across the campfire with sleeping comrades in front of some stone reliefs. You can examine things around camp, go to bed, or select the dialogue option "kill them".
+**Roam:** Interacting with Elaine prompts you only to shake her, which does nothing. The player comes across the campfire with sleeping comrades in front of some stone reliefs. You can examine things around camp, go to bed, or select the dialogue option "kill them", if Elaine has not been carried to camp.
 
-If you return to Elaine after having found the camp, you can optionally carry her to the camp, which results in different dialogue in 1-2, increased Elaine impression, and a small permanent buff for Elaine for the remainder of the game.
+If you return to Elaine after having found the camp, you can optionally carry her to the camp, which results in different dialogue in 1-2, increased Elaine impression, and a small permanent buff for Elaine for the remainder of the game. It also locks the player out of the bad path, as Elaine cannot be left behind.
 
-**Talk:** If you go to bed, the game fades to black. Abelon speaks to the player as ???, and the game transitions to 1-2. If you instead choose "kill them", Abelon slowly positions himself next to the camp, and begins drawing his sword, when the game cuts to black. Abelon speaks to the player as ???, and the game transitions to 1-2-a.
+**Talk:** If you go to bed, the game fades to black. Abelon speaks to the player as ???, and the game transitions to 1-2. If you instead choose "kill them", Abelon slowly positions himself next to the camp, and begins drawing his sword, when the game cuts to black. Abelon speaks to the player as ???, and the game transitions to 1-5-a.
 
 ## 1-2
 
@@ -39,11 +39,11 @@ Getting Elaine up to speed is a good opportunity to fill in the relevant context
 
 TODO: ROUGH DRAFT
 
-- The three go after Shanti and Lester (talk)
+- The three go after Shanti and Lester (roam, talk). After going ahead, Elaine and Kath catch up, brief discussion. Where did the two go? Need to find them. Roam, chat, solve environmental puzzle, find goodies, etc.
 - find them in a predicament with mysterious stone monsters, Lester incapacitated (battle: elaine kath abelon shanti).
 - Resolve the encounter, but Lester is unconscious. Need to heal him. Shanti made a small discovery. Discuss the mission with Elaine (talk).
 - Follow trail of Shanti's discovery, find next place to go (roam).
-- On finding it, Abelon briefly is able to talk to the player (as ???). Angry, confused, vague. Not clear that it is Abelon speaking (talk).
+- On finding it, Abelon briefly is able to talk to the player (as ???). Angry, confused, vague. Not clear that it is Abelon speaking. Perhaps in "broad daylight", not as a black screen? (talk).
 
 Regardless of whether Elaine is taken or not, we find Lester and Shanti in their own predicament. They had gone on assuming themselves to be in a safe area, but strange living rock creatures corner them – defenders created by the Caretaker, who has sensed their presence, to keep people away. A battle ensues to reconvene with Shanti and Lester. Lester is incapacitated, and needs healing.
 
@@ -53,9 +53,9 @@ Shanti made a small discovery, leading to some roaming while Kath heals Lester, 
 
 TODO: ROUGH DRAFT
 
-- Lester is awake, discuss Elaine outside the entrance (talk).
-- Open entrance, triggers battle (battle).
-- Make camp inside. Can start finding Gaheris' journals (roam).
+- Lester is awake, discuss Elaine outside the entrance (talk). Lester finds it hilarious that she got lost by going the wrong way, Shanti points out that kids don't learn geography anymore.
+- Open entrance, triggers battle outside. Part 1 midboss, evil big monster. Alpha wolf? Gorilla? Something? (battle).
+- It's not safe to stay aboveground. Make camp inside. Can start finding Gaheris' journals (roam).
 - The party wonders why they in particular have been chosen for this expedition. The cover, of course, is that they are the trusted elite, but that doesn't necessarily seem true on a close inspection. (talk)
 - At night, Abelon speaks again. Saving Elaine affected him. Still angry, fighting for control, doesn't feel confident to take it (talk).
 
@@ -228,13 +228,6 @@ TODO: ROUGH DRAFT
 Timeskip forward into a scene where an older Abelon speaks to the suddenly stirring demon as an old friend. Having completed 2-7 has some details changed to reflect a more "complete" golden path ending. Depending on the party's impressions of Abelon, their fates and the way he relays them in this scene may also be slightly different.
 
 ## Bad path
-
-## 1-2-a
-
-TODO: ROUGH DRAFT
-
-- Same as 1-5-a
-Triggered if Abelon ends 1-1 by killing the party. Identical to 1-5-a.
 
 ## 1-3-a
 

@@ -71,10 +71,20 @@ Settings ->
         Adept ->
             ~
         Master
-    Formulas (hover: combat formulas)
+    Tutorials -> (tutorials only appear here after they are unlocked)
+        Navigating the World
+        Battle: The Basics
+        Battle: Turns
+        Battle: Assists
+        Battle: Ignea
+        Battle: Attributes
+        Experience and Skill Learning
+        Using and Presenting Items
+
+        
 Quit ->
     Save and Quit ->
         (centered) Save current progress and close the game? Yes/No
-    Restart Part 1/2 ->
-        (centered) Are you SURE you want to restart Part <current part>?
-        You will lose ALL progress made during Part <current part>. Yes/No
+    Restart Chapter <current ch> ->
+        (centered) Are you SURE you want to restart Chapter <current ch>?
+        You will lose ALL progress made during Chapter <current ch>. Yes/No
