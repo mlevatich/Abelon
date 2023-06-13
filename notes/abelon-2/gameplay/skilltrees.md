@@ -1,7 +1,7 @@
 Abelon: Demon, Veteran, Executioner
 Kath:   Defender, Hero, Cleric
 Elaine: Huntress, Apprentice, Sniper
-Shanti: Sorceress, Scholar
+Shanti: Scholar, Sorceress
 Lester: Firebrand, Assassin
 Mona:   Caretaker
 

@@ -4,7 +4,7 @@ paragraph separately for your own sanity)
 CHAPTER 1 IMPLEMENTATION CHECKLIST
 
 -Write narrative.md for abelon-2
--Write scenes 1-1, 1-2, 1-3 for abelon-2
+-Write scripts 1-1, 1-2, 1-3 for abelon-2
 
 -In battle, HUD should show how much damage/healing you are about to do and what
 statuses you will apply to each enemy/ally, when an attack is selected.
