@@ -142,12 +142,11 @@ ATTRIBUTE_DESC = {
     {
         ['id'] = 'reaction', ['name'] = 'Reaction',
         ['desc'] = "Stay alert. Turn deadly strikes into glancing blows. \z
-        Received Weapon damage is reduced by one for every two points of \z
-        Reaction."
+        Each point of Reaction reduces received Weapon damage by one."
     },
     {
         ['id'] = 'agility', ['name'] = 'Agility',
-        ['desc'] = "Adapt fast and move faster. Every five points of \z
+        ['desc'] = "Adapt fast and move faster. Every four points of \z
         Agility grants the character one space of movement in battle."
     }
 }

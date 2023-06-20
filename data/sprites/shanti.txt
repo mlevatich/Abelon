@@ -10,7 +10,7 @@ Awareness: 0
 Discard: no
 Present:
 Level: 4
-Attributes: endurance:11 focus:15 force:13 affinity:4 reaction:7 agility:12
+Attributes: endurance:11 focus:15 force:13 affinity:4 reaction:3 agility:10
 Skilltrees: Sorceress:searing_light,detonate Enchanter:hypnotize Lanternfaire:heavy_swing,shine
 Skills: searing_light,heavy_swing,hypnotize,shine,detonate
 Description: The knight Shanti. EOS

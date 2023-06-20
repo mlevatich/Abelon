@@ -847,7 +847,7 @@ end
 function Battle:getMovement(sp, i, j)
     local attrs = self:getTmpAttributes(sp)
     local spent = self:getSpent(i, j)
-    return math.floor(attrs['agility'] / 5) - spent
+    return math.floor(attrs['agility'] / 4) - spent
 end
 
 function Battle:validMoves(sp, i, j)
@@ -1561,7 +1561,7 @@ function Battle:mkInitialPlan(e, sps)
     -- Preemptively get shortest paths for the grid, and enemy movement
     local y, x = self:findSprite(e:getId())
     local paths_dist, paths_prev = e:djikstra(self.grid, { y, x })
-    local movement = math.floor(self:getTmpAttributes(e)['agility'] / 5)
+    local movement = math.floor(self:getTmpAttributes(e)['agility'] / 4)
 
     -- Compute ALL movement options!
     local opts = {}

@@ -153,7 +153,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
                           * scaling.mul)
                 local dmg = atk
                 if dmg_type == WEAPON then
-                    local def = math.floor(t_tmp_attrs['reaction'] / 2)
+                    local def = math.floor(t_tmp_attrs['reaction'] / 1)
                     dmg = math.max(0, atk - def)
                 end
 
@@ -484,7 +484,7 @@ skills = {
     ),
     ['contempt'] = Skill:new('contempt', 'Contempt',
         "Glare with an evil eye lit by ignea, reducing the Reaction of \z
-         affected enemies by (Focus * 1.0) for two turns.",
+         affected enemies by (Focus * 0.5) for two turns.",
         'Demon', SPELL, MANUAL, str_to_icon['focus'],
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { F, T, F, T, F },
@@ -493,7 +493,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'reaction', Scaling:new(0, 'focus', -1.0) }, 2 } }
+        nil, { { { 'reaction', Scaling:new(0, 'focus', -0.5) }, 2 } }
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
@@ -513,15 +513,15 @@ skills = {
     ),
     ['guard_blindspot'] = Skill:new('guard_blindspot', 'Guard Blindspot',
         "Protect an adjacent ally from wounds to the back. Adds \z
-         (Affinity * 1.0) to the assisted ally's Reaction.",
+         (Affinity * 0.5) to the assisted ally's Reaction.",
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(0, 'affinity', 1.0) } }
+        { { 'reaction', Scaling:new(0, 'affinity', 0.5) } }
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire',
-        "Inspire a distant ally with a courageous cry. Adds (Affinity * 1.0) \z
+        "Inspire a distant ally with a courageous cry. Adds (Affinity * 0.5) \z
          to ally's Force, Reaction, and Affinity.",
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 1 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
@@ -534,9 +534,9 @@ skills = {
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil,
         {
-            { 'force',    Scaling:new(0, 'affinity', 1.0) },
-            { 'reaction', Scaling:new(0, 'affinity', 1.0) },
-            { 'affinity', Scaling:new(0, 'affinity', 1.0) }
+            { 'force',    Scaling:new(0, 'affinity', 0.5) },
+            { 'reaction', Scaling:new(0, 'affinity', 0.5) },
+            { 'affinity', Scaling:new(0, 'affinity', 0.5) }
         }
     ),
 
@@ -544,14 +544,14 @@ skills = {
     -- KATH
     ['sweep'] = Skill:new('sweep', 'Sweep',
         "Slash in a wide arc. Deals (Force * 0.8) Weapon damage to enemies in \z
-         front of Kath, and grants 3 Reaction until his next turn.",
+         front of Kath, and grants 2 Reaction until his next turn.",
         'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 0.8),
-        { { { 'reaction', Scaling:new(3, 'force', 0) }, 1 } }, nil
+        { { { 'reaction', Scaling:new(2, 'force', 0) }, 1 } }, nil
     ),
     ['stun'] = Skill:new('stun', 'Stun',
         "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
@@ -602,7 +602,7 @@ skills = {
         ALLY, Scaling:new(0, 'affinity', -1.0)
     ),
     ['haste'] = Skill:new('haste', 'Haste',
-        "Kath raises the Agility of allies around him by 10.",
+        "Kath raises the Agility of allies around him by 8.",
         'Cleric', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 1 } },
         { { F, F, T, F, F },
@@ -611,7 +611,7 @@ skills = {
           { F, F, T, F, F },
           { F, F, T, F, F } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'agility', Scaling:new(10, 'force', 0) }, 1 } }
+        nil, { { { 'agility', Scaling:new(8, 'force', 0) }, 1 } }
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance',
         "Kath receives all attacks meant for an adjacent assisted ally.",
@@ -681,7 +681,7 @@ skills = {
     ),
     ['lay_traps'] = Skill:new('lay_traps', 'Lay Traps',
         "Elaine anticipates foes in her path and sets traps to reduce their \z
-         Reaction by (Reaction * 1.5) for one turn.",
+         Reaction by (Reaction * 1.0) for one turn.",
         'Huntress', WEAPON, MANUAL, str_to_icon['reaction'],
         { { 'Huntress', 1 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
         { { F, F, F, F, F },
@@ -690,7 +690,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, nil,
-        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.5) }, 1 } }
+        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.0) }, 1 } }
     ),
     ['butcher'] = Skill:new('butcher', 'Butcher',
         "Elaine expertly carves up an adjacent enemy with her hunting knife, \z
@@ -766,14 +766,14 @@ skills = {
     ),
     ['snare'] = Skill:new('snare', 'Snare',
         "Elaine swiftly lays a magical hunting snare, reducing a nearby foe's \z
-         Agility by 5 + (Agility * 0.5) for one turn.",
+         Agility by 4 + (Agility * 0.5) for one turn.",
         'Huntress', SPELL, MANUAL, str_to_icon['agility'],
         { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, F, F },
           { T, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'agility', Scaling:new(-5, 'agility', -0.5) }, 1 } }
+        nil, { { { 'agility', Scaling:new(-4, 'agility', -0.5) }, 1 } }
     ),
     ['ignea_arrowtips'] = Skill:new('ignea_arrowtips', 'Ignea Arrowtips',
         "Elaine fashions arrowtips from Ignea and charges them with magic, \z
@@ -862,7 +862,7 @@ skills = {
     ),
     ['farsight'] = Skill:new('farsight', 'Farsight',
         "Elaine extends her superior perception to those nearby, granting \z
-         assisted allies 4 + (Affinity * 0.5) Reaction.",
+         assisted allies 2 + (Affinity * 0.5) Reaction.",
         'Sniper', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
         { { T, T, T, T, T },
@@ -871,11 +871,11 @@ skills = {
           { T, F, F, F, T },
           { T, T, T, T, T } }, SELF_CAST_AIM, 1,
         nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(4, 'affinity', 0.5) } }
+        { { 'reaction', Scaling:new(2, 'affinity', 0.5) } }
     ),
     ['cover_fire'] = Skill:new('cover_fire', 'Cover Fire',
         "Elaine lays down a hail of arrows around an ally position, granting \z
-         them the advantage and (Affinity * 0.6) Reaction and Force.",
+         them the advantage and (Affinity * 0.5) Reaction and Force.",
         'Sniper', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F, T, F, F, F },
@@ -887,8 +887,8 @@ skills = {
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil,
         {
-            { 'reaction', Scaling:new(0, 'affinity', 0.6) },
-            { 'force', Scaling:new(0, 'affinity', 0.6) },
+            { 'reaction', Scaling:new(0, 'affinity', 0.5) },
+            { 'force', Scaling:new(0, 'affinity', 0.5) },
         }
     ),
 
