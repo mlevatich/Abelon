@@ -57,7 +57,7 @@ Flight (0,4,0): assist. Costs huge ignea. Allies on the assisted squares (all sq
 adjacent to Elaine) can move through enemies for their next movement, and gain
 Affinity * 1 agility.
 Farsight (0,1,1): assist. Costs low ignea. Allies in a hollow square around Elaine
-gain 4 + Affinity * 0.5 reaction.
+gain 2 + Affinity * 0.5 reaction.
 Cover fire (0,0,1): assist. Allies in a plus-sign set of tiles centered 3 tiles
 from elaine gain Affinity * 0.5 Force and Affinity * 0.5 Reaction.
 

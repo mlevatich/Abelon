@@ -25,6 +25,14 @@ But I should consider that this is just not realistic for me, and it will hamper
 - Caretaker Mona (Healer):      tired, remorseful, curious
 - King Sinclair (Not playable): severe, pragmatic, confident
 
+## Areas
+
+- Dense forest (1-1, 1-2, 2-5)
+- Monastery approach (1-3, 1-4, 2-4)
+- Monastery sanctum ruins (1-5, 2-3, 2-7)
+- Monastery basement library/dorms (1-6, 1-7)
+- Caretaker's cavern (2-1, 2-2, 2-6)
+
 ## Themes
 
 - Abelon decides not to kill the party due to the actions and choices of the players. He learns to wait, and observe, and learn before taking action, as discovering more and more about the situation leads him to disagree with the king that murdering dissenters and using brute force is the correct path. He learns that blindly following orders is a silent and insidious pain, as his possession causes him grief and his party reminds him that his obedience to the king is a similar relinquishing of agency. And he learns that there is value in companionship, camaraderie and kindness, when despite all of the party's grousing and arguing, Kath saves his life, and reveals that he cares deeply for Abelon and admires him.
