@@ -1,10 +1,15 @@
+# Inventory layout
+
+## Visual notes
+
 - Inventory starts in the top left
 - Submenus open to the right and scroll down if there are more than 8 options
 - Description of the hovered menu item appears in bottom right for non-endpoints
 - Additional info box appears in bottom left if the hovered item is complex
 - Upon selecting a menu item, open a submenu unless it's an endpoint
+- A confirmation box appears in the middle to confirm changes.
 
-A confirmation box appears in the middle to confirm changes.
+## Listing
 
 Items ->
     <list of items> -> (hover: name, picture, and description)

@@ -1,3 +1,5 @@
+# Battle mechanics
+
 ## In battle actions
 
 Every turn, each ally on the team does a move, weapon / spell, rest of move (X amount of movement points total), assist. The player may choose the order in which the characters act. The full action is planned at once and can be canceled until it is confirmed, at which point the entire action plays out.

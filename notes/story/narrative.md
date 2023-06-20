@@ -2,9 +2,30 @@
 
 The game is divided into two parts. Each part consists of seven chapters. Each chapter contains exactly one "Battle", and may optionally contain "Roam" sequences where the player controls Abelon and can explore freely, and "Talk" sequences which are extended scenes of dialogue in which the player cannot move but may respond as Abelon.
 
+## Areas
+
+- The dense forest: A deep forest, untouched by humanity.
+- The Monastery approach: Within the forest is hidden a path to a ruined Monastery.
+- The Monastery sanctum ruins: A bright sanctum full of glass ceilings and beautiful artwork, fallen to ruin. A place of worship.
+- The Monastery basement library/dorms: A dank, depressing library full of corpses, containing dorms for the monks of the old Monastery.
+- The Caretaker's cavern: A sealed cavern below the lowest reaches of the Monastery.
+- Outside Ebonach: A well defended natural haven near Ebonach. Either overrun with monsters or peaceful.
+
+ ## Characters
+
+- Abelon (Battlemage):     powerful, stoic, loyal
+- Kath (Paladin):          heroic, kind, jovial
+- Elaine (Archer):         scared, courageous, starry-eyed
+- Lester (Rogue):          clever, resentful, short-tempered
+- Shanti (Scholar):        insightful, bookish, incessant
+- Caretaker Mona (Healer): tired, remorseful, curious
+
+- King Sinclair: severe, pragmatic, confident
+- Gaheris:       ancient, knowledgeable, reckless
+
 # Part 1
 
-## 1-1
+## 1-1: Dense forest
 
 **Roam:** The game begins alone, at night, in a forested clearing. The player controls Captain Abelon. They can wander through the forest.
 
@@ -18,7 +39,7 @@ If you return to Elaine after having found the camp, you can optionally carry he
 
 **Talk:** If you go to bed, the game fades to black. Abelon speaks to the player as ???, and the game transitions to 1-2. If you instead choose "kill them", Abelon slowly positions himself next to the camp, and begins drawing his sword, when the game cuts to black. Abelon speaks to the player as ???, and the game transitions to 1-5-a.
 
-## 1-2
+## 1-2: Dense forest
 
 TODO: ROUGH DRAFT
 
@@ -32,7 +53,7 @@ Abelon may suspect she is tailing them for nefarious purposes or is otherwise si
 
 Getting Elaine up to speed is a good opportunity to fill in the relevant context.
 
-## 1-3
+## 1-3: Monastery approach
 
 TODO: ROUGH DRAFT
 
@@ -46,7 +67,7 @@ Regardless of whether Elaine is taken or not, we find Lester and Shanti in their
 
 Shanti made a small discovery, leading to some roaming while Kath heals Lester, in which the player discovers an entrance to the monastery ruins. Alone after finding it, Abelon is able to talk to the player. He is angry, confused, and vague. It is not at all clear to the player that the voice is coming from Abelon.
 
-## 1-4
+## 1-4: Monastery approach
 
 TODO: ROUGH DRAFT
 
@@ -56,7 +77,7 @@ TODO: ROUGH DRAFT
 - The party wonders why they in particular have been chosen for this expedition. The cover, of course, is that they are the trusted elite, but that doesn't necessarily seem true on a close inspection. (talk)
 - At night, Abelon speaks again. Saving Elaine affected him. He is mad about it, wouldn't have done that. But, he concedes... she is useful. Still angry, fighting for control, doesn't feel confident to take it (talk).
 
-## 1-5
+## 1-5: Monastery sanctum ruins
 
 TODO: ROUGH DRAFT
 
@@ -65,7 +86,7 @@ TODO: ROUGH DRAFT
 - find trouble. More stone monsters, and suits of armor. First suspect they are soldiers, then that they are empty, then finally find out they have corpses in them. Gross! (battle). Kath is not in this one for some reason.
 - post mortem, big revelations; there's more going on here than just finding a ritual site (talk)
 
-## 1-6
+## 1-6: Monastery basement library
 
 TODO: ROUGH DRAFT
 
@@ -74,10 +95,11 @@ TODO: ROUGH DRAFT
 - revelations in the library, lots of books to read, something about the giant monster? (talk)
 - Make camp in a dorm. Realize it's the turn of the new year. Kath brought party favors! (roam).
 - At night, Abelon ponders killing the party. Decides against it. Needs to know more. Frustrated. On the verge of gaining control. Addresses the demon directly, ponders it (talk).
+- Abelon decides not to kill the party due to the actions and choices of the players. He learns to wait, and observe, and learn before taking action, as discovering more and more about the situation leads him to disagree with the king that murdering dissenters and using brute force is the correct path. He learns that blindly following orders is a silent and insidious pain, as his possession causes him grief and his party reminds him that his obedience to the king is a similar relinquishing of agency. And he learns that there is value in companionship, camaraderie and kindness, when despite all of the party's grousing and arguing, Kath saves his life, and reveals that he cares deeply for Abelon and admires him.
 
 Party celebrates the turn of the new year over a campfire. Abelon can act vaguely out of character (e.g. too happy) under the influence of the player.
 
-## 1-7
+## 1-7: Monastery basement library
 
 TODO: ROUGH DRAFT
 
@@ -90,7 +112,7 @@ When abelon takes helmet off, blank dialogue responses. He says hes tired of bei
 
 # Part 2
 
-## 2-1
+## 2-1: Caretaker's cavern
 
 TODO: ROUGH DRAFT
 
@@ -108,7 +130,7 @@ At the end of their discussion, Abelon asks Kath if they are friends. Kath concl
 
 Kath and Abelon’s battle alone is because the caretaker flees from them, hooded, and summons more golems to defend herself. But when cornered, must explain that she only wanted to observe longer.
 
-## 2-2
+## 2-2: Caretaker's cavern
 
 TODO: ROUGH DRAFT
 
@@ -118,7 +140,7 @@ TODO: ROUGH DRAFT
 
 Abelon wants to kill her but Kath reminds him there’s more to learn. Question the caretaker about why she attacked, why she’s here, how she sensed them. Its a long story, she says, first she has pressing questions of her own. Player can respond to this, either option she interjects, there it is again! She recognizes the demon. Shift to talking about that until she leaves them behind when the cave collapses.
 
-## 2-3
+## 2-3: Monastery sanctum ruins
 
 TODO: ROUGH DRAFT
 
@@ -167,7 +189,7 @@ Lester: There's plenty else I'd like to ask him about...
 
 Learn that Lester became a knight to surpass Abelon and take his place as captain. Only cares to follow Kath.
 
-## 2-4
+## 2-4: Monastery approach
 
 TODO: ROUGH DRAFT
 
@@ -180,7 +202,7 @@ For 2-4 we go back to having the player doing a decent amount of the talking for
 
 By the time we reach battle 10 (reunite w/ elaine/shanti/lester) the caretaker helped abelon put the puzzle pieces together, and the other three have the last missing piece of info. We know what needs to be done. Before battle 10 discussion of what needs to be done and sharing of knowledge. Battle 10 is a proactive step, not an ambush.
 
-## 2-5
+## 2-5: Dense forest
 
 TODO: ROUGH DRAFT
 
@@ -202,7 +224,7 @@ Lester is infuriated and runs from camp into forest.
 
 After the party chases lester after big reveal scene, elaine has a hero moment of advocating for abelon, saying she was scared but just doesnt think he could do those things. But monsters appear. Afterwards, he and abelon fight, no player intervention. Lester just needed some time to cool off, he regrets endangering them. But Kath saying abelon was just following kings orders sets lester off. Lester claims Abelon believed he was right, always. Abelon says lester’s mom isnt innocent, reveals what lester’s mom did (kill soldier in home invasion to investigate/find treasonous documents). Lester furious, i dont believe this, did you come after me just to goad me into killing you, but when pressed Abelon says he wouldnt do it again. Lester demands to know abelon isnt just fishing for forgiveness. No forgiveness. Abelon doesnt lie. Return to the caretaker's cave.
 
-## 2-6
+## 2-6: Caretaker's cavern
 
 TODO: ROUGH DRAFT
 
@@ -219,7 +241,7 @@ Final battle
 
 The player can choose whether or not to continue to the ultimate battle (2-7) or end the game with the expedition a success. Mona strenuously advises against continuing, almost but not quite to the point of fourth wall breaking (i.e. don't continue unless you are very, very skilled). Ending the game here skips to the epilogue, with some changes.
 
-## 2-7
+## 2-7: Monastery sanctum ruins
 
 TODO: ROUGH DRAFT
 
@@ -228,7 +250,7 @@ TODO: ROUGH DRAFT
 
 Ultimate battle
 
-## Epilogue
+## Epilogue: Outside Ebonach
 
 TODO: ROUGH DRAFT
 
@@ -236,7 +258,7 @@ Timeskip forward into a scene where an older Abelon speaks to the suddenly stirr
 
 ## Bad path
 
-## 1-3-a
+## 1-3-a: Monastery approach
 
 TODO: ROUGH DRAFT
 
@@ -248,7 +270,7 @@ By arguing strenuously, Abelon can convince Kath to send Elaine home on the fore
 - Follow trail of Shanti's discovery, find next place to go (roam).
 - On finding it Abelon briefly is able to talk to the player (as ???). Confident, Demon understands him, prepared to proceed (talk).
 
-## 1-4-a
+## 1-4-a: Monastery approach
 
 TODO: ROUGH DRAFT
 
@@ -257,7 +279,7 @@ TODO: ROUGH DRAFT
 - Make camp (roam).
 - At night, Abelon talks to the player. Understanding. Says he can control the power, and that it is a kindred spirit; they will have a long and fruitful partnership. Wakes up, kills everyone (talk).
 
-## 1-5-a
+## 1-5-a: Outside Ebonach
 
 TODO: ROUGH DRAFT
 
