@@ -18,14 +18,15 @@ TRANSITION DATA
 1 36 north-forest 85 45
 
 LIGHTING DATA
-0.0
-20 20 40
+0.7
+10 10 20
 
 FIXED SPRITES
 ~wornfleet 34 50 L
 ~log 15 53 R
-~log 31 49 L
-~log 6 42 R
+~log 31 47 L
+~log 7 42 R
+~log 9 41 L
 ~grass2 31 1 R
 ~rock 43 1 R
 ~forniese 43 3 R
@@ -75,14 +76,14 @@ FIXED SPRITES
 ~grass 28 48 R
 ~grass2 29 48 L
 ~grass2 25 50 L
-~rock 28 50 R
+~rock 28 48 R
 ~grass2 32 50 R
 ~grass 25 51 R
 ~grass2 30 51 L
 ~rock 21 52 L
 ~grass 22 52 R
 ~grass 24 52 R
-~colblossom 25 52 L
+~colblossom 20 52 L
 ~grass 33 52 L
 ~shafe 12 53 R
 ~grass2 15 53 L

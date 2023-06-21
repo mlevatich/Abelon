@@ -1,24 +1,27 @@
 ~~west-forest standard Dying-Forest
 
-~abelon 12.5 17.5 R P
 ~kath 33 15 L kath-interact-base
 ~book 9 17 R book-interact-base
-~medallion 8 15 R medallion-interact-base
-~bloodrite 10 16 R
 ~bloodstain 41 1 R
-~torch 15 16 R
-~torch 15 19 R
-~torch 10 16 L
-~torch 10 19 L
-~wolf1 60 1 R
 ~wolf2 60 1 R
 ~wolf3 60 1 R
 
 ~~north-forest standard Dying-Forest
 
-~elaine 3 40 R elaine-interact-base
 ~bloodstain2 3 40 R
 
 ~~east-forest standard Dying-Forest
 
+~abelon 28.5 50.5 L P
+~torch 31 49 R
+~torch 31 52 R
+~torch 26 49 L
+~torch 26 52 L
+~bloodrite 26 49 R
+
 ~~south-forest standard Dying-Forest
+
+
+~elaine 36 9 R elaine-interact-base
+~wolf1 39 10 L
+~medallion 34 34 R medallion-interact-base

@@ -19,15 +19,23 @@ TRANSITION DATA
 54 24 east-forest 3 73
 
 LIGHTING DATA
-0.0
-20 20 40
+0.7
+10 10 20
 
 FIXED SPRITES
-~log 29 25 R
+~log 44 27 R
+~log 42 28 L
 ~log 43 51 R
 ~log 40 8 L
-~log 35 43 L
+~log 34 41 R
+~log 37 41 L
+~log 35 42 L
+~log 38 42 R
 ~log 6 26 L
+~grass 35 40 L
+~grass 37 40 L
+~grass 36 43 R
+~grass 38 43 L
 ~rock 43 8 L
 ~rock 44 8 R
 ~shafe 3 9 L
