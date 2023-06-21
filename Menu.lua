@@ -222,20 +222,20 @@ function Menu:hover(dir)
     end
 end
 
-function Menu:renderConfirmMessage(cam_x, cam_y)
+function Menu:renderConfirmMessage()
     local msg = self.confirm_msg
     local longest = max(mapf(function(m) return #m end, msg))
     local cbox_w = CHAR_WIDTH * longest + BOX_MARGIN*2
     local cbox_h = LINE_HEIGHT * (#msg + 2)
                  + BOX_MARGIN*2 - TEXT_MARGIN_Y
     if #self.menu_items == 1 then cbox_h = cbox_h - LINE_HEIGHT * 2 end
-    local cbox_x = cam_x + VIRTUAL_WIDTH/2 - cbox_w/2
-    local cbox_y = cam_y + VIRTUAL_HEIGHT/2 - cbox_h/2 - HALF_MARGIN
+    local cbox_x = VIRTUAL_WIDTH/2 - cbox_w/2
+    local cbox_y = VIRTUAL_HEIGHT/2 - cbox_h/2 - HALF_MARGIN
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill', cbox_x, cbox_y, cbox_w, cbox_h)
     love.graphics.setColor(unpack(self.confirm_clr))
     for i=1, #msg do
-        local base_x = cam_x + VIRTUAL_WIDTH/2
+        local base_x = VIRTUAL_WIDTH/2
                      - (#msg[i] * CHAR_WIDTH)/2
         local base_y = cbox_y + BOX_MARGIN
                      + LINE_HEIGHT * (i-1)
@@ -243,14 +243,14 @@ function Menu:renderConfirmMessage(cam_x, cam_y)
     end
 end
 
-function Menu:renderHoverDescription(cam_x, cam_y)
+function Menu:renderHoverDescription()
     local selection = self.menu_items[self.base + self.hovering - 1]
     if selection.hover_desc then
         local desc = selection.hover_desc
 
         if self.custom == 'lvlup' then
-            local x = cam_x + self.rel_x
-            local y = cam_y + self.rel_y
+            local x = self.rel_x
+            local y = self.rel_y
             local desc_x = x + BOX_MARGIN
             local desc_y = y + BOX_MARGIN + LINE_HEIGHT * 7 + PORTRAIT_SIZE
             local sdesc, _ = splitByCharLimit(desc, 32)
@@ -260,9 +260,8 @@ function Menu:renderHoverDescription(cam_x, cam_y)
                 )
             end
         else
-            local desc_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN
-                         - #desc * CHAR_WIDTH
-            local desc_y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
+            local desc_x = VIRTUAL_WIDTH - BOX_MARGIN - #desc * CHAR_WIDTH
+            local desc_y = VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
             renderString(desc, desc_x, desc_y)
         end
     end
@@ -448,14 +447,14 @@ function Menu:renderRangeDiagram(x, y, skill_data)
     )
 end
 
-function Menu:renderHoverBox(cam_x, cam_y, h_box)
+function Menu:renderHoverBox(h_box)
 
     local w = h_box['w']
     h_box = h_box['elements']
 
     -- Hover box top left
-    local x = cam_x + BOX_MARGIN
-    local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - HBOX_HEIGHT
+    local x = BOX_MARGIN
+    local y = VIRTUAL_HEIGHT - BOX_MARGIN - HBOX_HEIGHT
 
     -- Draw hover box
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
@@ -499,16 +498,16 @@ function Menu:renderSelectionArrow(x, y)
     love.graphics.print(">", arrow_x, arrow_y)
 end
 
-function Menu:render(cam_x, cam_y, c)
+function Menu:render(c)
 
     -- Top left of menu box
-    local x = cam_x + self.rel_x
-    local y = cam_y + self.rel_y
+    local x = self.rel_x
+    local y = self.rel_y
 
     -- If this is a confirmation menu, render confirmation box,
     -- otherwise render normal menu box
     if self.confirm_msg then
-        self:renderConfirmMessage(cam_x, cam_y)
+        self:renderConfirmMessage()
     else
         love.graphics.setColor(0, 0, 0, RECT_ALPHA)
         love.graphics.rectangle('fill', x, y, self.width, self.height)
@@ -525,15 +524,15 @@ function Menu:render(cam_x, cam_y, c)
     -- Render child menu if there is one or hover info if this is the leaf menu
     local hbox_rendered = false
     if self.selected then
-        hbox_rendered = self.selected:render(cam_x, cam_y, c)
+        hbox_rendered = self.selected:render(c)
     else
-        self:renderHoverDescription(cam_x, cam_y)
+        self:renderHoverDescription()
     end
 
     -- Only render deepest hover box
     local h_box = self.menu_items[self.hovering + self.base - 1].hover_box
     if h_box and not hbox_rendered then
-        self:renderHoverBox(cam_x, cam_y, h_box)
+        self:renderHoverBox(h_box)
         return true
     end
     return hbox_rendered

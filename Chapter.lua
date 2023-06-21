@@ -49,8 +49,8 @@ function Chapter:initialize(id)
 
     -- Settings
     self.turn_autoend = true
-    self.music_volume = OFF
-    self.sfx_volume   = OFF
+    self.music_volume = HIGH
+    self.sfx_volume   = HIGH
     self.text_volume  = OFF
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
@@ -391,8 +391,8 @@ function Chapter:updateCamera(dt)
 
     -- Get camera bounds from map
     local pixel_width, pixel_height = self.current_map:getPixelDimensions()
-    local cam_max_x = pixel_width - VIRTUAL_WIDTH
-    local cam_max_y = pixel_height - VIRTUAL_HEIGHT
+    local cam_max_x = pixel_width - VIRTUAL_WIDTH / ZOOM
+    local cam_max_y = pixel_height - VIRTUAL_HEIGHT / ZOOM
 
     -- Default camera info
     local focus = self.player
@@ -417,8 +417,8 @@ function Chapter:updateCamera(dt)
     if not self.battle or (self.current_scene and self.battle) then
         local x, y = focus:getPosition()
         local w, h = focus:getDimensions()
-        x_target = x + math.ceil(w / 2) + x_offset - VIRTUAL_WIDTH / 2
-        y_target = y + math.ceil(h / 2) + y_offset - VIRTUAL_HEIGHT / 2
+        x_target = x + math.ceil(w / 2) + x_offset - (VIRTUAL_WIDTH / ZOOM) / 2
+        y_target = y + math.ceil(h / 2) + y_offset - (VIRTUAL_HEIGHT / ZOOM) / 2
         x_target = math.max(0, math.min(x_target, cam_max_x))
         y_target = math.max(0, math.min(y_target, cam_max_y))
     end
@@ -513,7 +513,7 @@ function Chapter:render()
     end
 
     -- Render ground sprites
-    self.current_map:renderGroundSprites(self.camera_x, self.camera_y)
+    self.current_map:renderGroundSprites()
 
     -- Render battle underlay
     if self.battle then
@@ -521,22 +521,25 @@ function Chapter:render()
     end
 
     -- Render standing sprites
-    self.current_map:renderStandingSprites(self.camera_x, self.camera_y)
+    self.current_map:renderStandingSprites()
 
     -- Apply lighting
     self.current_map:renderLighting()
 
+    love.graphics.origin()
+    love.graphics.scale(1 / ZOOM)
+
     -- Render battle overlay
     if self.battle then
-        self.battle:renderOverlay(self.camera_x, self.camera_y)
+        self.battle:renderOverlay()
     end
 
     -- Render player inventory
-    self.player:render(self.camera_x, self.camera_y, self)
+    self.player:render(self)
 
     -- Render effects and text from current scene if there is one
     if self.current_scene then
-        self.current_scene:render(self.camera_x, self.camera_y)
+        self.current_scene:render()
     end
 
     -- Flash autosave message
@@ -544,14 +547,14 @@ function Chapter:render()
         love.graphics.setColor({ 1, 1, 1, self.autosave_flash })
         local str = 'Game saved'
         renderString(str,
-            self.camera_x + VIRTUAL_WIDTH - #str * CHAR_WIDTH - BOX_MARGIN,
-            self.camera_y + BOX_MARGIN, true
+            VIRTUAL_WIDTH - #str * CHAR_WIDTH - BOX_MARGIN,
+            BOX_MARGIN, true
         )
     end
 
     -- Fade in/out
     love.graphics.setColor(0, 0, 0, 1 - self.alpha)
-    love.graphics.rectangle('fill', self.camera_x, self.camera_y,
-        VIRTUAL_WIDTH, VIRTUAL_HEIGHT
-    )
+    love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+
+    love.graphics.origin()
 end

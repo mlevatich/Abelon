@@ -172,7 +172,7 @@ function Map:getName()
     return self.name
 end
 
--- Get pixel dimensions of this maps
+-- Get pixel dimensions of this map
 function Map:getPixelDimensions()
     return self.width * TILE_WIDTH, self.height * TILE_HEIGHT
 end
@@ -347,22 +347,22 @@ function Map:renderTiles()
     end
 end
 
-function Map:renderGroundSprites(cam_x, cam_y)
+function Map:renderGroundSprites()
 
     -- Render all sprites at or below ground depth
     for _, sp in pairs(self.sprites) do
         if sp:getDepth() >= GROUND_DEPTH then
-            sp:render(cam_x, cam_y)
+            sp:render()
         end
     end
 end
 
-function Map:renderStandingSprites(cam_x, cam_y)
+function Map:renderStandingSprites()
 
     -- Render all sprites above ground depth
     for _, sp in pairs(self.sprites) do
         if sp:getDepth() < GROUND_DEPTH then
-            sp:render(cam_x, cam_y)
+            sp:render()
         end
     end
 end

@@ -237,29 +237,28 @@ function Scene:update(dt)
 end
 
 -- Render a black text box at the given position
-function Scene:renderTextBox(x, y)
+function Scene:renderTextBox(y)
 
     -- Render black text box
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill',
-        x + BOX_MARGIN, y + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT
+        BOX_MARGIN, y + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT
     )
 end
 
 -- Render the speaker's name and portrait
-function Scene:renderSpeaker(sp, pid, x, y)
+function Scene:renderSpeaker(sp, pid, y)
     if sp then
 
         -- Render name of current speaker
         love.graphics.setColor(unpack(WHITE))
-        local base_x = x + BOX_MARGIN * 2
         local base_y = y + BOX_MARGIN + TEXT_MARGIN_Y
-        renderString(sp:getName(), base_x, base_y)
+        renderString(sp:getName(), BOX_MARGIN * 2, base_y)
 
         -- Render portrait of current speaker
         if sp:getPtexture() then
             love.graphics.draw(sp:getPtexture(), sp:getPortrait(pid),
-                x + BOX_MARGIN * 1.5,
+                BOX_MARGIN * 1.5,
                 y + BOX_MARGIN * 2,
                 0, 1, 1, 0, 0
             )
@@ -268,11 +267,11 @@ function Scene:renderSpeaker(sp, pid, x, y)
 end
 
 -- Render text in dialogue box up to current character position
-function Scene:renderText(text, base_x, base_y)
+function Scene:renderText(text, base_y)
 
     -- Determine starting location of text
     love.graphics.setColor(unpack(WHITE))
-    local x_beginning = base_x + BOX_MARGIN*2 + PORTRAIT_SIZE
+    local x_beginning = BOX_MARGIN*2 + PORTRAIT_SIZE
     local y_beginning = base_y + BOX_MARGIN + TEXT_MARGIN_Y + 20
 
     -- Iterate over lines and characters in the text, printing one-by-one
@@ -299,7 +298,7 @@ function Scene:renderText(text, base_x, base_y)
 end
 
 -- Render choice box, options, and selection arrow
-function Scene:renderChoice(choices, base_x, base_y, flip)
+function Scene:renderChoice(choices, base_y, flip)
 
     -- Get the length of the longest option
     local longest = max(mapf(string.len, choices))
@@ -309,7 +308,7 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
     local h = HALF_MARGIN + LINE_HEIGHT * (#choices)
 
     -- Compute coordinates of choice box
-    local rect_x = base_x + BOX_MARGIN + BOX_WIDTH - w
+    local rect_x = BOX_MARGIN + BOX_WIDTH - w
     local rect_y = base_y + BOX_MARGIN + BOX_HEIGHT + TEXT_MARGIN_Y
     if flip then
         rect_y = base_y
@@ -336,20 +335,20 @@ function Scene:renderChoice(choices, base_x, base_y, flip)
 end
 
 -- Render small indicator that current page is done
-function Scene:renderAdvanceIndicator(x, y)
-    local indicator_x = x + BOX_MARGIN + BOX_WIDTH - 7
+function Scene:renderAdvanceIndicator(y)
+    local indicator_x = BOX_MARGIN + BOX_WIDTH - 7
     local indicator_y = y + BOX_MARGIN + BOX_HEIGHT - 7
     love.graphics.setColor(unpack(WHITE))
     love.graphics.print("^", indicator_x, indicator_y, math.pi)
 end
 
 -- Render dialogue to screen at current position
-function Scene:render(x, y)
+function Scene:render()
 
     -- Update where text is rendered when asked
     if self.update_render then
         self:updateGroupY()
-        self.flip = y + VIRTUAL_HEIGHT / 3 > self.group_y
+        self.flip = VIRTUAL_HEIGHT / 3 > self.group_y
         self.update_render = false
     end
 
@@ -357,30 +356,27 @@ function Scene:render(x, y)
     if self.text_state then
 
         -- Flip if need to
+        local y = 0
         if self.flip then
-            y = y + VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN * 3.5)
+            y = VIRTUAL_HEIGHT - (BOX_HEIGHT + BOX_MARGIN * 3.5)
         end
 
         -- Render text box
-        self:renderTextBox(x, y)
+        self:renderTextBox(y)
 
         -- Render speaker name and portrait
-        self:renderSpeaker(
-            self.text_state['speaker'],
-            self.text_state['portrait'],
-            x, y
-        )
+        self:renderSpeaker(self.text_state['speaker'], self.text_state['portrait'], y)
 
         -- Render text up to current character position
-        self:renderText(self.text_state['text'], x, y)
+        self:renderText(self.text_state['text'], y)
 
         -- Render choice and selection arrow if there is a choice to make, or
         -- render indicator that text is finished if there's no choice
         if self.text_state['cnum'] == self.text_state['length'] then
             if self.text_state['choices'] then
-                self:renderChoice(self.text_state['choices'], x, y, self.flip)
+                self:renderChoice(self.text_state['choices'], y, self.flip)
             end
-            self:renderAdvanceIndicator(x, y)
+            self:renderAdvanceIndicator(y)
         end
     end
 end

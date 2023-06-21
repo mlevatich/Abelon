@@ -393,11 +393,11 @@ function Player:update()
 end
 
 -- Render the player character's interactions
-function Player:render(cam_x, cam_y, c)
+function Player:render(c)
 
     -- Render menu if it exists
     if self.open_menu then
-        self.open_menu:render(cam_x, cam_y, c)
+        self.open_menu:render(c)
     end
 end
 
@@ -405,6 +405,7 @@ end
 function Player:getId() return self.sp:getId() end
 function Player:getName() return self.sp:getName() end
 function Player:getPosition() return self.sp:getPosition() end
+function Player:getPositionOnScreen() return self.sp:getPositionOnScreen() end
 function Player:getDepth() return self.sp:getDepth() end
 function Player:getDimensions() return self.sp:getDimensions() end
 function Player:getImpression() return self.sp:getImpression() end

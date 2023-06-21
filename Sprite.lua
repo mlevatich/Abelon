@@ -120,6 +120,11 @@ function Sprite:getPosition()
     return self.x, self.y
 end
 
+-- Get sprite's position relative to where the camera is
+function Sprite:getPositionOnScreen()
+    return self.x - self.chapter.camera_x, self.y - self.chapter.camera_y
+end
+
 -- Get sprite's depth for rendering order
 function Sprite:getDepth()
     return self.z
@@ -1254,7 +1259,7 @@ function Sprite:update(dt)
 end
 
 -- Render a sprite to the screen
-function Sprite:render(cam_x, cam_y)
+function Sprite:render()
 
     local b = self.chapter.battle
     local s = self.chapter.current_scene

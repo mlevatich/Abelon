@@ -7,10 +7,11 @@ VAL = 1
 ARR = 2
 
 -- Dimensions of a tile
-TILE_WIDTH     = 32
-TILE_HEIGHT    = 32
+TILE_WIDTH  = 32
+TILE_HEIGHT = 32
 
--- Apparent game resolution
+-- Width and height of game camera in pixels
+ZOOM           = 1.4
 VIRTUAL_WIDTH  = 864
 VIRTUAL_HEIGHT = 486
 
@@ -64,7 +65,7 @@ DISABLE           = { 1,     1,   1, 0.5 }
 HIGHLIGHT         = { 0.7,   1,   1,   1 }
 RED               = { 1,   0.7, 0.7,   1 }
 GREEN             = { 0.7,   1, 0.7,   1 }
-WHITE             = {   1,   1,   1,   1 }
+WHITE             = {0.95,0.95,0.95, 1.0 }
 AUTO_COLOR        = {
     ['Weapon']    = {   1,   1, 0.5,   1 }, -- Yellow
     ['Spell']     = { 0.8, 0.4,   1,   1 }, -- Purple

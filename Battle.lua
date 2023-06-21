@@ -1378,13 +1378,13 @@ function Battle:updateBattleCam()
     if focus then
         local x, y = focus:getPosition()
         local w, h = focus:getDimensions()
-        self.battle_cam_x = x + math.ceil(w / 2) - VIRTUAL_WIDTH / 2
-        self.battle_cam_y = y + math.ceil(h / 2) - VIRTUAL_HEIGHT / 2
+        self.battle_cam_x = x + math.ceil(w / 2) - (VIRTUAL_WIDTH / ZOOM) / 2
+        self.battle_cam_y = y + math.ceil(h / 2) - (VIRTUAL_HEIGHT / ZOOM) / 2
     elseif c then
-        self.battle_cam_x = (c[1] + self.origin_x)
-                          * TILE_WIDTH - VIRTUAL_WIDTH / 2 - TILE_WIDTH / 2
-        self.battle_cam_y = (c[2] + self.origin_y)
-                          * TILE_HEIGHT - VIRTUAL_HEIGHT / 2 - TILE_HEIGHT / 2
+        self.battle_cam_x = (c[1] + self.origin_x) * TILE_WIDTH 
+                          - (VIRTUAL_WIDTH / ZOOM) / 2 - TILE_WIDTH / 2
+        self.battle_cam_y = (c[2] + self.origin_y) * TILE_HEIGHT 
+                          - (VIRTUAL_HEIGHT / ZOOM) / 2 - TILE_HEIGHT / 2
     end
 end
 
@@ -1719,14 +1719,14 @@ function Battle:renderLens(clr)
     )
 end
 
-function Battle:renderSkillInUse(cam_x, cam_y)
+function Battle:renderSkillInUse()
     local sk = self.skill_in_use
     if not sk then return end
     local str_w = #sk.name * CHAR_WIDTH
     local w = str_w + 55 + BOX_MARGIN
     local h = LINE_HEIGHT + BOX_MARGIN
-    local x = cam_x + VIRTUAL_WIDTH - w - BOX_MARGIN
-    local y = cam_y + BOX_MARGIN
+    local x = VIRTUAL_WIDTH - w - BOX_MARGIN
+    local y = BOX_MARGIN
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill', x, y, w, h)
     love.graphics.setColor(1, 1, 1, 1)
@@ -1915,7 +1915,7 @@ function Battle:renderViews(depth)
 end
 
 function Battle:renderHealthbar(sp)
-    local x, y = sp:getPosition()
+    local x, y = sp:getPositionOnScreen()
     local ratio = sp.health / (sp.attributes['endurance'] * 2)
     y = y + sp.h + ite(self.pulse, 0, -1) - 1
     love.graphics.setColor(0, 0, 0, 1)
@@ -1929,7 +1929,7 @@ end
 function Battle:renderStatus(sp)
 
     -- Get statuses
-    local x, y = sp:getPosition()
+    local x, y = sp:getPositionOnScreen()
     local statuses = self.status[sp:getId()]['effects']
 
     -- Collect what icons need to be rendered
@@ -2078,7 +2078,7 @@ function Battle:mkInnerHoverBox()
     return hbox, bw, bh, bclr
 end
 
-function Battle:renderTargetHoverBoxes(cam_x, cam_y)
+function Battle:renderTargetHoverBoxes()
 
     -- Get skill range
     local dir    = self:getTargetDirection()
@@ -2088,9 +2088,8 @@ function Battle:renderTargetHoverBoxes(cam_x, cam_y)
     local tiles  = self:skillRange(sk, dir, c)
 
     -- Iterate over tiles to see which ones need to render boxes
-    local max_y = cam_y + VIRTUAL_HEIGHT
-                - BOX_MARGIN * 2 - FONT_SIZE - LINE_HEIGHT
-    local cur_y = cam_y + BOX_MARGIN
+    local max_y = VIRTUAL_HEIGHT - BOX_MARGIN * 2 - FONT_SIZE - LINE_HEIGHT
+    local cur_y = BOX_MARGIN
     for i = 1, #tiles do
 
         -- Switch tile of current sprite with prospective tile it's moving to
@@ -2113,15 +2112,14 @@ function Battle:renderTargetHoverBoxes(cam_x, cam_y)
 
             -- Only render if there's room for the whole box on screen
             if cur_y + h <= max_y then
-                local cur_x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - w
+                local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - w
                 table.insert(clr, RECT_ALPHA)
                 love.graphics.setColor(unpack(clr))
                 love.graphics.rectangle('fill', cur_x, cur_y, w, h)
                 self:renderBoxElements(box, cur_x, cur_y)
                 cur_y = cur_y + h + BOX_MARGIN
             else
-                local cur_x = cam_x + VIRTUAL_WIDTH
-                            - BOX_MARGIN - CHAR_WIDTH * 3
+                local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
                 renderString("...", cur_x, cur_y)
                 break
             end
@@ -2151,12 +2149,12 @@ function Battle:renderBoxElements(box, base_x, base_y)
     end
 end
 
-function Battle:renderHoverBoxes(x, y, ibox, w, ih, obox, oh, clr)
+function Battle:renderHoverBoxes(ibox, w, ih, obox, oh, clr)
 
     -- Base coordinates for both boxes
-    local outer_x = x + VIRTUAL_WIDTH - BOX_MARGIN - w
+    local outer_x = VIRTUAL_WIDTH - BOX_MARGIN - w
     local inner_x = outer_x
-    local inner_y = y + BOX_MARGIN
+    local inner_y = BOX_MARGIN
     local outer_y = inner_y + ih
 
 
@@ -2180,7 +2178,7 @@ function Battle:renderHoverBoxes(x, y, ibox, w, ih, obox, oh, clr)
     self:renderBoxElements(ibox, inner_x, inner_y)
 end
 
-function Battle:renderBattleText(cam_x, cam_y)
+function Battle:renderBattleText()
 
     -- Variables needed off stack
     local s = self:getStage()
@@ -2202,21 +2200,21 @@ function Battle:renderBattleText(cam_x, cam_y)
     end
 
     -- Render hover string in the lower right
-    local x = cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
-    local y = cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
+    local x = VIRTUAL_WIDTH - BOX_MARGIN - #hover_str * CHAR_WIDTH
+    local y = VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE
     renderString(hover_str, x, y)
 end
 
-function Battle:renderBexp(x, y)
+function Battle:renderBexp()
     local bexp = self.render_bexp
     local saved = self.turnlimit - self.turn
     local msg1 = saved .. " turns saved * 15 exp"
     local msg2 = bexp .. " bonus exp"
 
     local computeX = function(s)
-        return x + VIRTUAL_WIDTH - BOX_MARGIN - #s * CHAR_WIDTH
+        return VIRTUAL_WIDTH - BOX_MARGIN - #s * CHAR_WIDTH
     end
-    local base_y = y + BOX_MARGIN
+    local base_y = BOX_MARGIN
     love.graphics.setColor(unpack(DISABLE))
     renderString(msg1, computeX(msg1), base_y, true)
     love.graphics.setColor(unpack(HIGHLIGHT))
@@ -2261,15 +2259,18 @@ function Battle:renderUnderlay()
     end
 end
 
-function Battle:renderOverlay(cam_x, cam_y)
+function Battle:renderOverlay()
 
     -- Render healthbars below each sprite, and status markers above
+    love.graphics.push()
+    love.graphics.origin()
     for i = 1, #self.participants do
         if self.chapter:getMap():getSprite(self.participants[i]:getId()) then
             self:renderHealthbar(self.participants[i])
             self:renderStatus(self.participants[i])
         end
     end
+    love.graphics.pop()
 
     -- No overlay if stack has no cursors
     local s = self:getStage()
@@ -2280,35 +2281,35 @@ function Battle:renderOverlay(cam_x, cam_y)
 
             -- Make and render hover boxes
             if s == STAGE_TARGET then
-                self:renderTargetHoverBoxes(cam_x, cam_y)
+                self:renderTargetHoverBoxes()
             else
                 local ibox, w, ih, clr = self:mkInnerHoverBox()
                 local obox, oh = self:mkOuterHoverBox(w)
-                self:renderHoverBoxes(cam_x, cam_y, ibox, w, ih, obox, oh, clr)
+                self:renderHoverBoxes(ibox, w, ih, obox, oh, clr)
             end
 
             -- Render battle text if not in a menu
             if s ~= STAGE_MENU then
-                self:renderBattleText(cam_x, cam_y)
+                self:renderBattleText()
             end
         elseif s == STAGE_WATCH then
-            self:renderSkillInUse(cam_x, cam_y)
+            self:renderSkillInUse()
         end
     end
 
     -- Render menu if there is one
     local m = self:getMenu()
     if m then
-        m:render(cam_x, cam_y, self.chapter)
-        if self.render_bexp then self:renderBexp(cam_x, cam_y) end
+        m:render(self.chapter)
+        if self.render_bexp then self:renderBexp() end
     end
 
     -- Render what turn it is in the lower right
     if s and s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
         local turn_str = 'Turn ' .. self.turn
         renderString(turn_str,
-            cam_x + VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
-            cam_y + VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
+            VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
+            VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
         )
     end
 end

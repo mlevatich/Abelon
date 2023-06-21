@@ -44,8 +44,8 @@ function love.load()
     -- Set up a screen with the virtual width and height
     local WINDOW_WIDTH, WINDOW_HEIGHT = love.window.getDesktopDimensions()
     push:setupScreen(
-        VIRTUAL_WIDTH,
-        VIRTUAL_HEIGHT,
+        VIRTUAL_WIDTH / ZOOM,
+        VIRTUAL_HEIGHT / ZOOM,
         1280,
         720,
         { fullscreen = false, resizable = true }
