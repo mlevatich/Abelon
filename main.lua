@@ -82,15 +82,17 @@ end
 -- Update each frame, dt is seconds since last frame
 function love.update(dt)
 
-    dt = math.min(dt, 1 / 60)
-    -- dt = dt / 2 -- DEBUG
+    game.t = game.t + dt
+    if game.t >= FRAME_DUR then
 
-    -- Update everything in the game
-    game:update(dt)
+        -- Update everything in the game
+        game:update(FRAME_DUR)
+        game.t = game.t - FRAME_DUR
 
-    -- reset all keys pressed and released this frame
-    love.keyboard.keysPressed = {}
-    love.keyboard.keysReleased = {}
+        -- reset all keys pressed and released this frame
+        love.keyboard.keysPressed = {}
+        love.keyboard.keysReleased = {}
+    end
 end
 
 -- Render game to screen each frame using virtual resolution from push

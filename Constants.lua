@@ -14,6 +14,10 @@ TILE_HEIGHT    = 32
 VIRTUAL_WIDTH  = 864
 VIRTUAL_HEIGHT = 486
 
+-- Video data
+FPS_TARGET = 60
+FRAME_DUR = 1 / FPS_TARGET
+
 -- Saving and reloading constants
 SAVE_DIRECTORY = 'data/savedata/'
 AUTO_SAVE      = 'save.dat'

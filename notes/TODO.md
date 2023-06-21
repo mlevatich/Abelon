@@ -10,6 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
+- Rework github issues
 - Re-implement up through 1-2 battle. Adjust Abelon spawn, ritual sprites, shrubs, road, obstacle logs, add stone reliefs. Then move Elaine, adjust scene triggers,create 1-1 battle. Then create 1-1 to 1-2 transition and 1-2 scene and battle.
 - #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu. Support GOTOs in scenes for sane script-writing.
 - Implement game start scene, implement ??? for sprites whose names are not known
@@ -17,7 +18,6 @@ to the player. Learning a name is a scene event.
 - #69: Elaine sprite, Elaine portrait, Elaine-downed, Elaine-idle, Elaine-walk, Elaine-getup.
 - Music fade is quieter than it should be.
 - In battle, HUD should show how much damage/healing you are about to do and what statuses you will apply to each enemy/ally, when an attack is selected. When an assist is selected, HUD should show the effect that will apply to the assisted tiles.
-- Fix movement bug; sticking to walls when moving diagonally away from them to the south or east.
 - Finish script 1-2 and implement it up to 1-3 transition.
 
 ## Near
@@ -37,8 +37,8 @@ to the player. Learning a name is a scene event.
 
 ## Distant
 
-- Write Part 1 of narrative.md for abelon-2
-- Write script 1-3 for abelon-2
+- Write 1-3, 1-4 of narrative.md
+- Write script 1-3
 - #70: Lester sprite, Lester portrait, Lester-idle, Lester-walk, Lester-combat-entry-exit, Lester-combat-idle, Lester-combat-run, Lester-weapon, Lester-spell, Lester-assist, Lester-hurt, Lester-death, Stone sprite data and graphics
 - #71: Shanti sprite, Shanti portrait, Shanti-idle, Shanti-walk, Shanti-combat-entry-exit, Shanti-combat, Shanti-combat-run, Shanti-weapon, Shanti-spell, Shanti-assist, Shanti-hurt, Shanti-death
 - Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.

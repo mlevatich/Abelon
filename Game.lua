@@ -11,6 +11,9 @@ function Game:initialize()
     -- Track current chapter
     self.chapter = nil
 
+    -- Time passed since last game update
+    self.t = 0
+
     -- Detect quicksave or autosave
     if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
         self:loadSave(QUICK_SAVE, true)
