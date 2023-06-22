@@ -44,6 +44,10 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     return frames
 end
 
+function printChar(s, x, y, rot)
+    love.graphics.print(s, x, y, rot)
+end
+
 function renderString(s, x, y, custom_pen, auto_color)
     if not custom_pen then
         love.graphics.setColor(unpack(WHITE))
@@ -66,7 +70,7 @@ function renderString(s, x, y, custom_pen, auto_color)
         then
             love.graphics.setColor(unpack(char_color[i]))
         end
-        love.graphics.print(s:sub(i, i), x + CHAR_WIDTH * (i - 1), y)
+        printChar(s:sub(i, i), x + CHAR_WIDTH * (i - 1), y)
     end
 end
 

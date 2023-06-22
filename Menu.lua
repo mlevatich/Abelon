@@ -354,12 +354,10 @@ function Menu:renderMenuItems(x, y, c)
     -- Render indicator of more content
     love.graphics.setColor(unpack(WHITE))
     if self.base > 1 then
-        love.graphics.print("^", x + self.width - 11, y + 6)
+        printChar("^", x + self.width - 11, y + 6)
     end
     if self.base <= #self.menu_items - self.window then
-        love.graphics.print("^",
-            x + self.width - 5, y + self.height - 6, math.pi
-        )
+        printChar("^", x + self.width - 5, y + self.height - 6, math.pi)
     end
 end
 
@@ -495,7 +493,7 @@ function Menu:renderSelectionArrow(x, y)
                 + (self.hovering - 1) * self.spacing
     end
     love.graphics.setColor(unpack(WHITE))
-    love.graphics.print(">", arrow_x, arrow_y)
+    printChar(">", arrow_x, arrow_y)
 end
 
 function Menu:render(c)

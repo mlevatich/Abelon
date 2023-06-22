@@ -11,12 +11,16 @@ Bullets that reference a github issue should close the issue when committed.
 ## Immediate
 
 - Rework github issues
-- Re-implement up through 1-2 battle. Adjust Abelon spawn, ritual sprites, shrubs, road, obstacle logs, add stone reliefs. Then move Elaine, adjust scene triggers,create 1-1 battle. Then create 1-1 to 1-2 transition and 1-2 scene and battle.
-- #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu. Support GOTOs in scenes for sane script-writing.
 - Implement game start scene, implement ??? for sprites whose names are not known
 to the player. Learning a name is a scene event.
-- #69: Elaine sprite, Elaine portrait, Elaine-downed, Elaine-idle, Elaine-walk, Elaine-getup.
+- Elaine sprite, Elaine portrait, Elaine-downed
+- Implement 1-1 battle.
+- #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu.
+- Implement 1-1 script. Adjust road, add campsite, stone reliefs. Create 1-1 to 1-2 transition.
+- Support GOTOs in scenes for sane script-writing.
 - Music fade is quieter than it should be.
+- #69: Elaine-idle, Elaine-walk, Elaine-getup.
+- Implement 1-2 opening scene and battle.
 - In battle, HUD should show how much damage/healing you are about to do and what statuses you will apply to each enemy/ally, when an attack is selected. When an assist is selected, HUD should show the effect that will apply to the assisted tiles.
 - Finish script 1-2 and implement it up to 1-3 transition.
 

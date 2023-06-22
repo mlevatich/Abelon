@@ -284,7 +284,7 @@ function Scene:renderText(text, base_y)
         local y = y_beginning + LINE_HEIGHT * (line_num - 1)
 
         -- Print character
-        love.graphics.print(text[line_num]:sub(char_num, char_num), x, y)
+        printChar(text[line_num]:sub(char_num, char_num), x, y)
 
         -- Increment character count
         char_num = char_num + 1
@@ -331,7 +331,7 @@ function Scene:renderChoice(choices, base_y, flip)
     -- Render selection arrow on the selected option
     local arrow_y = rect_y + TEXT_MARGIN_Y + 2 + LINE_HEIGHT
                   * (self.text_state['selection'] - 1)
-    love.graphics.print(">", rect_x + 15, arrow_y)
+    printChar(">", rect_x + 15, arrow_y)
 end
 
 -- Render small indicator that current page is done
@@ -339,7 +339,7 @@ function Scene:renderAdvanceIndicator(y)
     local indicator_x = BOX_MARGIN + BOX_WIDTH - 7
     local indicator_y = y + BOX_MARGIN + BOX_HEIGHT - 7
     love.graphics.setColor(unpack(WHITE))
-    love.graphics.print("^", indicator_x, indicator_y, math.pi)
+    printChar("^", indicator_x, indicator_y, math.pi)
 end
 
 -- Render dialogue to screen at current position
