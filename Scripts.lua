@@ -166,12 +166,54 @@ function lookDir(p1, dir)
     end
 end
 
+function blackout()
+    return function(scene)
+        scene.chapter.alpha = 0
+    end
+end
+
+function fade(rate)
+    return function(scene)
+        scene.chapter.fade_rate = rate
+    end
+end
+
+function chaptercard(title)
+    return function(scene)
+        scene.chapter:flash(title, 0.2)
+    end
+end
+
+function introduce(name)
+    return function(scene)
+        scene.player:introduce(name)
+    end
+end
+
 scripts = {
+
+    ['1-1-entry'] = {
+        ['ids'] = {'abelon'},
+        ['events'] = {
+            blackout(),
+            wait(2),
+            chaptercard("1-1"),
+            say(1, 0, false, "..."),
+            say(1, 0, false, "............"),
+            say(1, 0, false, "...Perhaps I made a mistake somewhere."),
+            say(1, 0, false, ".................."),
+            say(1, 0, false, "..!"),
+            fade(0.15),
+            wait(7.5)
+        },
+        ['result'] = {}
+    },
 
     ['1-1-select-kath'] = {
         ['ids'] = {'kath'},
         ['events'] = {
             focus(1, 170),
+            introduce("kath"),
             say(1, 1, false,
                 "Captain Kath of Ebonach, at your command!"
             )
@@ -418,6 +460,7 @@ scripts = {
         ['ids'] = {'abelon', 'elaine'},
         ['events'] = {
             face(1, 2),
+            introduce("elaine"),
             say(2, 1, false,
                 "My name's Elaine. It's nice to meet you! Shall I join your \z
                  party?"
@@ -460,6 +503,7 @@ scripts = {
         ['ids'] = {'abelon', 'book'},
         ['events'] = {
             lookAt(1, 2),
+            introduce('book'),
             say(2, 0, false,
                 "An open book lies on the ground, full of strange drawings and \z
                  hastily scrawled paragraphs. The writing is faded and barely \z
@@ -490,6 +534,7 @@ scripts = {
         ['ids'] = {'abelon', 'medallion'},
         ['events'] = {
             lookAt(1, 2),
+            introduce('medallion'),
             say(2, 1, true,
                 "A silver medallion on a string lies on the ground, smeared with \z
                  dirt. The image of a round shield over a longsword is engraved \z

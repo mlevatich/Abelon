@@ -57,8 +57,14 @@ function Chapter:initialize(id)
 
     -- Rendering information
     self.alpha = 1
-    self.fade_to = nil
+    self.fade_rate = 0
+    self.in_transition = nil
     self.autosave_flash = 0
+
+    -- Additional rendering vars for flashing messages
+    self.flash_alpha = 0
+    self.flash_rate = 0
+    self.flash_msg = nil
 
     -- Sprites in this chapter
     self.sprites = {}
@@ -88,9 +94,8 @@ function Chapter:initialize(id)
     self:saveChapter()
 end
 
-function Chapter:autosave(silent)
+function Chapter:autosave()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. AUTO_SAVE, self)
-    self.autosave_flash = ite(silent, 0, 1)
 end
 
 function Chapter:quicksave()
@@ -105,7 +110,7 @@ end
 
 function Chapter:saveChapter()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. CHAPTER_SAVE, self)
-    self:autosave(true)
+    self:autosave()
 end
 
 function Chapter:saveAndQuit()
@@ -183,10 +188,6 @@ function Chapter:endChapter()
 
     -- Stop music
     self:stopMusic()
-
-    -- retire all sprites and write them to save file
-    -- save relevant quest state info as well
-    -- save Abelon's inventory
 end
 
 -- Return all sprite objects belonging to the chapter's active map
@@ -243,6 +244,12 @@ end
 function Chapter:setTextVolume(vol)
     self.text_volume = vol
     sfx['text']:setVolume(vol)
+end
+
+function Chapter:flash(msg, rate)
+    self.flash_alpha = 0.001
+    self.flash_rate = rate
+    self.flash_msg = msg
 end
 
 function Chapter:launchBattle(b_id)
@@ -350,39 +357,49 @@ function Chapter:performTransition()
     if track_change then self:stopMusic() end
     self.current_map = self.maps[new_map]
     if track_change then self:startMapMusic() end
-    self.in_transition = nil
+end
+
+-- Fade in or out (depending on sign of fade rate)
+function Chapter:updateFade(dt)
+    self.alpha = math.max(0, math.min(1, self.alpha + self.fade_rate * dt))
+    self.flash_alpha = math.max(0, math.min(1, self.flash_alpha + self.flash_rate * dt))
 end
 
 -- Initiate, update, and perform map transitions
--- and the associated fade-out and in
 function Chapter:updateTransition(transition)
+
+    -- When fade in is complete, transition is over
+    if self.in_transition and self.alpha == 1 then
+        self.player:changeMode('free')
+        self.in_transition = nil
+        self.fade_rate = 0
+    end
 
     -- Start new transition if an argument was provided
     if transition then
         self.player:changeBehavior('idle')
         self.player:changeMode('frozen')
         self.in_transition = transition
+        self.fade_rate = -2
     end
 
-    -- When fade out is complete, perform switch
-    if self.alpha == 0 then
+    -- When fade out is complete, perform switch and start fade-in
+    if self.in_transition and self.alpha == 0 then
         self:performTransition()
         self:updateCamera(100)
+        self.fade_rate = 2
+    end
+end
+
+function Chapter:updateFlash()
+
+    if self.flash_msg and self.flash_alpha == 0 then
+        self.flash_msg = nil
+        self.flash_rate = 0
     end
 
-    -- If in a transition, fade out
-    if self.in_transition then
-        self.alpha = math.max(0, self.alpha - 0.05)
-    end
-
-    -- If map has switched, fade in until alpha is full
-    if not self.in_transition and self.alpha < 1 then
-        self.alpha = math.min(1, self.alpha + 0.05)
-
-        -- End transition when alpha is full
-        if self.alpha == 1 then
-            self.player:changeMode('free')
-        end
+    if self.flash_msg and self.flash_alpha == 1 then
+        self.flash_rate = self.flash_rate * -0.8
     end
 end
 
@@ -487,11 +504,13 @@ function Chapter:update(dt)
 
     -- Update current transition or initiate new one
     self:updateTransition(new_transition)
+    
+    -- Update fades on screens/messages
+    self:updateFlash()
+    self:updateFade(dt)
 
     -- Update camera position
     self:updateCamera(dt)
-
-    self.autosave_flash = math.max(0, self.autosave_flash - dt)
 
     -- Return reload/end signal
     return self.signal
@@ -529,6 +548,10 @@ function Chapter:render()
     love.graphics.origin()
     love.graphics.scale(1 / ZOOM)
 
+    -- Fade in/out
+    love.graphics.setColor(0, 0, 0, 1 - self.alpha)
+    love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+
     -- Render battle overlay
     if self.battle then
         self.battle:renderOverlay()
@@ -542,19 +565,16 @@ function Chapter:render()
         self.current_scene:render()
     end
 
-    -- Flash autosave message
-    if self.autosave_flash > 0 then
-        love.graphics.setColor({ 1, 1, 1, self.autosave_flash })
-        local str = 'Game saved'
-        renderString(str,
-            VIRTUAL_WIDTH - #str * CHAR_WIDTH - BOX_MARGIN,
-            BOX_MARGIN, true
+    -- Render flashed message
+    if self.flash_msg then
+        love.graphics.push('all')
+        love.graphics.setColor({ 1, 1, 1, self.flash_alpha })
+        renderString(self.flash_msg,
+            (VIRTUAL_WIDTH - #self.flash_msg * CHAR_WIDTH) / 2,
+            VIRTUAL_HEIGHT - 50, true
         )
+        love.graphics.pop()
     end
-
-    -- Fade in/out
-    love.graphics.setColor(0, 0, 0, 1 - self.alpha)
-    love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
 
     love.graphics.origin()
 end

@@ -11,8 +11,8 @@ require 'Sounds'
 Player = class('Player')
 
 -- Movement constants
-WALK_SPEED = 100
-DIAG_SPEED = 80
+WALK_SPEED = 80
+DIAG_SPEED = 64
 
 -- Initialize the player character, Abelon
 function Player:initialize(sp)
@@ -35,8 +35,9 @@ function Player:initialize(sp)
     -- Abelon's inventory
     self.inventory = {}
 
-    -- Abelon's party
+    -- Abelon's party and the names he knows
     self.party = { self.sp }
+    self.introduced = {}
 
     -- Abelon can open menus, like shops and the inventory
     self.open_menu = nil
@@ -228,6 +229,14 @@ end
 
 function Player:joinParty(sp)
     table.insert(self.party, sp)
+end
+
+function Player:introduce(name)
+    self.introduced[name] = true
+end
+
+function Player:knows(name)
+    return self.introduced[name]
 end
 
 -- When player presses space to interact, a dialogue is started

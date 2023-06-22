@@ -29,6 +29,10 @@ function mkSimpleTrigger(check, action)
 end
 
 scene_triggers = {
+    ['1-1-entry'] = mkAreaTrigger('1-1-entry', 'east-forest',
+        function(x) return true end,
+        function(y) return true end
+    ),
     ['meet-kath'] = mkAreaTrigger('meet-kath', 'west-forest',
         function(x) return x > 24 end,
         function(y) return true end

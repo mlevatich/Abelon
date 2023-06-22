@@ -253,10 +253,14 @@ function Scene:renderSpeaker(sp, pid, y)
         -- Render name of current speaker
         love.graphics.setColor(unpack(WHITE))
         local base_y = y + BOX_MARGIN + TEXT_MARGIN_Y
-        renderString(sp:getName(), BOX_MARGIN * 2, base_y)
+        local n = sp:getName()
+        if not self.player:knows(sp:getId()) then
+            n = "???"
+        end
+        renderString(n, BOX_MARGIN * 2, base_y)
 
         -- Render portrait of current speaker
-        if sp:getPtexture() then
+        if sp:getPtexture() and pid > 0 then
             love.graphics.draw(sp:getPtexture(), sp:getPortrait(pid),
                 BOX_MARGIN * 1.5,
                 y + BOX_MARGIN * 2,
