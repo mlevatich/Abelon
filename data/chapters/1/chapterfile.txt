@@ -22,5 +22,5 @@
 ~~south-forest standard Dying-Forest
 
 ~elaine 36 9 R elaine-interact-base
-~wolf1 39 10 L
+~wolf1 38 10 L
 ~medallion 34 34 R medallion-interact-base

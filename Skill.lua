@@ -436,12 +436,12 @@ skills = {
     -- ABELON
     ['sever'] = Skill:new('sever', 'Sever',
         "Slice at an enemy's exposed limbs. Deals (Force * 1.0) Weapon damage \z
-         to an enemy next to you and lowers their Force by 2.",
+         to an enemy next to you and lowers their Force by 3.",
         'Executioner', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.0),
-        nil, { { { 'force', Scaling:new(-2, 'force', 0) }, 1 } }
+        nil, { { { 'force', Scaling:new(-3, 'force', 0) }, 1 } }
     ),
     ['trust'] = Skill:new('trust', 'Trust',
         "Place your faith in your comrades. Increases your Affinity by 8 \z

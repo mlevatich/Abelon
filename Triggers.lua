@@ -33,10 +33,14 @@ scene_triggers = {
         function(x) return true end,
         function(y) return true end
     ),
-    ['meet-kath'] = mkAreaTrigger('meet-kath', 'west-forest',
-        function(x) return x > 24 end,
-        function(y) return true end
+    ['1-1-battle'] = mkAreaTrigger('1-1-battle', 'south-forest',
+        function(x) return x < 47 end,
+        function(y) return y < 15 end
     )
+    -- ['meet-kath'] = mkAreaTrigger('meet-kath', 'west-forest',
+    --     function(x) return x > 24 end,
+    --     function(y) return true end
+    -- )
 }
 
 function mkUseTrigger(id, checks, actions)
@@ -78,6 +82,12 @@ end
 
 battle_triggers = {
     ['1-1'] = {
+        [SELECT]     = {},
+        [ALLY]       = {},
+        [ENEMY]      = {},
+        [END_ACTION] = {}
+    },
+    ['1-2'] = {
         [SELECT] = {
             ['select-kath'] = mkSelectTrigger('kath')
         },

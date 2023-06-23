@@ -209,7 +209,51 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-select-kath'] = {
+    ['1-1-battle'] = {
+        ['ids'] = {'abelon', 'wolf1'},
+        ['events'] = {
+            lookAt(1, 2),
+            focus(2, 100),
+            pan(50, 0, 100),
+            wait(0.5),
+            walk(false, 1, 42, 11, 'walk'),
+            waitForEvent('walk'),
+            lookAt(1, 2),
+            wait(1),
+            lookAt(2, 1),
+            wait(1),
+            walk(false, 2, 39, 11, 'walk'),
+            waitForEvent('walk'),
+            wait(1)
+        },
+        ['result'] = {
+            ['do'] = function(c)
+                c:launchBattle('1-1')
+            end
+        }
+    },
+
+    ['1-1-abelon-defeat'] = {
+        ['ids'] = {},
+        ['events'] = {},
+        ['result'] = {}
+    },
+
+    ['1-1-turnlimit-defeat'] = {
+        ['ids'] = {},
+        ['events'] = {},
+        ['result'] = {}
+    },
+
+    ['1-1-victory'] = {
+        ['ids'] = {},
+        ['events'] = {},
+        ['result'] = {
+            ['do'] = function(c) c:healAll() end
+        }
+    },
+
+    ['1-2-select-kath'] = {
         ['ids'] = {'kath'},
         ['events'] = {
             focus(1, 170),
@@ -221,7 +265,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-ally-turn-1'] = {
+    ['1-2-ally-turn-1'] = {
         ['ids'] = {'kath'},
         ['events'] = {
             focus(1, 170),
@@ -234,7 +278,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-ally-turn-2'] = {
+    ['1-2-ally-turn-2'] = {
         ['ids'] = {'kath'},
         ['events'] = {
             brState('kath-saw-spell', {}, {
@@ -250,7 +294,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-enemy-turn-1'] = {
+    ['1-2-enemy-turn-1'] = {
         ['ids'] = {'kath'},
         ['events'] = {
             focus(1, 170),
@@ -261,7 +305,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-abelon-demon'] = {
+    ['1-2-abelon-demon'] = {
         ['ids'] = {'kath'},
         ['events'] = {
             brState('kath-saw-spell', {}, {
@@ -311,7 +355,7 @@ scripts = {
         }
     },
 
-    ['1-1-kath-defeat'] = {
+    ['1-2-kath-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
             focus(1, 170),
@@ -324,7 +368,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-abelon-defeat'] = {
+    ['1-2-abelon-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
             focus(1, 170),
@@ -337,7 +381,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-turnlimit-defeat'] = {
+    ['1-2-turnlimit-defeat'] = {
         ['ids'] = {'kath', 'abelon'},
         ['events'] = {
             focus(1, 170),
@@ -352,7 +396,7 @@ scripts = {
         ['result'] = {}
     },
 
-    ['1-1-victory'] = {
+    ['1-2-victory'] = {
         ['ids'] = {'abelon', 'kath'},
         ['events'] = {
             wait(0.5),
@@ -840,7 +884,7 @@ scripts = {
             ['do'] = function(c)
                 local kath = c.sprites['kath']
                 c.player:joinParty(kath)
-                c:launchBattle('1-1')
+                c:launchBattle('1-2')
             end
         }
     }
