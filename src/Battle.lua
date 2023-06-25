@@ -61,6 +61,12 @@ function Battle:initialize(battle_id, player, chapter)
         self:readEntities(data, 4),
         self:readEntities(data, 5)
     )
+    self.n_allies = 0
+    for i = 1, #self.participants do
+        if self:isAlly(self.participants[i]) then
+            self.n_allies = self.n_allies + 1
+        end
+    end
     self.enemy_action = nil
 
     -- Win conditions and loss conditions
@@ -967,14 +973,20 @@ function Battle:playAction()
     -- Skills used
     local sp     = self:getSprite()
     local attack = self.stack[4]['sk']
-    local assist = self.stack[7]['sk']
+    local assist = nil
+    if self.stack[7] then
+        assist = self.stack[7]['sk']
+    end
 
     -- Cursor locations
     local c_sp     = self.stack[1]['cursor']
     local c_move1  = self.stack[2]['cursor']
     local c_attack = self.stack[4]['cursor']
     local c_move2  = self.stack[5]['cursor']
-    local c_assist = self.stack[7]['cursor']
+    local c_assist = nil
+    if self.stack[7] then
+        c_assist = self.stack[7]['cursor']
+    end
 
     -- Derive directions from cursor locations
     local computeDir = function(c1, c2)
@@ -1257,8 +1269,10 @@ function Battle:update(keys, dt)
                     if moves[i]['to'][1] == y and moves[i]['to'][2] == x then
                         if not c then
                             self:openAttackMenu(sp)
-                        else
+                        elseif self.n_allies > 1 then
                             self:openAssistMenu(sp)
+                        else
+                            self:endAction(false)
                         end
                         break
                     end
