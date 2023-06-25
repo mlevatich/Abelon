@@ -10,8 +10,8 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
+- Close #16
 - #33: Merge Game and Chapter -> Game, create new Title to display title screen and manage saves. Stub a title screen menu
-- #16: Title screen v0 (continue (if save file detected), new game -> choose difficulty). Title screen should have controls in one corner.
 - #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu.
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass.
 
@@ -20,11 +20,10 @@ Bullets that reference a github issue should close the issue when committed.
 - Music fade is quieter than it should be
 - Finish script 1-2
 
-- Elaine-downed
 - Adjust road, add campsite, stone reliefs
 - Lester-sleep, Shanti-sleep, Kath-sleep
 - Abelon-combat-entry-exit, Abelon-combat-idle
-- Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup
+- Elaine-downed, Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup
 
 - #69: Implement 1-1 and 1-2 script, 1-3 transition kicks back to title
 
@@ -51,18 +50,19 @@ Bullets that reference a github issue should close the issue when committed.
 - Write 1-3, 1-4 of narrative.md
 - Write script 1-3
 - #70: Lester sprite, Lester portrait, Lester-idle, Lester-walk, Lester-combat-entry-exit, Lester-combat-idle, Lester-combat-run, Lester-weapon, Lester-spell, Lester-assist, Lester-hurt, Lester-death, Stone sprite data and graphics, Shanti sprite, Shanti portrait, Shanti-idle, Shanti-walk, Shanti-combat-entry-exit, Shanti-combat, Shanti-combat-run, Shanti-weapon, Shanti-spell, Shanti-assist, Shanti-hurt, Shanti-death
-- Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.
-- Write 1-4 script
 - #71: Implement 1-3. Includes additional map to the north of north forest, the monastery approach.
 
 ## Finally
 
+- Write 1-4 script
 - #72: Implement 1-4
 - 1-4 battle theme
 - #68: Last pass over script for consistency
 - Animation sound effects: Explore "animation sound effects": looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. Not an easy task!!
 - #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite parameter deciding whether it blocks light may be needed. e.g. abelon blocks light but a log doesn't), proper color computation. Look up lua/love shaders. Alternate, darken with patterns of black pixels over tiles?
 - "Splash" animations: When sprites take damage, a damage splash should be rendered. When they heal, a heal splash should be rendered. This should happen as the damage is dealt. The idea of a "splash" animation could be re-used for skill animations. When sprites gain exp, render exp splash. This should happen on a delay, so the exp splash renders after the relevant action has just finished playing out.
+- Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.
 - #47: Better portraits
+- Title screen background artwork
 - #73: Make executable
 - #74: Pre-alpha closed release

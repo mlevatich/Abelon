@@ -11,6 +11,7 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 require 'src.Util'
 require 'src.Constants'
 
+require 'src.Title'
 require 'src.Game'
 require 'src.Skill'
 require 'src.Menu'
@@ -38,6 +39,10 @@ binser.register(GridSpace)
 binser.register(Battle)
 binser.register(Chapter)
 
+local game = nil
+local title = nil
+local t = 0.0
+
 -- Initialize window and launch game
 function love.load()
 
@@ -61,7 +66,7 @@ function love.load()
     love.keyboard.keysReleased = {}
 
     -- Go!
-    game = Game:new()
+    title = Title:new(font_file)
 end
 
 -- Resize game window
@@ -82,12 +87,19 @@ end
 -- Update each frame, dt is seconds since last frame
 function love.update(dt)
 
-    game.t = game.t + dt
-    if game.t >= FRAME_DUR then
+    t = t + dt
+    if t >= FRAME_DUR then
 
-        -- Update everything in the game
-        game:update(FRAME_DUR)
-        game.t = game.t - FRAME_DUR
+        -- Update game or title screen if game hasn't started
+        if game then
+            game:update(FRAME_DUR)
+        else
+            game = title:update(FRAME_DUR)
+            if game then
+                title = nil
+            end
+        end
+        t = t - FRAME_DUR
 
         -- reset all keys pressed and released this frame
         love.keyboard.keysPressed = {}
@@ -95,9 +107,10 @@ function love.update(dt)
     end
 end
 
--- Render game to screen each frame using virtual resolution from push
+-- Render game or title to screen each frame using virtual resolution from push
 function love.draw()
     push:apply('start')
-    game:render()
+    if game then game:render()
+    else         title:render() end
     push:apply('end')
 end

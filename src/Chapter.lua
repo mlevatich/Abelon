@@ -24,7 +24,7 @@ require 'src.Battle'
 Chapter = class('Chapter')
 
 -- Constructor for our scenario object
-function Chapter:initialize(id)
+function Chapter:initialize(id, difficulty)
 
     -- Store id
     self.id = id
@@ -66,7 +66,7 @@ function Chapter:initialize(id)
     self.player = nil
 
     -- Difficulty level
-    self.difficulty = MASTER
+    self.difficulty = difficulty
 
     -- State of a chapter a dictionary of strings that correspond to different
     -- chapter events and determine quest progress, cinematic triggers, and

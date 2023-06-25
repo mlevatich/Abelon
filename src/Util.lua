@@ -70,7 +70,7 @@ function renderString(s, x, y, custom_pen, auto_color)
         then
             love.graphics.setColor(unpack(char_color[i]))
         end
-        printChar(s:sub(i, i), x + CHAR_WIDTH * (i - 1), y)
+        printChar(c, x + CHAR_WIDTH * (i - 1), y)
     end
 end
 

@@ -6,34 +6,8 @@ require 'src.Chapter'
 Game = class('Game')
 
 -- Initialize game context
-function Game:initialize()
-
-    -- Track current chapter
-    self.chapter = nil
-
-    -- Time passed since last game update
-    self.t = 0
-
-    -- Detect quicksave or autosave
-    if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
-        self:loadSave(QUICK_SAVE, true)
-    elseif love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
-        self:loadSave(AUTO_SAVE)
-    else
-        self:nextChapter()
-    end
-end
-
-function Game:cleanChapter()
-    self.chapter:setSfxVolume(self.chapter.sfx_volume)
-    -- self.chapter:setTextVolume(self.chapter.text_volume)
-    self.chapter.scene_inputs = {}
-    self.chapter.battle_inputs = {}
-end
-
--- Clear all sprites from the current map and change the current map
-function Game:nextChapter()
-    self.chapter = Chapter:new('1-1')
+function Game:initialize(chapter)
+    self.chapter = chapter
 end
 
 function Game:loadSave(path, quick)
@@ -50,7 +24,10 @@ function Game:loadSave(path, quick)
     -- Load file
     local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. path)
     self.chapter = res[1]
-    self:cleanChapter()
+    self.chapter:setSfxVolume(self.chapter.sfx_volume)
+    -- self.chapter:setTextVolume(self.chapter.text_volume)
+    self.chapter.scene_inputs = {}
+    self.chapter.battle_inputs = {}
     if quick then
         os.remove('abelon/' .. SAVE_DIRECTORY .. path)
     else
@@ -82,8 +59,6 @@ function Game:update(dt)
         self:loadSave(BATTLE_SAVE)
     elseif signal == RELOAD_CHAPTER then
         self:loadSave(CHAPTER_SAVE)
-    elseif signal == END_CHAPTER then
-        self:nextChapter()
     end
 end
 
