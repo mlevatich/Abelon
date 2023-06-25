@@ -9,12 +9,7 @@ icons = getSpriteQuads(
     icon_texture, 22, 22, 0
 )
 status_icons = getSpriteQuads({0, 1, 2, 3}, icon_texture, 8, 8, 23)
-chapter_spritesheets = {}
-n_chapters = 1
-for i = 1, n_chapters do
-    local sheet_file = 'graphics/spritesheets/ch' .. i .. '.png'
-    chapter_spritesheets[i] = love.graphics.newImage(sheet_file)
-end
+spritesheet = love.graphics.newImage('graphics/spritesheet.png')
 
 require 'Player'
 require 'Sprite'
@@ -23,7 +18,7 @@ require 'Scene'
 require 'Music'
 require 'Sounds'
 require 'Triggers'
-require 'Scripts'
+require 'Script'
 require 'Battle'
 
 Chapter = class('Chapter')
@@ -49,8 +44,8 @@ function Chapter:initialize(id)
 
     -- Settings
     self.turn_autoend = true
-    self.music_volume = HIGH
-    self.sfx_volume   = HIGH
+    self.music_volume = OFF
+    self.sfx_volume   = OFF
     self.text_volume  = OFF
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
@@ -164,17 +159,11 @@ function Chapter:load()
             self.sprites[sp:getId()] = sp
 
             -- If the sprite is the player character, we make the current map
-            -- into the chapter's starting map, and initialize a player object.
-            -- Or if they have an initial interaction, register it.
-            local first_interaction = fields[5]
-            if first_interaction then
-                if first_interaction == 'P' then
-                    self.current_map = self.maps[current_map_name]
-                    self.player = Player:new(sp)
-                    self:updateCamera(100)
-                else
-                    sp.interactive = first_interaction
-                end
+            -- into the chapter's starting map, and initialize a player object
+            if fields[5] and fields[5] == 'P' then
+                self.current_map = self.maps[current_map_name]
+                self.player = Player:new(sp)
+                self:updateCamera(100)
             end
         end
     end
@@ -252,9 +241,9 @@ function Chapter:flash(msg, rate)
     self.flash_msg = msg
 end
 
-function Chapter:launchBattle(b_id)
+function Chapter:launchBattle()
     self.current_scene = nil
-    self.battle = Battle:new(b_id, self.player, self)
+    self.battle = Battle:new(self.id, self.player, self)
     self:saveBattle()
     self.battle:openBattleStartMenu()
 end
@@ -291,7 +280,7 @@ end
 
 -- Begin an interaction with the target sprite
 function Chapter:interactWith(target)
-    self:launchScene(target.interactive)
+    self:launchScene(self.id .. '-' .. target.id)
 end
 
 -- Store player inputs to a scene, to be processed on update
@@ -461,8 +450,7 @@ function Chapter:updateCamera(dt)
 end
 
 function Chapter:checkSceneTriggers()
-    local i = 1
-    for k, v in pairs(scene_triggers) do
+    for k, v in pairs(scene_triggers[self.id]) do
         if not self.seen[k] then
             local check = v(self)
             if check then

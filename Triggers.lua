@@ -1,7 +1,7 @@
 require 'Util'
 require 'Constants'
 
-require 'Scripts'
+require 'Script'
 
 function mkAreaTrigger(scene_id, map_id, xTrigger, yTrigger)
     return function(c)
@@ -29,27 +29,29 @@ function mkSimpleTrigger(check, action)
 end
 
 scene_triggers = {
-    ['1-1-entry'] = mkAreaTrigger('1-1-entry', 'east-forest',
-        function(x) return true end,
-        function(y) return true end
-    ),
-    ['1-1-battle'] = mkAreaTrigger('1-1-battle', 'south-forest',
-        function(x) return x < 47 end,
-        function(y) return y < 15 end
-    )
-    -- ['meet-kath'] = mkAreaTrigger('meet-kath', 'west-forest',
-    --     function(x) return x > 24 end,
-    --     function(y) return true end
-    -- )
+    ['1-1'] = {
+        ['1-1-entry'] = mkAreaTrigger('1-1-entry', 'east-forest',
+            function(x) return true end,
+            function(y) return true end
+        ),
+        ['1-1-battle'] = mkAreaTrigger('1-1-battle', 'south-forest',
+            function(x) return x < 47 end,
+            function(y) return y < 15 end
+        )
+    },
+    ['1-2'] = {
+        ['1-2-battle'] = mkAreaTrigger('1-2-battle', 'west-forest',
+            function(x) return x > 24 end,
+            function(y) return true end
+        )
+    }
 }
 
-function mkUseTrigger(id, checks, actions)
+function mkUseTrigger(id, check)
     return function(c)
-        for i=1, #checks do
-            if checks[i](c) then
-                actions[i](c)
-                return
-            end
+        if check(c) then
+            c:launchScene(id .. '-use')
+            return
         end
         c:launchScene(id .. '-use-fail')
     end
@@ -57,8 +59,7 @@ end
 
 item_triggers = {
     ['medallion'] = mkUseTrigger('medallion',
-        { function(c) return true end },
-        { function(c) c:launchScene('medallion-use') end }
+        function(c) return true end
     )
 }
 

@@ -10,8 +10,10 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- No assists allowed, no battle prep in 1-1
-- Elaine-downed, 1-1 Elaine interaction
+- No assists allowed in 1-1
+- 1-1 Elaine interaction, Elaine-downed
+- Scroll and journal
+- Object in the way that Abelon must interact with in east forest
 - #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu.
 - Adjust road, add campsite, stone reliefs
 - Lester-sleep, Shanti-sleep, Kath-sleep
@@ -21,6 +23,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Implement 1-1 script and 1-2 opening scene and battle.
 - #69: Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup.
 - In battle, HUD should show how much damage/healing you are about to do and what statuses you will apply to each enemy/ally, when an attack is selected. When an assist is selected, HUD should show the effect that will apply to the assisted tiles.
+- In battle, target tile for directional skills should default to a tile with an enemy on it.
 - Finish script 1-2 and implement it up to 1-3 transition.
 
 ## Near

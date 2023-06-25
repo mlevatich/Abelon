@@ -4,7 +4,7 @@ require 'Constants'
 require 'Animation'
 require 'Menu'
 require 'Skill'
-require 'Scripts'
+require 'Script'
 require 'Triggers'
 require 'Battle'
 
@@ -13,7 +13,6 @@ Sprite = class('Sprite')
 -- Class constants
 INIT_DIRECTION = RIGHT
 INIT_ANIMATION = 'idle'
-INIT_VERSION = 'standard'
 
 -- Movement constants
 WANDER_SPEED = 70
@@ -61,7 +60,6 @@ function Sprite:initialize(id, chapter)
     -- Initial animation state
     self.dir = INIT_DIRECTION
     self.animation_name = INIT_ANIMATION
-    self.version_name = INIT_VERSION
 
     -- Sprite behaviors
     self.resting_behavior = readField(data[7])
@@ -173,21 +171,12 @@ function Sprite:getPortrait(i)
     return sprite_graphics[self.id]['portraits'][i]
 end
 
-function Sprite:getSheet()
-    local by_chapter = sprite_graphics[self.id]['sprites_by_chapter']
-    return by_chapter[self.chapter.id]['sheet']
-end
-
 function Sprite:getCurrentAnimation()
-    local by_chapter = sprite_graphics[self.id]['sprites_by_chapter']
-    local versions = by_chapter[self.chapter.id]['versions']
-    return versions[self.version_name][self.animation_name]
+    return sprite_graphics[self.id]['animations'][self.animation_name]
 end
 
 function Sprite:getRestingQuad()
-    local by_chapter = sprite_graphics[self.id]['sprites_by_chapter']
-    local versions = by_chapter[self.chapter.id]['versions']
-    return versions[self.version_name]['idle'].frames[1]
+    return sprite_graphics[self.id]['animations']['idle'].frames[1]
 end
 
 function Sprite:getCurrentQuad()
@@ -228,7 +217,7 @@ end
 function Sprite:mkUse()
 
     -- Add fail scene for this item
-    scripts[self.id .. '-use-fail'] = {
+    script[self.id .. '-use-fail'] = {
         ['ids'] = {self.id},
         ['events'] = {
             say(1, 1, false,
@@ -246,7 +235,7 @@ end
 function Sprite:mkPresent()
 
     -- Add fail scene for this item
-    scripts[self.id .. '-present-fail'] = {
+    script[self.id .. '-present-fail'] = {
         ['ids'] = {self.id},
         ['events'] = {
             say(1, 1, false,
@@ -274,7 +263,7 @@ end
 function Sprite:mkDiscard()
 
     -- Add discard scene for this item
-    scripts[self.id .. '-discard'] = {
+    script[self.id .. '-discard'] = {
         ['ids'] = {self.id},
         ['events'] = {
             say(1, 1, false,
@@ -472,7 +461,7 @@ function Sprite:buildAttributeBox(tmp_attrs)
         mkEle('text', {self.name}, HALF_MARGIN, line(1)),
         mkEle('text', {'Attributes'}, attrib_x, line(1)),
         mkEle('image', self:getRestingQuad(),
-            sp_x, line(2) + 5, self:getSheet()),
+            sp_x, line(2) + 5, spritesheet),
         mkEle('text', {hp_str},
             sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
         mkEle('text', {ign_str},
@@ -766,7 +755,7 @@ end
 -- Change the animation the sprite is performing
 function Sprite:changeAnimation(new_animation_name)
 
-    -- Get the new animation for the current version of the sprite
+    -- Get the new animation for the sprite
     local current_animation = self:getCurrentAnimation()
     self.animation_name = new_animation_name
     local new_animation = self:getCurrentAnimation()
@@ -775,18 +764,6 @@ function Sprite:changeAnimation(new_animation_name)
     if new_animation ~= current_animation then
         new_animation:restart()
     end
-end
-
--- Change a sprite's version so that it is rendered
--- using a different set of animations
-function Sprite:changeVersion(new_version_name)
-
-    local current_animation = self:getCurrentAnimation()
-    self.version_name = new_version_name
-    local new_animation = self:getCurrentAnimation()
-
-    -- Sync the exact timing between the animations so there is no stuttering
-    new_animation:syncWith(current_animation)
 end
 
 -- Change a sprite's behavior so that they perform different actions
@@ -1276,7 +1253,7 @@ function Sprite:render()
     -- Draw sprite's current animation frame, at its current position,
     -- in its current direction
     love.graphics.draw(
-        self:getSheet(),
+        spritesheet,
         self:getCurrentQuad(),
         self.x + self.w / 2,
         self.y + self.h / 2,
@@ -1424,9 +1401,8 @@ for i = 1, #sprite_data do
     local data = sprite_data[i]
     local id = data['id']
     sprite_graphics[id] = {}
-    if data['versions']   == nil then data['versions']   = { 'standard' } end
-    if data['animations'] == nil then data['animations'] = inanimate      end
-    if data['n']          == nil then data['n']          = 0              end
+    if data['animations'] == nil then data['animations'] = inanimate end
+    if data['n']          == nil then data['n']          = 0 end
     for x = 1, data['n'] do sprite_graphics[id .. x] = sprite_graphics[id] end
     local g = sprite_graphics[id]
     local portrait_file = 'graphics/portraits/' .. id .. '.png'
@@ -1438,23 +1414,13 @@ for i = 1, #sprite_data do
     end
     g['w'] = data['w']
     g['h'] = data['h']
-    g['sprites_by_chapter'] = {}
-    for j = 1, n_chapters do
-        g['sprites_by_chapter'][j] = {}
-        local gj = g['sprites_by_chapter'][j]
-        gj['sheet'] = chapter_spritesheets[j]
-        gj['versions'] = {}
-        for k = 1, #sprite_data[i]['versions'] do
-            local v = sprite_data[i]['versions'][k]
-            gj['versions'][v] = {}
-            for name, frames in pairs(data['animations']) do
-                local spd, idxs = frames[1], frames[2]
-                gj['versions'][v][name] = Animation:new(
-                    getSpriteQuads(idxs, gj['sheet'], data['w'], data['h'], sheet_y),
-                    spd
-                )
-            end
-            sheet_y = sheet_y + (data['h'] + 1)
-        end
+    g['animations'] = {}
+    for name, frames in pairs(data['animations']) do
+        local spd, idxs = frames[1], frames[2]
+        g['animations'][name] = Animation:new(
+            getSpriteQuads(idxs, spritesheet, data['w'], data['h'], sheet_y),
+            spd
+        )
     end
+    sheet_y = sheet_y + (data['h'] + 1)
 end

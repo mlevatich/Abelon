@@ -33,12 +33,7 @@ end
 
 -- Clear all sprites from the current map and change the current map
 function Game:nextChapter()
-    if self.chapter then
-        self.chapter:endChapter()
-        self.chapter = Chapter:new(self.chapter.id + 1)
-    else
-        self.chapter = Chapter:new(1)
-    end
+    self.chapter = Chapter:new('1-1')
 end
 
 function Game:loadSave(path, quick)

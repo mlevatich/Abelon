@@ -431,7 +431,6 @@ function Player:updatePosition(a, b, c) return self.sp:updatePosition(a, b, c) e
 function Player:changeImpression(a) return self.sp:changeImpression(a) end
 function Player:changeAwareness(a) return self.sp:changeAwareness(a) end
 function Player:changeAnimation(a) return self.sp:changeAnimation(a) end
-function Player:changeVersion(a) return self.sp:changeVersion(a) end
 function Player:changeBehavior(a) return self.sp:changeBehavior(a) end
 function Player:atEase() return self.sp:atEase() end
 function Player:addBehaviors(a) return self.sp:addBehaviors(a) end

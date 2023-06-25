@@ -1749,7 +1749,7 @@ function Battle:renderSpriteImage(cx, cy, x, y, sp)
     if cx ~= x or cy ~= y then
         love.graphics.setColor(1, 1, 1, 0.5)
         love.graphics.draw(
-            sp:getSheet(),
+            spritesheet,
             sp:getCurrentQuad(),
             TILE_WIDTH * (cx + self.origin_x - 1) + sp.w / 2,
             TILE_HEIGHT * (cy + self.origin_y - 1) + sp.h / 2,

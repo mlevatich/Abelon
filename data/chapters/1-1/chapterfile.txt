@@ -1,7 +1,7 @@
 ~~west-forest standard Dying-Forest
 
-~kath 33 15 L kath-interact-base
-~book 9 17 R book-interact-base
+~kath 33 15 L
+~book 9 17 R
 ~bloodstain 41 1 R
 ~wolf2 60 1 R
 ~wolf3 60 1 R
@@ -21,6 +21,6 @@
 
 ~~south-forest standard Dying-Forest
 
-~elaine 36 9 R elaine-interact-base
+~elaine 36 9 R
 ~wolf1 38 10 L
-~medallion 34 34 R medallion-interact-base
+~medallion 34 34 R

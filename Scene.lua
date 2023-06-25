@@ -1,7 +1,8 @@
 require 'Util'
 require 'Constants'
 
-require 'Scripts'
+require 'scriptlib.Utils'
+require 'Script'
 
 Scene = class('Scene')
 
@@ -15,7 +16,7 @@ function Scene:initialize(scene_id, player, chapter, returnToBattle)
 
     -- Retrieve scene by id
     self.id = scene_id
-    self.script = deepcopy(scripts[scene_id])
+    self.script = deepcopy(script[scene_id])
     self.chapter = chapter
     self.returnToBattle = returnToBattle
 
@@ -95,7 +96,7 @@ function Scene:processResult(result)
         self.chapter.state[result['state']] = true
     end
     if result['callback'] then
-        self.chapter.callbacks[self.id] = result['callback']
+        self.chapter.callbacks[self.id] = self.chapter.id .. '-' .. result['callback']
     end
     if result['do'] then
         result['do'](self.chapter)
