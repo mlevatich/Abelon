@@ -1,5 +1,5 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
 -- INITIALIZE GRAPHICAL DATA
 icon_texture = love.graphics.newImage('graphics/icons.png')
@@ -11,15 +11,15 @@ icons = getSpriteQuads(
 status_icons = getSpriteQuads({0, 1, 2, 3}, icon_texture, 8, 8, 23)
 spritesheet = love.graphics.newImage('graphics/spritesheet.png')
 
-require 'Player'
-require 'Sprite'
-require 'Map'
-require 'Scene'
-require 'Music'
-require 'Sounds'
-require 'Triggers'
-require 'Script'
-require 'Battle'
+require 'src.Player'
+require 'src.Sprite'
+require 'src.Map'
+require 'src.Scene'
+require 'src.Music'
+require 'src.Sounds'
+require 'src.Triggers'
+require 'src.Script'
+require 'src.Battle'
 
 Chapter = class('Chapter')
 
@@ -127,7 +127,7 @@ end
 function Chapter:load()
 
     -- Read lines into list
-    local chap_file = 'Abelon/data/chapters/' .. self.id .. '/chapterfile.txt'
+    local chap_file = 'Abelon/data/world.txt'
     local lines = readLines(chap_file)
 
     -- Iterate over lines of chapter file

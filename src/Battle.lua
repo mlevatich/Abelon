@@ -1,10 +1,10 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Menu'
-require 'Music'
-require 'Skill'
-require 'Triggers'
+require 'src.Menu'
+require 'src.Music'
+require 'src.Skill'
+require 'src.Triggers'
 
 Battle = class('Battle')
 

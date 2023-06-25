@@ -1,7 +1,7 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Menu'
+require 'src.Menu'
 
 Scaling = class('Scaling')
 

@@ -11,14 +11,13 @@ Bullets that reference a github issue should close the issue when committed.
 ## Immediate
 
 - No assists allowed in 1-1
-- 1-1 Elaine interaction, Elaine-downed
 - Scroll and journal
 - Object in the way that Abelon must interact with in east forest
+- Elaine-downed
 - #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu.
 - Adjust road, add campsite, stone reliefs
 - Lester-sleep, Shanti-sleep, Kath-sleep
 - Abelon-combat-entry-exit, Abelon-combat-idle
-- Support GOTOs in scenes for sane script-writing.
 - Music fade is quieter than it should be.
 - Implement 1-1 script and 1-2 opening scene and battle.
 - #69: Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup.
@@ -28,7 +27,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Near
 
-- #33: Chapter -> Context refactor. Simplify lesser used features like tileset variation, sprite versions, chapterfile, base interactions, etc. Prepare for inclusion of title screen.
+- #33: Merge Game and Chapter -> Game (inc current chapter) refactor. Move save into main.lua. Src directory Prepare for inclusion of title screen.
 - Add in skills from notes, support displacement effects, test with a buffed Elaine and more wolves.
 - Ignea restore on battle finish depending on difficulty (50%/25%/0%)
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.

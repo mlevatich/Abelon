@@ -1,7 +1,7 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Sounds'
+require 'src.Sounds'
 
 MenuItem = class('MenuItem')
 

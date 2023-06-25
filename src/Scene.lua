@@ -1,8 +1,8 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'scriptlib.Utils'
-require 'Script'
+require 'src.script.Util'
+require 'src.Script'
 
 Scene = class('Scene')
 

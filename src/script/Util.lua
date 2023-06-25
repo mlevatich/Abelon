@@ -1,5 +1,5 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
 function addEvents(scene, e, at)
     for i = 1, #e do

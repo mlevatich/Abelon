@@ -1,6 +1,6 @@
-class = require 'middleclass'
-push = require 'push'
-binser = require 'binser'
+class = require 'lib.middleclass'
+push = require 'lib.push'
+binser = require 'lib.binser'
 
 -- Seed RNG
 math.randomseed(os.time())
@@ -8,17 +8,17 @@ math.randomseed(os.time())
 -- Make upscaling look pixelated instead of blurry
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Game'
-require 'Skill'
-require 'Menu'
-require 'Sprite'
-require 'Player'
-require 'Map'
-require 'Battle'
-require 'Chapter'
+require 'src.Game'
+require 'src.Skill'
+require 'src.Menu'
+require 'src.Sprite'
+require 'src.Player'
+require 'src.Map'
+require 'src.Battle'
+require 'src.Chapter'
 
 -- Register classes so they're serializable
 -- Don't serialize Music, preloaded

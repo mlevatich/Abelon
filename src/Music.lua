@@ -1,5 +1,5 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
 local Music = class('Music')
 

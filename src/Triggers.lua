@@ -1,7 +1,7 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Script'
+require 'src.Script'
 
 function mkAreaTrigger(scene_id, map_id, xTrigger, yTrigger)
     return function(c)

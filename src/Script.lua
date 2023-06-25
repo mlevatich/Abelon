@@ -1,6 +1,6 @@
-require 'scriptlib.1-1'
-require 'scriptlib.1-2'
-require 'scriptlib.Items'
+require 'src.script.1-1'
+require 'src.script.1-2'
+require 'src.script.Items'
 
 local sources = {
     ['1-1'] = s11,

@@ -1,12 +1,12 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Animation'
-require 'Menu'
-require 'Skill'
-require 'Script'
-require 'Triggers'
-require 'Battle'
+require 'src.Animation'
+require 'src.Menu'
+require 'src.Skill'
+require 'src.Script'
+require 'src.Triggers'
+require 'src.Battle'
 
 Sprite = class('Sprite')
 

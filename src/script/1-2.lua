@@ -1,4 +1,4 @@
-require 'scriptlib.Utils'
+require 'src.script.Util'
 
 s12 = {}
 

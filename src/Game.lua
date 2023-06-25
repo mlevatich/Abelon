@@ -1,7 +1,7 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Chapter'
+require 'src.Chapter'
 
 Game = class('Game')
 

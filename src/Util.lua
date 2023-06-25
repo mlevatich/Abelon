@@ -1,4 +1,4 @@
-require 'Constants'
+require 'src.Constants'
 
 -- Takes a spritesheet texture and width and height of tiles,
 -- and splits into quads that can be individually drawn

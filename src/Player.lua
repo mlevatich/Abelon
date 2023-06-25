@@ -1,12 +1,12 @@
-require 'Util'
-require 'Constants'
+require 'src.Util'
+require 'src.Constants'
 
-require 'Animation'
-require 'Scene'
-require 'Sprite'
-require 'Menu'
+require 'src.Animation'
+require 'src.Scene'
+require 'src.Sprite'
+require 'src.Menu'
 
-require 'Sounds'
+require 'src.Sounds'
 
 Player = class('Player')
 
