@@ -42,6 +42,7 @@ binser.register(Chapter)
 local game = nil
 local title = nil
 local t = 0.0
+local transition_t = 0.0
 
 -- Initialize window and launch game
 function love.load()
@@ -91,13 +92,16 @@ function love.update(dt)
     if t >= FRAME_DUR then
 
         -- Update game or title screen if game hasn't started
-        if game then
+        if game and title then
+            transition_t = transition_t + dt
+            if transition_t >= 3.5 then
+                title = nil
+            end
+        elseif game then
             game:update(FRAME_DUR)
         else
             game = title:update(FRAME_DUR)
-            if game then
-                title = nil
-            end
+            if game then game:update(FRAME_DUR) end
         end
         t = t - FRAME_DUR
 
@@ -110,7 +114,23 @@ end
 -- Render game or title to screen each frame using virtual resolution from push
 function love.draw()
     push:apply('start')
-    if game then game:render()
-    else         title:render() end
+    if game and title then
+        local bb_alpha = 1
+        if transition_t < 2 then
+            bb_alpha = 1 - (2 - transition_t) / 2
+            title:render()
+        elseif transition_t > 3 and transition_t < 3.5 then
+            bb_alpha = 1 - (transition_t - 3) / 0.5
+            game:render()
+        end
+        love.graphics.push('all')
+        love.graphics.setColor(0, 0, 0, bb_alpha)
+        love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH / ZOOM, VIRTUAL_HEIGHT / ZOOM)
+        love.graphics.pop()
+    elseif game then
+        game:render()
+    else
+        title:render()
+    end
     push:apply('end')
 end

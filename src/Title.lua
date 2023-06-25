@@ -6,7 +6,7 @@ require 'src.Chapter'
 
 Title = class('Title')
 
-local T_BYLINE = 6
+local T_BYLINE = 4.5
 local TITLE_FONT_SIZE = 40
 local SUBFONT_SIZE = 18
 
@@ -17,11 +17,14 @@ local SELECT_CONFIRM = 2
 -- Initialize title sequence
 function Title:initialize(font_file)
 
+    -- Time passed since initialized
     self.t = 0
 
+    -- Fonts
     self.titlefont = love.graphics.newFont(font_file, TITLE_FONT_SIZE)
     self.subfont = love.graphics.newFont(font_file, SUBFONT_SIZE)
 
+    -- Menu state
     self.state = SELECT_GAME
     self.cursor = 0
     self.difficulty = nil
@@ -86,7 +89,9 @@ function Title:update(dt)
                     launch = Game:new(Chapter:new('1-1', self.difficulty))
                 end
             end
-            self.cursor = 0
+            if not launch then
+                self.cursor = 0
+            end
 
         elseif d then
 
@@ -109,6 +114,8 @@ function Title:update(dt)
 end
 
 function Title:render()
+
+    -- Render either byline or title menu, depending on time passed
     if self.t < T_BYLINE then
 
         -- Render byline
@@ -126,6 +133,7 @@ function Title:render()
         renderString(s, x, y, true)
         love.graphics.pop()
     else
+
         -- Render title background
         -- TODO
 

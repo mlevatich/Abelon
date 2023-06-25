@@ -8,7 +8,7 @@ s11['entry'] = {
     ['ids'] = {'abelon'},
     ['events'] = {
         blackout(),
-        wait(2),
+        wait(1),
         chaptercard(),
         say(1, 0, false, "..."),
         say(1, 0, false, "............"),
@@ -16,7 +16,7 @@ s11['entry'] = {
         say(1, 0, false, ".................."),
         say(1, 0, false, "..!"),
         fade(0.15),
-        wait(7.5)
+        wait(6)
     },
     ['result'] = {}
 }

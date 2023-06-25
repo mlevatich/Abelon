@@ -11,7 +11,7 @@ Bullets that reference a github issue should close the issue when committed.
 ## Immediate
 
 - Close #16
-- #33: Merge Game and Chapter -> Game, create new Title to display title screen and manage saves. Stub a title screen menu
+- #33: Factor out Game.lua, then change Chapter -> Game, add nextChapter functionality
 - #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu.
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass.
 
@@ -63,6 +63,6 @@ Bullets that reference a github issue should close the issue when committed.
 - "Splash" animations: When sprites take damage, a damage splash should be rendered. When they heal, a heal splash should be rendered. This should happen as the damage is dealt. The idea of a "splash" animation could be re-used for skill animations. When sprites gain exp, render exp splash. This should happen on a delay, so the exp splash renders after the relevant action has just finished playing out.
 - Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.
 - #47: Better portraits
-- Title screen background artwork
+- Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
 - #73: Make executable
 - #74: Pre-alpha closed release
