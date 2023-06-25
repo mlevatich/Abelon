@@ -1,16 +1,4 @@
-~~west-forest standard Dying-Forest
-
-~kath 33 15 L
-~book 9 17 R
-~bloodstain 41 1 R
-~wolf2 60 1 R
-~wolf3 60 1 R
-
-~~north-forest standard Dying-Forest
-
-~bloodstain2 3 40 R
-
-~~east-forest standard Dying-Forest
+~~east-forest Dying-Forest
 
 ~abelon 28.5 50.5 L P
 ~torch 31 49 R
@@ -19,8 +7,18 @@
 ~torch 26 52 L
 ~bloodrite 26 49 R
 
-~~south-forest standard Dying-Forest
+~~south-forest Dying-Forest
 
 ~elaine 36 9 R
 ~wolf1 38 10 L
 ~medallion 34 34 R
+
+~~west-forest Dying-Forest
+
+~kath 33 15 L
+~book 9 17 R
+~bloodstain 41 1 R
+
+~~north-forest Dying-Forest
+
+~bloodstain2 3 40 R

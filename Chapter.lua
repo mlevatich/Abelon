@@ -140,11 +140,11 @@ function Chapter:load()
 
             -- Read data from line
             local fields = split(lines[i]:sub(3))
-            local map_name, tileset, song_name = fields[1], fields[2], fields[3]
+            local map_name, song_name = fields[1], fields[2]
             current_map_name = map_name
 
             -- Initialize map and tie it to chapter
-            self.maps[map_name] = Map:new(map_name, tileset, self)
+            self.maps[map_name] = Map:new(map_name, self)
 
             -- Maps sharing a music track share a pointer to the audio
             self.map_to_music[map_name] = song_name

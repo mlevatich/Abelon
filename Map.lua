@@ -6,11 +6,10 @@ require 'Sprite'
 Map = class('Map')
 
 -- constructor for our map object
-function Map:initialize(name, tileset, c)
+function Map:initialize(name, c)
 
     -- Map texture
     self.name = name
-    self.tileset = tileset
 
     -- Sprites on the map
     self.sprites = {}
@@ -330,8 +329,8 @@ function Map:renderTiles()
 
     -- Render all non-empty tiles
     love.graphics.setColor(1, 1, 1, 1)
-    local tilesheet = map_graphics[self.name][self.tileset]['tilesheet']
-    local quads = map_graphics[self.name][self.tileset]['quads']
+    local tilesheet = map_graphics[self.name]['tilesheet']
+    local quads = map_graphics[self.name]['quads']
     for y=1, self.height do
         for x=1, self.width do
             local tile = self.tiles[y][x]
@@ -374,21 +373,13 @@ end
 
 -- INITIALIZE GRAPHICAL DATA
 map_graphics = {}
-local map_ids = {
-    { 'west-forest',  'standard' },
-    { 'north-forest', 'standard' },
-    { 'south-forest', 'standard' },
-    { 'east-forest',  'standard' }
-}
+local map_ids = { 'west-forest', 'north-forest', 'south-forest', 'east-forest' }
 for i = 1, #map_ids do
-    local n = map_ids[i][1]
-    local tileset = map_ids[i][2]
-
-    if not map_graphics[n] then map_graphics[n] = {} end
-    map_graphics[n][tileset] = {}
-
-    local map = map_graphics[n][tileset]
-    local img_file = 'graphics/tilesets/' .. n .. '/' .. tileset .. '.png'
-    map['tilesheet'] = love.graphics.newImage(img_file)
-    map['quads'] = generateQuads(map['tilesheet'], TILE_WIDTH+1, TILE_HEIGHT+1)
+    local n = map_ids[i]
+    map_graphics[n] = {}
+    local img_file = 'graphics/tilesets/' .. n .. '.png'
+    map_graphics[n]['tilesheet'] = love.graphics.newImage(img_file)
+    map_graphics[n]['quads'] = generateQuads(
+        map_graphics[n]['tilesheet'], TILE_WIDTH + 1, TILE_HEIGHT + 1
+    )
 end
