@@ -27,9 +27,8 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Near
 
-- #33: Merge Game and Chapter -> Game (inc current chapter) refactor. Move save into main.lua. Src directory Prepare for inclusion of title screen.
+- #33: Merge Game and Chapter -> Game, create new Title to display title screen and manage saves. Stub a title screen menu
 - Add in skills from notes, support displacement effects, test with a buffed Elaine and more wolves.
-- Ignea restore on battle finish depending on difficulty (50%/25%/0%)
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.
 - Two mostly identical wolf sprites, Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run).
 - #52: Every skill has an associated single-fire animation, with render position determined by the cursor location of the cast. This has nothing to do with the sprite casting the skill. For some skills, the animation should play at every affected tile, for others, the animation should play centered on the cursor and affected by direction. This should be provided as an option. Make skill animations for all basic skills.

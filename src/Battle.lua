@@ -470,6 +470,26 @@ function Battle:checkWinLose()
     return false
 end
 
+function Battle:restoreIgnea()
+
+    -- Ignea is restored by 0% on master, 25% on adept, 50% on normal
+    local factor = 0.0
+    if self.chapter.difficulty == ADEPT then
+        factor = 0.25
+    elseif self.chapter.difficulty == NORMAL then
+        factor = 0.5
+    end
+
+    -- Restore to all allied participants
+    for i = 1, #self.participants do
+        local sp = self.participants[i]
+        if self:isAlly(sp) then
+            local max_ign = sp.attributes['focus']
+            sp.ignea = math.min(sp.ignea + math.floor(max_ign * factor), max_ign)
+        end
+    end
+end
+
 function Battle:awardBonusExp()
     local bexp = 0
     if self.turnlimit then
@@ -525,6 +545,7 @@ function Battle:openVictoryMenu()
                     ['views'] = {}
                 })
             else
+                self:restoreIgnea()
                 self.chapter:launchScene(self.id .. '-victory')
                 self.chapter:startMapMusic()
                 self.chapter.battle = nil
