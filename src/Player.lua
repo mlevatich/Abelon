@@ -39,7 +39,7 @@ function Player:initialize(sp)
     self.party = { self.sp }
     self.introduced = {}
 
-    -- Abelon can open menus, like shops and the inventory
+    -- Abelon can open menus
     self.open_menu = nil
 end
 
