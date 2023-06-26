@@ -312,10 +312,18 @@ function love.update(dt)
                 title = nil
             end
         elseif game then
-            game:update(FRAME_DUR)
+            -- Update chapter state, map, and all sprites in chapter
+            local signal = game.chapter:update(FRAME_DUR)
+
+            -- Detect and handle chapter change or reload
+            if signal == RELOAD_BATTLE then
+                game:loadSave(BATTLE_SAVE)
+            elseif signal == RELOAD_CHAPTER then
+                game:loadSave(CHAPTER_SAVE)
+            end
         else
             game = title:update(FRAME_DUR)
-            if game then game:update(FRAME_DUR) end
+            if game then game.chapter:update(FRAME_DUR) end
         end
         t = t - FRAME_DUR
 
@@ -335,14 +343,14 @@ function love.draw()
             title:render()
         elseif transition_t > 3 and transition_t < 3.5 then
             bb_alpha = 1 - (transition_t - 3) / 0.5
-            game:render()
+            game.chapter:render()
         end
         love.graphics.push('all')
         love.graphics.setColor(0, 0, 0, bb_alpha)
         love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH / ZOOM, VIRTUAL_HEIGHT / ZOOM)
         love.graphics.pop()
     elseif game then
-        game:render()
+        game.chapter:render()
     else
         title:render()
     end

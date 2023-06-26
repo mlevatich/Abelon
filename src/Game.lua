@@ -47,22 +47,3 @@ function Game:loadSave(path, quick)
         -- self.chapter:setTextVolume(set_tv)
     end
 end
-
--- Update game state
-function Game:update(dt)
-
-    -- Update chapter state, map, and all sprites in chapter
-    local signal = self.chapter:update(dt)
-
-    -- Detect and handle chapter change or reload
-    if signal == RELOAD_BATTLE then
-        self:loadSave(BATTLE_SAVE)
-    elseif signal == RELOAD_CHAPTER then
-        self:loadSave(CHAPTER_SAVE)
-    end
-end
-
--- Render everything!
-function Game:render()
-    self.chapter:render()
-end
