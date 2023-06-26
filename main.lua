@@ -73,10 +73,10 @@ function Title:initialize(font_file)
     self.save = nil
     if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
         self.save = freshGame(self.difficulty)
-        self.save:loadSave(QUICK_SAVE, true, true)
+        self.save.chapter = self.save.chapter:loadSave(QUICK_SAVE, true, true)
     elseif love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
         self.save = freshGame(self.difficulty)
-        self.save:loadSave(AUTO_SAVE, false, true)
+        self.save.chapter = self.save.chapter:loadSave(AUTO_SAVE, false, true)
     end
 end
 
@@ -309,6 +309,7 @@ function love.update(dt)
 
         -- Update game or title screen if game hasn't started
         if game and title then
+            print(transition_t)
             transition_t = transition_t + dt
             if transition_t >= 3.5 then
                 title = nil
@@ -319,13 +320,17 @@ function love.update(dt)
 
             -- Detect and handle chapter change or reload
             if signal == RELOAD_BATTLE then
-                game:loadSave(BATTLE_SAVE)
+                game.chapter = game.chapter:loadSave(BATTLE_SAVE)
             elseif signal == RELOAD_CHAPTER then
-                game:loadSave(CHAPTER_SAVE)
+                game.chapter = game.chapter:loadSave(CHAPTER_SAVE)
             end
         else
             game = title:update(FRAME_DUR)
-            if game then game.chapter:update(FRAME_DUR) end
+            if game then
+                love.keyboard.keysPressed = {}
+                love.keyboard.keysReleased = {}
+                game.chapter:update(FRAME_DUR) 
+            end
         end
         t = t - FRAME_DUR
 
