@@ -11,7 +11,6 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 require 'src.Util'
 require 'src.Constants'
 
-require 'src.Game'
 require 'src.Chapter'
 require 'src.Skill'
 require 'src.Menu'
@@ -73,10 +72,10 @@ function Title:initialize(font_file)
     self.save = nil
     if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
         self.save = freshGame(self.difficulty)
-        self.save.chapter = self.save.chapter:loadSave(QUICK_SAVE, true, true)
+        self.save = self.save:loadSave(QUICK_SAVE, true, true)
     elseif love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
         self.save = freshGame(self.difficulty)
-        self.save.chapter = self.save.chapter:loadSave(AUTO_SAVE, false, true)
+        self.save = self.save:loadSave(AUTO_SAVE, false, true)
     end
 end
 
@@ -119,7 +118,7 @@ function Title:update(dt)
                 self.difficulty = self.cursor + 1
                 if not self.save then
                     launch = freshGame(self.difficulty)
-                    launch.chapter:saveChapter()
+                    launch:saveChapter()
                 else
                     self.state = SELECT_CONFIRM
                 end
@@ -128,7 +127,7 @@ function Title:update(dt)
                     self.state = SELECT_DIFF
                 else
                     launch = freshGame(self.difficulty)
-                    launch.chapter:saveChapter()
+                    launch:saveChapter()
                 end
             end
             if not launch then
@@ -257,7 +256,7 @@ function Title:render()
 end
 
 function freshGame(difficulty)
-    return Game:new(Chapter:new('1-1', difficulty))
+    return Chapter:new('1-1', difficulty)
 end
 
 -- Initialize window and launch game
@@ -309,27 +308,26 @@ function love.update(dt)
 
         -- Update game or title screen if game hasn't started
         if game and title then
-            print(transition_t)
-            transition_t = transition_t + dt
+            transition_t = transition_t + FRAME_DUR
             if transition_t >= 3.5 then
                 title = nil
             end
         elseif game then
             -- Update chapter state, map, and all sprites in chapter
-            local signal = game.chapter:update(FRAME_DUR)
+            local signal = game:update(FRAME_DUR)
 
             -- Detect and handle chapter change or reload
             if signal == RELOAD_BATTLE then
-                game.chapter = game.chapter:loadSave(BATTLE_SAVE)
+                game = game:loadSave(BATTLE_SAVE)
             elseif signal == RELOAD_CHAPTER then
-                game.chapter = game.chapter:loadSave(CHAPTER_SAVE)
+                game = game:loadSave(CHAPTER_SAVE)
             end
         else
             game = title:update(FRAME_DUR)
             if game then
                 love.keyboard.keysPressed = {}
                 love.keyboard.keysReleased = {}
-                game.chapter:update(FRAME_DUR) 
+                game:update(FRAME_DUR) 
             end
         end
         t = t - FRAME_DUR
@@ -350,14 +348,14 @@ function love.draw()
             title:render()
         elseif transition_t > 3 and transition_t < 3.5 then
             bb_alpha = 1 - (transition_t - 3) / 0.5
-            game.chapter:render()
+            game:render()
         end
         love.graphics.push('all')
         love.graphics.setColor(0, 0, 0, bb_alpha)
         love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH / ZOOM, VIRTUAL_HEIGHT / ZOOM)
         love.graphics.pop()
     elseif game then
-        game.chapter:render()
+        game:render()
     else
         title:render()
     end

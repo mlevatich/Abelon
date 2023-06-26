@@ -10,9 +10,8 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- Fix bug where fade from title takes way too long sometimes. Close #16
-- Factor out Game.lua
 - #33: change Chapter -> Game, add nextChapter functionality
+- Close #16
 - #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu.
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass.
 
