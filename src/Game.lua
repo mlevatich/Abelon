@@ -12,36 +12,31 @@ end
 
 function Game:loadSave(path, quick, fresh)
 
-    -- Store settings
-    local c = self.chapter
-    local set_ta = c.turn_autoend
-    local set_mv = c.music_volume
-    local set_sv = c.sfx_volume
-    local set_tv = c.text_volume
-
     -- Load file
     local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. path)
-    self.chapter = res[1]
-    self.chapter:setSfxVolume(self.chapter.sfx_volume)
-    -- self.chapter:setTextVolume(self.chapter.text_volume)
-    self.chapter.scene_inputs = {}
-    self.chapter.battle_inputs = {}
+    local c = res[1]
+    c:setSfxVolume(self.chapter.sfx_volume)
+    -- c:setTextVolume(self.chapter.text_volume)
+    c.scene_inputs = {}
+    c.battle_inputs = {}
     if quick then
         os.remove('abelon/' .. SAVE_DIRECTORY .. path)
     else
-        self.chapter:autosave(true)
-        if self.chapter.battle then
-            self.chapter.battle:openBattleStartMenu()
+        c:autosave(true)
+        if c.battle then
+            c.battle:openBattleStartMenu()
         end
     end
 
-    -- Restore settings
+    -- When hot-reloading an earlier save, preserve some settings
     if not fresh then
-        self.chapter.turn_autoend = set_ta
-        self.chapter.music_volume = set_mv
-        self.chapter.sfx_volume   = set_sv
-        self.chapter.text_volume  = set_tv
-        self.chapter:setSfxVolume(set_sv)
-        -- self.chapter:setTextVolume(set_tv)
+        c.turn_autoend = self.chapter.turn_autoend
+        c.music_volume = self.chapter.music_volume
+        c.sfx_volume   = self.chapter.sfx_volume
+        c.text_volume  = self.chapter.text_volume
+        c:setSfxVolume(self.chapter.sfx_volume)
+        -- c:setTextVolume(self.chapter.text_volume)
     end
+
+    self.chapter = c
 end
