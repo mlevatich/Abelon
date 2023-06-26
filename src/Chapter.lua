@@ -563,14 +563,12 @@ function Chapter:render()
     -- Apply lighting
     self.current_map:renderLighting()
 
-    love.graphics.origin()
-    love.graphics.scale(1 / ZOOM)
-
     -- Fade in/out
-    love.graphics.setColor(0, 0, 0, 1 - self.alpha)
-    love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-
+    love.graphics.origin()
+    drawFade(1 - self.alpha)
+    
     -- Render battle overlay
+    love.graphics.scale(1 / ZOOM)
     if self.battle then
         self.battle:renderOverlay()
     end

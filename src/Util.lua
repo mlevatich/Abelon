@@ -44,6 +44,13 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     return frames
 end
 
+function drawFade(alpha)
+    love.graphics.push('all')
+    love.graphics.setColor(0, 0, 0, alpha)
+    love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH / ZOOM, VIRTUAL_HEIGHT / ZOOM)
+    love.graphics.pop()
+end
+
 function printChar(s, x, y, rot)
     love.graphics.print(s, x, y, rot)
 end

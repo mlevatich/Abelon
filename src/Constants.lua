@@ -14,6 +14,8 @@ TILE_HEIGHT = 32
 ZOOM           = 1.4
 VIRTUAL_WIDTH  = 864
 VIRTUAL_HEIGHT = 486
+ZOOM_WIDTH     = VIRTUAL_WIDTH  / ZOOM
+ZOOM_HEIGHT    = VIRTUAL_HEIGHT / ZOOM
 
 -- Video data
 FPS_TARGET = 60
@@ -31,7 +33,9 @@ END_CHAPTER    = 2
 
 -- Text variables
 FONT           = 'VT323-Regular'
+FONT_FILE      = 'graphics/fonts/' .. FONT .. '.ttf'
 FONT_SIZE      = 16
+TITLE_FONT_SIZE = 40
 PORTRAIT_SIZE  = 120
 BOX_MARGIN     = 20
 TEXT_MARGIN_X  = -7
@@ -205,6 +209,10 @@ HIGH = 1
 -- Misc
 PRESENT_DISTANCE = 4
 GROUND_DEPTH = 6
+T_BYLINE = 4.5
+M_GAME = 0
+M_DIFF = 1
+M_CONF = 2
 
 -- Trigger vars
 DELETE = '__del__'

@@ -1,16 +1,15 @@
-class = require 'lib.middleclass'
-push = require 'lib.push'
-binser = require 'lib.binser'
-
 -- Seed RNG
 math.randomseed(os.time())
 
 -- Make upscaling look pixelated instead of blurry
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
+-- Libs
+class  = require 'lib.middleclass'
+push   = require 'lib.push'
+binser = require 'lib.binser'
 require 'src.Util'
 require 'src.Constants'
-
 require 'src.Chapter'
 require 'src.Skill'
 require 'src.Menu'
@@ -18,7 +17,6 @@ require 'src.Sprite'
 require 'src.Player'
 require 'src.Map'
 require 'src.Battle'
-
 
 -- Register classes so they're serializable
 -- Don't serialize Music, preloaded
@@ -38,251 +36,31 @@ binser.register(GridSpace)
 binser.register(Battle)
 binser.register(Chapter)
 
+-- Game object, Title Screen object
 local game = nil
 local title = nil
-local t = 0.0
-local transition_t = 0.0
 
-Title = class('Title')
+-- total time, frame time
+local t = 0
+local per_frame_t = 0
 
-local T_BYLINE = 4.5
-local TITLE_FONT_SIZE = 40
-local SUBFONT_SIZE = 18
-
-local SELECT_GAME = 0
-local SELECT_DIFF = 1
-local SELECT_CONFIRM = 2
-
--- Initialize title sequence
-function Title:initialize(font_file)
-
-    -- Time passed since initialized
-    self.t = 0
-
-    -- Fonts
-    self.titlefont = love.graphics.newFont(font_file, TITLE_FONT_SIZE)
-    self.subfont = love.graphics.newFont(font_file, SUBFONT_SIZE)
-
-    -- Menu state
-    self.state = SELECT_GAME
-    self.cursor = 0
-    self.difficulty = NORMAL
-
-    -- Detect existing saved game
-    self.save = nil
-    if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
-        self.save = freshGame(self.difficulty)
-        self.save = self.save:loadSave(QUICK_SAVE, true, true)
-    elseif love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
-        self.save = freshGame(self.difficulty)
-        self.save = self.save:loadSave(AUTO_SAVE, false, true)
-    end
-end
-
-function Title:update(dt)
-
-    -- Are we launching the game after this update?
-    local launch = nil
-
-    -- Update time
-    self.t = self.t + dt
-
-    -- Ignore keyboard inputs until the byline is finished
-    if self.t > T_BYLINE + 1 then
-
-        -- How many cursor options?
-        local n = 2
-        if self.state == SELECT_GAME and not self.save then
-            n = 1
-        elseif self.state == SELECT_DIFF then
-            n = 3
-        end
-
-        -- Get keyboard inputs
-        local f    = love.keyboard.wasPressed('f')
-        local d    = love.keyboard.wasPressed('d')
-        local up   = love.keyboard.wasPressed('up')
-        local down = love.keyboard.wasPressed('down')
-
-        -- Process inputs
-        if f then
-            
-            -- Process 'select'
-            if self.state == SELECT_GAME then
-                if self.save and self.cursor == 0 then
-                    launch = self.save
-                else
-                    self.state = SELECT_DIFF
-                end
-            elseif self.state == SELECT_DIFF then
-                self.difficulty = self.cursor + 1
-                if not self.save then
-                    launch = freshGame(self.difficulty)
-                    launch:saveChapter()
-                else
-                    self.state = SELECT_CONFIRM
-                end
-            else
-                if self.cursor == 0 then
-                    self.state = SELECT_DIFF
-                else
-                    launch = freshGame(self.difficulty)
-                    launch:saveChapter()
-                end
-            end
-            if not launch then
-                self.cursor = 0
-            end
-
-        elseif d then
-
-            -- Process 'go back'
-            self.cursor = 0
-            if self.state == SELECT_CONFIRM then
-                self.state = SELECT_DIFF
-            else
-                self.state = SELECT_GAME
-            end
-
-        -- Process cursor hover
-        elseif down and not up then
-            self.cursor = (self.cursor + 1) % n
-        elseif up and not down then
-            self.cursor = (self.cursor + n - 1) % n
-        end
-    end
-    return launch
-end
-
-function Title:render()
-
-    -- Render either byline or title menu, depending on time passed
-    if self.t < T_BYLINE then
-
-        -- Render byline
-        local s = "A game by Max Levatich"
-        local x = (VIRTUAL_WIDTH / ZOOM) / 2 - (#s / 2 * CHAR_WIDTH)
-        local y = (VIRTUAL_HEIGHT / ZOOM) / 2 - FONT_SIZE / 2
-        local alpha = 1
-        if self.t < T_BYLINE / 3 then
-            alpha = 1 - (T_BYLINE / 3 - self.t) / (T_BYLINE / 3)
-        elseif self.t > T_BYLINE * 2 / 3 then
-            alpha = 1 - (self.t - T_BYLINE * 2 / 3) / (T_BYLINE / 3)
-        end
-        love.graphics.push('all')
-        love.graphics.setColor(1, 1, 1, alpha)
-        renderString(s, x, y, true)
-        love.graphics.pop()
-    else
-
-        -- Render title background
-        -- TODO
-
-        -- Render game title
-        local s = "ABELON"
-        local w = TITLE_FONT_SIZE + TEXT_MARGIN_X
-        local x = (VIRTUAL_WIDTH / ZOOM) / 2 - (#s / 2 * w) + 9
-        love.graphics.push('all')
-        love.graphics.setColor(unpack(WHITE))
-        love.graphics.setFont(self.titlefont)
-        for i = 1, #s do
-            printChar(s:sub(i, i), x + w * (i - 1), (VIRTUAL_HEIGHT / ZOOM) / 5)
-        end
-        love.graphics.pop()
-
-        -- Render controls
-        local s1 = "Use the arrow keys to navigate"
-        local s2 = "Press F to confirm"
-        local s3 = "Press D to go back"
-        love.graphics.push('all')
-        love.graphics.scale(1 / ZOOM)
-        love.graphics.setFont(self.subfont)
-        renderString(s1, HALF_MARGIN, HALF_MARGIN)
-        renderString(s2, HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT)
-        renderString(s3, HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2)
-
-        -- Render menu options
-        local vh = VIRTUAL_HEIGHT / 2
-        local vw = VIRTUAL_WIDTH / 2
-        local xCenter = function(s)
-            return vw - CHAR_WIDTH * #s / 2 + 3
-        end
-        if self.state == SELECT_GAME then
-            local s1, s2 = 'Continue', 'New game'
-            if self.save then
-                renderString('Continue', xCenter(s1), vh + 50)
-                renderString('New game', xCenter(s2), vh + 90)
-            else
-                renderString('New game', xCenter(s2), vh + 70)
-            end
-        elseif self.state == SELECT_DIFF then
-            local s1 = 'Select a difficulty level'
-            local s2, s3, s4 = 'Normal', 'Adept ', 'Master'
-            renderString(s1, xCenter(s1), vh - 30)
-            renderString(s2, xCenter(s2), vh + 30)
-            renderString(s3, xCenter(s3), vh + 70)
-            renderString(s4, xCenter(s4), vh + 110)
-        else
-            local s1 = 'Are you sure? This will OVERWRITE your existing saved game!'
-            local s2, s3 = 'No ', 'Yes'
-            renderString(s1, xCenter(s1), vh - 30)
-            renderString(s2, xCenter(s2), vh + 50)
-            renderString(s3, xCenter(s3), vh + 90)
-        end
-        
-        -- Render cursor
-        if self.t > T_BYLINE + 1 then
-            if self.state == SELECT_GAME then
-                if self.save then
-                    renderString('>', xCenter('Continue') - 20, vh + 50 + self.cursor * 40)
-                else
-                    renderString('>', xCenter('Continue') - 20, vh + 70)
-                end
-            elseif self.state == SELECT_DIFF then
-                renderString('>', xCenter('Normal') - 20, vh + 30 + self.cursor * 40)
-            else
-                renderString('>', xCenter('Yes') - 20, vh + 50 + self.cursor * 40)
-            end
-        end
-        love.graphics.pop()
-
-        -- Render fade in
-        local bb_alpha = math.max(0, 1 - (self.t - T_BYLINE))
-        love.graphics.push('all')
-        love.graphics.setColor(0, 0, 0, bb_alpha)
-        love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH / ZOOM, VIRTUAL_HEIGHT / ZOOM)
-        love.graphics.pop()
-    end
-end
-
-function freshGame(difficulty)
-    return Chapter:new('1-1', difficulty)
-end
-
--- Initialize window and launch game
+-- Initialize window and start game
 function love.load()
 
-    -- Set up a screen with the virtual width and height
-    local WINDOW_WIDTH, WINDOW_HEIGHT = love.window.getDesktopDimensions()
-    push:setupScreen(
-        VIRTUAL_WIDTH / ZOOM,
-        VIRTUAL_HEIGHT / ZOOM,
-        1280,
-        720,
-        { fullscreen = false, resizable = true }
-    )
+    -- Set up a window with the virtual width and height
+    local WW, WH = love.window.getDesktopDimensions()
+    push:setupScreen(ZOOM_WIDTH, ZOOM_HEIGHT, 1280, 720, {fullscreen=false, resizable=true})
     love.window.setTitle('Abelon')
 
-    -- Font used by LOVE's text engine
-    local font_file = 'graphics/fonts/' .. FONT .. '.ttf'
-    love.graphics.setFont(love.graphics.newFont(font_file, FONT_SIZE))
+    -- Set font
+    love.graphics.setFont(love.graphics.newFont(FONT_FILE, FONT_SIZE))
 
     -- Storing keypresses
     love.keyboard.keysPressed = {}
     love.keyboard.keysReleased = {}
 
-    -- Go!
-    title = Title:new(font_file)
+    -- Begin with title screen
+    title = Title:new()
 end
 
 -- Resize game window
@@ -304,35 +82,31 @@ end
 function love.update(dt)
 
     t = t + dt
-    if t >= FRAME_DUR then
+    per_frame_t = per_frame_t + dt
+    if per_frame_t >= FRAME_DUR then
 
-        -- Update game or title screen if game hasn't started
+        -- If in transition, check when we're finished with title
         if game and title then
-            transition_t = transition_t + FRAME_DUR
-            if transition_t >= 3.5 then
+            if t - title.t_launch >= 3.5 then
                 title = nil
             end
-        elseif game then
-            -- Update chapter state, map, and all sprites in chapter
-            local signal = game:update(FRAME_DUR)
 
-            -- Detect and handle chapter change or reload
+        -- Update game and hot-reload a save if requested
+        elseif game then
+            local signal = game:update(FRAME_DUR)
             if signal == RELOAD_BATTLE then
                 game = game:loadSave(BATTLE_SAVE)
             elseif signal == RELOAD_CHAPTER then
                 game = game:loadSave(CHAPTER_SAVE)
             end
-        else
-            game = title:update(FRAME_DUR)
-            if game then
-                love.keyboard.keysPressed = {}
-                love.keyboard.keysReleased = {}
-                game:update(FRAME_DUR) 
-            end
-        end
-        t = t - FRAME_DUR
 
-        -- reset all keys pressed and released this frame
+        -- Update title screen, possibly launching game
+        else
+            title:update()
+        end
+        per_frame_t = per_frame_t - FRAME_DUR
+
+        -- Reset all keys pressed and released this frame
         love.keyboard.keysPressed = {}
         love.keyboard.keysReleased = {}
     end
@@ -340,24 +114,226 @@ end
 
 -- Render game or title to screen each frame using virtual resolution from push
 function love.draw()
+    
+    -- If in transition, fade from title render into game render
     push:apply('start')
     if game and title then
-        local bb_alpha = 1
-        if transition_t < 2 then
-            bb_alpha = 1 - (2 - transition_t) / 2
+        local alpha = 1
+        local dt = t - title.t_launch
+        if dt < 2 then
+            alpha = 1 - (2 - dt) / 2
             title:render()
-        elseif transition_t > 3 and transition_t < 3.5 then
-            bb_alpha = 1 - (transition_t - 3) / 0.5
+        elseif dt > 3 then
+            alpha = math.max(0, 1 - (dt - 3) / 0.5)
             game:render()
         end
-        love.graphics.push('all')
-        love.graphics.setColor(0, 0, 0, bb_alpha)
-        love.graphics.rectangle('fill', 0, 0, VIRTUAL_WIDTH / ZOOM, VIRTUAL_HEIGHT / ZOOM)
-        love.graphics.pop()
+        drawFade(alpha)
+
+    -- Otherwise render whichever of title or game is active
     elseif game then
         game:render()
     else
         title:render()
     end
     push:apply('end')
+end
+
+
+
+-- TITLE SCREEN CLASS
+Title = class('Title')
+
+-- Initialize title sequence
+function Title:initialize()
+
+    -- Fonts
+    local SUBFONT_SIZE = 18
+    self.titlefont = love.graphics.newFont(FONT_FILE, TITLE_FONT_SIZE)
+    self.subfont = love.graphics.newFont(FONT_FILE, SUBFONT_SIZE)
+
+    -- Menu state
+    self.state = M_GAME
+    self.cursor = 0
+    self.difficulty = NORMAL
+    self.t_launch = 0
+
+    -- Detect existing saved game
+    self.save = nil
+    if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
+        self.save = self:freshGame()
+        self.save = self.save:loadSave(QUICK_SAVE, true, true)
+    elseif love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
+        self.save = self:freshGame()
+        self.save = self.save:loadSave(AUTO_SAVE, false, true)
+    end
+end
+
+-- Create a brand new game context
+function Title:freshGame()
+    return Chapter:new('1-1', self.difficulty)
+end
+
+-- Initialize the game variable, starting the
+-- transition from title to game
+function Title:launchGame(from_save)
+    self.t_launch = t
+    love.keyboard.keysPressed = {}
+    love.keyboard.keysReleased = {}
+    if from_save then
+        game = from_save
+    else
+        game = self:freshGame()
+        game:saveChapter()
+    end
+    game:update(FRAME_DUR)
+end
+
+function Title:update()
+
+    -- Ignore keyboard inputs until the byline is finished
+    if t > T_BYLINE + 1 then
+
+        -- How many cursor options?
+        local n = ite(self.state == M_GAME and not self.save, 1, ite(self.state == M_DIFF, 3, 2))
+
+        -- Get keyboard inputs
+        local f    = love.keyboard.wasPressed('f')
+        local d    = love.keyboard.wasPressed('d')
+        local up   = love.keyboard.wasPressed('up')
+        local down = love.keyboard.wasPressed('down')
+
+        -- Process inputs
+        -- 'select'
+        if f then
+            if self.state == M_GAME then
+                if self.save and self.cursor == 0 then
+                    return self:launchGame(self.save)
+                else
+                    self.state = M_DIFF
+                end
+            elseif self.state == M_DIFF then
+                self.difficulty = self.cursor + 1
+                if not self.save then
+                    return self:launchGame()
+                else
+                    self.state = M_CONF
+                end
+            else
+                if self.cursor == 0 then
+                    self.state = M_DIFF
+                else
+                    return self:launchGame()
+                end
+            end
+            self.cursor = 0
+
+        -- 'go back'
+        elseif d then
+            self.cursor = 0
+            self.state = ite(self.state == M_CONF, M_DIFF, M_GAME)
+
+        -- Cursor up
+        elseif down and not up then
+            self.cursor = (self.cursor + 1) % n
+
+        -- Cursor down
+        elseif up and not down then
+            self.cursor = (self.cursor + n - 1) % n
+        end
+    end
+end
+
+function Title:render()
+
+    -- Render either byline or title menu, depending on time passed
+    if t < T_BYLINE then
+
+        -- Render fade-in byline
+        local s = "A game by Max Levatich"
+        local x = ZOOM_WIDTH / 2 - (#s / 2 * CHAR_WIDTH)
+        local y = ZOOM_HEIGHT / 2 - FONT_SIZE / 2
+        local alpha = 0
+        if t < T_BYLINE / 3 then
+            alpha = (T_BYLINE / 3 - t) / (T_BYLINE / 3)
+        elseif t > T_BYLINE * 2 / 3 then
+            alpha = (t - T_BYLINE * 2 / 3) / (T_BYLINE / 3)
+        end
+        renderString(s, x, y)
+        drawFade(alpha)
+    else
+
+        -- Render title background
+        -- TODO
+
+        -- Render game title
+        local s = "ABELON"
+        local w = TITLE_FONT_SIZE + TEXT_MARGIN_X
+        local x = ZOOM_WIDTH / 2 - (#s / 2 * w) + 9
+        love.graphics.push('all')
+        love.graphics.setColor(unpack(WHITE))
+        love.graphics.setFont(self.titlefont)
+        for i = 1, #s do
+            printChar(s:sub(i, i), x + w * (i - 1), ZOOM_HEIGHT / 5)
+        end
+        love.graphics.pop()
+
+        -- Render controls
+        local s1 = "Use the arrow keys to navigate"
+        local s2 = "Press F to confirm"
+        local s3 = "Press D to go back"
+        love.graphics.push('all')
+        love.graphics.scale(1 / ZOOM)
+        love.graphics.setFont(self.subfont)
+        renderString(s1, HALF_MARGIN, HALF_MARGIN)
+        renderString(s2, HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT)
+        renderString(s3, HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2)
+
+        -- Render menu options
+        local vh = VIRTUAL_HEIGHT / 2
+        local vw = VIRTUAL_WIDTH / 2
+        local xCenter = function(s)
+            return vw - CHAR_WIDTH * #s / 2 + 3
+        end
+        if self.state == M_GAME then
+            local s1, s2 = 'Continue', 'New game'
+            if self.save then
+                renderString(s1, xCenter(s1), vh + 50)
+                renderString(s2, xCenter(s2), vh + 90)
+            else
+                renderString(s2, xCenter(s2), vh + 70)
+            end
+        elseif self.state == M_DIFF then
+            local s1 = 'Select a difficulty level'
+            local s2, s3, s4 = 'Normal', 'Adept ', 'Master'
+            renderString(s1, xCenter(s1), vh - 30)
+            renderString(s2, xCenter(s2), vh + 30)
+            renderString(s3, xCenter(s3), vh + 70)
+            renderString(s4, xCenter(s4), vh + 110)
+        else
+            local s1 = 'Are you sure? This will OVERWRITE your existing saved game!'
+            local s2, s3 = 'No ', 'Yes'
+            renderString(s1, xCenter(s1), vh - 30)
+            renderString(s2, xCenter(s2), vh + 50)
+            renderString(s3, xCenter(s3), vh + 90)
+        end
+        
+        -- Render cursor
+        if t > T_BYLINE + 1 then
+            if self.state == M_GAME then
+                if self.save then
+                    renderString('>', xCenter('Continue') - 20, vh + 50 + self.cursor * 40)
+                else
+                    renderString('>', xCenter('Continue') - 20, vh + 70)
+                end
+            elseif self.state == M_DIFF then
+                renderString('>', xCenter('Normal') - 20, vh + 30 + self.cursor * 40)
+            else
+                renderString('>', xCenter('Yes') - 20, vh + 50 + self.cursor * 40)
+            end
+        end
+        love.graphics.pop()
+
+        -- Render fade-in
+        drawFade(math.max(0, 1 - (t - T_BYLINE)))
+    end
 end
