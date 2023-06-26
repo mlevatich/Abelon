@@ -86,7 +86,6 @@ function Chapter:initialize(id, difficulty)
     -- Read into the above fields from chapter file
     self.signal = nil
     self:load()
-    self:saveChapter()
 end
 
 function Chapter:autosave()

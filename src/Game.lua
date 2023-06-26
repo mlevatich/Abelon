@@ -10,16 +10,14 @@ function Game:initialize(chapter)
     self.chapter = chapter
 end
 
-function Game:loadSave(path, quick)
+function Game:loadSave(path, quick, fresh)
 
     -- Store settings
     local c = self.chapter
-    if c then
-        set_ta = c.turn_autoend
-        set_mv = c.music_volume
-        set_sv = c.sfx_volume
-        set_tv = c.text_volume
-    end
+    local set_ta = c.turn_autoend
+    local set_mv = c.music_volume
+    local set_sv = c.sfx_volume
+    local set_tv = c.text_volume
 
     -- Load file
     local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. path)
@@ -38,7 +36,7 @@ function Game:loadSave(path, quick)
     end
 
     -- Restore settings
-    if c then
+    if not fresh then
         self.chapter.turn_autoend = set_ta
         self.chapter.music_volume = set_mv
         self.chapter.sfx_volume   = set_sv

@@ -67,16 +67,16 @@ function Title:initialize(font_file)
     -- Menu state
     self.state = SELECT_GAME
     self.cursor = 0
-    self.difficulty = nil
+    self.difficulty = NORMAL
 
     -- Detect existing saved game
     self.save = nil
     if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
-        self.save = Game:new(nil)
-        self.save:loadSave(QUICK_SAVE, true)
+        self.save = freshGame(self.difficulty)
+        self.save:loadSave(QUICK_SAVE, true, true)
     elseif love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
-        self.save = Game:new(nil)
-        self.save:loadSave(AUTO_SAVE)
+        self.save = freshGame(self.difficulty)
+        self.save:loadSave(AUTO_SAVE, false, true)
     end
 end
 
@@ -119,6 +119,7 @@ function Title:update(dt)
                 self.difficulty = self.cursor + 1
                 if not self.save then
                     launch = freshGame(self.difficulty)
+                    launch.chapter:saveChapter()
                 else
                     self.state = SELECT_CONFIRM
                 end
@@ -127,6 +128,7 @@ function Title:update(dt)
                     self.state = SELECT_DIFF
                 else
                     launch = freshGame(self.difficulty)
+                    launch.chapter:saveChapter()
                 end
             end
             if not launch then
