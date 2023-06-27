@@ -226,6 +226,15 @@ function Game:playerNearSprite(sp_id)
     return false
 end
 
+function Game:nextChapter()
+    local ch = tonumber(self.chapter_id:sub(3,3))
+    if ch == 7 then
+        self.chapter_id = ite(self.chapter_id:sub(1,1) == '1', '2-1', 'epilogue')
+    else
+        self.chapter_id = self.chapter_id:sub(1,2) .. tostring(ch + 1)
+    end
+end
+
 function Game:setDifficulty(d)
     local old = self.difficulty
     self.difficulty = d
