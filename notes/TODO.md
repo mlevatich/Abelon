@@ -10,19 +10,19 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- #48: Tutorial information should appear on the right side of the screen, in the middle. Tutorial paragraphs are given in the script. They are also accessible from the settings menu in a "tutorial" menu.
-- #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass.
+- #48: Add tutorials as right side hoverboxes with specific triggers, add to inventory after they disappear.
+
+- #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
+- Music fade is quieter than it should be
 
 - Scroll and journal
-- Object in the way that Abelon must interact with in east forest
-- Music fade is quieter than it should be
-- Finish script 1-2
-
 - Adjust road, add campsite, stone reliefs
 - Lester-sleep, Shanti-sleep, Kath-sleep
 - Abelon-combat-entry-exit, Abelon-combat-idle
 - Elaine-downed, Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup
 
+- Object in the way that Abelon must interact with in east forest
+- Finish script 1-2
 - #69: Implement 1-1 and 1-2 script, 1-3 transition kicks back to title
 
 ## Near

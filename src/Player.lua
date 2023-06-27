@@ -38,6 +38,10 @@ function Player:initialize(sp)
     -- Abelon's party and the names he knows
     self.party = { self.sp }
     self.introduced = {}
+    self.old_tutorials = {
+        'Navigating the world', 'Battle: The basics',
+        'Battle: Turns', 'Battle: Assists', 'Battle: Ignea', 'Battle: Attributes'
+    }
 
     -- Abelon can open menus
     self.open_menu = nil
@@ -144,6 +148,36 @@ function Player:mkDifficultyMenu()
     }, 'View and lower difficulty level')
 end
 
+function Player:mkTutorialsMenu()
+    local items = {}
+    for i = 1, #self.old_tutorials do
+        local n = self.old_tutorials[i]
+        local eles = {}
+        local row = 0
+        for j = 1, #TUTORIALS[n] do
+            local s = TUTORIALS[n][j]
+            if n == 'Battle: Ignea' and j == 3 then
+                local sd, sp = "Master", "no Ignea"
+                if self.sp.game.difficulty == ADEPT then
+                    sd = "Adept"
+                    sp = "25% of each ally's maximum Ignea"
+                elseif self.sp.game.difficulty == NORMAL then
+                    sd = "Normal"
+                    sp = "50% of each ally's maximum Ignea"
+                end
+                s = string.format(s, sd, sp)
+            end
+            local lines, _ = splitByCharLimit(s, 89)
+            eles[#eles + 1] = mkEle('text', lines, HALF_MARGIN, 
+                HALF_MARGIN + row * LINE_HEIGHT, nil, true)
+            row = row + #lines + 1
+        end
+        local hbox = { ['w'] = VIRTUAL_WIDTH - BOX_MARGIN * 2, ['elements'] = eles }
+        items[#items + 1] = MenuItem:new(n, {}, "", hbox)
+    end
+    return MenuItem:new('Tutorials', items, 'View old tutorials')
+end
+
 function Player:mkSettingsMenu()
     local sv = function(k, v)
         return function(c)
@@ -206,8 +240,9 @@ function Player:mkSettingsMenu()
                 end
             )
         }, 'Change turn ending behavior in battle'),
-        self:mkDifficultyMenu()
-    }, 'View settings and information')
+        self:mkDifficultyMenu(),
+        self:mkTutorialsMenu()
+    }, 'View settings and tutorials')
 end
 
 function Player:acquire(sp)
