@@ -93,7 +93,7 @@ end
 
 function Player:mkDifficultyMenu()
     local setD = function(d)
-        if self:getChapter().difficulty > d then
+        if self:getGame().difficulty > d then
             return function(c, m)
                 c:setDifficulty(d)
 
@@ -243,9 +243,9 @@ end
 function Player:interact()
 
     -- Look through active sprites
-    local chapter = self:getChapter()
+    local game = self:getGame()
     local target = nil
-    for _, sp in ipairs(chapter:getActiveSprites()) do
+    for _, sp in ipairs(game:getActiveSprites()) do
 
         -- If sprite is close, interactive, and not the player, it's valid
         if sp:isInteractive() and
@@ -256,9 +256,9 @@ function Player:interact()
         end
     end
 
-    -- Start this chapter's interaction with the found sprite
+    -- Start interaction with the found sprite
     if target then
-        chapter:interactWith(target)
+        game:interactWith(target)
     end
 end
 
@@ -350,7 +350,7 @@ function Player:sceneMode()
     local f = love.keyboard.wasPressed('f')
 
     -- Advance scene based on keypresses
-    self:getChapter():sceneInput(f, u, d)
+    self:getGame():sceneInput(f, u, d)
 end
 
 function Player:battleMode()
@@ -364,7 +364,7 @@ function Player:battleMode()
     local d = love.keyboard.wasPressed('d')
 
     -- Interface with battle based on keypresses
-    self:getChapter():battleInput(up, down, left, right, f, d)
+    self:getGame():battleInput(up, down, left, right, f, d)
 end
 
 function Player:browseMode()
@@ -383,7 +383,7 @@ function Player:browseMode()
     elseif d then
         done = self.open_menu:back()
     elseif f then
-        self.open_menu:forward(self:getChapter())
+        self.open_menu:forward(self:getGame())
     elseif up ~= down then
         self.open_menu:hover(ite(up, UP, DOWN))
     end
@@ -419,7 +419,7 @@ function Player:getDepth() return self.sp:getDepth() end
 function Player:getDimensions() return self.sp:getDimensions() end
 function Player:getImpression() return self.sp:getImpression() end
 function Player:getAwareness() return self.sp:getAwareness() end
-function Player:getChapter() return self.sp:getChapter() end
+function Player:getGame() return self.sp:getGame() end
 function Player:isInteractive() return self.sp:isInteractive() end
 function Player:isBlocking() return self.sp:isBlocking() end
 function Player:getHitboxRect() return self.sp:getHitboxRect() end

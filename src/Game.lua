@@ -21,15 +21,15 @@ require 'src.Triggers'
 require 'src.Script'
 require 'src.Battle'
 
-Chapter = class('Chapter')
+Game = class('Game')
 
 -- Constructor for our scenario object
-function Chapter:initialize(id, difficulty)
+function Game:initialize(difficulty)
 
     -- Store id
-    self.id = id
+    self.chapter_id = '1-1'
 
-    -- Camera that follows coordinates of player sprite around the chapter
+    -- Camera that follows coordinates of player sprite around
     self.camera_x = 0
     self.camera_y = 0
     self.camera_speed = 300
@@ -61,16 +61,15 @@ function Chapter:initialize(id, difficulty)
     self.flash_rate = 0
     self.flash_msg = nil
 
-    -- Sprites in this chapter
+    -- Sprites
     self.sprites = {}
     self.player = nil
 
     -- Difficulty level
     self.difficulty = difficulty
 
-    -- State of a chapter a dictionary of strings that correspond to different
-    -- chapter events and determine quest progress, cinematic triggers, and
-    -- sprite locations
+    -- Dictionary of strings that correspond to different state flags, signifying
+    -- that some particular event or dialogue response happened
     self.state = {}
 
     -- Tracking the scene the player is currently in
@@ -83,46 +82,46 @@ function Chapter:initialize(id, difficulty)
     self.battle = nil
     self.battle_inputs = {}
 
-    -- Read into the above fields from chapter file
+    -- Read into the above fields from world file
     self.signal = nil
-    self:load()
+    self:loadFresh()
 end
 
-function Chapter:autosave()
+function Game:autosave()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. AUTO_SAVE, self)
 end
 
-function Chapter:quicksave()
+function Game:quicksave()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. QUICK_SAVE, self)
     love.event.quit(0)
 end
 
-function Chapter:saveBattle()
+function Game:saveBattle()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. BATTLE_SAVE, self)
     self:autosave()
 end
 
-function Chapter:saveChapter()
+function Game:saveChapter()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. CHAPTER_SAVE, self)
     self:autosave()
 end
 
-function Chapter:saveAndQuit()
+function Game:saveAndQuit()
     self:autosave()
     love.event.quit(0)
 end
 
-function Chapter:reloadBattle()
+function Game:reloadBattle()
     self.signal = RELOAD_BATTLE
     self:stopMusic()
 end
 
-function Chapter:reloadChapter()
+function Game:reloadChapter()
     self.signal = RELOAD_CHAPTER
     self:stopMusic()
 end
 
-function Chapter:loadSave(path, quick, fresh)
+function Game:loadSave(path, quick, fresh)
 
     -- Load file
     local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. path)
@@ -153,14 +152,14 @@ function Chapter:loadSave(path, quick, fresh)
     return c
 end
 
--- Read information about sprites and scenes for this chapter
-function Chapter:load()
+-- Read a fresh game state from the world file
+function Game:loadFresh()
 
     -- Read lines into list
     local chap_file = 'Abelon/data/world.txt'
     local lines = readLines(chap_file)
 
-    -- Iterate over lines of chapter file
+    -- Iterate over lines of file
     local audio_sources = {}
     local current_map_name = nil
     for i=1, #lines do
@@ -173,7 +172,7 @@ function Chapter:load()
             local map_name, song_name = fields[1], fields[2]
             current_map_name = map_name
 
-            -- Initialize map and tie it to chapter
+            -- Initialize map and tie it to game context
             self.maps[map_name] = Map:new(map_name, self)
 
             -- Maps sharing a music track share a pointer to the audio
@@ -183,13 +182,13 @@ function Chapter:load()
         elseif lines[i]:sub(1,1) == '~' then
 
             -- Collect sprite info from file.
-            -- Spawn sprite in map and add it to chapter's sprites
+            -- Spawn sprite in map and add it to sprites
             local fields = split(lines[i]:sub(2))
             local sp = self.maps[current_map_name]:spawnSprite(fields, self)
             self.sprites[sp:getId()] = sp
 
             -- If the sprite is the player character, we make the current map
-            -- into the chapter's starting map, and initialize a player object
+            -- into the starting map, and initialize a player object
             if fields[5] and fields[5] == 'P' then
                 self.current_map = self.maps[current_map_name]
                 self.player = Player:new(sp)
@@ -202,28 +201,21 @@ function Chapter:load()
     self:startMapMusic()
 end
 
--- End the current chapter and save what happened in it
-function Chapter:endChapter()
-
-    -- Stop music
-    self:stopMusic()
-end
-
--- Return all sprite objects belonging to the chapter's active map
-function Chapter:getActiveSprites()
+-- Return all sprite objects belonging to the active map
+function Game:getActiveSprites()
     return self.current_map:getSprites()
 end
 
-function Chapter:getSprite(sp_id)
+function Game:getSprite(sp_id)
     return self.sprites[sp_id]
 end
 
--- Return the active map belonging to this chapter
-function Chapter:getMap()
+-- Return the active map
+function Game:getMap()
     return self.current_map
 end
 
-function Chapter:playerNearSprite(sp_id)
+function Game:playerNearSprite(sp_id)
     local x, y = self.player.sp:getPosition()
     local sp = self.current_map:getSprite(sp_id)
     if sp then
@@ -234,52 +226,52 @@ function Chapter:playerNearSprite(sp_id)
     return false
 end
 
-function Chapter:setDifficulty(d)
+function Game:setDifficulty(d)
     local old = self.difficulty
     self.difficulty = d
     if self.battle then self.battle:adjustDifficultyFrom(old) end
 end
 
-function Chapter:startMapMusic()
+function Game:startMapMusic()
     self.current_music = self.map_to_music[self.current_map:getName()]
 end
 
-function Chapter:stopMusic()
+function Game:stopMusic()
     if self.current_music then
         music_tracks[self.current_music]:stop()
     end
     self.current_music = nil
 end
 
-function Chapter:setMusicVolume(vol)
+function Game:setMusicVolume(vol)
     self.music_volume = vol
 end
 
-function Chapter:setSfxVolume(vol)
+function Game:setSfxVolume(vol)
     self.sfx_volume = vol
     for k, v in pairs(sfx) do if k ~= 'text' then v:setVolume(vol) end end
 end
 
-function Chapter:setTextVolume(vol)
+function Game:setTextVolume(vol)
     self.text_volume = vol
     sfx['text']:setVolume(vol)
 end
 
-function Chapter:flash(msg, rate)
+function Game:flash(msg, rate)
     self.flash_alpha = 0.001
     self.flash_rate = rate
     self.flash_msg = msg
 end
 
-function Chapter:launchBattle()
+function Game:launchBattle()
     self.current_scene = nil
-    self.battle = Battle:new(self.id, self.player, self)
+    self.battle = Battle:new(self.player, self)
     self:saveBattle()
     self.battle:openBattleStartMenu()
 end
 
 -- Store player inputs to a scene, to be processed on update
-function Chapter:battleInput(up, down, left, right, f, d)
+function Game:battleInput(up, down, left, right, f, d)
     self.battle_inputs = {
         ['up'] = up,
         ['down'] = down,
@@ -290,7 +282,7 @@ function Chapter:battleInput(up, down, left, right, f, d)
     }
 end
 
-function Chapter:healAll()
+function Game:healAll()
     for i = 1, #self.player.party do
         local sp = self.player.party[i]
         sp.health = (sp.attributes['endurance'] * 2)
@@ -298,7 +290,7 @@ function Chapter:healAll()
 end
 
 -- Start scene with the given scene id
-function Chapter:launchScene(s_id, returnToBattle)
+function Game:launchScene(s_id, returnToBattle)
     self.player:changeMode('scene')
     if not returnToBattle then
         self.player:changeBehavior('idle')
@@ -309,12 +301,12 @@ function Chapter:launchScene(s_id, returnToBattle)
 end
 
 -- Begin an interaction with the target sprite
-function Chapter:interactWith(target)
-    self:launchScene(self.id .. '-' .. target.id)
+function Game:interactWith(target)
+    self:launchScene(self.chapter_id .. '-' .. target.id)
 end
 
 -- Store player inputs to a scene, to be processed on update
-function Chapter:sceneInput(space, u, d)
+function Game:sceneInput(space, u, d)
 
     -- Spacebar means advance dialogue
     if space then
@@ -330,7 +322,7 @@ function Chapter:sceneInput(space, u, d)
 end
 
 -- Advance current scene and collect results from a finished scene
-function Chapter:updateScene(dt)
+function Game:updateScene(dt)
 
     -- Advance scene according to player input
     if self.scene_inputs['advance'] then
@@ -353,7 +345,7 @@ function Chapter:updateScene(dt)
 end
 
 -- Switch from one map to another when the player touches a transition tile
-function Chapter:performTransition()
+function Game:performTransition()
 
     -- New map
     local tr = self.in_transition
@@ -379,13 +371,13 @@ function Chapter:performTransition()
 end
 
 -- Fade in or out (depending on sign of fade rate)
-function Chapter:updateFade(dt)
+function Game:updateFade(dt)
     self.alpha = math.max(0, math.min(1, self.alpha + self.fade_rate * dt))
     self.flash_alpha = math.max(0, math.min(1, self.flash_alpha + self.flash_rate * dt))
 end
 
 -- Initiate, update, and perform map transitions
-function Chapter:updateTransition(transition)
+function Game:updateTransition(transition)
 
     -- When fade in is complete, transition is over
     if self.in_transition and self.alpha == 1 then
@@ -410,7 +402,7 @@ function Chapter:updateTransition(transition)
     end
 end
 
-function Chapter:updateFlash()
+function Game:updateFlash()
 
     if self.flash_msg and self.flash_alpha == 0 then
         self.flash_msg = nil
@@ -423,7 +415,7 @@ function Chapter:updateFlash()
 end
 
 -- Update the camera to center on the player but not cross the map edges
-function Chapter:updateCamera(dt)
+function Game:updateCamera(dt)
 
     -- Get camera bounds from map
     local pixel_width, pixel_height = self.current_map:getPixelDimensions()
@@ -479,8 +471,8 @@ function Chapter:updateCamera(dt)
     self.camera_y = math.max(0, math.min(new_y, cam_max_y))
 end
 
-function Chapter:checkSceneTriggers()
-    for k, v in pairs(scene_triggers[self.id]) do
+function Game:checkSceneTriggers()
+    for k, v in pairs(scene_triggers[self.chapter_id]) do
         if not self.seen[k] then
             local check = v(self)
             if check then
@@ -493,10 +485,10 @@ function Chapter:checkSceneTriggers()
     end
 end
 
--- Update all of the sprites and objects in a chapter
-function Chapter:update(dt)
+-- Update everything in the game
+function Game:update(dt)
 
-    -- Update the chapter's active map and sprites
+    -- Update the active map and sprites on it
     local new_transition = self.current_map:update(dt, self.player)
 
     -- Update current battle
@@ -534,9 +526,9 @@ function Chapter:update(dt)
     return self.signal
 end
 
--- Render the map and sprites of the chapter at the current position,
--- along with active scene
-function Chapter:render()
+-- Render the map and sprites at the current position,
+-- along with active scene or battle, and camera effects
+function Game:render()
 
     -- Move to the camera position
     love.graphics.translate(-self.camera_x, -self.camera_y)

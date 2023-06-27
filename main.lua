@@ -10,7 +10,7 @@ push   = require 'lib.push'
 binser = require 'lib.binser'
 require 'src.Util'
 require 'src.Constants'
-require 'src.Chapter'
+require 'src.Game'
 require 'src.Skill'
 require 'src.Menu'
 require 'src.Sprite'
@@ -34,7 +34,7 @@ binser.register(Player)
 binser.register(Map)
 binser.register(GridSpace)
 binser.register(Battle)
-binser.register(Chapter)
+binser.register(Game)
 
 -- Game object, Title Screen object
 local game = nil
@@ -170,7 +170,7 @@ end
 
 -- Create a brand new game context
 function Title:freshGame()
-    return Chapter:new('1-1', self.difficulty)
+    return Game:new(self.difficulty)
 end
 
 -- Initialize the game variable, starting the

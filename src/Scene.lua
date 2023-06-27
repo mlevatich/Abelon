@@ -12,16 +12,16 @@ PAUSE_WEIGHT = 10
 BREATHE_WEIGHT = 3
 
 -- Initialize a new dialogue
-function Scene:initialize(scene_id, player, chapter, returnToBattle)
+function Scene:initialize(scene_id, player, game, returnToBattle)
 
     -- Retrieve scene by id
     self.id = scene_id
     self.script = deepcopy(script[scene_id])
-    self.chapter = chapter
+    self.game = game
     self.returnToBattle = returnToBattle
 
     -- Retrieve scene participants from the map
-    local getSp = function(sp) return self.chapter:getSprite(sp) end
+    local getSp = function(sp) return self.game:getSprite(sp) end
     self.player = player
     self.participants = mapf(getSp, self.script['ids'])
     self.update_render = false
@@ -93,13 +93,13 @@ function Scene:processResult(result)
         end
     end
     if result['state'] then
-        self.chapter.state[result['state']] = true
+        self.game.state[result['state']] = true
     end
     if result['callback'] then
-        self.chapter.callbacks[self.id] = self.chapter.id .. '-' .. result['callback']
+        self.game.callbacks[self.id] = self.game.chapter_id .. '-' .. result['callback']
     end
     if result['do'] then
-        result['do'](self.chapter)
+        result['do'](self.game)
     end
 end
 

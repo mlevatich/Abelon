@@ -9,14 +9,14 @@ end
 
 function br(test, t_events, f_events)
     return function(scene)
-        local events = ite(test(scene.chapter), t_events, f_events)
+        local events = ite(test(scene.game), t_events, f_events)
         addEvents(scene, events, scene.event + 1)
     end
 end
 
 function brState(key, t_events, f_events)
     return function(scene)
-        local events = ite(scene.chapter.state[key], t_events, f_events)
+        local events = ite(scene.game.state[key], t_events, f_events)
         addEvents(scene, events, scene.event + 1)
     end
 end
@@ -92,7 +92,7 @@ function walkTo(pathing, p1, p2, side, label)
     return function(scene)
         local sp1 = scene.participants[p1]
         local sp2 = scene.participants[p2]
-        local map = scene.chapter:getMap()
+        local map = scene.game:getMap()
         local x, y = sp2:getPosition()
         local w, h = sp2:getDimensions()
         local sp2_tile = ite(pathing,
@@ -106,7 +106,7 @@ end
 function teleport(p1, tile_x, tile_y)
     return function(scene)
         local sp1 = scene.participants[p1]
-        local m = scene.chapter:getMap()
+        local m = scene.game:getMap()
         local x, y = m:tileToPixels(tile_x, tile_y)
         sp1:resetPosition(x, y)
         if not m:getSprite(sp1:getId()) then
@@ -168,19 +168,19 @@ end
 
 function blackout()
     return function(scene)
-        scene.chapter.alpha = 0
+        scene.game.alpha = 0
     end
 end
 
 function fade(rate)
     return function(scene)
-        scene.chapter.fade_rate = rate
+        scene.game.fade_rate = rate
     end
 end
 
 function chaptercard()
     return function(scene)
-        scene.chapter:flash(scene.chapter.id, 0.2)
+        scene.game:flash(scene.game.chapter_id, 0.2)
     end
 end
 

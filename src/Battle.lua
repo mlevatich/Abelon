@@ -21,17 +21,16 @@ function GridSpace:initialize(sp)
     self.n_assists = 0
 end
 
-function Battle:initialize(battle_id, player, chapter)
+function Battle:initialize(player, game)
 
-    self.id = battle_id
-    self.chapter = chapter
+    self.game = game
 
     -- Tracking state
     self.turn = 0
     self.seen = {}
 
     -- Data file
-    local data_file = 'Abelon/data/battles/' .. self.id .. '.txt'
+    local data_file = 'Abelon/data/battles/' .. self:getId() .. '.txt'
     local data = readLines(data_file)
 
     -- Get base tile of the top left of the grid
@@ -77,8 +76,8 @@ function Battle:initialize(battle_id, player, chapter)
     self:adjustDifficultyFrom(MASTER)
 
     -- Battle cam starting location
-    self.battle_cam_x = self.chapter.camera_x
-    self.battle_cam_y = self.chapter.camera_y
+    self.battle_cam_x = self.game.camera_x
+    self.battle_cam_y = self.game.camera_y
     self.battle_cam_speed = 170
 
     -- Render timers
@@ -92,8 +91,8 @@ function Battle:initialize(battle_id, player, chapter)
     self.levelup_queue = {}
 
     -- Music
-    self.chapter:stopMusic()
-    self.chapter.current_music = readField(data[10])
+    self.game:stopMusic()
+    self.game.current_music = readField(data[10])
 
     -- Action stack
     self.suspend_stack = {}
@@ -113,7 +112,7 @@ function Battle:readEntities(data, idx)
     for k,v in pairs(readDict(data[idx], ARR, nil, tonumber)) do
 
         -- Put sprite on grid and into participants
-        local sp = self.chapter:getSprite(k)
+        local sp = self.game:getSprite(k)
         table.insert(t, sp)
         self.grid[v[2]][v[1]] = GridSpace:new(sp)
 
@@ -131,7 +130,7 @@ function Battle:readEntities(data, idx)
         }
         local x_tile = self.origin_x + v[1]
         local y_tile = self.origin_y + v[2]
-        local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
+        local x, y = self.game:getMap():tileToPixels(x_tile, y_tile)
         sp:resetPosition(x, y)
 
         -- If an enemy, prepare their first skill
@@ -145,7 +144,7 @@ end
 function Battle:adjustDifficultyFrom(old)
 
     -- Adjust enemy stats
-    local new = self.chapter.difficulty
+    local new = self.game.difficulty
     local factor = 3 * (old - new)
     for i = 1, #self.participants do
         local sp = self.participants[i]
@@ -187,7 +186,7 @@ function Battle:adjustDifficultyFrom(old)
 end
 
 function Battle:getId()
-    return self.id
+    return self.game.chapter_id
 end
 
 function Battle:getCamera()
@@ -348,13 +347,13 @@ function Battle:closeMenu()
 end
 
 function Battle:checkTriggers(phase, doneAction)
-    local triggers = battle_triggers[self.id][phase]
+    local triggers = battle_triggers[self:getId()][phase]
     for k, v in pairs(triggers) do
         if not self.seen[k] then
             local scene_id = v(self)
             if scene_id then
                 self.seen[k] = true
-                self:suspend(self.id .. '-' .. scene_id, doneAction)
+                self:suspend(self:getId() .. '-' .. scene_id, doneAction)
                 return true
             end
         end
@@ -441,7 +440,7 @@ function Battle:suspend(scene_id, effects)
         self:restore()
         if effects then effects() end
     end
-    self.chapter:launchScene(scene_id, doneAction)
+    self.game:launchScene(scene_id, doneAction)
 end
 
 function Battle:restore()
@@ -454,11 +453,11 @@ function Battle:checkWinLose()
         local defeat_scene = self.lose[i][2](self)
         if defeat_scene then
             -- TODO: Change to defeat music
-            local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
+            local scene_id = self:getId() .. '-' .. defeat_scene .. '-defeat'
             self:suspend(scene_id, function()
                 self.stack = {}
-                self.battle_cam_x = self.chapter.camera_x
-                self.battle_cam_y = self.chapter.camera_y
+                self.battle_cam_x = self.game.camera_x
+                self.battle_cam_y = self.game.camera_y
                 self:openDefeatMenu()
             end)
             return true
@@ -466,7 +465,7 @@ function Battle:checkWinLose()
     end
     for i = 1, #self.win do
         if self.win[i][2](self) then
-            self.chapter:stopMusic()
+            self.game:stopMusic()
             sfx['victory']:play()
             self.stack = {}
             self:openVictoryMenu()
@@ -480,9 +479,9 @@ function Battle:restoreIgnea()
 
     -- Ignea is restored by 0% on master, 25% on adept, 50% on normal
     local factor = 0.0
-    if self.chapter.difficulty == ADEPT then
+    if self.game.difficulty == ADEPT then
         factor = 0.25
-    elseif self.chapter.difficulty == NORMAL then
+    elseif self.game.difficulty == NORMAL then
         factor = 0.5
     end
 
@@ -552,9 +551,9 @@ function Battle:openVictoryMenu()
                 })
             else
                 self:restoreIgnea()
-                self.chapter:launchScene(self.id .. '-victory')
-                self.chapter:startMapMusic()
-                self.chapter.battle = nil
+                self.game:launchScene(self:getId() .. '-victory')
+                self.game:startMapMusic()
+                self.game.battle = nil
             end
         end
     )}
@@ -1048,7 +1047,7 @@ function Battle:playAction()
                         local did = dead[i]:getId()
                         local stat = self.status[did]
                         if stat['team'] == ENEMY then
-                            self.chapter:getMap():dropSprite(did)
+                            self.game:getMap():dropSprite(did)
                         end
                     end)
                     return pass
@@ -1221,7 +1220,7 @@ function Battle:update(keys, dt)
         if d then
             done = m:back()
         elseif f then
-            m:forward(self.chapter)
+            m:forward(self.game)
         elseif up ~= down then
             m:hover(ite(up, UP, DOWN))
         end
@@ -1365,7 +1364,7 @@ function Battle:update(keys, dt)
                     ally_phase_over = false
                 end
             end
-            if ally_phase_over and self.chapter.turn_autoend then
+            if ally_phase_over and self.game.turn_autoend then
                 self:openEndTurnMenu()
             else
 
@@ -1726,7 +1725,7 @@ function Battle:renderCursors()
         if c then
             local x_tile = self.origin_x + c[1]
             local y_tile = self.origin_y + c[2]
-            local x, y = self.chapter:getMap():tileToPixels(x_tile, y_tile)
+            local x, y = self.game:getMap():tileToPixels(x_tile, y_tile)
             local shift = ite(c[3], 2, 3)
             local fx = x + TILE_WIDTH - shift
             local fy = y + TILE_HEIGHT - shift
@@ -1748,7 +1747,7 @@ end
 
 function Battle:renderLens(clr)
     love.graphics.setColor(clr[1], clr[2], clr[3], 0.1)
-    local map = self.chapter.current_map
+    local map = self.game.current_map
     love.graphics.rectangle('fill', 0, 0,
         map.width * TILE_WIDTH, map.height * TILE_HEIGHT
     )
@@ -2300,7 +2299,7 @@ function Battle:renderOverlay()
     love.graphics.push()
     love.graphics.origin()
     for i = 1, #self.participants do
-        if self.chapter:getMap():getSprite(self.participants[i]:getId()) then
+        if self.game:getMap():getSprite(self.participants[i]:getId()) then
             self:renderHealthbar(self.participants[i])
             self:renderStatus(self.participants[i])
         end
@@ -2335,7 +2334,7 @@ function Battle:renderOverlay()
     -- Render menu if there is one
     local m = self:getMenu()
     if m then
-        m:render(self.chapter)
+        m:render(self.game)
         if self.render_bexp then self:renderBexp() end
     end
 

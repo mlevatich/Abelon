@@ -26,7 +26,7 @@ PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 EXP_NEXT = { 10, 20, 40, 60, 80, 120, 160, 200, 250, 300, 350, 400 }
 
 -- Initialize a new sprite
-function Sprite:initialize(id, chapter)
+function Sprite:initialize(id, game)
 
     -- Unique identifier
     self.id = id
@@ -99,8 +99,8 @@ function Sprite:initialize(id, chapter)
     self.level = readField(data[12], tonumber)
     self.exp = 0
 
-    -- Current chapter inhabited by sprite
-    self.chapter = chapter
+    -- Pointer to game
+    self.game = game
 end
 
 -- Get sprite's ID
@@ -120,7 +120,7 @@ end
 
 -- Get sprite's position relative to where the camera is
 function Sprite:getPositionOnScreen()
-    return self.x - self.chapter.camera_x, self.y - self.chapter.camera_y
+    return self.x - self.game.camera_x, self.y - self.game.camera_y
 end
 
 -- Get sprite's depth for rendering order
@@ -143,9 +143,9 @@ function Sprite:getAwareness()
     return self.awareness
 end
 
--- Get the chapter this sprite is in
-function Sprite:getChapter()
-    return self.chapter
+-- Get the game this sprite is in
+function Sprite:getGame()
+    return self.game
 end
 
 -- Is this sprite interactive?
@@ -594,7 +594,7 @@ end
 
 function Sprite:djikstra(graph, src, dst, depth)
 
-    local map = self.chapter:getMap()
+    local map = self.game:getMap()
 
     -- If no source was provided, source is the sprite's current tile
     if not src then
@@ -847,7 +847,7 @@ function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run)
     local speed = ite(run, WANDER_SPEED * 2, WANDER_SPEED)
 
     -- Where are we going?
-    local map = self.chapter:getMap()
+    local map = self.game:getMap()
     local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
 
     -- Path ordering info
@@ -1020,7 +1020,7 @@ end
 function Sprite:onTile(x, y)
 
     -- Check if the tile matches the tile at any corner of the sprite
-    local map = self.chapter:getMap()
+    local map = self.game:getMap()
     local sx, sy, w, h = self:getHitboxRect()
 
     -- Check northwest tile
@@ -1074,7 +1074,7 @@ end
 function Sprite:_checkSpriteCollisions()
 
     -- Iterate over all active sprites
-    for _, sp in ipairs(self.chapter:getActiveSprites()) do
+    for _, sp in ipairs(self.game:getActiveSprites()) do
         if sp.name ~= self.name and sp:isBlocking() then
 
             local x,  y,  w,  h  = self:getHitboxRect()
@@ -1126,7 +1126,7 @@ end
 function Sprite:_checkMapCollisions()
 
     -- Convenience variables
-    local map = self.chapter:getMap()
+    local map = self.game:getMap()
     local x, y, w, h = self:getHitboxRect()
 
     -- Check all surrounding tiles
@@ -1214,7 +1214,7 @@ function Sprite:updatePosition(dt, x_dst, y_dst)
         self.y = post_y
     end
 
-    local w, h = self.chapter:getMap():getPixelDimensions()
+    local w, h = self.game:getMap():getPixelDimensions()
     self.x = math.max(math.min(self.x, w - self.w - 1), 1)
     self.y = math.max(math.min(self.y, h - self.h - 1), 1)
 end
@@ -1238,8 +1238,8 @@ end
 -- Render a sprite to the screen
 function Sprite:render()
 
-    local b = self.chapter.battle
-    local s = self.chapter.current_scene
+    local b = self.game.battle
+    local s = self.game.current_scene
     local mono = not s and b
                        and b.status[self.id]
                        and b.status[self.id]['acted']

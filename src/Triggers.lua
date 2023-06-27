@@ -101,7 +101,7 @@ battle_triggers = {
         },
         [END_ACTION] = {
             ['first-demonic-spell'] =  function(b)
-                local saw = b.chapter.state['kath-saw-spell']
+                local saw = b.game.state['kath-saw-spell']
                 local atk = b.status['abelon']['attack']
                 if atk then atk = atk.id end
                 if not saw and atk == 'conflagration' or atk == 'crucible' then
