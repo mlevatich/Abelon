@@ -40,9 +40,9 @@ binser.register(Game)
 local game = nil
 local title = nil
 
--- total time, frame time
+-- total time, time of last frame
 local t = 0
-local per_frame_t = 0
+local lastframe = 0
 
 -- Initialize window and start game
 function love.load()
@@ -57,7 +57,9 @@ function love.load()
 
     -- Storing keypresses
     love.keyboard.keysPressed = {}
-    love.keyboard.keysReleased = {}
+
+    -- Time of last frame
+    lastframe = love.timer.getTime()
 
     -- Begin with title screen
     title = Title:new()
@@ -81,35 +83,34 @@ end
 -- Update each frame, dt is seconds since last frame
 function love.update(dt)
 
+    -- Cap framerate
+    local slack = FRAME_DUR - (love.timer.getTime() - lastframe)
+    if slack > 0 then love.timer.sleep(slack) end
+	lastframe = love.timer.getTime()
     t = t + dt
-    per_frame_t = per_frame_t + dt
-    if per_frame_t >= FRAME_DUR then
 
-        -- If in transition, check when we're finished with title
-        if game and title then
-            if t - title.t_launch >= 3.5 then
-                title = nil
-            end
-
-        -- Update game and hot-reload a save if requested
-        elseif game then
-            local signal = game:update(FRAME_DUR)
-            if signal == RELOAD_BATTLE then
-                game = game:loadSave(BATTLE_SAVE)
-            elseif signal == RELOAD_CHAPTER then
-                game = game:loadSave(CHAPTER_SAVE)
-            end
-
-        -- Update title screen, possibly launching game
-        else
-            title:update()
+    -- If in transition, check when we're finished with title
+    if game and title then
+        if t - title.t_launch >= 3.5 then
+            title = nil
         end
-        per_frame_t = per_frame_t - FRAME_DUR
 
-        -- Reset all keys pressed and released this frame
-        love.keyboard.keysPressed = {}
-        love.keyboard.keysReleased = {}
+    -- Update game and hot-reload a save if requested
+    elseif game then
+        local signal = game:update(FRAME_DUR)
+        if signal == RELOAD_BATTLE then
+            game = game:loadSave(BATTLE_SAVE)
+        elseif signal == RELOAD_CHAPTER then
+            game = game:loadSave(CHAPTER_SAVE)
+        end
+
+    -- Update title screen, possibly launching game
+    else
+        title:update()
     end
+
+    -- Reset all keys pressed this frame
+    love.keyboard.keysPressed = {}
 end
 
 -- Render game or title to screen each frame using virtual resolution from push
@@ -178,7 +179,6 @@ end
 function Title:launchGame(from_save)
     self.t_launch = t
     love.keyboard.keysPressed = {}
-    love.keyboard.keysReleased = {}
     if from_save then
         game = from_save
     else

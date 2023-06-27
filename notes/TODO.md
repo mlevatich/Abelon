@@ -11,25 +11,27 @@ Bullets that reference a github issue should close the issue when committed.
 ## Immediate
 
 - #48: Add tutorials as right side hoverboxes with specific triggers, add to inventory after they disappear.
+- In battle, target tile for directional skills should default to a tile with an enemy on it.
+- In battle, HUD should show how much damage/healing you are about to do and what statuses you will apply to each enemy/ally, when an attack is selected. When an assist is selected, HUD should show the effect that will apply to the assisted tiles.
+- Add in skills from notes, support the two displacement effects
+
+- Finish script 1-2
+
+- Scroll and journal
+- Object in the way that Abelon must interact with in east forest
+- #69: Implement 1-1 and 1-2 script, 1-3 transition kicks back to title
+- Test balance using 1-2 battle
 
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
 - Music fade is quieter than it should be
 
-- Scroll and journal
 - Adjust road, add campsite, stone reliefs
 - Lester-sleep, Shanti-sleep, Kath-sleep
 - Abelon-combat-entry-exit, Abelon-combat-idle
 - Elaine-downed, Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup
 
-- Object in the way that Abelon must interact with in east forest
-- Finish script 1-2
-- #69: Implement 1-1 and 1-2 script, 1-3 transition kicks back to title
-
 ## Near
 
-- In battle, HUD should show how much damage/healing you are about to do and what statuses you will apply to each enemy/ally, when an attack is selected. When an assist is selected, HUD should show the effect that will apply to the assisted tiles.
-- In battle, target tile for directional skills should default to a tile with an enemy on it.
-- Add in skills from notes, support displacement effects, test with a buffed Elaine and more wolves.
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.
 - Two mostly identical wolf sprites, Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run).
 - #52: Every skill has an associated single-fire animation, with render position determined by the cursor location of the cast. This has nothing to do with the sprite casting the skill. For some skills, the animation should play at every affected tile, for others, the animation should play centered on the cursor and affected by direction. This should be provided as an option. Make skill animations for all basic skills.
@@ -47,20 +49,26 @@ Bullets that reference a github issue should close the issue when committed.
 
 - Write 1-3, 1-4 of narrative.md
 - Write script 1-3
+
 - #70: Lester sprite, Lester portrait, Lester-idle, Lester-walk, Lester-combat-entry-exit, Lester-combat-idle, Lester-combat-run, Lester-weapon, Lester-spell, Lester-assist, Lester-hurt, Lester-death, Stone sprite data and graphics, Shanti sprite, Shanti portrait, Shanti-idle, Shanti-walk, Shanti-combat-entry-exit, Shanti-combat, Shanti-combat-run, Shanti-weapon, Shanti-spell, Shanti-assist, Shanti-hurt, Shanti-death
+
 - #71: Implement 1-3. Includes additional map to the north of north forest, the monastery approach.
 
 ## Finally
 
 - Write 1-4 script
-- #72: Implement 1-4
-- 1-4 battle theme
 - #68: Last pass over script for consistency
+
+- #72: Implement 1-4
+
+- 1-4 battle theme
+
+- #47: Better portraits
+- Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
+
 - Animation sound effects: Explore "animation sound effects": looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. Not an easy task!!
 - #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite parameter deciding whether it blocks light may be needed. e.g. abelon blocks light but a log doesn't), proper color computation. Look up lua/love shaders. Alternate, darken with patterns of black pixels over tiles?
 - "Splash" animations: When sprites take damage, a damage splash should be rendered. When they heal, a heal splash should be rendered. This should happen as the damage is dealt. The idea of a "splash" animation could be re-used for skill animations. When sprites gain exp, render exp splash. This should happen on a delay, so the exp splash renders after the relevant action has just finished playing out.
 - Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.
-- #47: Better portraits
-- Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
 - #73: Make executable
 - #74: Pre-alpha closed release
