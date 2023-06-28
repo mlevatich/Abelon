@@ -155,7 +155,7 @@ s11['medallion'] = {
         medallion_choice
     },
     ['result'] = {
-        ['callback'] = 'medallion-callback'
+        ['callback'] = { 'medallion-callback' }
     }
 }
 s11['medallion-callback'] = {
@@ -230,7 +230,7 @@ s11['elaine'] = {
         elaine_choices
     },
     ['result'] = {
-        ['callback'] = 'elaine-callback'
+        ['callback'] = { 'elaine-callback' }
     }
 }
 s11['elaine-callback'] = {
@@ -271,7 +271,7 @@ s11['book'] = {
         )
     },
     ['result'] = {
-        ['callback'] = 'book-callback'
+        ['callback'] = { 'book-callback' }
     }
 }
 s11['book-callback'] = {

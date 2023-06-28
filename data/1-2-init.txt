@@ -1,0 +1,30 @@
+~~east-forest Dying-Forest
+
+~torch 31 49 R
+~torch 31 52 R
+~torch 26 49 L
+~torch 26 52 L
+~bloodrite 26 49 R
+
+~~south-forest Dying-Forest
+
+~medallion 34 34 R
+~bigwolf 1 1 L
+~smallwolf1 1 1 L
+~smallwolf2 1 1 L
+
+~~west-forest Dying-Forest
+
+~abelon 45 8 L P
+~elaine 49 10 L
+~kath 33 15 L
+~book 9 17 R
+~bloodstain 41 1 R
+
+~~north-forest Dying-Forest
+
+~bloodstain2 3 40 R
+
+->State saw-camp,carried-elaine
+->Seen 1-2-battle
+->Inventory medallion

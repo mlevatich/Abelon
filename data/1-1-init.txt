@@ -22,3 +22,14 @@
 ~~north-forest Dying-Forest
 
 ~bloodstain2 3 40 R
+
+// EXAMPLE FAST-FORWARD
+// ->State saw-camp,carried-elaine
+// ->Seen 1-1-entry
+// ->Inventory journal
+// ->abelon
+// +Impression 100
+// +Awareness 100
+// +Level 2
+// +Skills contempt
+// +BonusAttrs force:1 reaction:1

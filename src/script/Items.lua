@@ -39,9 +39,7 @@ si['medallion-present-kath'] = {
                          considerate of you."
                     )
                 },
-                ['result'] = {
-                    ['callback'] = 'medallion-present-kath-callback'
-                }
+                ['result'] = {}
             },
             {
                 ['response'] = 'Yes',
@@ -51,13 +49,13 @@ si['medallion-present-kath'] = {
                          known you to be careless with your possessions."
                     )
                 },
-                ['result'] = {
-                    ['callback'] = 'medallion-present-kath-callback'
-                }
+                ['result'] = {}
             }
         })
     },
-    ['result'] = {}
+    ['result'] = {
+        ['callback'] = { 'medallion-present-kath-callback', true }
+    }
 }
 si['medallion-present-kath-callback'] = {
     ['ids'] = {'abelon', 'kath'},

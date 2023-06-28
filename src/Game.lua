@@ -25,10 +25,10 @@ require 'src.Battle'
 Game = class('Game')
 
 -- Constructor for our scenario object
-function Game:initialize(difficulty)
+function Game:initialize(id, difficulty)
 
     -- Store id
-    self.chapter_id = '1-1'
+    self.chapter_id = id
 
     -- Camera that follows coordinates of player sprite around
     self.camera_x = 0
@@ -160,16 +160,81 @@ end
 function Game:loadFresh()
 
     -- Read lines into list
-    local chap_file = 'Abelon/data/world.txt'
+    local chap_file = 'Abelon/data/' .. self.chapter_id .. '-init.txt'
     local lines = readLines(chap_file)
 
     -- Iterate over lines of file
     local audio_sources = {}
     local current_map_name = nil
+    local sprite_ff = nil
     for i=1, #lines do
 
+        -- Lines starting with -> denote a state fast-forward
+        if lines[i]:sub(1,2) == '->' then
+            local fname, vals = readNamed(lines[i]:sub(3), readArray)
+            if fname == 'State' then
+                for i=1, #vals do
+                    self.state[vals[i]] = true
+                end
+            elseif fname == 'Seen' then
+                for i=1, #vals do
+                    self.seen[vals[i]] = true
+                end
+            elseif fname == 'Inventory' then
+                for i=1, #vals do
+                    local sp = self.sprites[vals[i]]
+                    if not sp then sp = Sprite:new(vals[i], self) end
+                    self.player:acquire(sp)
+                end
+            else
+                sprite_ff = self.sprites[fname]
+            end
+
+        -- Lines starting with + denote a sprite fast-forward
+        elseif lines[i]:sub(1,1) == '+' then
+
+            local sp = sprite_ff
+            local fname, vals = readNamed(lines[i]:sub(2), readArray)
+            if fname == 'Impression' then
+                sp:changeImpression(tonumber(vals[1]))
+            elseif fname == 'Awareness' then
+                sp:changeAwareness(tonumber(vals[1]))
+            elseif fname == 'Level' then
+                local lvls = tonumber(vals[1])
+                sp.level = sp.level + lvls
+                sp.skill_points = sp.skill_points + lvls
+                for k, v in pairs(sp.attributes) do
+                    sp.attributes[k] = sp.attributes[k] + lvls
+                end
+                sp.health = sp.health + (lvls * 2)
+                sp.ignea = sp.ignea + lvls
+            elseif fname == 'Skills' then
+                for i=1, #vals do
+                    local known = false
+                    for j=1, #sp.skills do
+                        if sp.skills[j].id == vals[i] then known = true end
+                    end
+                    if not known then
+                        sp:learn(vals[i])
+                    end
+                end
+            elseif fname == 'BonusAttrs' then
+                local attrs = readDict(lines[i]:sub(2), VAL, nil, tonumber)
+                for k,_ in pairs(sp.attributes) do
+                    if attrs[k] then
+                        sp.attributes[k] = sp.attributes[k] + attrs[k]
+                    end
+                end
+                if attrs['endurance'] then
+                    sp.health = sp.health + attrs['endurance'] * 2
+                end
+                if attrs['focus'] then
+                    sp.ignea = sp.ignea + attrs['focus']
+                end
+            end
+
         -- Lines starting with ~~ denote a new map
-        if lines[i]:sub(1,2) == '~~' then
+        elseif lines[i]:sub(1,2) == '~~' then
 
             -- Read data from line
             local fields = split(lines[i]:sub(3))

@@ -10,22 +10,24 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- Target box forward simulation and target tile default: get it working on assists as well (show the effect that will apply to the assisted tiles), and allies, test on the chapter 1-2 battle with lots of skills. Hide tutorials when target boxes are active, or otherwise deal with them.
-- Add in skills from notes, support the two displacement effects.
+- Implement 1-2 and battle
+- Implement chapter 1-2 battle, include Elaine in battle (assume carried)
+- Add debug flag, skip title, customizable starting places
 
+- Target box forward simulation and target tile default: get it working on assists as well (show the effect that will apply to the assisted tiles), and allies, test on the chapter 1-2 battle with lots of skills.
+- Hide tutorials when target boxes are active, or otherwise deal with them. Clean up visuals
+- Add in skills from notes, support the two displacement effects.
+- test game balance, usability, bug-hunt, using 1-2 battle and many skills.
+
+- Finish script 1-2
 - Scroll and journal
 - Object in the way that Abelon must interact with in east forest
-- Finish script 1-2
-- #69: Implement 1-1 and 1-2 script, 1-3 transition kicks back to title
-- Test balance using 1-2 battle
-
-- #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
-- Music fade is quieter than it should be
-
 - Adjust road, add campsite, stone reliefs
 - Lester-sleep, Shanti-sleep, Kath-sleep
 - Abelon-combat-entry-exit, Abelon-combat-idle
 - Elaine-downed, Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup
+- #69: Implement rest of 1-1 and 1-2 script, 1-3 transition kicks back to title.
+- Add more optional content to 1-1 and 1-2.
 
 ## Near
 
@@ -37,6 +39,8 @@ Bullets that reference a github issue should close the issue when committed.
 - #4: SFX for:, menu select (not too different from current), text sound effects, start game (from title screen).
 - #56: SFX for: battle cursor move, Mute ally turn start, enemy turn start, victory, defeat menus, battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up, use weapon skill, use spell, use assist, use utility, skills (can re-use liberally).
 
+- Music fade is quieter than it should be
+- #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
 - #66: Second battle theme - more slow and tense, for 1-1 and maybe others
 - #64: Defeat theme: Despair - Short theme that plays during the battle loss scene.
 - #67: Better forest theme - more tense investigation, less funeral march

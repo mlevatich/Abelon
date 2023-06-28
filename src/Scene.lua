@@ -96,7 +96,11 @@ function Scene:processResult(result)
         self.game.state[result['state']] = true
     end
     if result['callback'] then
-        self.game.callbacks[self.id] = self.game.chapter_id .. '-' .. result['callback']
+        local cb = result['callback'][1]
+        if not result['callback'][2] then
+            cb = self.game.chapter_id .. '-' .. cb
+        end
+        self.game.callbacks[self.id] = cb
     end
     if result['do'] then
         result['do'](self.game)

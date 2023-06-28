@@ -235,6 +235,12 @@ function splitSep(str, sep)
     return array
 end
 
+-- Read a field and save its name
+function readNamed(str, f)
+    local n = split(str)[1]
+    return n, f(str)
+end
+
 -- Read a field as a single string
 function readField(str, apply)
     local val = split(str)[2]

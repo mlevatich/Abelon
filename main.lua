@@ -45,7 +45,7 @@ local t = 0
 local lastframe = 0
 
 -- Initialize window and start game
-function love.load()
+function love.load(args)
 
     -- Set up a window with the virtual width and height
     local WW, WH = love.window.getDesktopDimensions()
@@ -62,7 +62,13 @@ function love.load()
     lastframe = love.timer.getTime()
 
     -- Begin with title screen
-    title = Title:new()
+    local skip_to = args[1]
+    if skip_to then
+        game = Game:new(skip_to, MASTER)
+        game:saveChapter()
+    else
+        title = Title:new()
+    end
 end
 
 -- Resize game window
@@ -155,23 +161,23 @@ function Title:initialize()
     -- Menu state
     self.state = M_GAME
     self.cursor = 0
-    self.difficulty = NORMAL
+    self.difficulty = MASTER
     self.t_launch = 0
 
     -- Detect existing saved game
     self.save = nil
     if love.filesystem.getInfo(SAVE_DIRECTORY .. QUICK_SAVE) then
-        self.save = self:freshGame()
+        self.save = self:freshGame('1-1')
         self.save = self.save:loadSave(QUICK_SAVE, true, true)
     elseif love.filesystem.getInfo(SAVE_DIRECTORY .. AUTO_SAVE) then
-        self.save = self:freshGame()
+        self.save = self:freshGame('1-1')
         self.save = self.save:loadSave(AUTO_SAVE, false, true)
     end
 end
 
 -- Create a brand new game context
-function Title:freshGame()
-    return Game:new(self.difficulty)
+function Title:freshGame(id)
+    return Game:new(id, self.difficulty)
 end
 
 -- Initialize the game variable, starting the
@@ -182,7 +188,7 @@ function Title:launchGame(from_save)
     if from_save then
         game = from_save
     else
-        game = self:freshGame()
+        game = self:freshGame('1-1')
         game:saveChapter()
     end
     game:update(FRAME_DUR)
