@@ -4,7 +4,7 @@ Name: Kath
 Depth: 5
 Interactive: yes
 Hitbox: 7,1,20,31
-Resting: wander
+Resting: idle
 Impression: 50
 Awareness: 0
 Discard: no

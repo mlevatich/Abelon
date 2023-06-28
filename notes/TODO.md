@@ -10,23 +10,23 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- Implement 1-2 and battle
-- Implement chapter 1-2 battle, include Elaine in battle (assume carried)
-- Add debug flag, skip title, customizable starting places
+- Implement 1-2 and battle, include Elaine in battle (assume carried)
 
 - Target box forward simulation and target tile default: get it working on assists as well (show the effect that will apply to the assisted tiles), and allies, test on the chapter 1-2 battle with lots of skills.
 - Hide tutorials when target boxes are active, or otherwise deal with them. Clean up visuals
 - Add in skills from notes, support the two displacement effects.
 - test game balance, usability, bug-hunt, using 1-2 battle and many skills.
 
-- Finish script 1-2
 - Scroll and journal
 - Object in the way that Abelon must interact with in east forest
 - Adjust road, add campsite, stone reliefs
 - Lester-sleep, Shanti-sleep, Kath-sleep
 - Abelon-combat-entry-exit, Abelon-combat-idle
 - Elaine-downed, Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup
-- #69: Implement rest of 1-1 and 1-2 script, 1-3 transition kicks back to title.
+
+- Implement 1-1, connect to 1-2 battle
+- Finish script 1-2
+- #69: Implement rest of 1-2 and empty start of 1-3
 - Add more optional content to 1-1 and 1-2.
 
 ## Near

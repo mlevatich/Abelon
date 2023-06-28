@@ -15,21 +15,13 @@
 
 ~~west-forest Dying-Forest
 
-~kath 33 15 L
-~book 9 17 R
+~kath 53 8 L
+~book 56 6 R
 ~bloodstain 41 1 R
 
 ~~north-forest Dying-Forest
 
 ~bloodstain2 3 40 R
 
-// EXAMPLE FAST-FORWARD
-// ->State saw-camp,carried-elaine
-// ->Seen 1-1-entry
+// Add this after I make journal sprite
 // ->Inventory journal
-// ->abelon
-// +Impression 100
-// +Awareness 100
-// +Level 2
-// +Skills contempt
-// +BonusAttrs force:1 reaction:1

@@ -8,17 +8,16 @@
 
 ~~south-forest Dying-Forest
 
-~medallion 34 34 R
 ~bigwolf 1 1 L
 ~smallwolf1 1 1 L
 ~smallwolf2 1 1 L
 
 ~~west-forest Dying-Forest
 
-~abelon 45 8 L P
-~elaine 49 10 L
-~kath 33 15 L
-~book 9 17 R
+~abelon 52 6 L P
+~elaine 54 5 L
+~kath 50 8 L
+~book 56 6 R
 ~bloodstain 41 1 R
 
 ~~north-forest Dying-Forest
@@ -26,5 +25,16 @@
 ~bloodstain2 3 40 R
 
 ->State saw-camp,carried-elaine
-->Seen 1-2-battle
 ->Inventory medallion
+->Seen 1-2-battle
+
+// EXAMPLE FAST-FORWARD
+// ->State saw-camp,carried-elaine
+// ->Seen 1-1-entry
+// ->Inventory journal
+// ->abelon
+// +Impression 100
+// +Awareness 100
+// +Level 2
+// +Skills contempt
+// +BonusAttrs force:1 reaction:1
