@@ -195,3 +195,9 @@ function addChoice(choices, c)
     new_choices[#new_choices + 1] = c
     return new_choices
 end
+
+function closeTutorial()
+    return function(scene)
+        scene.game:endTutorial()
+    end
+end

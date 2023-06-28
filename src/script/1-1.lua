@@ -15,16 +15,32 @@ s11['entry'] = {
         say(1, 0, false, "...Perhaps I made a mistake somewhere."),
         say(1, 0, false, ".................."),
         say(1, 0, false, "..!"),
-        fade(0.15),
+        fade(0.2),
         wait(6)
     },
-    ['result'] = {}
+    ['result'] = {
+        ['do'] = function(g)
+            g:startTutorial("Navigating the world")
+        end
+    }
+}
+
+
+
+s11['close-tutorial1'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:endTutorial()
+        end
+    }
 }
 
 
 
 s11['battle'] = {
-    ['ids'] = {'abelon', 'wolf1'},
+    ['ids'] = {'abelon', 'bigwolf'},
     ['events'] = {
         lookAt(1, 2),
         focus(2, 100),
@@ -41,8 +57,44 @@ s11['battle'] = {
         wait(1)
     },
     ['result'] = {
-        ['do'] = function(c)
-            c:launchBattle()
+        ['do'] = function(g)
+            g:launchBattle()
+        end
+    }
+}
+s11['ally-turn-1'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:startTutorial("Battle: The basics")
+        end
+    }
+}
+s11['close-tutorial2'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:endTutorial()
+        end
+    }
+}
+s11['ally-turn-2'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:startTutorial("Battle: Turns")
+        end
+    }
+}
+s11['close-tutorial3'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:endTutorial()
         end
     }
 }
@@ -60,7 +112,9 @@ s11['victory'] = {
     ['ids'] = {},
     ['events'] = {},
     ['result'] = {
-        ['do'] = function(c) c:healAll() end
+        ['do'] = function(g)
+            g:healAll()
+        end
     }
 }
 
@@ -76,9 +130,9 @@ local medallion_choice = choice({
             )
         },
         ['result'] = {
-            ['do'] = function(c)
-                local sp = c:getMap():dropSprite('medallion')
-                c.player:acquire(sp)
+            ['do'] = function(g)
+                local sp = g:getMap():dropSprite('medallion')
+                g.player:acquire(sp)
             end
         }
     },
@@ -144,7 +198,7 @@ local elaine_choices_saw_camp = addChoice(elaine_choices_no_carry, {
     },
     ['result'] = {
         ['state'] = "carried-elaine",
-        ['do'] = function(c)
+        ['do'] = function(g)
             -- TODO: Teleport Abelon and Elaine to camp
         end
     }

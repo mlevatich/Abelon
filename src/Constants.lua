@@ -43,6 +43,7 @@ TEXT_MARGIN_Y  = 5
 LINES_PER_PAGE = 3
 TEXT_INTERVAL  = 0.03
 MAX_MENU_ITEMS = 6
+SUB_MENU_ITEMS = 5
 RECT_ALPHA     = 0.4
 HBOX_WIDTH     = 540
 MAX_WORD       = 14
@@ -162,36 +163,33 @@ ATTRIBUTE_DESC = {
 
 TUTORIALS = {
     ['Navigating the world'] = {
-        "Move around the world using the arrow keys. Press F to interact with nearby objects or people, and advance dialogue.",
-        "Press E to open your inventory, where you can see and use the items in your pack, inspect your party, change settings, and read these tutorials.",
-        "Press D to cancel."
+        "Move around the world using the arrow keys. Press F to interact with nearby objects or people, and advance dialogue. Press D to cancel.",
+        "Press E to open your inventory, where you can use the items in your pack, inspect your party, change settings, and read tutorials."
     },
     ['Battle: The basics'] = {
-        "Use the arrow keys to navigate the battle grid and menu options. Press F to make a selection, and D to cancel a selection.",
-        "Select an enemy to view information about it. Select an ally to move them, choose and aim a skill, finish moving, and confirm the entire action.",
-        "Aim a Weapon or Spell at an enemy to damage it. Read descriptions to learn their effects."
+        "Use the arrow keys to navigate the grid and menus. Press F to select, and D to go back.",
+        "Select an enemy to view its information. Select an ally to move them, use a skill, finish moving, and confirm.",
+        "Aim a Weapon or Spell at an enemy to damage it."
     },
     ['Battle: Turns'] = {
-        "Each ally may act once during the ally phase. Once all allies have acted, the enemy phase begins and enemies will move and attack you. Then the ally phase begins again.",
-        "An ally or enemy dies when their health, visible underneath them, reaches zero. Keep your allies alive and defeat all enemies to win the battle."
+        "Each ally may act once during the ally phase. Once all allies have acted, the enemies will move and attack you. Then the next turn begins.",
+        "A unit dies when their health reaches zero. Keep your allies alive and defeat all enemies to win the battle."
     },
     ['Battle: Assists'] = {
-        "After moving and using a Weapon or Spell, an ally may use an Assist skill on some tiles.",
-        "Until the next ally phase, any ally standing on an assisted tile benefits from the effects of the Assist, calculated from the caster's attributes.",
-        "Attack from tiles with offensive assists, and defend on tiles with defensive assists. Multiple assists may combine on one tile."
+        "After moving and using a Weapon or Spell, an ally may use an Assist on some tiles.",
+        "Until the next ally phase, any ally on an assisted tile benefits from the Assist effects, calculated from the caster's attributes. A tile may have multiple assists."
     },
     ['Battle: Ignea'] = {
-        "Many powerful skills consume Ignea, listed as their 'Cost'. Ignea is a precious stone, and each unit in battle has a limited supply, shown in their Attributes.",
-        "Be careful with these skills - to recover Ignea, you will have to find it on your journey.",
-        "On %s difficulty, %s is restored after battle."
+        "Many powerful skills consume Ignea, shown as their 'Cost'. Ignea is a precious stone, and each unit has a limited supply.",
+        "To recover Ignea, you will have to find it on your journey. On %s difficulty, %s is restored after battle."
     },
     ['Battle: Attributes'] = {
-        "The capabilities of a unit are summarized by their Attributes. Endurance determines a unit's maximum health, and Focus determines their maximum Ignea.",
-        "Force empowers many Weapon and Spell skills, and Affinity empowers many Assist skills.",
+        "Units have six Attributes. Endurance determines maximum health, and Focus determines maximum Ignea.",
+        "Force empowers attacks, and Affinity empowers assists.",
         "Each point of Reaction reduces Weapon damage by one. Every four points of Agility confers one tile of movement."
     },
     ['Battle: Reminder'] = {
-        "All battle tutorials are now available for review under 'Tutorials' in the settings menu.",
+        "All battle tutorials are available for review under 'Tutorials' in the settings menu.",
         "To access the settings and other information during battle, select any empty tile."
     },
     ['Experience and skill learning'] = {

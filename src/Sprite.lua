@@ -315,30 +315,30 @@ end
 function Sprite:mkLearnable(sk_id, sk_item)
     sk_item.hover_desc = 'Learn ' .. sk_item.name
     if find(mapf(function(s) return s.id end, self.skills), sk_id) then
-        sk_item.setPen = function(c)
-            love.graphics.setColor(unpack(DISABLE))
+        sk_item.setPen = function(g)
+            return DISABLE
         end
     elseif self:isLearnable(sk_id) then
-        sk_item.setPen = function(c)
-            love.graphics.setColor(unpack(HIGHLIGHT))
+        sk_item.setPen = function(g)
+            return HIGHLIGHT
         end
-        sk_item.action = function(c)
+        sk_item.action = function(g)
             self:learn(sk_id)
             local m = nil
-            if c.player.open_menu then
-                c.player:openInventory()
-                m = c.player.open_menu
+            if g.player.open_menu then
+                g.player:openInventory()
+                m = g.player.open_menu
             else
-                c.battle:closeMenu()
-                c.battle:openBattleStartMenu()
-                m = c.battle:getMenu()
+                g.battle:closeMenu()
+                g.battle:openBattleStartMenu()
+                m = g.battle:getMenu()
             end
 
             -- Stupid
             m:hover(DOWN)
             m:forward()
-            for i = 1, #c.player.party do
-                if c.player.party[i] == self then break end
+            for i = 1, #g.player.party do
+                if g.player.party[i] == self then break end
                 m:hover(DOWN)
             end
             m:forward()
@@ -397,9 +397,9 @@ function Sprite:mkSkillsMenu(with_skilltrees, with_prio)
 end
 
 function Sprite:mkLearnMenu()
-    local checkUnspent = function(c)
+    local checkUnspent = function(g)
         if self.skill_points > 0 then
-            love.graphics.setColor(unpack(HIGHLIGHT))
+            return HIGHLIGHT
         end
     end
     local mkLearn = function(s)
@@ -1310,11 +1310,11 @@ sprite_data = {
         ['animations'] = living
     },
     {
-        ['id'] = 'wolf',
+        ['id'] = 'bigwolf',
         ['w'] = 31,
         ['h'] = 31,
         ['animations'] = living,
-        ['n'] = 5
+        ['n'] = 3
     },
     {
         ['id'] = 'living_rock',
@@ -1393,6 +1393,13 @@ sprite_data = {
         ['id'] = 'bloodstain2',
         ['w'] = 416,
         ['h'] = 608
+    },
+    {
+        ['id'] = 'smallwolf',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['animations'] = living,
+        ['n'] = 3
     }
 }
 sprite_graphics = {}

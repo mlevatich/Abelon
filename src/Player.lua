@@ -38,10 +38,7 @@ function Player:initialize(sp)
     -- Abelon's party and the names he knows
     self.party = { self.sp }
     self.introduced = {}
-    self.old_tutorials = {
-        'Navigating the world', 'Battle: The basics',
-        'Battle: Turns', 'Battle: Assists', 'Battle: Ignea', 'Battle: Attributes'
-    }
+    self.old_tutorials = {}
 
     -- Abelon can open menus
     self.open_menu = nil
@@ -67,7 +64,7 @@ function Player:openInventory()
     local inv_ch = mapf(function(sp) return sp:toItem() end, self.inventory)
     local inv_m = MenuItem:new('Items', inv_ch, 'View possessions')
 
-    -- Open inventory menu(
+    -- Open inventory menu
     self:openMenu(
         { inv_m, self:mkPartyMenu(), self:mkSettingsMenu(), self:mkQuitMenu() }
     )
@@ -118,12 +115,8 @@ function Player:mkDifficultyMenu()
         end
     end
     local isD = function(d)
-        return function(c)
-            if c.difficulty == d then
-                love.graphics.setColor(unpack(HIGHLIGHT))
-            else
-                love.graphics.setColor(unpack(WHITE))
-            end
+        return function(g)
+            return ite(g.difficulty == d, HIGHLIGHT, WHITE)
         end
     end
     return MenuItem:new('Difficulty', {
@@ -148,31 +141,35 @@ function Player:mkDifficultyMenu()
     }, 'View and lower difficulty level')
 end
 
+function Player:mkTutorialBox(n, w, chars)
+    local eles = {}
+    local row = 0
+    for j = 1, #TUTORIALS[n] do
+        local s = TUTORIALS[n][j]
+        if n == 'Battle: Ignea' and j == 2 then
+            local sd, sp = "Master", "no Ignea"
+            if self.sp.game.difficulty == ADEPT then
+                sd = "Adept"
+                sp = "25% of each ally's maximum Ignea"
+            elseif self.sp.game.difficulty == NORMAL then
+                sd = "Normal"
+                sp = "50% of each ally's maximum Ignea"
+            end
+            s = string.format(s, sd, sp)
+        end
+        local lines, _ = splitByCharLimit(s, chars)
+        eles[#eles + 1] = mkEle('text', lines, HALF_MARGIN, 
+            HALF_MARGIN + row * LINE_HEIGHT, { 0.8, 0.8, 0.8, 1 }, true)
+        row = row + #lines + 1
+    end
+    return { ['w'] = w, ['elements'] = eles, ['light'] = true }
+end
+
 function Player:mkTutorialsMenu()
     local items = {}
     for i = 1, #self.old_tutorials do
         local n = self.old_tutorials[i]
-        local eles = {}
-        local row = 0
-        for j = 1, #TUTORIALS[n] do
-            local s = TUTORIALS[n][j]
-            if n == 'Battle: Ignea' and j == 3 then
-                local sd, sp = "Master", "no Ignea"
-                if self.sp.game.difficulty == ADEPT then
-                    sd = "Adept"
-                    sp = "25% of each ally's maximum Ignea"
-                elseif self.sp.game.difficulty == NORMAL then
-                    sd = "Normal"
-                    sp = "50% of each ally's maximum Ignea"
-                end
-                s = string.format(s, sd, sp)
-            end
-            local lines, _ = splitByCharLimit(s, 89)
-            eles[#eles + 1] = mkEle('text', lines, HALF_MARGIN, 
-                HALF_MARGIN + row * LINE_HEIGHT, nil, true)
-            row = row + #lines + 1
-        end
-        local hbox = { ['w'] = VIRTUAL_WIDTH - BOX_MARGIN * 2, ['elements'] = eles }
+        local hbox = self:mkTutorialBox(n, HBOX_WIDTH, 58)
         items[#items + 1] = MenuItem:new(n, {}, "", hbox)
     end
     return MenuItem:new('Tutorials', items, 'View old tutorials')
@@ -180,21 +177,21 @@ end
 
 function Player:mkSettingsMenu()
     local sv = function(k, v)
-        return function(c)
-            if     k == 'm' then c:setMusicVolume(v)
-            elseif k == 's' then c:setSfxVolume(v)
-            elseif k == 't' then c:setTextVolume(v)
+        return function(g)
+            if     k == 'm' then g:setMusicVolume(v)
+            elseif k == 's' then g:setSfxVolume(v)
+            elseif k == 't' then g:setTextVolume(v)
             end
         end
     end
     local iv = function(k, v)
-        return function(c)
-            if (k == 'm' and c.music_volume == v) or
-               (k == 's' and c.sfx_volume == v) or
-               (k == 't' and c.text_volume == v) then
-                love.graphics.setColor(unpack(HIGHLIGHT))
+        return function(g)
+            if (k == 'm' and g.music_volume == v) or
+               (k == 's' and g.sfx_volume == v) or
+               (k == 't' and g.text_volume == v) then
+                return HIGHLIGHT
             else
-                love.graphics.setColor(unpack(WHITE))
+                return WHITE
             end
         end
     end
@@ -225,23 +222,21 @@ function Player:mkSettingsMenu()
         MenuItem:new('Turn end', {
             MenuItem:new('Auto', {},
                 "Turn automatically ends after all allies have acted",
-                nil, function(c) c.turn_autoend = true end, nil,
-                function(c)
-                    clr = ite(c.turn_autoend, HIGHLIGHT, WHITE)
-                    love.graphics.setColor(unpack(clr))
+                nil, function(g) g.turn_autoend = true end, nil,
+                function(g)
+                    return ite(g.turn_autoend, HIGHLIGHT, WHITE)
                 end
             ),
             MenuItem:new('Manual', {},
                 "'End turn' must be selected from the options menu",
-                nil, function(c) c.turn_autoend = false end, nil,
-                function(c)
-                    clr = ite(c.turn_autoend, WHITE, HIGHLIGHT)
-                    love.graphics.setColor(unpack(clr))
+                nil, function(g) g.turn_autoend = false end, nil,
+                function(g)
+                    return ite(g.turn_autoend, WHITE, HIGHLIGHT)
                 end
             )
         }, 'Change turn ending behavior in battle'),
-        self:mkDifficultyMenu(),
-        self:mkTutorialsMenu()
+        self:mkTutorialsMenu(),
+        self:mkDifficultyMenu()
     }, 'View settings and tutorials')
 end
 
@@ -437,11 +432,11 @@ function Player:update()
 end
 
 -- Render the player character's interactions
-function Player:render(c)
+function Player:render(g)
 
     -- Render menu if it exists
     if self.open_menu then
-        self.open_menu:render(c)
+        self.open_menu:render(g)
     end
 end
 

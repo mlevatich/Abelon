@@ -57,11 +57,13 @@ end
 
 function renderString(s, x, y, custom_pen, auto_color)
     if not custom_pen then
-        love.graphics.setColor(unpack(WHITE))
+        custom_pen = WHITE
     end
+    love.graphics.push('all')
+    love.graphics.setColor(unpack(custom_pen))
     local char_color = {}
     if auto_color then
-        for i = 1, #s do char_color[i] = WHITE end
+        for i = 1, #s do char_color[i] = custom_pen end
         for k, clr in pairs(AUTO_COLOR) do
             local st, ed = s:find(k)
             while st and ed do
@@ -79,6 +81,7 @@ function renderString(s, x, y, custom_pen, auto_color)
         end
         printChar(c, x + CHAR_WIDTH * (i - 1), y)
     end
+    love.graphics.pop()
 end
 
 function mkEle(t, data, x, y, extra, auto_color)

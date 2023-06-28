@@ -5,7 +5,7 @@ s12 = {}
 
 
 s12['battle'] = {
-    ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3'},
+    ['ids'] = {'abelon', 'kath', 'bigwolf', 'smallwolf1', 'smallwolf2'},
     ['events'] = {
         lookAt(2, 1),
         focus(2, 200),
@@ -186,10 +186,10 @@ s12['battle'] = {
         })
     },
     ['result'] = {
-        ['do'] = function(c)
-            local kath = c.sprites['kath']
-            c.player:joinParty(kath)
-            c:launchBattle()
+        ['do'] = function(g)
+            local kath = g.sprites['kath']
+            g.player:joinParty(kath)
+            g:launchBattle()
         end
     }
 }
@@ -368,8 +368,8 @@ s12['victory'] = {
                 ['result'] = {}
             }
         }),
-        br(function(c)
-            local abelon = c.sprites['abelon']
+        br(function(g)
+            local abelon = g.sprites['abelon']
             return abelon.health == (abelon.attributes['endurance'] * 2)
         end, {
             say(2, 1, false,
@@ -413,7 +413,7 @@ s12['victory'] = {
         waitForEvent('camera')
     },
     ['result'] = {
-        ['do'] = function(c) c:healAll() end
+        ['do'] = function(g) g:healAll() end
     }
 }
 

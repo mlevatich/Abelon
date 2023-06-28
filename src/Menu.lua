@@ -11,7 +11,7 @@ function CONFIRM_Y(msg)
          + (#msg/2 - 1) * LINE_HEIGHT - HALF_MARGIN
 end
 
-function MenuItem:initialize(name, children, h_desc, h_box, action, confirm, p, id)
+function MenuItem:initialize(name, children, h_desc, h_box, action, conf, p, id)
 
     self.name = name
     self.children = children
@@ -20,19 +20,19 @@ function MenuItem:initialize(name, children, h_desc, h_box, action, confirm, p, 
     self.hover_desc = h_desc
     self.hover_box = h_box
     self.action = action
-    self.confirm_msg = confirm
-    if confirm then
-        local cm, _ = splitByCharLimit(confirm, CBOX_CHARS_PER_LINE)
+    self.confirm_msg = conf
+    if conf then
+        local cm, _ = splitByCharLimit(conf, CBOX_CHARS_PER_LINE)
         self.confirm_msg = cm
     end
-    self.setPen = ite(p, p, function(c) love.graphics.setColor(unpack(WHITE)) end)
+    self.setPen = ite(p, p, function(g) return WHITE end)
     self.id = id
 end
 
 Menu = class('Menu')
 
 -- Initialize a new menu
-function Menu:initialize(parent, menu_items, x, y, forced, confirm_msg, clr)
+function Menu:initialize(parent, menu_items, x, y, forced, conf, clr, max_override)
 
     -- What is the parent menu of this menu (nil if a top-level menu)
     self.parent = parent
@@ -53,7 +53,7 @@ function Menu:initialize(parent, menu_items, x, y, forced, confirm_msg, clr)
 
     -- Is this a confirmation prompt? If so, what is the message?
     -- (optional parameter)
-    self.confirm_msg = confirm_msg
+    self.confirm_msg = conf
     self.confirm_clr = ite(clr, clr, WHITE)
 
     -- Is the menu forced to stay open until an option is selected
@@ -62,7 +62,7 @@ function Menu:initialize(parent, menu_items, x, y, forced, confirm_msg, clr)
     -- The different options on this menu
     self.hovering = 1
     self.base = 1
-    self.window = MAX_MENU_ITEMS
+    self.window = ite(max_override, max_override, MAX_MENU_ITEMS)
     self.menu_items = menu_items
     self:initSubmenus()
 end
@@ -114,7 +114,9 @@ function initSubmenu(cur, parent)
         local next_y = parent.rel_y
 
         -- Init menu and open action
-        local submenu = Menu:new(parent, cur.children, next_x, next_y, false)
+        local submenu = Menu:new(parent, cur.children, 
+            next_x, next_y, false, nil, nil, SUB_MENU_ITEMS
+        )
         local old_action = cur.action
         cur.action = function(c)
             parent.selected = submenu
@@ -233,13 +235,12 @@ function Menu:renderConfirmMessage()
     local cbox_y = VIRTUAL_HEIGHT/2 - cbox_h/2 - HALF_MARGIN
     love.graphics.setColor(0, 0, 0, RECT_ALPHA)
     love.graphics.rectangle('fill', cbox_x, cbox_y, cbox_w, cbox_h)
-    love.graphics.setColor(unpack(self.confirm_clr))
     for i=1, #msg do
         local base_x = VIRTUAL_WIDTH/2
                      - (#msg[i] * CHAR_WIDTH)/2
         local base_y = cbox_y + BOX_MARGIN
                      + LINE_HEIGHT * (i-1)
-        renderString(msg[i], base_x, base_y, true)
+        renderString(msg[i], base_x, base_y, self.confirm_clr)
     end
 end
 
@@ -256,7 +257,7 @@ function Menu:renderHoverDescription()
             local sdesc, _ = splitByCharLimit(desc, 32)
             for i = 1, #sdesc do
                 renderString(sdesc[i],
-                    desc_x, desc_y + LINE_HEIGHT * (i - 1), false, true
+                    desc_x, desc_y + LINE_HEIGHT * (i - 1), nil, true
                 )
             end
         else
@@ -267,7 +268,7 @@ function Menu:renderHoverDescription()
     end
 end
 
-function Menu:renderMenuItems(x, y, c)
+function Menu:renderMenuItems(x, y, g)
 
     if self.custom == 'lvlup' then
 
@@ -279,8 +280,7 @@ function Menu:renderMenuItems(x, y, c)
         )
         local l = self.sp.level - self.levels
         local lstr = 'Level:  ' .. l .. '  >>  ' .. (l + 1)
-        love.graphics.setColor(unpack(HIGHLIGHT))
-        renderString(lstr, b + x, b + y + PORTRAIT_SIZE, true)
+        renderString(lstr, b + x, b + y + PORTRAIT_SIZE, HIGHLIGHT)
         renderString(self.sp.name .. ' grows stronger!',
             b + x, b + y + LINE_HEIGHT + PORTRAIT_SIZE
         )
@@ -298,7 +298,7 @@ function Menu:renderMenuItems(x, y, c)
             local icon = icons[str_to_icon[a['id']]]
             local y_cur = y_base + self.spacing * (i - 1)
             local incr = 1
-            local pen = false
+            local pen = nil
             love.graphics.setColor(unpack(WHITE))
             love.graphics.draw(icon_texture, icon, x_base, y_cur, 0, 1, 1, 0, 0)
             if self.hovering == i then
@@ -306,11 +306,10 @@ function Menu:renderMenuItems(x, y, c)
                     b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, 0, 1, 1, 0, 0
                 )
                 renderString(a['name'], b + x + 27,
-                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, false, true
+                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, nil, true
                 )
                 incr = 2
-                pen = true
-                love.graphics.setColor(unpack(HIGHLIGHT))
+                pen = HIGHLIGHT
             end
             renderString(tostring(val), x_base + 57, y_cur + LINE_HEIGHT, pen)
             renderString(a['name'], x_base + 27, y_cur, pen)
@@ -346,8 +345,7 @@ function Menu:renderMenuItems(x, y, c)
             local base_x = 5 + x + BOX_MARGIN
             local base_y = y + HALF_MARGIN + (i - 1) * LINE_HEIGHT
             local item = self.menu_items[i + self.base - 1]
-            item.setPen(c)
-            renderString(item.name, base_x, base_y, true)
+            renderString(item.name, base_x, base_y, item.setPen(g))
         end
     end
 
@@ -361,7 +359,7 @@ function Menu:renderMenuItems(x, y, c)
     end
 end
 
-function Menu:renderRangeDiagram(x, y, skill_data)
+function renderRangeDiagram(x, y, skill_data)
 
     -- Data
     local shape = skill_data[1]
@@ -445,29 +443,26 @@ function Menu:renderRangeDiagram(x, y, skill_data)
     )
 end
 
-function Menu:renderHoverBox(h_box)
+function renderHoverBox(h_box, x, y, h)
 
     local w = h_box['w']
+    local light = h_box['light']
     h_box = h_box['elements']
 
-    -- Hover box top left
-    local x = BOX_MARGIN
-    local y = VIRTUAL_HEIGHT - BOX_MARGIN - HBOX_HEIGHT
-
     -- Draw hover box
-    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-    love.graphics.rectangle('fill', x, y, w, HBOX_HEIGHT)
+    local alpha = ite(light, RECT_ALPHA / 2, RECT_ALPHA)
+    love.graphics.setColor(0, 0, 0, alpha)
+    love.graphics.rectangle('fill', x, y, w, h)
 
     -- Draw elements in box relative to top left
     for i = 1, #h_box do
         local e = h_box[i]
         if e['type'] == 'text' then
             local clr = ite(e['color'], e['color'], WHITE)
-            love.graphics.setColor(unpack(clr))
             local msg = e['data']
             for j = 1, #msg do
                 local cy = y + e['y'] + LINE_HEIGHT * (j - 1)
-                renderString(msg[j], x + e['x'], cy, true, e['auto_color'])
+                renderString(msg[j], x + e['x'], cy, clr, e['auto_color'])
             end
         elseif e['type'] == 'image' then
             love.graphics.setColor(unpack(WHITE))
@@ -479,7 +474,7 @@ function Menu:renderHoverBox(h_box)
                 0, 1, 1, 0, 0
             )
         elseif e['type'] == 'range' then
-            self:renderRangeDiagram(x + e['x'], y + e['y'], e['data'])
+            renderRangeDiagram(x + e['x'], y + e['y'], e['data'])
         end
     end
 end
@@ -496,7 +491,7 @@ function Menu:renderSelectionArrow(x, y)
     printChar(">", arrow_x, arrow_y)
 end
 
-function Menu:render(c)
+function Menu:render(g)
 
     -- Top left of menu box
     local x = self.rel_x
@@ -512,7 +507,7 @@ function Menu:render(c)
     end
 
     -- Render options
-    self:renderMenuItems(x, y, c)
+    self:renderMenuItems(x, y, g)
 
     -- Render arrow over item being hovered (if visible)
     if not (self.confirm_msg and #self.menu_items == 1) then
@@ -522,7 +517,7 @@ function Menu:render(c)
     -- Render child menu if there is one or hover info if this is the leaf menu
     local hbox_rendered = false
     if self.selected then
-        hbox_rendered = self.selected:render(c)
+        hbox_rendered = self.selected:render(g)
     else
         self:renderHoverDescription()
     end
@@ -530,7 +525,9 @@ function Menu:render(c)
     -- Only render deepest hover box
     local h_box = self.menu_items[self.hovering + self.base - 1].hover_box
     if h_box and not hbox_rendered then
-        self:renderHoverBox(h_box)
+        renderHoverBox(h_box,
+            BOX_MARGIN, VIRTUAL_HEIGHT - BOX_MARGIN - HBOX_HEIGHT, HBOX_HEIGHT
+        )
         return true
     end
     return hbox_rendered

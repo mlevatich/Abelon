@@ -10,7 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- #48: Add tutorials as right side hoverboxes with specific triggers, add to inventory after they disappear.
 - In battle, target tile for directional skills should default to a tile with an enemy on it.
 - In battle, HUD should show how much damage/healing you are about to do and what statuses you will apply to each enemy/ally, when an attack is selected. When an assist is selected, HUD should show the effect that will apply to the assisted tiles.
 - Add in skills from notes, support the two displacement effects

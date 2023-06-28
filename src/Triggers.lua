@@ -4,11 +4,11 @@ require 'src.Constants'
 require 'src.Script'
 
 function mkAreaTrigger(scene_id, map_id, xTrigger, yTrigger)
-    return function(c)
-        local x, y = c.player:getPosition()
-        local id = c.current_map:getName()
+    return function(g)
+        local x, y = g.player:getPosition()
+        local id = g.current_map:getName()
         if id == map_id then
-            local tile = c.current_map:tileAt(x, y)
+            local tile = g.current_map:tileAt(x, y)
             if xTrigger(tile['x']) and yTrigger(tile['y']) then
                 return scene_id
             end
@@ -18,9 +18,9 @@ function mkAreaTrigger(scene_id, map_id, xTrigger, yTrigger)
 end
 
 function mkSimpleTrigger(check, action)
-    return function(c)
-        if check(c) then
-            action(c)
+    return function(g)
+        if check(g) then
+            action(g)
             return DELETE
         else
             return nil
@@ -37,6 +37,10 @@ scene_triggers = {
         ['1-1-battle'] = mkAreaTrigger('1-1-battle', 'south-forest',
             function(x) return x < 47 end,
             function(y) return y < 15 end
+        ),
+        ['close-tutorial1'] = mkAreaTrigger('1-1-close-tutorial1', 'south-forest',
+            function(x) return true end,
+            function(y) return true end
         )
     },
     ['1-2'] = {
@@ -48,18 +52,18 @@ scene_triggers = {
 }
 
 function mkUseTrigger(id, check)
-    return function(c)
-        if check(c) then
-            c:launchScene(id .. '-use')
+    return function(g)
+        if check(g) then
+            g:launchScene(id .. '-use')
             return
         end
-        c:launchScene(id .. '-use-fail')
+        g:launchScene(id .. '-use-fail')
     end
 end
 
 item_triggers = {
     ['medallion'] = mkUseTrigger('medallion',
-        function(c) return true end
+        function(g) return true end
     )
 }
 
@@ -84,9 +88,25 @@ end
 battle_triggers = {
     ['1-1'] = {
         [SELECT]     = {},
-        [ALLY]       = {},
+        [ALLY]       = {
+            ['tutorial2'] = mkTurnTrigger(1, ALLY),
+            ['tutorial3'] = mkTurnTrigger(2, ALLY)
+        },
         [ENEMY]      = {},
-        [END_ACTION] = {}
+        [END_ACTION] = {
+            ['end-tutorial2'] = function(b)
+                if b.game.current_tutorial then
+                    return 'close-tutorial2'
+                end
+                return false
+            end,
+            ['end-tutorial3'] = function(b)
+                if b.game.current_tutorial then
+                    return 'close-tutorial3'
+                end
+                return false
+            end
+        }
     },
     ['1-2'] = {
         [SELECT] = {

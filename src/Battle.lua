@@ -799,10 +799,10 @@ function Battle:mkUsable(sp, sk_menu)
     if sk2 then ignea_spent = ignea_spent + sk2.cost end
     local obsrv = hasSpecial(self.status[sp:getId()]['effects'], {}, 'observe')
     if sp.ignea < ignea_spent or (sk.id == 'observe' and obsrv) then
-        sk_menu.setPen = function(c) love.graphics.setColor(unpack(DISABLE)) end
+        sk_menu.setPen = function(g) return DISABLE end
     else
-        sk_menu.setPen = function(c) love.graphics.setColor(unpack(WHITE)) end
-        sk_menu.action = function(c)
+        sk_menu.setPen = function(g) return WHITE end
+        sk_menu.action = function(g)
             local c = self:getCursor()
             local cx = c[1]
             local cy = c[2]
@@ -2166,9 +2166,8 @@ function Battle:renderBoxElements(box, base_x, base_y)
         local e = box[i]
         if e['type'] == 'text' then
             local clr = ite(e['color'], e['color'], WHITE)
-            love.graphics.setColor(unpack(clr))
             renderString(e['data'],
-                base_x + e['x'], base_y + e['y'], true, e['auto_color']
+                base_x + e['x'], base_y + e['y'], clr, e['auto_color']
             )
         else
             love.graphics.setColor(unpack(WHITE))
@@ -2249,10 +2248,8 @@ function Battle:renderBexp()
         return VIRTUAL_WIDTH - BOX_MARGIN - #s * CHAR_WIDTH
     end
     local base_y = BOX_MARGIN
-    love.graphics.setColor(unpack(DISABLE))
-    renderString(msg1, computeX(msg1), base_y, true)
-    love.graphics.setColor(unpack(HIGHLIGHT))
-    renderString(msg2, computeX(msg2), base_y + LINE_HEIGHT, true)
+    renderString(msg1, computeX(msg1), base_y, DISABLE)
+    renderString(msg2, computeX(msg2), base_y + LINE_HEIGHT, HIGHLIGHT)
 end
 
 function Battle:renderGrid()

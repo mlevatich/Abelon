@@ -16,6 +16,7 @@ require 'src.Sprite'
 require 'src.Map'
 require 'src.Scene'
 require 'src.Music'
+require 'src.Menu'
 require 'src.Sounds'
 require 'src.Triggers'
 require 'src.Script'
@@ -77,6 +78,9 @@ function Game:initialize(difficulty)
     self.scene_inputs = {}
     self.callbacks = {}
     self.seen = {}
+
+    -- If a tutorial is in progress, store the name
+    self.current_tutorial = nil
 
     -- If the player is in a battle, it goes here
     self.battle = nil
@@ -239,6 +243,15 @@ function Game:setDifficulty(d)
     local old = self.difficulty
     self.difficulty = d
     if self.battle then self.battle:adjustDifficultyFrom(old) end
+end
+
+function Game:startTutorial(n)
+    self.current_tutorial = n
+end
+
+function Game:endTutorial()
+    self.player.old_tutorials[#self.player.old_tutorials+1] = self.current_tutorial
+    self.current_tutorial = nil
 end
 
 function Game:startMapMusic()
@@ -535,6 +548,25 @@ function Game:update(dt)
     return self.signal
 end
 
+function Game:renderTutorial()
+
+    -- Determine if tutorial should be hidden
+    local hide_tutorial = self.alpha ~= 1 or self.current_scene
+    if self.battle then
+        local st = self.battle:getStage()
+        if st == STAGE_WATCH or #self.battle.levelup_queue ~= 0 then
+            hide_tutorial = true
+        end
+    end
+
+    -- If there's an active tutorial, and we aren't hiding it, render!
+    if self.current_tutorial and not hide_tutorial then
+        local w = VIRTUAL_WIDTH / 3 - BOX_MARGIN
+        local hbox = self.player:mkTutorialBox(self.current_tutorial, w, 28)
+        renderHoverBox(hbox, VIRTUAL_WIDTH - w - BOX_MARGIN, 140, 285)
+    end
+end
+
 -- Render the map and sprites at the current position,
 -- along with active scene or battle, and camera effects
 function Game:render()
@@ -582,15 +614,15 @@ function Game:render()
         self.current_scene:render()
     end
 
+    -- Render tutorial message, if one exists
+    self:renderTutorial()
+
     -- Render flashed message
     if self.flash_msg then
-        love.graphics.push('all')
-        love.graphics.setColor({ 1, 1, 1, self.flash_alpha })
         renderString(self.flash_msg,
             (VIRTUAL_WIDTH - #self.flash_msg * CHAR_WIDTH) / 2,
-            VIRTUAL_HEIGHT - 50, true
+            VIRTUAL_HEIGHT - 50, { 1, 1, 1, self.flash_alpha }
         )
-        love.graphics.pop()
     end
 
     love.graphics.origin()
