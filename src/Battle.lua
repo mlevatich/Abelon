@@ -238,19 +238,17 @@ function Battle:stackBubble(c, moves)
 end
 
 function Battle:getCursor(n)
-    c = nil
     found = 0
     n = ite(n, n, 1)
     for i = 1, #self.stack do
-        if self.stack[#self.stack - i + 1]['cursor'] then
-            c = self.stack[#self.stack - i + 1]['cursor']
+        local c = self.stack[#self.stack - i + 1]['cursor']
+        if c then
             found = found + 1
             if found == n then
                 return c
             end
         end
     end
-    return nil
 end
 
 function Battle:getMenu()
@@ -791,6 +789,61 @@ function Battle:buildObjectivesBox()
     }
 end
 
+function Battle:getCursorSuggestion(sp, sk)
+
+    -- Sprite cursor position
+    local move_c = self:getCursor()
+    local cx = move_c[1]
+    local cy = move_c[2]
+    local c3 = move_c[3]
+
+    -- Assemble options for initial cursor position. Favor the direction
+    -- the sprite is already facing
+    local options = {}
+    if sk.aim['type'] ~= SELF_CAST then
+        if self.grid[cy][cx + sp.dir] then options[#options+1] = {cx + sp.dir,cy,c3} end
+        if self.grid[cy][cx - sp.dir] then options[#options+1] = {cx - sp.dir,cy,c3} end
+        if self.grid[cy + 1] and self.grid[cy + 1][cx] then 
+            options[#options+1] = {cx,cy + 1,c3} 
+        end
+        if self.grid[cy - 1] and self.grid[cy - 1][cx] then 
+            options[#options+1] = {cx,cy - 1,c3}
+        end
+    else
+        options = {{cx,cy,c3}}
+    end
+
+    -- If there's only one option, we're done
+    if #options == 1 then
+        return options[1]
+    end
+
+    -- If there are multiple options, pick the one that hits the most targets
+    local most_hit = 0
+    local most_hit_i = 1
+    for i = 1, #options do
+        local dir = self:getTargetDirection(sk, options[i])
+        local tiles = self:skillRange(sk, dir, options[i])
+        local n_hit = 0
+        for k = 1, #tiles do
+            local t = self.grid[tiles[k][1]][tiles[k][2]].occupied
+            if t == sp then
+                t = self.grid[move_c[2]][move_c[1]].occupied
+            elseif tiles[k][1] == move_c[2] and tiles[k][2] == move_c[1] then
+                t = sp
+            end
+            if t and sk:hits(sp, t, self.status) then
+                n_hit = n_hit + 1
+            end
+        end
+        if n_hit > most_hit then
+            most_hit = n_hit
+            most_hit_i = i
+        end
+    end
+    return options[most_hit_i]
+end
+
 function Battle:mkUsable(sp, sk_menu)
     local sk = skills[sk_menu.id]
     sk_menu.hover_desc = 'Use ' .. sk_menu.name
@@ -803,23 +856,12 @@ function Battle:mkUsable(sp, sk_menu)
     else
         sk_menu.setPen = function(g) return WHITE end
         sk_menu.action = function(g)
-            local c = self:getCursor()
-            local cx = c[1]
-            local cy = c[2]
-            if sk.aim['type'] ~= SELF_CAST then
-                if self.grid[cy][cx + 1] then
-                    cx = cx + 1
-                elseif self.grid[cy][cx - 1] then
-                    cx = cx - 1
-                elseif self.grid[cy + 1][cx] then
-                    cy = cy + 1
-                else
-                    cy = cy - 1
-                end
-            end
+
+            -- Pick best based on number of hittable targets range intersects
+            best_c = self:getCursorSuggestion(sp, sk)
             local cclr = ite(sk.type == ASSIST, { 0.4, 1, 0.4, 1 },
                                                 { 1, 0.4, 0.4, 1 })
-            local new_c = { cx, cy, c[3], cclr }
+            local new_c = { best_c[1], best_c[2], best_c[3], cclr }
             local zclr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
             self:push({
                 ['stage'] = STAGE_TARGET,
@@ -904,7 +946,11 @@ function Battle:selectTarget()
     local moves = self:validMoves(sp, c[2], c[1])
     if #moves <= 1 then
         self:push(self:stackBubble(c, moves))
-        self:openAssistMenu(sp)
+        if self.n_allies > 1 then
+            self:openAssistMenu(sp)
+        else
+            self:endAction(false)
+        end
     else
         local nc = { c[1], c[2], c[3], { 0.6, 0.4, 0.8, 1 } }
         self:push({
@@ -924,18 +970,31 @@ function Battle:selectTarget()
     end
 end
 
-function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun)
+function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, simulate_move)
     local i, j = self:findSprite(sp:getId())
-    local sp_a = ite(self:isAlly(sp), self.grid[i][j].assists, {})
+    local move_c = nil
+    local ass = self.grid[i][j].assists
+    if simulate_move then
+        move_c = self:getCursor(2)
+        ass = self.grid[move_c[2]][move_c[1]].assists
+    end
+    local sp_a = ite(self:isAlly(sp), ass, {})
     local t = self:skillRange(attack, attack_dir, c_attack)
     local ts = {}
     local ts_a = {}
     for k = 1, #t do
         local space = self.grid[t[k][1]][t[k][2]]
-        local target = space.occupied
+        if simulate_move then
+            if space.occupied == sp then
+                space = self.grid[move_c[2]][move_c[1]]
+            elseif t[k][1] == move_c[2] and t[k][2] == move_c[1] then
+                space = self.grid[i][j]
+            end
+        end
+        target = space.occupied
         if target then
-            table.insert(ts, target)
-            table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
+            table.insert(ts, 1, target)
+            table.insert(ts_a, 1, ite(self:isAlly(target), space.assists, {}))
         end
     end
     return attack:use(sp, sp_a, ts, ts_a, self.status, self.grid, dryrun)
@@ -967,6 +1026,14 @@ function Battle:pathToWalk(sp, path, next_sk)
     return move_seq
 end
 
+function Battle:computeDir(c1, c2)
+    if     c1[1] - c2[1] ==  1 then return RIGHT
+    elseif c1[1] - c2[1] == -1 then return LEFT
+    elseif c1[2] - c2[2] ==  1 then return DOWN
+    else                            return UP
+    end
+end
+
 function Battle:playAction()
 
     -- Skills used
@@ -988,20 +1055,13 @@ function Battle:playAction()
     end
 
     -- Derive directions from cursor locations
-    local computeDir = function(c1, c2)
-        if     c1[1] - c2[1] ==  1 then return RIGHT
-        elseif c1[1] - c2[1] == -1 then return LEFT
-        elseif c1[2] - c2[2] ==  1 then return DOWN
-        else                            return UP
-        end
-    end
     local attack_dir = UP
     if attack and attack.aim['type'] == DIRECTIONAL then
-        attack_dir = computeDir(c_attack, c_move1)
+        attack_dir = self:computeDir(c_attack, c_move1)
     end
     local assist_dir = UP
     if assist and assist.aim['type'] == DIRECTIONAL then
-        assist_dir = computeDir(c_assist, c_move2)
+        assist_dir = self:computeDir(c_assist, c_move2)
     end
 
     -- Shorthand
@@ -1829,16 +1889,16 @@ function Battle:renderAssistSpaces()
     end
 end
 
-function Battle:getTargetDirection()
+function Battle:getTargetDirection(sk, sk_c)
 
     -- Get skill and cursor info
-    local c = self:getCursor()
-    local sk = self:getSkill()
+    local c  = ite(sk_c, sk_c, self:getCursor())
+    local sk = ite(sk, sk, self:getSkill())
 
     -- Get direction to point the skill
     local dir = UP
     if sk.aim['type'] == DIRECTIONAL then
-        local o = self:getCursor(2)
+        local o = ite(sk_c, self:getCursor(), self:getCursor(2))
         dir = ite(c[1] > o[1], RIGHT,
                   ite(c[1] < o[1], LEFT,
                       ite(c[2] > o[2], DOWN, UP)))
@@ -2028,18 +2088,29 @@ function Battle:mkOuterHoverBox(w)
     return {}, 0
 end
 
-function Battle:mkTileHoverBox(tx, ty)
+function Battle:hoverBoxFromDryrun(sp, result)
+    local hp = sp.health - result['flat']
+    local stat = result['new_stat']
+    return self:hoverBoxFromInfo(sp, hp, stat)
+end
+
+function Battle:hoverBoxFromTile(tx, ty)
     local sp = self.grid[ty][tx].occupied
     if not sp then return nil, nil, nil, nil end
+    local hp = sp.health
+    local stat = self.status[sp:getId()]['effects']
+    return self:hoverBoxFromInfo(sp, hp, stat)
+end
+
+function Battle:hoverBoxFromInfo(sp, hp, statuses)
     local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
 
     -- Box contains sprite's name and status
     local name_str = sp.name
-    local hp_str = sp.health .. "/" .. (sp.attributes['endurance'] * 2)
-    local ign_str = sp.ignea .. "/" .. sp.attributes['focus']
+    local hp_str   = hp       .. "/" .. (sp.attributes['endurance'] * 2)
+    local ign_str  = sp.ignea .. "/" ..  sp.attributes['focus']
 
     -- Compute box width from longest status
-    local statuses = self.status[sp:getId()]['effects']
     local longest_status = 0
     for i = 1, #statuses do
 
@@ -2102,7 +2173,7 @@ end
 
 function Battle:mkInnerHoverBox()
     local c = self:getCursor()
-    local hbox, bw, bh, bclr = self:mkTileHoverBox(c[1], c[2])
+    local hbox, bw, bh, bclr = self:hoverBoxFromTile(c[1], c[2])
     if not hbox then
         local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
         local h = BOX_MARGIN + LINE_HEIGHT
@@ -2114,6 +2185,28 @@ end
 
 function Battle:renderTargetHoverBoxes()
 
+    function renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
+
+        -- Result box goes to the right
+        local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - w2
+        table.insert(clr2, RECT_ALPHA)
+        love.graphics.setColor(unpack(clr2))
+        love.graphics.rectangle('fill', cur_x, cur_y, w2, h2)
+        self:renderBoxElements(box2, cur_x, cur_y)
+
+        -- Arrow connecting them
+        cur_x = cur_x - BOX_MARGIN - 30
+        love.graphics.setColor(unpack(WHITE))
+        love.graphics.print("->", cur_x, cur_y + (h + h2) / 4)
+
+        -- Initial box left of it
+        cur_x = cur_x - BOX_MARGIN - w
+        table.insert(clr, RECT_ALPHA)
+        love.graphics.setColor(unpack(clr))
+        love.graphics.rectangle('fill', cur_x, cur_y, w, h)
+        self:renderBoxElements(box, cur_x, cur_y)
+    end
+
     -- Get skill range
     local dir    = self:getTargetDirection()
     local sk     = self:getSkill()
@@ -2121,9 +2214,16 @@ function Battle:renderTargetHoverBoxes()
     local sp     = self:getSprite()
     local tiles  = self:skillRange(sk, dir, c)
 
+    -- Do dryrun with simulated caster position
+    -- return value has distinct target effects and an optional caster effect
+    -- target effects in dryrun will appear in the same order as they do here.
+    -- Render them all, and then caster effects.
+    local dryrun = self:useAttack(sp, sk, dir, c, true, true)
+
     -- Iterate over tiles to see which ones need to render boxes
     local max_y = VIRTUAL_HEIGHT - BOX_MARGIN * 2 - FONT_SIZE - LINE_HEIGHT
     local cur_y = BOX_MARGIN
+    local k = 1
     for i = 1, #tiles do
 
         -- Switch tile of current sprite with prospective tile it's moving to
@@ -2142,21 +2242,32 @@ function Battle:renderTargetHoverBoxes()
         -- If there's a sprite on the tile and the skill affects that sprite,
         -- render the sprite's hover box
         if t and sk:hits(sp, t, self.status) then
-            local box, w, h, clr = self:mkTileHoverBox(tiles[i][2], tiles[i][1])
+            local result = dryrun[k]
+            local box, w, h, clr = self:hoverBoxFromTile(tiles[i][2], tiles[i][1])
+            local box2, w2, h2, clr2 = self:hoverBoxFromDryrun(t, result)
 
             -- Only render if there's room for the whole box on screen
-            if cur_y + h <= max_y then
-                local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - w
-                table.insert(clr, RECT_ALPHA)
-                love.graphics.setColor(unpack(clr))
-                love.graphics.rectangle('fill', cur_x, cur_y, w, h)
-                self:renderBoxElements(box, cur_x, cur_y)
-                cur_y = cur_y + h + BOX_MARGIN
+            if cur_y + math.max(h, h2) <= max_y then
+                renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
+                cur_y = cur_y + math.max(h, h2) + BOX_MARGIN
             else
                 local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
                 renderString("...", cur_x, cur_y)
                 break
             end
+            k = k + 1
+        end
+    end
+
+    if dryrun['caster'] then
+        local y, x = self:findSprite(sp:getId())
+        local box, w, h, clr = self:hoverBoxFromTile(x, y)
+        local box2, w2, h2, clr2 = self:hoverBoxFromDryrun(sp, dryrun['caster'])
+        if cur_y + math.max(h, h2) <= max_y then
+            renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
+        else
+            local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
+            renderString("...", cur_x, cur_y)
         end
     end
 end

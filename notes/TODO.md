@@ -10,14 +10,12 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- In battle, target tile for directional skills should default to a tile with an enemy on it.
-- In battle, HUD should show how much damage/healing you are about to do and what statuses you will apply to each enemy/ally, when an attack is selected. When an assist is selected, HUD should show the effect that will apply to the assisted tiles.
-- Add in skills from notes, support the two displacement effects
-
-- Finish script 1-2
+- Target box forward simulation and target tile default: get it working on assists as well (show the effect that will apply to the assisted tiles), and allies, test on the chapter 1-2 battle with lots of skills. Hide tutorials when target boxes are active, or otherwise deal with them.
+- Add in skills from notes, support the two displacement effects.
 
 - Scroll and journal
 - Object in the way that Abelon must interact with in east forest
+- Finish script 1-2
 - #69: Implement 1-1 and 1-2 script, 1-3 transition kicks back to title
 - Test balance using 1-2 battle
 

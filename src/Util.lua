@@ -342,6 +342,15 @@ function deepcopy(obj, seen)
     return res
 end
 
+-- Shallow copy
+function copy(tbl)
+    tbl2 = {}
+    for k,v in pairs(tbl) do
+        tbl2[k] = v
+    end
+    return tbl2
+end
+
 -- Print the contents of any variable
 function dump(var)
     print(toString(var))

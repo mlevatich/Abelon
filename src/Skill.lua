@@ -123,7 +123,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
         local t_tmp_attrs = mkTmpAttrs(t.attributes, t_stat, t_ass)
 
         -- Dryrun just computes damage, doesn't deal it or apply effects
-        dryrun_dmg[i] = { ['flat'] = 0, ['percent'] = 0 }
+        dryrun_dmg[i] = { ['flat'] = 0, ['percent'] = 0, ['new_stat'] = t_stat }
 
         -- If attacker is an enemy and target has forbearance, the target
         -- switches to Kath
@@ -201,30 +201,34 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
             end
 
             -- Apply status effects to target
-            if not dryrun then
-                for j = 1, #ts_effects do
-                    local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
-                    addStatus(t_stat, Effect:new(b, ts_effects[j][2]))
+            if dryrun then
+                t_stat = copy(t_stat)
+            end
+            for j = 1, #ts_effects do
+                local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
+                addStatus(t_stat, Effect:new(b, ts_effects[j][2]))
 
-                    -- Allies gain exp for applying negative status to enemies
-                    -- or applying positive statuses to allies
-                    local exp = 0
-                    if (b.type == DEBUFF and sp_team == ALLY and t_team == ENEMY)
-                    or (b.type == BUFF and sp_team == ALLY and t_team == ALLY)
-                    then
-                        exp = 10
-                        if b.attr ~= 'special' then exp = abs(b.val) end
-                    end
-                    exp_gain = exp_gain + exp
+                -- Allies gain exp for applying negative status to enemies
+                -- or applying positive statuses to allies
+                local exp = 0
+                if (b.type == DEBUFF and sp_team == ALLY and t_team == ENEMY)
+                or (b.type == BUFF and sp_team == ALLY and t_team == ALLY)
+                then
+                    exp = 10
+                    if b.attr ~= 'special' then exp = abs(b.val) end
                 end
+                exp_gain = exp_gain + exp
+            end
+            dryrun_dmg[i]['new_stat'] = t_stat
 
-                -- Target turns to face the caster
+            -- Target turns to face the caster
+            if not dryrun then
                 if abs(t.x - sp.x) > TILE_WIDTH / 2 then
                     t.dir = ite(t.x > sp.x, LEFT, RIGHT)
                 end
             end
 
-            -- Additional affects given by the 'and' modifier
+            -- Additional effects given by the 'and' modifier
             if not dryrun and modifiers['and'] then
                 modifiers['and'](sp, sp_tmp_attrs, t, t_tmp_attrs, status)
             end
@@ -232,20 +236,26 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
     end
 
     -- Affect caster
-    if not dryrun then
-        for j = 1, #sp_effects do
-            local b = mkBuff(sp_tmp_attrs, sp_effects[j][1])
-            addStatus(sp_stat, Effect:new(b, sp_effects[j][2]))
+    if dryrun then
+        sp_stat = copy(sp_stat)
+    end
+    for j = 1, #sp_effects do
+        local b = mkBuff(sp_tmp_attrs, sp_effects[j][1])
+        addStatus(sp_stat, Effect:new(b, sp_effects[j][2]))
 
-            -- Allies gain exp for applying positive status to themselves
-            local exp = 0
-            if b.type == BUFF and sp_team == ALLY then
-                exp = 10
-                if b.attr ~= 'special' then exp = abs(b.val) end
-            end
-            exp_gain = exp_gain + exp
+        -- Allies gain exp for applying positive status to themselves
+        local exp = 0
+        if b.type == BUFF and sp_team == ALLY then
+            exp = 10
+            if b.attr ~= 'special' then exp = abs(b.val) end
         end
+        exp_gain = exp_gain + exp
+    end
+    if #sp_effects > 0 then
+        dryrun_dmg['caster'] = { ['flat'] = 0, ['new_stat'] = sp_stat }
+    end
 
+    if not dryrun then
         -- If the attacker is an ally, gain exp
         if sp_team == ALLY then lvlups[sp:getId()] = sp:gainExp(exp_gain) end
 
@@ -394,6 +404,7 @@ end
 function addStatus(stat, eff)
     local spc = function(e) return e.buff.attr == 'special' end
     local dur = function(e) return e.duration               end
+
     local f = false
     for i = 1, #stat do
         local st = stat[i]
@@ -450,7 +461,7 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
-        { { { 'affinity', Scaling:new(8, 'affinity', 0) }, 1 } }, nil
+        nil, { { { 'affinity', Scaling:new(8, 'affinity', 0) }, 1 } }
     ),
     ['punish'] = Skill:new('punish', 'Punish',
         "Exploit a brief weakness with a precise stab. Deals 10 + (Force * \z
@@ -782,7 +793,7 @@ skills = {
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        { { { 'force', Scaling:new(2, 'focus', 1.0) }, 2 } }, nil
+        nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 2 } }
     ),
     ['mimic'] = Skill:new('mimic', 'Mimic',
         "Elaine chooses any ally on the field and magically copies their \z
