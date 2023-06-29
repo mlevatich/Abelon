@@ -123,7 +123,7 @@ battle_triggers = {
             ['enemy-turn1'] = mkTurnTrigger(1, ENEMY)
         },
         [END_ACTION] = {
-            ['demonic-spell'] =  function(b)
+            ['demonic-spell'] = function(b)
                 local atk = b.status['abelon']['attack']
                 if atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
                     return 'demonic-spell'
@@ -131,25 +131,25 @@ battle_triggers = {
                 return false
             end,
             ['end-tutorial1'] = function(b)
-                if b.game.current_tutorial then
+                if b.game.current_tutorial == "Battle: Assists" then
                     return 'close-tutorial-1'
                 end
                 return false
             end,
             ['end-tutorial2'] = function(b)
-                if b.game.current_tutorial then
+                if b.game.current_tutorial == "Battle: Ignea" then
                     return 'close-tutorial-2'
                 end
                 return false
             end,
             ['end-tutorial3'] = function(b)
-                if b.game.current_tutorial then
+                if b.game.current_tutorial == "Battle: Attributes" then
                     return 'close-tutorial-3'
                 end
                 return false
             end,
             ['end-tutorial4'] = function(b)
-                if b.game.current_tutorial then
+                if b.game.current_tutorial == "Battle: Reminder" then
                     return 'close-tutorial-4'
                 end
                 return false

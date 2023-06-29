@@ -455,9 +455,10 @@ s12['close-tutorial-4'] = {
     }
 }
 s12['demonic-spell'] = {
-    ['ids'] = {'kath'},
+    ['ids'] = {'kath', 'abelon'},
     ['events'] = {
         focus(1, 170),
+        face(1, 2),
         say(1, 3, true,
             "By Ignus, what the hell did you just do, Abelon? I've \z
              never seen such unbelievable magic!"
