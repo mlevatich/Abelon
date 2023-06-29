@@ -10,16 +10,20 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- Finish battle script, create battle file, test
+- Clean up target box visuals: better arrow and position, x-alignment for multiple targets.
+- Fix assist hover boxes to take dryrun and width into account
 
-- Target box forward simulation and target tile default: get it working on assists as well (show the effect that will apply to the assisted tiles), and allies, test on the chapter 1-2 battle with lots of skills.
-- Hide tutorials when target boxes are active, or otherwise deal with them. Clean up visuals
-- Add in skills from notes, support the two displacement effects.
-- test game balance, usability, bug-hunt, using 1-2 battle and many skills.
+- Smallwolf placeholder sprite
+- Make the lead-up to battle cooler, with pans and moving wolves
+- Add elaine join scene
+- Clean up 1-2 scene
+
+- Add in skills from notes, support the two displacement effects
+- test game balance, presentation, bug-hunt, using 1-2 battle and many skills
 
 - Scroll and journal
 - Object in the way that Abelon must interact with in east forest
-- Adjust road, add campsite, stone reliefs
+- Adjust road, add campsite, stone reliefs. West forest more claustraphobic
 - Lester-sleep, Shanti-sleep, Kath-sleep
 - Abelon-combat-entry-exit, Abelon-combat-idle
 - Elaine-downed, Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup

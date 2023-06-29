@@ -993,8 +993,8 @@ function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, simulate_mov
         end
         target = space.occupied
         if target then
-            table.insert(ts, 1, target)
-            table.insert(ts_a, 1, ite(self:isAlly(target), space.assists, {}))
+            table.insert(ts, target)
+            table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
         end
     end
     return attack:use(sp, sp_a, ts, ts_a, self.status, self.grid, dryrun)
@@ -2091,7 +2091,9 @@ end
 function Battle:hoverBoxFromDryrun(sp, result)
     local hp = sp.health - result['flat']
     local stat = result['new_stat']
-    return self:hoverBoxFromInfo(sp, hp, stat)
+    local ign = sp.ignea
+    if sp == self:getSprite() then ign = sp.ignea - self:getSkill().cost end
+    return self:hoverBoxFromInfo(sp, hp, ign, stat)
 end
 
 function Battle:hoverBoxFromTile(tx, ty)
@@ -2099,16 +2101,16 @@ function Battle:hoverBoxFromTile(tx, ty)
     if not sp then return nil, nil, nil, nil end
     local hp = sp.health
     local stat = self.status[sp:getId()]['effects']
-    return self:hoverBoxFromInfo(sp, hp, stat)
+    return self:hoverBoxFromInfo(sp, hp, sp.ignea, stat)
 end
 
-function Battle:hoverBoxFromInfo(sp, hp, statuses)
+function Battle:hoverBoxFromInfo(sp, hp, ign, statuses)
     local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
 
     -- Box contains sprite's name and status
     local name_str = sp.name
-    local hp_str   = hp       .. "/" .. (sp.attributes['endurance'] * 2)
-    local ign_str  = sp.ignea .. "/" ..  sp.attributes['focus']
+    local hp_str   = hp  .. "/" .. (sp.attributes['endurance'] * 2)
+    local ign_str  = ign .. "/" ..  sp.attributes['focus']
 
     -- Compute box width from longest status
     local longest_status = 0
@@ -2183,7 +2185,7 @@ function Battle:mkInnerHoverBox()
     return hbox, bw, bh, bclr
 end
 
-function Battle:renderTargetHoverBoxes()
+function Battle:renderAttackHoverBoxes(sk)
 
     function renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
 
@@ -2209,7 +2211,6 @@ function Battle:renderTargetHoverBoxes()
 
     -- Get skill range
     local dir    = self:getTargetDirection()
-    local sk     = self:getSkill()
     local c      = self:getCursor()
     local sp     = self:getSprite()
     local tiles  = self:skillRange(sk, dir, c)
@@ -2241,19 +2242,21 @@ function Battle:renderTargetHoverBoxes()
 
         -- If there's a sprite on the tile and the skill affects that sprite,
         -- render the sprite's hover box
-        if t and sk:hits(sp, t, self.status) then
-            local result = dryrun[k]
-            local box, w, h, clr = self:hoverBoxFromTile(tiles[i][2], tiles[i][1])
-            local box2, w2, h2, clr2 = self:hoverBoxFromDryrun(t, result)
+        if t then
+            if sk:hits(sp, t, self.status) then
+                local result = dryrun[k]
+                local box, w, h, clr = self:hoverBoxFromTile(tiles[i][2], tiles[i][1])
+                local box2, w2, h2, clr2 = self:hoverBoxFromDryrun(t, result)
 
-            -- Only render if there's room for the whole box on screen
-            if cur_y + math.max(h, h2) <= max_y then
-                renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
-                cur_y = cur_y + math.max(h, h2) + BOX_MARGIN
-            else
-                local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
-                renderString("...", cur_x, cur_y)
-                break
+                -- Only render if there's room for the whole box on screen
+                if cur_y + math.max(h, h2) <= max_y then
+                    renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
+                    cur_y = cur_y + math.max(h, h2) + BOX_MARGIN
+                else
+                    local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
+                    renderString("...", cur_x, cur_y)
+                    break
+                end
             end
             k = k + 1
         end
@@ -2269,6 +2272,43 @@ function Battle:renderTargetHoverBoxes()
             local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
             renderString("...", cur_x, cur_y)
         end
+    end
+end
+
+function Battle:renderAssistHoverBox(sk)
+
+    -- TODO: get tmp attributes assuming we're on the target space,
+    -- and we have already used the attack for this turn.
+    local buffs = sk:use(self:getTmpAttributes(self:getSprite()))
+
+    local eles = { mkEle('text', 'Assists', HALF_MARGIN, HALF_MARGIN) }
+
+    -- TODO: compute w ahead of time based on maximum width
+    local w = 200
+
+    for i = 1, #buffs do
+        local str = buffs[i]:toStr()
+        table.insert(eles, mkEle('text', str,
+            w - #str * CHAR_WIDTH - HALF_MARGIN,
+            HALF_MARGIN + LINE_HEIGHT * i
+        ))
+    end
+    local x = VIRTUAL_WIDTH - w - BOX_MARGIN
+    local y = BOX_MARGIN
+    local h = LINE_HEIGHT * (#eles) + BOX_MARGIN
+
+    love.graphics.setColor(0.05, 0.15, 0.05, RECT_ALPHA)
+    love.graphics.rectangle('fill', x, y, w, h)
+    self:renderBoxElements(eles, x, y)
+end
+
+function Battle:renderTargetHoverBoxes()
+
+    local sk = self:getSkill()
+    if sk.type == ASSIST then
+        self:renderAssistHoverBox(sk)
+    else
+        self:renderAttackHoverBoxes(sk)
     end
 end
 
