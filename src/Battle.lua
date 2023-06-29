@@ -581,7 +581,7 @@ function Battle:openEndTurnMenu()
             self:endTurn()
         end
     )}
-    local e = { "   E N E M Y   P H A S E   " }
+    local e = { "   E N E M Y   P H A S E   " .. self.turn .. "   " }
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED), {})
 end
 
@@ -599,8 +599,13 @@ function Battle:openBeginTurnMenu()
             self:checkTriggers(ALLY)
         end
     )}
-    local e = { "   A L L Y   P H A S E   " }
-    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, HIGHLIGHT), {})
+    
+    local t = self.turnlimit - self.turn
+    local msg = "   A L L Y   P H A S E   " .. self.turn .. "   "
+    if t == 0 then msg = "   F I N A L   T U R N   " end
+    local e = { msg }
+    local clr = ite(t == 0, AUTO_COLOR['Focus'], HIGHLIGHT)
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, clr), {})
 end
 
 function Battle:openAttackMenu(sp)
@@ -2519,10 +2524,11 @@ function Battle:renderOverlay()
 
     -- Render what turn it is in the lower right
     if s and s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
-        local turn_str = 'Turn ' .. self.turn
+        local turn_str = 'Turn ' .. self.turn .. '/' .. self.turnlimit
         renderString(turn_str,
             VIRTUAL_WIDTH - BOX_MARGIN - #turn_str * CHAR_WIDTH,
-            VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT
+            VIRTUAL_HEIGHT - BOX_MARGIN - FONT_SIZE - LINE_HEIGHT,
+            ite(self.turnlimit - self.turn == 0, AUTO_COLOR['Focus'], WHITE)
         )
     end
 end
