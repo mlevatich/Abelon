@@ -10,7 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- Clean up target box visuals: better arrow and position, x-alignment for multiple targets.
+- Clean up target box: better arrow and position, x-alignment for multiple targets.
 
 - Smallwolf placeholder sprite
 - Make the lead-up to battle cooler, with pans and moving wolves

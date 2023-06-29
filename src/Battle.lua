@@ -2204,9 +2204,9 @@ function Battle:renderAttackHoverBoxes(sk)
         self:renderBoxElements(box2, cur_x, cur_y)
 
         -- Arrow connecting them
-        cur_x = cur_x - BOX_MARGIN - 30
+        cur_x = cur_x - BOX_MARGIN - 10
         love.graphics.setColor(unpack(WHITE))
-        love.graphics.print("->", cur_x, cur_y + (h + h2) / 4)
+        love.graphics.print(">>", cur_x, cur_y + (h + h2) / 4 - TEXT_MARGIN_Y / 2)
 
         -- Initial box left of it
         cur_x = cur_x - BOX_MARGIN - w
