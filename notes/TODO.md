@@ -11,7 +11,7 @@ Bullets that reference a github issue should close the issue when committed.
 ## Immediate
 
 - Clean up target box visuals: better arrow and position, x-alignment for multiple targets.
-- Fix assist hover boxes to take dryrun and width into account
+- Warning for turns remaining on ally phase start
 
 - Smallwolf placeholder sprite
 - Make the lead-up to battle cooler, with pans and moving wolves

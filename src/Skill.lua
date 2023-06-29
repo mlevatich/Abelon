@@ -112,7 +112,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
     local sp_tmp_attrs = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
 
     -- Affect targets
-    local dryrun_dmg = {}
+    local dryrun_res = {}
     for i = 1, #ts do
 
         -- Temporary attributes and special effects for the target
@@ -122,8 +122,13 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
         local t_ass = ts_assists[i]
         local t_tmp_attrs = mkTmpAttrs(t.attributes, t_stat, t_ass)
 
-        -- Dryrun just computes damage, doesn't deal it or apply effects
-        dryrun_dmg[i] = { ['flat'] = 0, ['percent'] = 0, ['new_stat'] = t_stat }
+        -- Dryrun just computes results, doesn't deal damage or apply effects
+        dryrun_res[i] = {
+            ['sp'] = t, 
+            ['flat'] = 0, 
+            ['percent'] = 0, 
+            ['new_stat'] = t_stat
+        }
 
         -- If attacker is an enemy and target has forbearance, the target
         -- switches to Kath
@@ -174,8 +179,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
                     t.health = n_hp
                 end
 
-                dryrun_dmg[i]['flat'] = dealt
-                dryrun_dmg[i]['percent'] = dealt / pre_hp
+                dryrun_res[i]['flat'] = dealt
+                dryrun_res[i]['percent'] = dealt / pre_hp
 
                 -- Allies gain exp for damage dealt to enemies
                 if sp_team == ALLY and t_team == ENEMY then
@@ -219,7 +224,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
                 end
                 exp_gain = exp_gain + exp
             end
-            dryrun_dmg[i]['new_stat'] = t_stat
+            dryrun_res[i]['new_stat'] = t_stat
 
             -- Target turns to face the caster
             if not dryrun then
@@ -252,7 +257,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
         exp_gain = exp_gain + exp
     end
     if #sp_effects > 0 then
-        dryrun_dmg['caster'] = { ['flat'] = 0, ['new_stat'] = sp_stat }
+        dryrun_res['caster'] = { ['flat'] = 0, ['new_stat'] = sp_stat }
     end
 
     if not dryrun then
@@ -262,7 +267,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
         -- Return which targets were hurt/killed
         return hurt, dead, lvlups
     else
-        return dryrun_dmg
+        return dryrun_res
     end
 end
 

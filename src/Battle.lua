@@ -310,11 +310,15 @@ function Battle:isAlly(sp)
     return self.status[sp:getId()]['team'] == ALLY
 end
 
-function Battle:getTmpAttributes(sp)
+function Battle:getTmpAttributes(sp, with_eff, with_tile)
     local y, x = self:findSprite(sp:getId())
+    if with_tile then
+        y = with_tile[1]
+        x = with_tile[2]
+    end
     return mkTmpAttrs(
         sp.attributes,
-        self.status[sp:getId()]['effects'],
+        ite(with_eff, with_eff, self.status[sp:getId()]['effects']),
         ite(self:isAlly(sp), self.grid[y][x].assists, {})
     )
 end
@@ -822,7 +826,7 @@ function Battle:getCursorSuggestion(sp, sk)
     local most_hit = 0
     local most_hit_i = 1
     for i = 1, #options do
-        local dir = self:getTargetDirection(sk, options[i])
+        local dir = self:getTargetDirection(sk, move_c, options[i])
         local tiles = self:skillRange(sk, dir, options[i])
         local n_hit = 0
         for k = 1, #tiles do
@@ -970,13 +974,11 @@ function Battle:selectTarget()
     end
 end
 
-function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, simulate_move)
+function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, sp_c)
     local i, j = self:findSprite(sp:getId())
-    local move_c = nil
     local ass = self.grid[i][j].assists
-    if simulate_move then
-        move_c = self:getCursor(2)
-        ass = self.grid[move_c[2]][move_c[1]].assists
+    if sp_c then
+        ass = self.grid[sp_c[2]][sp_c[1]].assists
     end
     local sp_a = ite(self:isAlly(sp), ass, {})
     local t = self:skillRange(attack, attack_dir, c_attack)
@@ -984,10 +986,10 @@ function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, simulate_mov
     local ts_a = {}
     for k = 1, #t do
         local space = self.grid[t[k][1]][t[k][2]]
-        if simulate_move then
+        if sp_c then
             if space.occupied == sp then
-                space = self.grid[move_c[2]][move_c[1]]
-            elseif t[k][1] == move_c[2] and t[k][2] == move_c[1] then
+                space = self.grid[sp_c[2]][sp_c[1]]
+            elseif t[k][1] == sp_c[2] and t[k][2] == sp_c[1] then
                 space = self.grid[i][j]
             end
         end
@@ -1889,7 +1891,7 @@ function Battle:renderAssistSpaces()
     end
 end
 
-function Battle:getTargetDirection(sk, sk_c)
+function Battle:getTargetDirection(sk, sp_c, sk_c)
 
     -- Get skill and cursor info
     local c  = ite(sk_c, sk_c, self:getCursor())
@@ -1898,7 +1900,7 @@ function Battle:getTargetDirection(sk, sk_c)
     -- Get direction to point the skill
     local dir = UP
     if sk.aim['type'] == DIRECTIONAL then
-        local o = ite(sk_c, self:getCursor(), self:getCursor(2))
+        local o = ite(sp_c, sp_c, self:getCursor(2))
         dir = ite(c[1] > o[1], RIGHT,
                   ite(c[1] < o[1], LEFT,
                       ite(c[2] > o[2], DOWN, UP)))
@@ -2219,7 +2221,7 @@ function Battle:renderAttackHoverBoxes(sk)
     -- return value has distinct target effects and an optional caster effect
     -- target effects in dryrun will appear in the same order as they do here.
     -- Render them all, and then caster effects.
-    local dryrun = self:useAttack(sp, sk, dir, c, true, true)
+    local dryrun = self:useAttack(sp, sk, dir, c, true, self:getCursor(2))
 
     -- Iterate over tiles to see which ones need to render boxes
     local max_y = VIRTUAL_HEIGHT - BOX_MARGIN * 2 - FONT_SIZE - LINE_HEIGHT
@@ -2277,15 +2279,43 @@ end
 
 function Battle:renderAssistHoverBox(sk)
 
-    -- TODO: get tmp attributes assuming we're on the target space,
-    -- and we have already used the attack for this turn.
-    local buffs = sk:use(self:getTmpAttributes(self:getSprite()))
+    -- Get attack info
+    local sp = self:getSprite()
+    local attack_loc = self:getCursor(4)
+    local attack_c = self:getCursor(3)
+    local atk = self.stack[4]['sk']
 
-    local eles = { mkEle('text', 'Assists', HALF_MARGIN, HALF_MARGIN) }
+    -- Recover the status effects on the sprite that would
+    -- result from the attack to create a spoofed copy of their stats
+    local spoof_effects = self.status[sp:getId()]['effects']
+    if atk then
+        local dir = self:getTargetDirection(atk, attack_loc, attack_c)
+        local dryrun = self:useAttack(sp, atk, dir, attack_c, true, attack_loc)
+        if dryrun['caster'] then
+            spoof_effects = dryrun['caster']['new_stat']
+        else
+            local i = 1
+            while dryrun[i] do
+                if dryrun[i]['sp'] == sp then
+                    spoof_effects = dryrun[i]['new_stat']
+                    break
+                end
+                i = i + 1
+            end
+        end
+    end
 
-    -- TODO: compute w ahead of time based on maximum width
-    local w = 200
+    -- Get the grid tile (y, x) that the sprite would use the assist from.
+    local assist_loc = self:getCursor(2)
+    local spoof_tile = { assist_loc[2], assist_loc[1] }
 
+    -- Pass the spoofed grid tile and spoofed status effects to getTmpAttributes
+    -- to get the buffs that would be applied
+    local buffs = sk:use(self:getTmpAttributes(sp, spoof_effects, spoof_tile))
+
+    -- Compute buff strings
+    local eles = { mkEle('text', 'Assist', HALF_MARGIN, HALF_MARGIN) }
+    local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
     for i = 1, #buffs do
         local str = buffs[i]:toStr()
         table.insert(eles, mkEle('text', str,
@@ -2297,6 +2327,7 @@ function Battle:renderAssistHoverBox(sk)
     local y = BOX_MARGIN
     local h = LINE_HEIGHT * (#eles) + BOX_MARGIN
 
+    -- Render assist box
     love.graphics.setColor(0.05, 0.15, 0.05, RECT_ALPHA)
     love.graphics.rectangle('fill', x, y, w, h)
     self:renderBoxElements(eles, x, y)
