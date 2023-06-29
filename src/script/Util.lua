@@ -7,6 +7,12 @@ function addEvents(scene, e, at)
     end
 end
 
+function insertEvents(events)
+    return function(scene)
+        addEvents(scene, events, scene.event + 1)
+    end
+end
+
 function br(test, t_events, f_events)
     return function(scene)
         local events = ite(test(scene.game), t_events, f_events)
@@ -163,6 +169,17 @@ end
 function lookDir(p1, dir)
     return function(scene)
         scene.participants[p1].dir = dir
+    end
+end
+
+function daytime()
+    return function(scene)
+        for k,v in pairs(scene.game.maps) do
+            if k == 'east-forest' or k == 'west-forest' 
+            or k == 'south-forest' or k == 'north-forest' then
+                v.lit = 0.0
+            end
+        end
     end
 end
 

@@ -1,23 +1,24 @@
 // Battle stats
 
-TileOrigin: 31,9
-Allies: abelon:1,5 kath:2,6
-Enemies: bigwolf:10,2 smallwolf1:11,6 smallwolf2:9,5
-Order: bigwolf,smallwolf1,smallwolf2
+TileOrigin: 45,6
+Allies: abelon:7,3 kath:5,2
+Enemies: smallwolf1:1,2 smallwolf2:11,3 bigwolf:1,9 smallwolf3:2,10
+Order: smallwolf1,smallwolf2,smallwolf3,bigwolf
 Wincon: rout
 Losscon: death
-Turnlimits: 7,6,5
+Turnlimits: 8,7,6
 Music: A-Single-Shard-Of-Ignea
 
 // Battle grid
 
-Dimensions: 11,9
-FFFFFFFTTTT
-FFTTTTTTTTT
+Dimensions: 11,10
 TTTTTTTTTTT
 TTTTTTTTTTT
 TTTTTTTTTTT
 TTTTTTTTTTT
 TTTTTTTTTTT
-FTTTTTTTTFF
-FFFFFFTTFFF
+TTTTTTTTTTF
+TTTTTTTTTTF
+TTTTTTTTTFF
+TTTTTTTFFFF
+TTTTTFFFFFF

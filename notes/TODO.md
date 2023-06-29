@@ -10,7 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Immediate
 
-- Implement 1-2 and battle, include Elaine in battle (assume carried)
+- Finish battle script, create battle file, test
 
 - Target box forward simulation and target tile default: get it working on assists as well (show the effect that will apply to the assisted tiles), and allies, test on the chapter 1-2 battle with lots of skills.
 - Hide tutorials when target boxes are active, or otherwise deal with them. Clean up visuals

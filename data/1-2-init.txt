@@ -11,6 +11,7 @@
 ~bigwolf 1 1 L
 ~smallwolf1 1 1 L
 ~smallwolf2 1 1 L
+~smallwolf3 1 1 L
 
 ~~west-forest Dying-Forest
 
@@ -26,7 +27,6 @@
 
 ->State saw-camp,carried-elaine
 ->Inventory medallion
-->Seen 1-2-battle
 
 // EXAMPLE FAST-FORWARD
 // ->State saw-camp,carried-elaine

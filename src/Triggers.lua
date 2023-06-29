@@ -45,7 +45,7 @@ scene_triggers = {
     },
     ['1-2'] = {
         ['1-2-battle'] = mkAreaTrigger('1-2-battle', 'west-forest',
-            function(x) return x > 24 end,
+            function(x) return true end,
             function(y) return true end
         )
     }
@@ -110,22 +110,47 @@ battle_triggers = {
     },
     ['1-2'] = {
         [SELECT] = {
-            ['select-kath'] = mkSelectTrigger('kath')
+            ['select-kath'] = mkSelectTrigger('kath'),
+            ['select-abelon'] = mkSelectTrigger('abelon')
         },
         [ALLY] = {
             ['ally-turn1'] = mkTurnTrigger(1, ALLY),
-            ['ally-turn2'] = mkTurnTrigger(2, ALLY)
+            ['ally-turn2'] = mkTurnTrigger(2, ALLY),
+            ['ally-turn3'] = mkTurnTrigger(3, ALLY),
+            ['ally-turn4'] = mkTurnTrigger(4, ALLY)
         },
         [ENEMY] = {
             ['enemy-turn1'] = mkTurnTrigger(1, ENEMY)
         },
         [END_ACTION] = {
-            ['first-demonic-spell'] =  function(b)
-                local saw = b.game.state['kath-saw-spell']
+            ['demonic-spell'] =  function(b)
                 local atk = b.status['abelon']['attack']
-                if atk then atk = atk.id end
-                if not saw and atk == 'conflagration' or atk == 'crucible' then
-                    return 'abelon-demon'
+                if atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
+                    return 'demonic-spell'
+                end
+                return false
+            end,
+            ['end-tutorial1'] = function(b)
+                if b.game.current_tutorial then
+                    return 'close-tutorial-1'
+                end
+                return false
+            end,
+            ['end-tutorial2'] = function(b)
+                if b.game.current_tutorial then
+                    return 'close-tutorial-2'
+                end
+                return false
+            end,
+            ['end-tutorial3'] = function(b)
+                if b.game.current_tutorial then
+                    return 'close-tutorial-3'
+                end
+                return false
+            end,
+            ['end-tutorial4'] = function(b)
+                if b.game.current_tutorial then
+                    return 'close-tutorial-4'
                 end
                 return false
             end
