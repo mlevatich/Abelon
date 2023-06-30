@@ -609,23 +609,21 @@ function Battle:openBeginTurnMenu()
 end
 
 function Battle:openAttackMenu(sp)
-    local attributes = MenuItem:new('Attributes', {},
-        'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = HBOX_WIDTH
-    })
+    local atk_loc = self:getCursor()
+    local spoof_tile = { atk_loc[2], atk_loc[1] }
+    local attrs = self:getTmpAttributes(sp, nil, spoof_tile)
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s attack", nil, function(c)
             self:push(self:stackBubble())
             self:selectTarget()
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true, false)
+    local skills_menu = sp:mkSkillsMenu(true, false, attrs)
     local weapon = skills_menu.children[1]
     local spell = skills_menu.children[2]
     for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
     for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
-    local opts = { attributes, weapon, spell, wait }
+    local opts = { weapon, spell, wait }
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end }
@@ -633,20 +631,40 @@ function Battle:openAttackMenu(sp)
 end
 
 function Battle:openAssistMenu(sp)
-    local attributes = MenuItem:new('Attributes', {},
-        'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = HBOX_WIDTH
-    })
+    local attack_loc = self:getCursor(3)
+    local attack_c = self:getCursor(2)
+    local atk = self.stack[4]['sk']
+    local eff = self.status[sp:getId()]['effects']
+    if atk then
+        local dir = self:getTargetDirection(atk, attack_loc, attack_c)
+        local dryrun = self:useAttack(sp, atk, dir, attack_c, true, attack_loc)
+        if dryrun['caster'] then
+            eff = dryrun['caster']['new_stat']
+        else
+            local i = 1
+            while dryrun[i] do
+                if dryrun[i]['sp'] == sp then
+                    eff = dryrun[i]['new_stat']
+                    break
+                end
+                i = i + 1
+            end
+        end
+    end
+
+    local assist_loc = self:getCursor()
+    local spoof_tile = { assist_loc[2], assist_loc[1] }
+    local attrs = self:getTmpAttributes(sp, eff, spoof_tile)
+    local ign = sp.ignea - self:getSkill().cost
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s assist", nil, function(c)
             self:endAction(false)
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true, false)
+    local skills_menu = sp:mkSkillsMenu(true, false, attrs, ign)
     local assist = skills_menu.children[3]
     for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
-    local opts = { attributes, assist, wait }
+    local opts = { assist, wait }
     local c = self:getCursor(3)
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
@@ -2500,7 +2518,7 @@ function Battle:renderOverlay()
             -- Make and render hover boxes
             if s == STAGE_TARGET then
                 self:renderTargetHoverBoxes()
-            else
+            elseif not (s == STAGE_MENU and self:getCursor(4)) then
                 local ibox, w, ih, clr = self:mkInnerHoverBox()
                 local obox, oh = self:mkOuterHoverBox(w)
                 self:renderHoverBoxes(ibox, w, ih, obox, oh, clr)

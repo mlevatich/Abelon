@@ -8,16 +8,13 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Immediate
-
-- Clean up target box: better arrow and position, x-alignment for multiple targets.
+## Basic battle presentation, 1-1, 1-2
 
 - Smallwolf placeholder sprite
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
 - Clean up 1-2 scene
-
-- Add in skills from notes, support the two displacement effects
+- Add in skills from notes, support displacement effects
 - test game balance, presentation, bug-hunt, using 1-2 battle and many skills
 
 - Scroll and journal
@@ -32,7 +29,7 @@ Bullets that reference a github issue should close the issue when committed.
 - #69: Implement rest of 1-2 and empty start of 1-3
 - Add more optional content to 1-1 and 1-2.
 
-## Near
+## Advanced battle presentation
 
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.
 - Two mostly identical wolf sprites, Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run).
@@ -49,7 +46,7 @@ Bullets that reference a github issue should close the issue when committed.
 - #67: Better forest theme - more tense investigation, less funeral march
 - #65: Enemy approaches theme - for rising action before a fight!
 
-## Distant
+## 1-3
 
 - Write 1-3, 1-4 of narrative.md
 - Write script 1-3
@@ -58,7 +55,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 - #71: Implement 1-3. Includes additional map to the north of north forest, the monastery approach.
 
-## Finally
+## 1-4, engine extensions, closed release
 
 - Write 1-4 script
 - #68: Last pass over script for consistency

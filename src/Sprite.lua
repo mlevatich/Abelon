@@ -367,7 +367,7 @@ function Sprite:mkLearnable(sk_id, sk_item)
     return sk_item
 end
 
-function Sprite:mkSkillsMenu(with_skilltrees, with_prio)
+function Sprite:mkSkillsMenu(with_skilltrees, with_prio, attrs, ign)
 
     -- Helpers
     local learnedOf = function(t)
@@ -376,20 +376,24 @@ function Sprite:mkSkillsMenu(with_skilltrees, with_prio)
     local skToMenu = function(s)
         return s:toMenuItem(icon_texture, icons, with_skilltrees, with_prio)
     end
+    local hbox = {
+        ['elements'] = self:buildAttributeBox(attrs, ign),
+        ['w'] = HBOX_WIDTH
+    }
 
     -- Weapon and attack skills
     local skills = MenuItem:new('Skills', {
         MenuItem:new('Weapon', mapf(skToMenu, learnedOf(WEAPON)),
-                 'View ' .. self.name .. "'s weapon skills"),
+                 'View ' .. self.name .. "'s weapon skills", hbox),
         MenuItem:new('Spell', mapf(skToMenu, learnedOf(SPELL)),
-                 'View ' .. self.name .. "'s spells")
-    }, 'View ' .. self.name .. "'s learned skills")
+                 'View ' .. self.name .. "'s spells", hbox)
+    }, 'View ' .. self.name .. "'s learned skills", hbox)
 
     -- Assists, if this sprite has them
     if #learnedOf(ASSIST) > 0 then
         table.insert(skills.children, MenuItem:new('Assist',
             mapf(skToMenu, learnedOf(ASSIST)),
-            'View ' .. self.name .. "'s assists")
+            'View ' .. self.name .. "'s assists", hbox)
         )
     end
 
@@ -407,20 +411,24 @@ function Sprite:mkLearnMenu()
             s:toMenuItem(icon_texture, icons, true, false)
         )
     end
+    local hbox = {
+        ['elements'] = self:buildAttributeBox(),
+        ['w'] = HBOX_WIDTH
+    }
     local skt = self.skill_trees
     local learn = MenuItem:new('Learn (' .. self.skill_points .. ')', {
         MenuItem:new(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
-                 'View the ' .. skt[1]['name'] .. " tree"),
+                 'View the ' .. skt[1]['name'] .. " tree", hbox),
         MenuItem:new(skt[2]['name'], mapf(mkLearn, skt[2]['skills']),
-                 'View the ' .. skt[2]['name'] .. " tree"),
+                 'View the ' .. skt[2]['name'] .. " tree", hbox),
         MenuItem:new(skt[3]['name'], mapf(mkLearn, skt[3]['skills']),
-                 'View the ' .. skt[3]['name'] .. " tree")
-    }, 'Learn new skills', nil, nil, nil, checkUnspent)
+                 'View the ' .. skt[3]['name'] .. " tree", hbox)
+    }, 'Learn new skills', hbox, nil, nil, checkUnspent)
 
     return learn
 end
 
-function Sprite:buildAttributeBox(tmp_attrs)
+function Sprite:buildAttributeBox(tmp_attrs, tmp_ign)
 
     -- If temp attributes were provided, use those
     local att = ite(tmp_attrs, tmp_attrs, self.attributes)
@@ -441,7 +449,7 @@ function Sprite:buildAttributeBox(tmp_attrs)
     local lvl_str = 'Lvl: ' .. tostring(self.level)
     local hp_str  = 'Hp: '  .. tostring(self.health) .. '/'
                             .. tostring(self.attributes['endurance'] * 2)
-    local ign_str = 'Ign: ' .. tostring(self.ignea) .. '/'
+    local ign_str = 'Ign: ' .. tostring(ite(tmp_ign, tmp_ign, self.ignea)) .. '/'
                             .. tostring(self.attributes['focus'])
     local exp_str = 'Exp: ' .. tostring(self.exp) .. '/' .. EXP_NEXT[self.level]
     local icon = function(i)
