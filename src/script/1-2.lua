@@ -217,7 +217,9 @@ s12['battle'] = {
         wait(1),
         say(2, 0, false, "Abelon?"),
         fade(0.2),
-        wait(4),
+        wait(1),
+        -- TODO: getUp(1),
+        wait(3),
         focus(2, 100),
         say(2, 3, true,
             "Can you sense it? They're hanging back for now, watching us. \z

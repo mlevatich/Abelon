@@ -8,13 +8,16 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Basic battle presentation, 1-1, 1-2
+## Basic battle mechanics, 1-1, 1-2
+
+- During a non-dryrun attack, the sprite's grid location is adjusted. During playAction(), the sprite slides to the displacement destination, if one exists.
+- During a dryrun, we report the tile the sprite will be moved to, and after the attack, this tile is no longer walkable. When targeting a displacement skill, and after it has been queued, an additional VIEW renders the displacement destination of each affected sprite, with an arrow pointing to it.
+- Add in skills from notes.
 
 - Smallwolf placeholder sprite
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
 - Clean up 1-2 scene
-- Add in skills from notes, support displacement effects
 - test game balance, presentation, bug-hunt, using 1-2 battle and many skills
 
 - Scroll and journal
@@ -29,7 +32,7 @@ Bullets that reference a github issue should close the issue when committed.
 - #69: Implement rest of 1-2 and empty start of 1-3
 - Add more optional content to 1-1 and 1-2.
 
-## Advanced battle presentation
+## Battle presentation
 
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.
 - Two mostly identical wolf sprites, Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run).

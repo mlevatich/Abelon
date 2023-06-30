@@ -17,13 +17,29 @@ Mona:   Caretaker
 
 #### Abelon
 
-- clutches: pull an enemy towards you (potentially lower its stats? Or dmg? Both?)
-- Siphon: lifesteal by hitting an enemy
+- demon - clutches: pull an enemy towards you, deal some damage, and reduce its reaction. Costs 1 ignea.
+- demon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
+- executioner - Execute: Force * 1.5 weapon damage to enemy below half
+- veteran - gambit - 40 weapon damage, lowers affinity and agility to zero.
+- veteran - Bravado - Assist, grants allies big force, but vastly reduced reaction, affinity
+- executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
 
 #### Kath
 
-- shove: push an enemy or ally. Free
-- riposte: kath retaliates against any weapon damage dealt to him
+- hero - shove: push an enemy or ally 1 tile, and gain some reaction. Free
+- defender - riposte: kath retaliates against any weapon damage dealt to him
+- defender - caution: Lowers force by 2, raises reaction by 3 for 5 turns
+- Buff sweep
+- Hero - bond: raise an ally's affinity, and kath's affinity, for 3 turns
+- cleric - Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
+- cleric - sacrifice: Reduce Kath's hp by 10, heal allies in an area by 20. Costs 1 ignea.
+- cleric - regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
+- Hero - thrust: Deals 1.0 * force damage to two enemies in front of Kath.
+- Hero - charged thrust: Deals 1.0 * force damage to four enemies in front of Kath. Costs 1 ignea.
+- defender - charged sweep: sweep but add more tiles, more damage, more reaction. Costs 3 ignea.
+- Hero - charged javelin: Deals 2.0 * force damage to an enemy three tiles in front of Kath, and pushes them back 2 tiles. Costs 3 ignea.
+- cleric - Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
+- defender - steadfast: allies on the assist lose all of their agility but gain reaction scaling with affinity. Costs 1 ignea.
 
 #### Lester
 
@@ -52,8 +68,6 @@ does 10 + Force x 3 weapon damage
 - Living Rock: big phys aoe reduces agility
 
 ## Skill Mechanics
-
-Have each skill have a potential displacement effect, which is either “slide” or “teleport” (controls animation) and specifies the distance/direction pushed as a function of skill direction and displacement from caster (so you could push “outward”). Enemies are pushed until they are stopped by a grid edge or another unit
 
 Every character has skill "paths" to choose from, named by nouns
 (e.g. Abelon has Veteran, Demon, and Executioner), with an associated icon and
