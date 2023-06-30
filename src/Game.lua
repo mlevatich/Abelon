@@ -186,6 +186,12 @@ function Game:loadFresh()
                     if not sp then sp = Sprite:new(vals[i], self) end
                     self.player:acquire(sp)
                 end
+            elseif fname == 'Party' then
+                for i=1, #vals do
+                    local sp = self.sprites[vals[i]]
+                    if not sp then sp = Sprite:new(vals[i], self) end
+                    self.player:joinParty(sp)
+                end
             else
                 sprite_ff = self.sprites[fname]
             end

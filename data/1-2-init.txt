@@ -37,6 +37,7 @@
 // ->State saw-camp,carried-elaine
 // ->Seen 1-1-entry
 // ->Inventory journal
+// ->Party kath
 // ->abelon
 // +Impression 100
 // +Awareness 100
