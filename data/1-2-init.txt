@@ -28,6 +28,11 @@
 ->State saw-camp,carried-elaine
 ->Inventory medallion
 
+->abelon
++Level 1
++Skills crucible
++BonusAttrs force:1
+
 // EXAMPLE FAST-FORWARD
 // ->State saw-camp,carried-elaine
 // ->Seen 1-1-entry

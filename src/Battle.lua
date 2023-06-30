@@ -635,6 +635,8 @@ function Battle:openAssistMenu(sp)
     local attack_c = self:getCursor(2)
     local atk = self.stack[4]['sk']
     local eff = self.status[sp:getId()]['effects']
+    local hp = sp.health
+    local ign = sp.ignea - self:getSkill().cost
     if atk then
         local dir = self:getTargetDirection(atk, attack_loc, attack_c)
         local dryrun = self:useAttack(sp, atk, dir, attack_c, true, attack_loc)
@@ -645,6 +647,7 @@ function Battle:openAssistMenu(sp)
             while dryrun[i] do
                 if dryrun[i]['sp'] == sp then
                     eff = dryrun[i]['new_stat']
+                    hp = sp.health - dryrun[i]['flat']
                     break
                 end
                 i = i + 1
@@ -655,13 +658,12 @@ function Battle:openAssistMenu(sp)
     local assist_loc = self:getCursor()
     local spoof_tile = { assist_loc[2], assist_loc[1] }
     local attrs = self:getTmpAttributes(sp, eff, spoof_tile)
-    local ign = sp.ignea - self:getSkill().cost
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s assist", nil, function(c)
             self:endAction(false)
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true, false, attrs, ign)
+    local skills_menu = sp:mkSkillsMenu(true, false, attrs, hp, ign)
     local assist = skills_menu.children[3]
     for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
     local opts = { assist, wait }
@@ -683,18 +685,13 @@ function Battle:openAllyMenu(sp)
 end
 
 function Battle:openEnemyMenu(sp)
-    local attributes = MenuItem:new('Attributes', {},
-        'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
-        ['w'] = 390
-    })
     local readying = MenuItem:new('Next Attack', {},
         'Prepared skill and target', {
         ['elements'] = self:buildReadyingBox(sp),
         ['w'] = HBOX_WIDTH
     })
-    local skills = sp:mkSkillsMenu(false, true)
-    local opts = { attributes, readying, skills }
+    local skills = sp:mkSkillsMenu(false, true, nil, nil, nil, 390)
+    local opts = { skills, readying }
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function(b) b:renderMovementHover() end }
     })

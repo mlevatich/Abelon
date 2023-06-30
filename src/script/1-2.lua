@@ -213,9 +213,11 @@ s12['battle'] = {
         chaptercard(),
         -- TODO: combatReady(2),
         say(2, 0, false, "Abelon, wake up. Quickly."),
-        say(2, 0, false, "And fetch your scabbard. Abelon?"),
+        say(2, 0, false, "And fetch your scabbard."),
+        wait(1),
+        say(2, 0, false, "Abelon?"),
         fade(0.2),
-        wait(3),
+        wait(4),
         focus(2, 100),
         say(2, 3, true,
             "Can you sense it? They're hanging back for now, watching us. \z

@@ -367,7 +367,7 @@ function Sprite:mkLearnable(sk_id, sk_item)
     return sk_item
 end
 
-function Sprite:mkSkillsMenu(with_skilltrees, with_prio, attrs, ign)
+function Sprite:mkSkillsMenu(with_skilltrees, with_prio, attrs, hp, ign, hbox_w)
 
     -- Helpers
     local learnedOf = function(t)
@@ -377,8 +377,8 @@ function Sprite:mkSkillsMenu(with_skilltrees, with_prio, attrs, ign)
         return s:toMenuItem(icon_texture, icons, with_skilltrees, with_prio)
     end
     local hbox = {
-        ['elements'] = self:buildAttributeBox(attrs, ign),
-        ['w'] = HBOX_WIDTH
+        ['elements'] = self:buildAttributeBox(attrs, hp, ign),
+        ['w'] = ite(hbox_w, hbox_w, HBOX_WIDTH)
     }
 
     -- Weapon and attack skills
@@ -428,7 +428,7 @@ function Sprite:mkLearnMenu()
     return learn
 end
 
-function Sprite:buildAttributeBox(tmp_attrs, tmp_ign)
+function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
 
     -- If temp attributes were provided, use those
     local att = ite(tmp_attrs, tmp_attrs, self.attributes)
@@ -447,7 +447,7 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_ign)
 
     -- Creating some needed strings
     local lvl_str = 'Lvl: ' .. tostring(self.level)
-    local hp_str  = 'Hp: '  .. tostring(self.health) .. '/'
+    local hp_str  = 'Hp: '  .. tostring(ite(tmp_hp, tmp_hp, self.health)) .. '/'
                             .. tostring(self.attributes['endurance'] * 2)
     local ign_str = 'Ign: ' .. tostring(ite(tmp_ign, tmp_ign, self.ignea)) .. '/'
                             .. tostring(self.attributes['focus'])
