@@ -1019,7 +1019,7 @@ function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, sp_c)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
         end
     end
-    return attack:use(sp, sp_a, ts, ts_a, self.status, self.grid, dryrun)
+    return attack:use(sp, sp_a, ts, ts_a, attack_dir, self.status, self.grid, dryrun)
 end
 
 function Battle:kill(sp)
@@ -1106,18 +1106,33 @@ function Battle:playAction()
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
         return sp:skillBehaviorGeneric(function()
-            local hurt, dead, lvlups = self:useAttack(sp,
+            local moved, hurt, dead, lvlups = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
             sp.ignea = sp.ignea - attack.cost
             for k, v in pairs(lvlups) do
                 if lvlups[k] > 0 then self.levelup_queue[k] = v end
             end
+            local dont_hurt = { [sp:getId()] = true }
+            -- for i = 1, #moved do
+            --     local t = moved[i]['sp']
+            --     t:behaviorSequence({ function(d)
+            --         t:walkToBehaviorGeneric(function()
+            --             t:changeBehavior('battle')
+            --             if abs(t.x - sp.x) > TILE_WIDTH / 2 then
+            --                 t.dir = ite(t.x > sp.x, LEFT, RIGHT)
+            --             end
+            --             self:moveSprite(t, moved[i]['x'], moved[i]['y'])
+            --         end, moved[i]['x'], moved[i]['y'], true, 'displace')
+            --     end }, pass)
+            --     dont_hurt[t:getId()] = true
+            -- end
             for i = 1, #hurt do
-                if hurt[i] ~= sp then
-                    hurt[i]:behaviorSequence({ function(d)
-                        hurt[i]:fireAnimation('hurt', function()
-                            hurt[i]:changeBehavior('battle')
+                local t = hurt[i]
+                if dont_hurt[t:getId()] == nil then
+                    t:behaviorSequence({ function(d)
+                        t:fireAnimation('hurt', function()
+                            t:changeBehavior('battle')
                         end)
                         return pass
                     end }, pass)

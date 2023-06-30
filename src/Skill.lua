@@ -37,7 +37,7 @@ end
 Skill = class('Skill')
 
 function Skill:initialize(id, n, desc, ti, st, prio, si, tr, r, at, c,
-                          affects, scaling, sp_effects, ts_effects,
+                          affects, scaling, sp_effects, ts_effects, ts_displace,
                           modifiers, buff_templates)
 
     -- Identifying info
@@ -67,13 +67,14 @@ function Skill:initialize(id, n, desc, ti, st, prio, si, tr, r, at, c,
     self.scaling = scaling
     self.sp_effects = ite(sp_effects, sp_effects, {})
     self.ts_effects = ite(ts_effects, ts_effects, {})
+    self.ts_displace = ite(ts_displace, ts_displace, {})
     self.modifiers = ite(modifiers, modifiers, {})
     self.buff_templates = buff_templates
 end
 
-function Skill:use(a, b, c, d, e, f, g)
+function Skill:use(a, b, c, d, e, f, g, h)
     if self.type == ASSIST then return self:assist(a)
-    else                        return self:attack(a, b, c, d, e, f, g)
+    else                        return self:attack(a, b, c, d, e, f, g, h)
     end
 end
 
@@ -88,7 +89,7 @@ function Skill:assist(attrs)
     return mapf(function(b) return mkBuff(attrs, b) end, self.buff_templates)
 end
 
-function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
+function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dryrun)
 
     -- Bring upvalues into scope
     local dmg_type = self.dmg_type
@@ -96,9 +97,11 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
     local scaling = self.scaling
     local sp_effects = self.sp_effects
     local ts_effects = self.ts_effects
+    local ts_displace = self.ts_displace
     local modifiers = self.modifiers
 
-    -- Who was hurt/killed by this attack?
+    -- Who was moved/hurt/killed by this attack?
+    local moved = {}
     local hurt = {}
     local dead = {}
 
@@ -127,7 +130,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
             ['sp'] = t, 
             ['flat'] = 0, 
             ['percent'] = 0, 
-            ['new_stat'] = t_stat
+            ['new_stat'] = t_stat,
+            ['moved'] = {}
         }
 
         -- If attacker is an enemy and target has forbearance, the target
@@ -226,6 +230,52 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
             end
             dryrun_res[i]['new_stat'] = t_stat
 
+            -- Compute x/y displacement tile based on direction and grid state
+            -- Only record if displacement is non-zero
+            if #ts_displace > 0 then
+                
+                -- Compute actual direction
+                local dirs = { UP, RIGHT, DOWN, LEFT }
+                local dir = ts_displace[1]
+                local k = find(dirs, dir) - 1
+                local h = find(dirs, atk_dir) - 1
+                dir = dirs[((k + h) % 4) + 1]
+
+                -- Compute actual displacement
+                local d = ts_displace[2]
+                local loc = status[t:getId()]['location']
+                local x, y = loc[1], loc[2]
+                if dir == UP then
+                    while y > loc[2] - d and grid[y-1] and grid[y-1][x] 
+                    and not grid[y-1][x].occupied do
+                        y = y - 1
+                    end
+                elseif dir == RIGHT then
+                    while x < loc[1] + d and grid[y] and grid[y][x+1] 
+                    and not grid[y][x+1].occupied do
+                        x = x + 1
+                    end
+                elseif dir == DOWN then
+                    while y < loc[2] + d and grid[y+1] and grid[y+1][x] 
+                    and not grid[y+1][x].occupied do
+                        y = y + 1
+                    end
+                elseif dir == LEFT then
+                    while x > loc[1] - d and grid[y] and grid[y][x-1] 
+                    and not grid[y][x-1].occupied do
+                        x = x - 1
+                    end
+                end
+
+                -- Record final tile displaced to
+                if x ~= loc[1] or y ~= loc[2] then
+                    table.insert(moved, { ['sp'] = t, ['x'] = x, ['y'] = y })
+                end
+                if dryrun then
+                    dryrun_res[i]['moved'] = { ['x'] = x, ['y'] = y }
+                end
+            end
+
             -- Target turns to face the caster
             if not dryrun then
                 if abs(t.x - sp.x) > TILE_WIDTH / 2 then
@@ -265,7 +315,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, status, grid, dryrun)
         if sp_team == ALLY then lvlups[sp:getId()] = sp:gainExp(exp_gain) end
 
         -- Return which targets were hurt/killed
-        return hurt, dead, lvlups
+        return moved, hurt, dead, lvlups
     else
         return dryrun_res
     end
@@ -477,7 +527,7 @@ skills = {
           { T, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(10, 'force', 1.0),
-        nil, nil,
+        nil, nil, nil,
         { ['br'] = function(a, a_a, b, b_a, st) return isDebuffed(b, st) end }
     ),
     ['conflagration'] = Skill:new('conflagration', 'Conflagration',
@@ -495,21 +545,21 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { T } }, FREE_AIM(100), 1,
         ENEMY, Scaling:new(1000, 'force', 0),
-        nil, nil,
+        nil, nil, nil,
         { ['br'] = function(a, a_a, b, b_a, st) return b.health <= 10 end }
     ),
     ['contempt'] = Skill:new('contempt', 'Contempt',
-        "Glare with an evil eye lit by ignea, reducing the Reaction of \z
+        "Glare with an evil eye lit by ignea, reducing the Force of \z
          affected enemies by (Focus * 0.5) for two turns.",
-        'Demon', SPELL, MANUAL, str_to_icon['focus'],
-        { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
+        'Veteran', SPELL, MANUAL, str_to_icon['focus'],
+        { { 'Demon', 1 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
         { { F, T, F, T, F },
           { F, F, T, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'reaction', Scaling:new(0, 'focus', -0.5) }, 2 } }
+        nil, { { { 'force', Scaling:new(0, 'focus', -0.5) }, 2 } }
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
@@ -524,7 +574,7 @@ skills = {
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 8,
         ENEMY, Scaling:new(0, 'force', 2.0),
-        nil, nil,
+        nil, nil, nil,
         { ['self'] = true }
     ),
     ['guard_blindspot'] = Skill:new('guard_blindspot', 'Guard Blindspot',
@@ -533,7 +583,7 @@ skills = {
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'reaction', Scaling:new(0, 'affinity', 0.5) } }
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire',
@@ -548,7 +598,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         {
             { 'force',    Scaling:new(0, 'affinity', 0.5) },
             { 'reaction', Scaling:new(0, 'affinity', 0.5) },
@@ -576,10 +626,22 @@ skills = {
         { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'special', 'stun', DEBUFF }, 1 } },
+        nil, { { { 'special', 'stun', DEBUFF }, 1 } }, nil,
         { ['br'] = function(a, a_a, b, b_a, st)
             return a_a['reaction'] > b_a['reaction'] end
         }
+    ),
+    ['shove'] = Skill:new('shove', 'Shove',
+        "Kath shoves an ally or enemy, moving them by one tile and raising \z
+         Kath's Reaction by 3.",
+        'Hero', WEAPON, MANUAL, str_to_icon['empty'],
+        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { F, F, F },
+          { F, T, F },
+          { F, F, F } }, DIRECTIONAL_AIM, 0,
+        ALL, nil,
+        { { { 'reaction', Scaling:new(3, 'force', 0) }, 1 } }, nil, 
+        { UP, 1 }
     ),
     ['javelin'] = Skill:new('javelin', 'Javelin',
         "Kath hurls a javelin at an enemy, dealing (Force * 1.2) Weapon \z
@@ -606,7 +668,7 @@ skills = {
         ENEMY, nil,
         nil, { { { 'special', 'enrage', DEBUFF }, 1 } }
     ),
-    ['stitching_mist'] = Skill:new('stitching_mist', 'Stitching Mist',
+    ['healing_mist'] = Skill:new('healing_mist', 'Healing Mist',
         "Infuse the air to close wounds. Allies in the area recover \z
          (Affinity * 1.0) health. Can target a square within three spaces of \z
          Kath.",
@@ -634,7 +696,7 @@ skills = {
         'Defender', ASSIST, MANUAL, str_to_icon['endurance'],
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'special', 'forbearance', BUFF } }
     ),
     ['invigorate'] = Skill:new('invigorate', 'Invigorate',
@@ -645,7 +707,7 @@ skills = {
         { { T, F, T },
           { F, F, F },
           { T, F, T } }, SELF_CAST_AIM, 2,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'force', Scaling:new(0, 'affinity', 1.0) } }
     ),
     ['hold_the_line'] = Skill:new('hold_the_line', 'Hold the Line',
@@ -654,7 +716,7 @@ skills = {
         'Hero', ASSIST, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'reaction', Scaling:new(0, 'reaction', 0.5) } }
     ),
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel',
@@ -669,7 +731,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'special', 'guardian_angel', BUFF } }
     ),
 
@@ -765,7 +827,7 @@ skills = {
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, FREE_AIM(100), 0,
         ALLY, nil,
-        { { { 'special', 'observe', BUFF }, math.huge } }, nil,
+        { { { 'special', 'observe', BUFF }, math.huge } }, nil, nil,
         { ['and'] =
             function(a, a_a, b, b_a, st)
                 best_attr = nil
@@ -837,7 +899,7 @@ skills = {
         'Huntress', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'agility', Scaling:new(0, 'affinity', 0.5) } }
     ),
     ['camouflage'] = Skill:new('camouflage', 'Camouflage',
@@ -846,7 +908,7 @@ skills = {
         'Huntress', ASSIST, MANUAL, str_to_icon['empty'],
         { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'special', 'hidden', BUFF } } -- TODO: implement hidden
     ),
     ['harmonize'] = Skill:new('harmonize', 'Harmonize',
@@ -859,7 +921,7 @@ skills = {
           { T, F, F, F, T },
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'special', 'hidden', BUFF } } -- TODO: change this
     ),
     ['flight'] = Skill:new('flight', 'Flight',
@@ -870,7 +932,7 @@ skills = {
         { { F, T, F },
           { T, F, T },
           { F, T, F } }, SELF_CAST_AIM, 4,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         {
             { 'special', 'flight', BUFF }, -- TODO: implement flight
             { 'agility', Scaling:new(0, 'affinity', 1.0) }
@@ -886,7 +948,7 @@ skills = {
           { T, F, F, F, T },
           { T, F, F, F, T },
           { T, T, T, T, T } }, SELF_CAST_AIM, 1,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         { { 'reaction', Scaling:new(2, 'affinity', 0.5) } }
     ),
     ['cover_fire'] = Skill:new('cover_fire', 'Cover Fire',
@@ -901,7 +963,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil,
         {
             { 'reaction', Scaling:new(0, 'affinity', 0.5) },
             { 'force', Scaling:new(0, 'affinity', 0.5) },
