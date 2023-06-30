@@ -849,7 +849,7 @@ function Sprite:waitBehaviorGeneric(doneAction, waitAnimation, s)
     end
 end
 
-function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run)
+function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run, anim)
 
     -- How fast are we walking?
     local speed = ite(run, WANDER_SPEED * 2, WANDER_SPEED)
@@ -898,7 +898,7 @@ function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run)
         else
 
             -- Keep walking!
-            self:changeAnimation('walking')
+            self:changeAnimation(ite(anim, anim, 'walking'))
             if order[1] == UP then
                 if y <= y_dst then
                     self.y = y_dst
