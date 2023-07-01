@@ -23,6 +23,7 @@ Mona:   Caretaker
 - veteran - gambit - 40 weapon damage, lowers affinity and agility to zero.
 - veteran - Bravado - Assist, grants allies big force, but vastly reduced reaction, affinity
 - executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
+- Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
 
 #### Kath
 

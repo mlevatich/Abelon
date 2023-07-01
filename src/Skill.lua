@@ -269,7 +269,9 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 if x ~= loc[1] or y ~= loc[2] then
                     table.insert(moved, { ['sp'] = t, ['x'] = x, ['y'] = y })
                     if dryrun then
-                        dryrun_res[z]['moved'] = { ['x'] = x, ['y'] = y }
+                        dryrun_res[z]['moved'] = {
+                            ['x'] = x, ['y'] = y, ['dir'] = dir
+                        }
                     end
                 end
             end
@@ -560,6 +562,21 @@ skills = {
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
         nil, { { { 'force', Scaling:new(0, 'focus', -0.5) }, 2 } }
+    ),
+    ['clutches'] = Skill:new('clutches', 'Clutches',
+        "Summon a hand of darkness to pull an enemy to you. Deals \z
+         (Force * 0.5) Spell damage and reduces the enemy's Reaction by \z
+         (Force * 0.2) for one turn.",
+        'Demon', SPELL, MANUAL, str_to_icon['force'],
+        { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
+        { { F, F, T, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+        ENEMY, Scaling:new(0, 'force', 0.5),
+        nil, { { { 'reaction', Scaling:new(0, 'force', -0.2) }, 2 } },
+        { DOWN, 2 }
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z

@@ -2166,6 +2166,7 @@ function Battle:renderDisplacement()
             if dry[i]['moved'] then
 
                 -- Get position and rotation of arrow
+                local dir = dry[i]['moved']['dir']
                 local to_x = dry[i]['moved']['x']
                 local to_y = dry[i]['moved']['y']
                 local from_y, from_x = self:findSprite(t:getId())
