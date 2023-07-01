@@ -636,8 +636,9 @@ function Battle:openAssistMenu(sp)
     local atk = self.stack[4]['sk']
     local eff = self.status[sp:getId()]['effects']
     local hp = sp.health
-    local ign = sp.ignea - self:getSkill().cost
+    local ign = sp.ignea
     if atk then
+        ign = ign - atk.cost
         local dir = self:getTargetDirection(atk, attack_loc, attack_c)
         local dryrun = self:useAttack(sp, atk, dir, attack_c, true, attack_loc)
         if dryrun['caster'] then
@@ -947,8 +948,30 @@ function Battle:validMoves(sp, i, j)
     -- Get sprite's base movement points
     local move = self:getMovement(sp, i, j)
 
+    -- Spoof a shallow copy of the grid, dryrun-move tiles occupied
+    local grid = {}
+    for h = 1, self.grid_h do
+        grid[h] = {}
+        for k = 1, self.grid_w do grid[h][k] = self.grid[h][k]  end
+    end
+    if self.stack[4] and self.stack[4]['sk'] then
+        local sp_c = self.stack[2]['cursor']
+        local atk_c = self.stack[4]['cursor']
+        local atk = self.stack[4]['sk']
+        if atk then
+            local dir = self:getTargetDirection(atk, sp_c, atk_c)
+            local dry = self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+            for z = 1, #dry do
+                local d = dry[z]
+                if d['moved'] then
+                    grid[d['moved']['y']][d['moved']['x']] = GridSpace:new(d['sp'])
+                end
+            end
+        end
+    end
+
     -- Run djikstra's algorithm on grid
-    local dist, _ = sp:djikstra(self.grid, { i, j }, nil, move)
+    local dist, _ = sp:djikstra(grid, { i, j }, nil, move)
 
     -- Reachable nodes have distance < move
     local moves = {}
@@ -1359,7 +1382,27 @@ function Battle:update(keys, dt)
             self:moveCursor(x, y)
 
             local space = self.grid[y][x].occupied
-            if f and not (space and space ~= sp) then
+
+            -- Make sure tile is still unoccupied after dryrun
+            local dryrun_occupied = false
+            if self.stack[4] and self.stack[4]['sk'] then
+                local sp_c = self:getCursor(3)
+                local atk_c = self:getCursor(2)
+                local atk = self.stack[4]['sk']
+                if atk then
+                    local dir = self:getTargetDirection(atk, sp_c, atk_c)
+                    local dry = self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+                    for i = 1, #dry do
+                        if dry[i]['moved'] and dry[i]['moved']['x'] == x 
+                        and dry[i]['moved']['y'] == y then
+                            dryrun_occupied = true
+                            break
+                        end
+                    end
+                end
+            end
+            
+            if f and not dryrun_occupied and not (space and space ~= sp) then
                 local moves = self:getMoves()
                 for i = 1, #moves do
                     if moves[i]['to'][1] == y and moves[i]['to'][2] == x then
@@ -2158,7 +2201,7 @@ function Battle:hoverBoxFromInfo(sp, hp, ign, statuses)
 
         -- Length of duration string
         local d = statuses[i].duration
-        local dlen = ite(d == math.huge, 0, ite(d < 2, 6, ite(d < 10, 7, 8)))
+        local dlen = ite(d == math.huge, 0, ite(d < 2, 2, ite(d < 10, 2, 3)))
 
         -- Length of buff string
         local b = statuses[i].buff
@@ -2191,7 +2234,7 @@ function Battle:hoverBoxFromInfo(sp, hp, ign, statuses)
         local d = statuses[i].duration
         local dur = ''
         if d ~= math.huge then
-            dur = d .. ite(d > 1, ' turns', ' turn')
+            dur = d .. 't'
         end
         table.insert(stat_eles, mkEle('text', dur,
             w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
@@ -2220,6 +2263,62 @@ function Battle:mkInnerHoverBox()
         return { mkEle('text', 'Empty', HALF_MARGIN, HALF_MARGIN) }, w, h, clr
     end
     return hbox, bw, bh, bclr
+end
+
+function Battle:renderDisplacement()
+
+    -- If an attack exists
+    if self.stack[4] and self.stack[4]['sk'] then
+
+        -- Perform dryrun
+        local sk     = self.stack[4]['sk']
+        local sp_c   = self.stack[2]['cursor']
+        local atk_c  = self.stack[4]['cursor']
+        local sp     = self:getSprite()
+        local dir    = self:getTargetDirection(sk, sp_c, atk_c)
+        local dryrun = self:useAttack(sp, sk, dir, atk_c, true, sp_c)
+
+        -- Render arrow and shadow target for each target
+        for i=1, #dryrun do
+            local t = dryrun[i]['sp']
+            if dryrun[i]['moved'] then
+
+                -- Get position and rotation of arrow
+                local to_x = dryrun[i]['moved']['x']
+                local to_y = dryrun[i]['moved']['y']
+                local from_y, from_x = self:findSprite(t:getId())
+                local arrow_x = (self.origin_x + (from_x + to_x - 1) / 2) * TILE_WIDTH
+                local arrow_y = (self.origin_y + (from_y + to_y - 1) / 2) * TILE_HEIGHT
+                
+                -- Offset depends on direction
+                local off = TILE_WIDTH / 4
+                local rot = 0
+                local x_off, y_off = -off, -off
+                if dir == DOWN then
+                    rot, x_off, y_off = math.pi / 2, off, -off
+                elseif dir == LEFT then
+                    rot, x_off, y_off = math.pi, off, off
+                elseif dir == UP then
+                    rot, x_off, y_off = 3 * math.pi / 2, -off, off
+                end
+                
+                -- Render arrow
+                love.graphics.push('all')
+                if self.pulse then
+                    love.graphics.setColor(AUTO_COLOR['Focus'])
+                    if dir == RIGHT or dir == LEFT then arrow_x = arrow_x - 1 end
+                    if dir == UP    or dir == DOWN then arrow_y = arrow_y - 1 end
+                else
+                    love.graphics.setColor(RED)
+                end
+                love.graphics.print(">>>", arrow_x + x_off, arrow_y + y_off, rot)
+                love.graphics.pop()
+
+                -- Render sprite image at the new location
+                self:renderSpriteImage(to_x, to_y, from_x, from_y, t)
+            end
+        end
+    end
 end
 
 function Battle:renderAttackHoverBoxes(sk)
@@ -2495,6 +2594,9 @@ function Battle:renderUnderlay()
     -- Render views over grid if we aren't watching a scene
     local s = self:getStage()
     if s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
+
+        -- Render arrow on grid associated with displacement skills dryrun
+        self:renderDisplacement()
 
         -- Render active views below the cursor, in stack order
         self:renderViews(BEFORE)

@@ -80,8 +80,9 @@ end
 
 function Skill:hits(caster, target, status)
     local team = status[target:getId()]['team']
+    local oppo_team = ite(team == ALLY, ENEMY, ALLY)
     return (self.type == ASSIST and team == ALLY)
-        or (self.type ~= ASSIST and team == self.affects)
+        or (self.type ~= ASSIST and oppo_team ~= self.affects)
         or (caster == target and self.modifiers['self'])
 end
 
@@ -130,8 +131,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
             ['sp'] = t, 
             ['flat'] = 0, 
             ['percent'] = 0, 
-            ['new_stat'] = t_stat,
-            ['moved'] = {}
+            ['new_stat'] = t_stat
         }
 
         -- If attacker is an enemy and target has forbearance, the target
@@ -147,9 +147,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
 
         -- Only hit targets passing the team filter
-        local oppo_team = ite(t_team == ALLY, ENEMY, ALLY)
-        if (oppo_team ~= affects or (t == sp and modifiers['self']))
-        and (not modifiers['br']
+        if self:hits(sp, t, status) and (not modifiers['br']
         or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status))
         then
 

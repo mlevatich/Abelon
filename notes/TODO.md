@@ -10,8 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2
 
-- During a non-dryrun attack, the sprite's grid location is adjusted. During playAction(), the sprite slides to the displacement destination, if one exists.
-- During a dryrun, we report the tile the sprite will be moved to, and after the attack, this tile is no longer walkable. When targeting a displacement skill, and after it has been queued, an additional VIEW renders the displacement destination of each affected sprite, with an arrow pointing to it.
+- During playAction(), the sprite slides to the displacement destination while looping a static 'displace' animation, and has their grid location adjusted
 - Add in skills from notes.
 
 - Smallwolf placeholder sprite
