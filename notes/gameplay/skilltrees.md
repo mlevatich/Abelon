@@ -17,13 +17,11 @@ Mona:   Caretaker
 
 #### Abelon
 
-- demon - clutches: pull an enemy towards you, deal some damage, and reduce its reaction. Costs 1 ignea.
-- demon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
-- executioner - Execute: Force * 1.5 weapon damage to enemy below half
-- veteran - gambit - 40 weapon damage, lowers affinity and agility to zero.
 - veteran - Bravado - Assist, grants allies big force, but vastly reduced reaction, affinity
-- executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
+- executioner - Execute: Force * 1.5 weapon damage to enemy below half
 - Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
+- executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
+- demon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
 
 #### Kath
 

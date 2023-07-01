@@ -7,8 +7,8 @@ Scaling = class('Scaling')
 
 function Scaling:initialize(base, attr, mul)
     self.base = base
-    self.attr = attr
-    self.mul  = mul
+    self.attr = ite(attr, attr, 'force')
+    self.mul  = ite(mul, mul, 0)
 end
 
 Buff = class('Buff')
@@ -509,7 +509,7 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.0),
-        nil, { { { 'force', Scaling:new(-3, 'force', 0) }, 1 } }
+        nil, { { { 'force', Scaling:new(-3) }, 1 } }
     ),
     ['trust'] = Skill:new('trust', 'Trust',
         "Place your faith in your comrades. Increases your Affinity by 8 \z
@@ -518,7 +518,7 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
-        nil, { { { 'affinity', Scaling:new(8, 'affinity', 0) }, 1 } }
+        nil, { { { 'affinity', Scaling:new(8) }, 1 } }
     ),
     ['punish'] = Skill:new('punish', 'Punish',
         "Exploit a brief weakness with a precise stab. Deals 10 + (Force * \z
@@ -538,7 +538,7 @@ skills = {
         'Demon', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 5,
-        ENEMY, Scaling:new(30, 'force', 0)
+        ENEMY, Scaling:new(30)
     ),
     ['judgement'] = Skill:new('judgement', 'Judgement',
         "Instantly kill an enemy anywhere on the field with less than 10 \z
@@ -546,13 +546,13 @@ skills = {
         'Executioner', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { T } }, FREE_AIM(100), 1,
-        ENEMY, Scaling:new(1000, 'force', 0),
+        ENEMY, Scaling:new(1000),
         nil, nil, nil,
         { ['br'] = function(a, a_a, b, b_a, st) return b.health <= 10 end }
     ),
     ['contempt'] = Skill:new('contempt', 'Contempt',
         "Glare with an evil eye lit by ignea, reducing the Force of \z
-         affected enemies by (Focus * 0.5) for two turns.",
+         affected enemies by (Focus * 0.5) for 2 turns.",
         'Veteran', SPELL, MANUAL, str_to_icon['focus'],
         { { 'Demon', 1 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
         { { F, T, F, T, F },
@@ -564,9 +564,8 @@ skills = {
         nil, { { { 'force', Scaling:new(0, 'focus', -0.5) }, 2 } }
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches',
-        "Summon a hand of darkness to pull an enemy to you. Deals \z
-         (Force * 0.5) Spell damage and reduces the enemy's Reaction by \z
-         (Force * 0.2) for one turn.",
+        "Pull an enemy to you, dealing (Force * 0.5) Spell damage and \z
+         reducing the enemy's Reaction by   (Force * 0.2) for 1 turn.",
         'Demon', SPELL, MANUAL, str_to_icon['force'],
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { F, F, T, F, F },
@@ -577,6 +576,16 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'reaction', Scaling:new(0, 'force', -0.2) }, 2 } },
         { DOWN, 2 }
+    ),
+    ['gambit'] = Skill:new('gambit', 'Gambit',
+        "Attack relentlessly. Deals 40 Weapon damage to an adjacent enemy, \z
+         but lowers your Affinity and Agility to 0 for 1 turn.",
+        'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
+        { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 1 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(40),
+        { { { 'affinity', Scaling:new(-100) }, 1 }, 
+          { { 'agility',  Scaling:new(-100) }, 1 } }, nil
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
@@ -634,7 +643,7 @@ skills = {
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 0.8),
-        { { { 'reaction', Scaling:new(2, 'force', 0) }, 1 } }, nil
+        { { { 'reaction', Scaling:new(2) }, 1 } }, nil
     ),
     ['stun'] = Skill:new('stun', 'Stun',
         "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
@@ -649,7 +658,7 @@ skills = {
         }
     ),
     ['shove'] = Skill:new('shove', 'Shove',
-        "Kath shoves an ally or enemy, moving them by one tile and raising \z
+        "Kath shoves an ally or enemy, moving them by 1 tile and raising \z
          Kath's Reaction by 3.",
         'Hero', WEAPON, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
@@ -657,7 +666,7 @@ skills = {
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ALL, nil,
-        { { { 'reaction', Scaling:new(3, 'force', 0) }, 1 } }, nil, 
+        { { { 'reaction', Scaling:new(3) }, 1 } }, nil, 
         { UP, 1 }
     ),
     ['javelin'] = Skill:new('javelin', 'Javelin',
@@ -687,7 +696,7 @@ skills = {
     ),
     ['healing_mist'] = Skill:new('healing_mist', 'Healing Mist',
         "Infuse the air to close wounds. Allies in the area recover \z
-         (Affinity * 1.0) health. Can target a square within three spaces of \z
+         (Affinity * 1.0) health. Can target a square within 3 spaces of \z
          Kath.",
         'Cleric', SPELL, MANUAL, str_to_icon['affinity'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
@@ -706,7 +715,7 @@ skills = {
           { F, F, T, F, F },
           { F, F, T, F, F } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'agility', Scaling:new(8, 'force', 0) }, 1 } }
+        nil, { { { 'agility', Scaling:new(8) }, 1 } }
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance',
         "Kath receives all attacks meant for an adjacent assisted ally.",
@@ -772,11 +781,11 @@ skills = {
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(16, 'force', 0.0)
+        ENEMY, Scaling:new(16)
     ),
     ['lay_traps'] = Skill:new('lay_traps', 'Lay Traps',
         "Elaine anticipates foes in her path and sets traps to reduce their \z
-         Reaction by (Reaction * 1.0) for one turn.",
+         Reaction by (Reaction * 1.0) for 1 turn.",
         'Huntress', WEAPON, MANUAL, str_to_icon['reaction'],
         { { 'Huntress', 1 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
         { { F, F, F, F, F },
@@ -793,7 +802,7 @@ skills = {
         'Huntress', WEAPON, MANUAL, str_to_icon['empty'],
         { { 'Huntress', 3 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(30, 'force', 0.0)
+        ENEMY, Scaling:new(30)
     ),
     ['precise_shot'] = Skill:new('precise_shot', 'Precise Shot',
         "Elaine takes careful aim to hit a faraway target with an arrow, \z
@@ -861,7 +870,7 @@ skills = {
     ),
     ['snare'] = Skill:new('snare', 'Snare',
         "Elaine swiftly lays a magical hunting snare, reducing a nearby foe's \z
-         Agility by 4 + (Agility * 0.5) for one turn.",
+         Agility by 4 + (Agility * 0.5) for 1 turn.",
         'Huntress', SPELL, MANUAL, str_to_icon['agility'],
         { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, F, F },
@@ -872,7 +881,7 @@ skills = {
     ),
     ['ignea_arrowtips'] = Skill:new('ignea_arrowtips', 'Ignea Arrowtips',
         "Elaine fashions arrowtips from Ignea and charges them with magic, \z
-         increasing her Force by 2 + (Focus * 1.0) for two turns.",
+         increasing her Force by 2 + (Focus * 1.0) for 2 turns.",
         'Apprentice', SPELL, MANUAL, str_to_icon['focus'],
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { T } }, SELF_CAST_AIM, 1,
@@ -881,7 +890,7 @@ skills = {
     ),
     ['mimic'] = Skill:new('mimic', 'Mimic',
         "Elaine chooses any ally on the field and magically copies their \z
-         strongest attribute (excluding Focus or Endurance) for two turns.",
+         strongest attribute (excluding Focus or Endurance) for 2 turns.",
         'Apprentice', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Huntress', 1 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
         { { T } }, FREE_AIM(100), 2,
