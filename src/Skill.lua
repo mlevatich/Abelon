@@ -23,6 +23,9 @@ function Buff:toStr()
     if self.attr == 'special' then
         return EFFECT_NAMES[self.val]
     end
+    if self.val == 0 then
+        return nil
+    end
     local attr = self.attr:sub(1,1):upper() .. self.attr:sub(2)
     return ite(self.val > 0, '+', '-') .. abs(self.val) .. ' ' .. self.attr
 end
@@ -440,8 +443,13 @@ function mkTmpAttrs(bases, effects, assists)
     for i = 1, #buffs do
         local a = buffs[i].attr
         if tmp_attrs[a] then
-            tmp_attrs[a] = math.max(0, tmp_attrs[a] + buffs[i].val)
+            tmp_attrs[a] = tmp_attrs[a] + buffs[i].val
         end
+    end
+
+    -- No negative attributes
+    for k,v in pairs(tmp_attrs) do
+        tmp_attrs[k] = math.max(0, tmp_attrs[k])
     end
     return tmp_attrs
 end
@@ -584,8 +592,8 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 1 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(40),
-        { { { 'affinity', Scaling:new(-100) }, 1 }, 
-          { { 'agility',  Scaling:new(-100) }, 1 } }, nil
+        { { { 'affinity', Scaling:new(-99) }, 1 }, 
+          { { 'agility',  Scaling:new(-99) }, 1 } }, nil
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z

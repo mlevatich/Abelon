@@ -923,9 +923,9 @@ function Battle:getSpent(i, j)
 end
 
 function Battle:getMovement(sp, i, j)
-    local attrs = self:getTmpAttributes(sp)
+    local attrs, _, _ = self:dryrunAttributes({ j, i }, sp)
     local spent = self:getSpent(i, j)
-    return math.floor(attrs['agility'] / 4) - spent
+    return math.max(0, math.floor(attrs['agility'] / 4) - spent)
 end
 
 function Battle:validMoves(sp, i, j)
@@ -1056,9 +1056,9 @@ function Battle:getTargetDirection(sk, sp_c, sk_c)
     return dir
 end
 
-function Battle:dryrunAttributes(standing)
+function Battle:dryrunAttributes(standing, other)
 
-    local sp = self:getSprite()
+    local sp = ite(other, other, self:getSprite())
     local atk = self:getAttack()
     local eff = self.status[sp:getId()]['effects']
     local hp = sp.health
@@ -2264,10 +2264,12 @@ function Battle:mkAssistElements(assists, w)
     local eles = { mkEle('text', 'Assist', HALF_MARGIN, HALF_MARGIN) }
     for i = 1, #assists do
         local str = assists[i]:toStr()
-        table.insert(eles, mkEle('text', str,
-            w - #str * CHAR_WIDTH - HALF_MARGIN,
-            HALF_MARGIN + LINE_HEIGHT * i
-        ))
+        if str then
+            table.insert(eles, mkEle('text', str,
+                w - #str * CHAR_WIDTH - HALF_MARGIN,
+                HALF_MARGIN + LINE_HEIGHT * i
+            ))
+        end
     end
     local h = LINE_HEIGHT * (#eles) + BOX_MARGIN
     return eles, h
@@ -2290,11 +2292,11 @@ function Battle:boxElementsFromInfo(sp, hp, ign, statuses)
 
         -- Length of duration string
         local d = statuses[i].duration
-        local dlen = ite(d == math.huge, 0, ite(d < 2, 2, ite(d < 10, 2, 3)))
+        local dlen = ite(d == math.huge, 0, ite(d < 10, 2, 3))
 
         -- Length of buff string
         local b = statuses[i].buff
-        local blen = #b:toStr()
+        local blen = ite(b:toStr(), #b:toStr(), 0)
 
         -- Combine them all to get character size
         longest_status = math.max(longest_status, dlen + blen + buf)
@@ -2326,7 +2328,9 @@ function Battle:boxElementsFromInfo(sp, hp, ign, statuses)
             w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
         ))
         local str = b:toStr()
-        table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+        if str then
+            table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+        end
     end
 
     -- Concat info with statuses
