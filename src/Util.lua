@@ -55,15 +55,14 @@ function printChar(s, x, y, rot)
     love.graphics.print(s, x, y, rot)
 end
 
-function renderString(s, x, y, custom_pen, auto_color)
-    if not custom_pen then
-        custom_pen = WHITE
+function renderString(s, x, y, pen, auto_color, inherit_clr)
+    if not pen then pen = WHITE end
+    if not inherit_clr then
+        love.graphics.setColor(unpack(pen))
     end
-    love.graphics.push('all')
-    love.graphics.setColor(unpack(custom_pen))
     local char_color = {}
     if auto_color then
-        for i = 1, #s do char_color[i] = custom_pen end
+        for i = 1, #s do char_color[i] = pen end
         for k, clr in pairs(AUTO_COLOR) do
             local st, ed = s:find(k)
             while st and ed do
@@ -78,10 +77,21 @@ function renderString(s, x, y, custom_pen, auto_color)
         not (tonumber(c) or tonumber(s:sub(i,i+1) or tonumber(s:sub(i,i+2))))
         then
             love.graphics.setColor(unpack(char_color[i]))
+            printChar(c, x + CHAR_WIDTH * (i - 1), y)
+        elseif auto_color and tonumber(c) then
+            r, g, b, a = love.graphics.getColor()
+            if r == g and g == b then
+                love.graphics.push('all')
+                love.graphics.setColor(unpack(HIGHLIGHT))
+                printChar(c, x + CHAR_WIDTH * (i - 1), y)
+                love.graphics.pop()
+            else
+                printChar(c, x + CHAR_WIDTH * (i - 1), y)
+            end
+        else
+            printChar(c, x + CHAR_WIDTH * (i - 1), y)
         end
-        printChar(c, x + CHAR_WIDTH * (i - 1), y)
     end
-    love.graphics.pop()
 end
 
 function mkEle(t, data, x, y, extra, auto_color)

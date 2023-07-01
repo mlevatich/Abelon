@@ -10,10 +10,10 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2
 
+- Add skills
 - Fix small screen jitter when a unit finishes playing out their action
 - Smallwolf placeholder sprite
 - During playAction(), the sprite slides to the displacement destination while looping a static 'displace' animation, and has their grid location adjusted
-- Add in skills from notes.
 
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene

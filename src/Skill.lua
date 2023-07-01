@@ -521,7 +521,7 @@ skills = {
     ),
     ['trust'] = Skill:new('trust', 'Trust',
         "Place your faith in your comrades. Increases your Affinity by 8 \z
-         for the rest of the turn.",
+         for 1 turn.",
         'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
@@ -573,7 +573,7 @@ skills = {
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches',
         "Pull an enemy to you, dealing (Force * 0.5) Spell damage and \z
-         reducing the enemy's Reaction by   (Force * 0.2) for 1 turn.",
+         reducing the enemy's Reaction by (Force * 0.2) for 1 turn.",
         'Demon', SPELL, MANUAL, str_to_icon['force'],
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { F, F, T, F, F },
@@ -644,7 +644,7 @@ skills = {
     -- KATH
     ['sweep'] = Skill:new('sweep', 'Sweep',
         "Slash in a wide arc. Deals (Force * 0.8) Weapon damage to enemies in \z
-         front of Kath, and grants 2 Reaction until his next turn.",
+         front of Kath, and grants 2 Reaction for 1 turn.",
         'Hero', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
@@ -655,7 +655,7 @@ skills = {
     ),
     ['stun'] = Skill:new('stun', 'Stun',
         "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
-         higher than his foe's, they are unable to act for a turn.",
+         higher than his foe's, they are unable to act for 1 turn.",
         'Defender', WEAPON, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 1,
@@ -687,6 +687,16 @@ skills = {
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.2)
     ),
+    ['thrust'] = Skill:new('thrust', 'Thrust',
+        "Kath throws his body into a thrust, dealing (Force * 1.0) Weapon \z
+         damage to up to 2 enemies in a line.",
+        'Hero', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Defender', 0 }, { 'Hero', 2 }, { 'Cleric', 0 } },
+        { { F, T, F },
+          { F, T, F },
+          { F, F, F } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(0, 'force', 1.0)
+    ),
     ['enrage'] = Skill:new('enrage', 'Enrage',
         "Enrage nearby enemies with an ignaeic fog, so that their next \z
          actions will target Kath (whether or not they can reach him).",
@@ -710,7 +720,7 @@ skills = {
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
           { T, T, T },
-          { T, T, T } }, FREE_AIM(3), 3,
+          { T, T, T } }, FREE_AIM(3), 1,
         ALLY, Scaling:new(0, 'affinity', -1.0)
     ),
     ['haste'] = Skill:new('haste', 'Haste',
@@ -724,6 +734,80 @@ skills = {
           { F, F, T, F, F } }, SELF_CAST_AIM, 1,
         ALLY, nil,
         nil, { { { 'agility', Scaling:new(8) }, 1 } }
+    ),
+    ['storm_thrust'] = Skill:new('storm_thrust', 'Storm Thrust',
+        "Kath launches a thrust powered by lightning, dealing (Force * 1.0) \z
+         Weapon damage to up to 4 enemies in a line.",
+        'Hero', SPELL, MANUAL, str_to_icon['force'],
+        { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 0 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+        ENEMY, Scaling:new(0, 'force', 1.0)
+    ),
+    ['caution'] = Skill:new('caution', 'Caution',
+        "Kath enters a defensive stance, raising his Reaction by 4 and \z
+         lowering his Force by 2 for 5 turns.",
+        'Defender', WEAPON, MANUAL, str_to_icon['empty'],
+        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { T } }, SELF_CAST_AIM, 0,
+        ALLY, nil, nil,
+        { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 } }
+    ),
+    ['sacrifice'] = Skill:new('sacrifice', 'Sacrifice',
+        "Kath transfers his vitality, losing 10 Reaction for 1 turn \z
+         to restore 10 + (Force * 1.0) health to nearby allies.",
+        'Cleric', SPELL, MANUAL, str_to_icon['force'],
+        { { 'Defender', 0 }, { 'Hero', 2 }, { 'Cleric', 2 } },
+        { { F, T, F },
+          { T, F, T },
+          { F, T, F } }, SELF_CAST_AIM, 1,
+        ALLY, Scaling:new(-10, 'force', -1.0),
+        { { { 'reaction', Scaling:new(-10) }, 1 } }, nil, nil
+    ),
+    ['bond'] = Skill:new('bond', 'Bond',
+        "Kath ignites a bond, raising his and an ally's \z
+         Affinity by (Force * 0.5) for 3 turns. Can target any \z
+         ally within 3 tiles.",
+        'Cleric', SPELL, MANUAL, str_to_icon['force'],
+        { { 'Defender', 2 }, { 'Hero', 2 }, { 'Cleric', 2 } },
+        { { T } }, FREE_AIM(3), 2,
+        ALLY, nil,
+        { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 } },
+        { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 } },
+        nil
+    ),
+    ['great_javelin'] = Skill:new('great_javelin', 'Great Javelin',
+        "Kath catapults an empowered javelin which deals (Force * 2.0) \z
+         Weapon Damage and pushes the enemy back 2 tiles.",
+        'Hero', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Defender', 0 }, { 'Hero', 4 }, { 'Cleric', 0 } },
+        { { F, F, F, F, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
+        ENEMY, Scaling:new(0, 'force', 2.0), nil, nil, { UP, 2 }
+    ),
+    ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep',
+        "Kath swings an ignaeic crescent which deals (Force * 1.5) \z
+         Weapon Damage and raises Kath's Reaction by 5.",
+        'Hero', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Defender', 2 }, { 'Hero', 3 }, { 'Cleric', 0 } },
+        { { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, T, T, T, T, T, F },
+          { T, T, T, F, T, T, T },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
+        ENEMY, Scaling:new(0, 'force', 1.5)
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance',
         "Kath receives all attacks meant for an adjacent assisted ally.",
@@ -755,7 +839,7 @@ skills = {
     ),
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel',
         "Kath casts a powerful protective ward. Allies on the assist cannot \z
-         drop below 1 health for the remainder of the turn.",
+         drop below 1 health.",
         'Cleric', ASSIST, MANUAL, str_to_icon['empty'],
         { { 'Defender', 2 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { F, F, T, T, T, F, F },
@@ -767,6 +851,21 @@ skills = {
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         nil, nil, nil, nil, nil, nil,
         { { 'special', 'guardian_angel', BUFF } }
+    ),
+    ['steadfast'] = Skill:new('steadfast', 'Steadfast',
+        "Kath helps allies fortify their positions. Allies on the assist \z
+         lose all Agility but gain (Affinity * 1.0) Reaction.",
+        'Defender', ASSIST, MANUAL, str_to_icon['affinity'],
+        { { 'Defender', 3 }, { 'Hero', 1 }, { 'Cleric', 1 } },
+        { { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, F, T, F, F, F } }, DIRECTIONAL_AIM, 1,
+        nil, nil, nil, nil, nil, nil,
+        { { 'agility', Scaling:new(-99) }, { 'reaction', Scaling:new(0, 'affinity', 1.0) } }
     ),
 
 

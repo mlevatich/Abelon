@@ -20,25 +20,16 @@ Mona:   Caretaker
 - veteran - Bravado - Assist, grants allies big force, but vastly reduced reaction, affinity
 - executioner - Execute: Force * 1.5 weapon damage to enemy below half
 - Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
-- executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
+
 - demon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
+- executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
 
 #### Kath
 
-- hero - shove: push an enemy or ally 1 tile, and gain some reaction. Free
-- defender - riposte: kath retaliates against any weapon damage dealt to him
-- defender - caution: Lowers force by 2, raises reaction by 3 for 5 turns
-- Buff sweep
-- Hero - bond: raise an ally's affinity, and kath's affinity, for 3 turns
-- cleric - Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
-- cleric - sacrifice: Reduce Kath's hp by 10, heal allies in an area by 20. Costs 1 ignea.
 - cleric - regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
-- Hero - thrust: Deals 1.0 * force damage to two enemies in front of Kath.
-- Hero - charged thrust: Deals 1.0 * force damage to four enemies in front of Kath. Costs 1 ignea.
-- defender - charged sweep: sweep but add more tiles, more damage, more reaction. Costs 3 ignea.
-- Hero - charged javelin: Deals 2.0 * force damage to an enemy three tiles in front of Kath, and pushes them back 2 tiles. Costs 3 ignea.
 - cleric - Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
-- defender - steadfast: allies on the assist lose all of their agility but gain reaction scaling with affinity. Costs 1 ignea.
+- defender - riposte: kath retaliates against any weapon damage dealt to him
+- cleric - Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
 
 #### Lester
 

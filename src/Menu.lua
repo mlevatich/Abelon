@@ -44,11 +44,12 @@ function Menu:initialize(parent, menu_items, x, y, forced, conf, clr, max_overri
     self.rel_x = x
     self.rel_y = y
 
-    -- Store menu width and height so they aren't re-calculated at each render
+    -- Store menu width/height/window so they aren't re-calculated at each render
     local longest_word = max(mapf(function(e) return #e.name end, menu_items))
+    self.window = ite(max_override, max_override, MAX_MENU_ITEMS)
     self.width  = CHAR_WIDTH * longest_word + BOX_MARGIN*2
     self.height = LINE_HEIGHT
-                * (math.min(#menu_items, MAX_MENU_ITEMS))
+                * (math.min(#menu_items, self.window))
                 + BOX_MARGIN - TEXT_MARGIN_Y
 
     -- Is this a confirmation prompt? If so, what is the message?
@@ -62,7 +63,6 @@ function Menu:initialize(parent, menu_items, x, y, forced, conf, clr, max_overri
     -- The different options on this menu
     self.hovering = 1
     self.base = 1
-    self.window = ite(max_override, max_override, MAX_MENU_ITEMS)
     self.menu_items = menu_items
     self:initSubmenus()
 end
@@ -459,10 +459,11 @@ function renderHoverBox(h_box, x, y, h)
         local e = h_box[i]
         if e['type'] == 'text' then
             local clr = ite(e['color'], e['color'], WHITE)
+            love.graphics.setColor(unpack(clr))
             local msg = e['data']
             for j = 1, #msg do
                 local cy = y + e['y'] + LINE_HEIGHT * (j - 1)
-                renderString(msg[j], x + e['x'], cy, clr, e['auto_color'])
+                renderString(msg[j], x + e['x'], cy, clr, e['auto_color'], j ~= 1)
             end
         elseif e['type'] == 'image' then
             love.graphics.setColor(unpack(WHITE))

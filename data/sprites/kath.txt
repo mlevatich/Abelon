@@ -11,6 +11,6 @@ Discard: no
 Present:
 Level: 5
 Attributes: endurance:10 focus:7 force:12 affinity:10 reaction:7 agility:12
-Skilltrees: Hero:sweep,shove,javelin,hold_the_line Defender:enrage,stun,forbearance Cleric:healing_mist,haste,invigorate,guardian_angel
-Skills: sweep,enrage,shove,healing_mist,javelin,stun,forbearance,hold_the_line,invigorate
+Skilltrees: Hero:sweep,shove,javelin,hold_the_line,thrust,storm_thrust,great_sweep,great_javelin Defender:enrage,stun,forbearance,caution,steadfast Cleric:healing_mist,haste,invigorate,sacrifice,bond,guardian_angel
+Skills: sweep,enrage,shove,healing_mist,javelin,stun,forbearance,hold_the_line,invigorate,haste,guardian_angel,thrust,storm_thrust,great_sweep,great_javelin,caution,steadfast,sacrifice,bond
 Description: The knight Kath. EOS
