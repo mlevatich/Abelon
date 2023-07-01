@@ -277,9 +277,16 @@ function Battle:getMoves()
     end
 end
 
-function Battle:findSprite(sp_id)
-    local loc = self.status[sp_id]['location']
-    return loc[2], loc[1]
+function Battle:getAttack()
+    if self.stack[4] then
+        return self.stack[4]['sk']
+    end
+end
+
+function Battle:getAssist()
+    if self.stack[7] then
+        return self.stack[7]['sk']
+    end
 end
 
 function Battle:getSkill()
@@ -288,6 +295,11 @@ function Battle:getSkill()
             return self.stack[#self.stack - i + 1]['sk']
         end
     end
+end
+
+function Battle:findSprite(sp_id)
+    local loc = self.status[sp_id]['location']
+    return loc[2], loc[1]
 end
 
 function Battle:moveCursor(x, y)
@@ -599,7 +611,6 @@ function Battle:openBeginTurnMenu()
             self:checkTriggers(ALLY)
         end
     )}
-    
     local t = self.turnlimit - self.turn
     local msg = "   A L L Y   P H A S E   " .. self.turn .. "   "
     if t == 0 then msg = "   F I N A L   T U R N   " end
@@ -608,10 +619,11 @@ function Battle:openBeginTurnMenu()
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, clr), {})
 end
 
-function Battle:openAttackMenu(sp)
+function Battle:openAttackMenu()
+    local sp = self:getSprite()
     local atk_loc = self:getCursor()
-    local spoof_tile = { atk_loc[2], atk_loc[1] }
-    local attrs = self:getTmpAttributes(sp, nil, spoof_tile)
+    local loc = { atk_loc[2], atk_loc[1] }
+    local attrs = self:getTmpAttributes(sp, nil, loc)
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s attack", nil, function(c)
             self:push(self:stackBubble())
@@ -630,35 +642,9 @@ function Battle:openAttackMenu(sp)
     })
 end
 
-function Battle:openAssistMenu(sp)
-    local attack_loc = self:getCursor(3)
-    local attack_c = self:getCursor(2)
-    local atk = self.stack[4]['sk']
-    local eff = self.status[sp:getId()]['effects']
-    local hp = sp.health
-    local ign = sp.ignea
-    if atk then
-        ign = ign - atk.cost
-        local dir = self:getTargetDirection(atk, attack_loc, attack_c)
-        local dryrun = self:useAttack(sp, atk, dir, attack_c, true, attack_loc)
-        if dryrun['caster'] then
-            eff = dryrun['caster']['new_stat']
-        else
-            local i = 1
-            while dryrun[i] do
-                if dryrun[i]['sp'] == sp then
-                    eff = dryrun[i]['new_stat']
-                    hp = sp.health - dryrun[i]['flat']
-                    break
-                end
-                i = i + 1
-            end
-        end
-    end
-
-    local assist_loc = self:getCursor()
-    local spoof_tile = { assist_loc[2], assist_loc[1] }
-    local attrs = self:getTmpAttributes(sp, eff, spoof_tile)
+function Battle:openAssistMenu()
+    local sp = self:getSprite()
+    local attrs, hp, ign = self:dryrunAttributes(self:getCursor())
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s assist", nil, function(c)
             self:endAction(false)
@@ -668,7 +654,6 @@ function Battle:openAssistMenu(sp)
     local assist = skills_menu.children[3]
     for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
     local opts = { assist, wait }
-    local c = self:getCursor(3)
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end }
@@ -948,24 +933,20 @@ function Battle:validMoves(sp, i, j)
     -- Get sprite's base movement points
     local move = self:getMovement(sp, i, j)
 
-    -- Spoof a shallow copy of the grid, dryrun-move tiles occupied
+    -- Spoof a shallow copy of the grid
     local grid = {}
     for h = 1, self.grid_h do
         grid[h] = {}
         for k = 1, self.grid_w do grid[h][k] = self.grid[h][k]  end
     end
-    if self.stack[4] and self.stack[4]['sk'] then
-        local sp_c = self.stack[2]['cursor']
-        local atk_c = self.stack[4]['cursor']
-        local atk = self.stack[4]['sk']
-        if atk then
-            local dir = self:getTargetDirection(atk, sp_c, atk_c)
-            local dry = self:useAttack(sp, atk, dir, atk_c, true, sp_c)
-            for z = 1, #dry do
-                local d = dry[z]
-                if d['moved'] then
-                    grid[d['moved']['y']][d['moved']['x']] = GridSpace:new(d['sp'])
-                end
+
+    -- dryrun-move tiles occupied
+    local dry = self:dryrunAttack()
+    if dry then
+        for z = 1, #dry do
+            local d = dry[z]
+            if d['moved'] then
+                grid[d['moved']['y']][d['moved']['x']] = GridSpace:new(d['sp'])
             end
         end
     end
@@ -1075,9 +1056,42 @@ function Battle:getTargetDirection(sk, sp_c, sk_c)
     return dir
 end
 
-function Battle:dryrunAttack(sp, atk, sp_c, atk_c)
-    local dir = self:getTargetDirection(atk, sp_c, atk_c)
-    return self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+function Battle:dryrunAttributes(standing)
+
+    local sp = self:getSprite()
+    local atk = self:getAttack()
+    local eff = self.status[sp:getId()]['effects']
+    local hp = sp.health
+    local ign = sp.ignea
+    if atk then
+        ign = ign - atk.cost
+        local dry = self:dryrunAttack()
+        if dry['caster'] then
+            eff = dry['caster']['new_stat']
+        else
+            for i=1, #dry do
+                if dry[i]['sp'] == sp then
+                    eff = dry[i]['new_stat']
+                    hp = sp.health - dry[i]['flat']
+                    break
+                end
+            end
+        end
+    end
+    local loc = { standing[2], standing[1] }
+    local attrs = self:getTmpAttributes(sp, eff, loc)
+    return attrs, hp, ign
+end
+
+function Battle:dryrunAttack()
+    local atk = self:getAttack()
+    if atk then
+        local sp_c = self.stack[2]['cursor']
+        local atk_c = self.stack[4]['cursor']
+        local sp = self:getSprite()
+        local dir = self:getTargetDirection(atk, sp_c, atk_c)
+        return self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+    end
 end
 
 function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
@@ -1146,11 +1160,8 @@ function Battle:playAction()
 
     -- Skills used
     local sp     = self:getSprite()
-    local attack = self.stack[4]['sk']
-    local assist = nil
-    if self.stack[7] then
-        assist = self.stack[7]['sk']
-    end
+    local attack = self:getAttack()
+    local assist = self:getAssist()
 
     -- Cursor locations
     local c_sp     = self.stack[1]['cursor']
@@ -1394,8 +1405,6 @@ function Battle:update(keys, dt)
 
     elseif s == STAGE_MOVE then
 
-        local sp = self:getSprite()
-        local c = self:getCursor(3)
         if d then
             self:pop()
         else
@@ -1406,32 +1415,26 @@ function Battle:update(keys, dt)
             local space = self.grid[y][x].occupied
 
             -- Make sure tile is still unoccupied after dryrun
-            local dryrun_occupied = false
-            if self.stack[4] and self.stack[4]['sk'] then
-                local sp_c = self:getCursor(3)
-                local atk_c = self:getCursor(2)
-                local atk = self.stack[4]['sk']
-                if atk then
-                    local dir = self:getTargetDirection(atk, sp_c, atk_c)
-                    local dry = self:useAttack(sp, atk, dir, atk_c, true, sp_c)
-                    for i = 1, #dry do
-                        if dry[i]['moved'] and dry[i]['moved']['x'] == x 
-                        and dry[i]['moved']['y'] == y then
-                            dryrun_occupied = true
-                            break
-                        end
+            local dry_occ = false
+            local dry = self:dryrunAttack()
+            if dry then
+                for i = 1, #dry do
+                    if dry[i]['moved'] and dry[i]['moved']['x'] == x 
+                    and dry[i]['moved']['y'] == y then
+                        dry_occ = true
+                        break
                     end
                 end
             end
             
-            if f and not dryrun_occupied and not (space and space ~= sp) then
+            if f and not dry_occ and not (space and space ~= self:getSprite()) then
                 local moves = self:getMoves()
                 for i = 1, #moves do
                     if moves[i]['to'][1] == y and moves[i]['to'][2] == x then
-                        if not c then
-                            self:openAttackMenu(sp)
+                        if not self:getCursor(3) then
+                            self:openAttackMenu()
                         elseif self.n_allies > 1 then
-                            self:openAssistMenu(sp)
+                            self:openAssistMenu()
                         else
                             self:endAction(false)
                         end
@@ -2153,25 +2156,18 @@ end
 
 function Battle:renderDisplacement()
 
-    -- If an attack exists
-    if self.stack[4] and self.stack[4]['sk'] then
-
-        -- Perform dryrun
-        local sk     = self.stack[4]['sk']
-        local sp_c   = self.stack[2]['cursor']
-        local atk_c  = self.stack[4]['cursor']
-        local sp     = self:getSprite()
-        local dir    = self:getTargetDirection(sk, sp_c, atk_c)
-        local dryrun = self:useAttack(sp, sk, dir, atk_c, true, sp_c)
+    -- If an attack exists, do dryrun
+    local dry = self:dryrunAttack()
+    if dry then
 
         -- Render arrow and shadow target for each target
-        for i=1, #dryrun do
-            local t = dryrun[i]['sp']
-            if dryrun[i]['moved'] then
+        for i=1, #dry do
+            local t = dry[i]['sp']
+            if dry[i]['moved'] then
 
                 -- Get position and rotation of arrow
-                local to_x = dryrun[i]['moved']['x']
-                local to_y = dryrun[i]['moved']['y']
+                local to_x = dry[i]['moved']['x']
+                local to_y = dry[i]['moved']['y']
                 local from_y, from_x = self:findSprite(t:getId())
                 local arrow_x = (self.origin_x + (from_x + to_x - 1) / 2) * TILE_WIDTH
                 local arrow_y = (self.origin_y + (from_y + to_y - 1) / 2) * TILE_HEIGHT
@@ -2180,12 +2176,9 @@ function Battle:renderDisplacement()
                 local off = TILE_WIDTH / 4
                 local rot = 0
                 local x_off, y_off = -off, -off
-                if dir == DOWN then
-                    rot, x_off, y_off = math.pi / 2, off, -off
-                elseif dir == LEFT then
-                    rot, x_off, y_off = math.pi, off, off
-                elseif dir == UP then
-                    rot, x_off, y_off = 3 * math.pi / 2, -off, off
+                if     dir == DOWN then rot, x_off, y_off =     math.pi / 2,  off, -off
+                elseif dir == LEFT then rot, x_off, y_off =     math.pi,      off,  off
+                elseif dir == UP   then rot, x_off, y_off = 3 * math.pi / 2, -off,  off
                 end
                 
                 -- Render arrow
@@ -2391,8 +2384,7 @@ function Battle:renderAttackHoverBoxes(sk)
     end
 
     -- Dryrun and render all boxes
-    local sp = self:getSprite()
-    local dry = self:dryrunAttack(sp, sk, self:getCursor(2), self:getCursor())
+    local dry = self:dryrunAttack()
     local room = true
     for i = 1, #dry do
         if renderBoxIfRoom(dry[i]['sp'], dry[i]) then
@@ -2401,36 +2393,16 @@ function Battle:renderAttackHoverBoxes(sk)
         end
     end
     if room and dry['caster'] then
-        renderBoxIfRoom(sp, dry['caster'])
+        renderBoxIfRoom(self:getSprite(), dry['caster'])
     end
 end
 
 function Battle:renderAssistHoverBox(sk)
 
-    -- Recover the status effects on the sprite that would
-    -- result from the attack to create a spoofed copy of their stats
-    local sp = self:getSprite()
-    local atk = self.stack[4]['sk']
-    local eff = self.status[sp:getId()]['effects']
-    if atk then
-        local dry = self:dryrunAttack(sp, atk, self:getCursor(4), self:getCursor(3))
-        if dry['caster'] then
-            eff = dry['caster']['new_stat']
-        else
-            for i=1, #dry do
-                if dry[i]['sp'] == sp then
-                    eff = dry[i]['new_stat']
-                    break
-                end
-            end
-        end
-    end
-
-    -- Pass the dryrun grid tile and status effects to getTmpAttributes
-    -- to get the buffs that would be applied
-    local assist_loc = self:getCursor(2)
-    local loc = { assist_loc[2], assist_loc[1] }
-    local buffs = sk:use(self:getTmpAttributes(sp, eff, loc))
+    -- Get the sprites new attributes and assist effect after
+    -- attacking and moving
+    local attrs, _, _ = self:dryrunAttributes(self:getCursor(2))
+    local buffs = sk:use(attrs)
     
     -- Get box elements and render box
     local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
