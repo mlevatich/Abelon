@@ -585,6 +585,21 @@ skills = {
         nil, { { { 'reaction', Scaling:new(0, 'force', -0.2) }, 2 } },
         { DOWN, 2 }
     ),
+    ['execute'] = Skill:new('execute', 'Execute',
+        "Finish off an enemy. Deals (Force * 1.5) Weapon damage \z
+         to an adjacent enemy with less than half of their health \z
+         remaining.",
+        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(0, 'force', 1.5),
+        nil, nil, nil,
+        {
+            ['br'] = function(a, a_a, b, b_a, st)
+                return b.health < b_a['endurance'] / 2
+            end
+        }
+    ),
     ['gambit'] = Skill:new('gambit', 'Gambit',
         "Attack relentlessly. Deals 40 Weapon damage to an adjacent enemy, \z
          but lowers your Affinity and Agility to 0 for 1 turn.",
@@ -637,6 +652,24 @@ skills = {
             { 'force',    Scaling:new(0, 'affinity', 0.5) },
             { 'reaction', Scaling:new(0, 'affinity', 0.5) },
             { 'affinity', Scaling:new(0, 'affinity', 0.5) }
+        }
+    ),
+    ['confidence'] = Skill:new('confidence', 'Confidence',
+        "Fill allies with reckless confidence. They gain \z
+        (Affinity * 1.0) Force, but lose (Affinity * 1.0) Reaction \z
+         and Affinity.",
+        'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
+        { { 'Demon', 0 }, { 'Veteran', 3 }, { 'Executioner', 0 } },
+        { { T, T, T, T, T },
+          { T, T, T, T, T },
+          { T, T, F, T, T },
+          { T, T, T, T, T },
+          { T, T, T, T, T } }, SELF_CAST_AIM, 0,
+        nil, nil, nil, nil, nil, nil,
+        {
+            { 'force',    Scaling:new(0, 'affinity', 1.0) },
+            { 'reaction', Scaling:new(0, 'affinity', -1.0) },
+            { 'affinity', Scaling:new(0, 'affinity', -1.0) }
         }
     ),
 

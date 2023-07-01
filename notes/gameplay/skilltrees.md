@@ -17,9 +17,8 @@ Mona:   Caretaker
 
 #### Abelon
 
-- veteran - Bravado - Assist, grants allies big force, but vastly reduced reaction, affinity
 - executioner - Execute: Force * 1.5 weapon damage to enemy below half
-- Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
+- veteran - Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
 
 - demon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
 - executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
