@@ -78,10 +78,9 @@ function Skill:use(a, b, c, d, e, f, g, h)
     end
 end
 
-function Skill:hits(caster, target, status)
-    local team = status[target:getId()]['team']
-    local oppo_team = ite(team == ALLY, ENEMY, ALLY)
-    return (self.type == ASSIST and team == ALLY)
+function Skill:hits(caster, target, t_team)
+    local oppo_team = ite(t_team == ALLY, ENEMY, ALLY)
+    return (self.type == ASSIST and t_team == ALLY)
         or (self.type ~= ASSIST and oppo_team ~= self.affects)
         or (caster == target and self.modifiers['self'])
 end
@@ -117,6 +116,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
     -- Affect targets
     local dryrun_res = {}
+    local z = 1
     for i = 1, #ts do
 
         -- Temporary attributes and special effects for the target
@@ -125,14 +125,6 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         local t_stat = status[t:getId()]['effects']
         local t_ass = ts_assists[i]
         local t_tmp_attrs = mkTmpAttrs(t.attributes, t_stat, t_ass)
-
-        -- Dryrun just computes results, doesn't deal damage or apply effects
-        dryrun_res[i] = {
-            ['sp'] = t, 
-            ['flat'] = 0, 
-            ['percent'] = 0, 
-            ['new_stat'] = t_stat
-        }
 
         -- If attacker is an enemy and target has forbearance, the target
         -- switches to Kath
@@ -147,9 +139,17 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
 
         -- Only hit targets passing the team filter
-        if self:hits(sp, t, status) and (not modifiers['br']
+        if self:hits(sp, t, t_team) and (not modifiers['br']
         or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status))
         then
+
+            -- Dryrun just computes results, doesn't deal damage or apply effects
+            dryrun_res[z] = {
+                ['sp'] = t, 
+                ['flat'] = 0, 
+                ['percent'] = 0, 
+                ['new_stat'] = t_stat
+            }
 
             -- If there's no scaling, the attack does no damage
             if scaling then
@@ -181,8 +181,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     t.health = n_hp
                 end
 
-                dryrun_res[i]['flat'] = dealt
-                dryrun_res[i]['percent'] = dealt / pre_hp
+                dryrun_res[z]['flat'] = dealt
+                dryrun_res[z]['percent'] = dealt / pre_hp
 
                 -- Allies gain exp for damage dealt to enemies
                 if sp_team == ALLY and t_team == ENEMY then
@@ -226,7 +226,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 end
                 exp_gain = exp_gain + exp
             end
-            dryrun_res[i]['new_stat'] = t_stat
+            dryrun_res[z]['new_stat'] = t_stat
 
             -- Compute x/y displacement tile based on direction and grid state
             -- Only record if displacement is non-zero
@@ -268,9 +268,9 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 -- Record final tile displaced to
                 if x ~= loc[1] or y ~= loc[2] then
                     table.insert(moved, { ['sp'] = t, ['x'] = x, ['y'] = y })
-                end
-                if dryrun then
-                    dryrun_res[i]['moved'] = { ['x'] = x, ['y'] = y }
+                    if dryrun then
+                        dryrun_res[z]['moved'] = { ['x'] = x, ['y'] = y }
+                    end
                 end
             end
 
@@ -285,6 +285,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
             if not dryrun and modifiers['and'] then
                 modifiers['and'](sp, sp_tmp_attrs, t, t_tmp_attrs, status)
             end
+
+            z = z + 1
         end
     end
 

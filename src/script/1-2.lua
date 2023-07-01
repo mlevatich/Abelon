@@ -653,8 +653,8 @@ s12['victory'] = {
         ),
         focus(1, 170),
         brState('carried-elaine', 
-            choice(choices_carried_elaine),
-            choice(choices_not_carried_elaine)
+            { choice(choices_carried_elaine) },
+            { choice(choices_not_carried_elaine) }
         ),
         lookAt(2, 3),
         focus(3, 170),

@@ -857,7 +857,7 @@ function Battle:getCursorSuggestion(sp, sk)
             elseif tiles[k][1] == move_c[2] and tiles[k][2] == move_c[1] then
                 t = sp
             end
-            if t and sk:hits(sp, t, self.status) then
+            if t and sk:hits(sp, t, self.status[t:getId()]['team']) then
                 n_hit = n_hit + 1
             end
         end
@@ -1017,14 +1017,77 @@ function Battle:selectTarget()
     end
 end
 
-function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, sp_c)
+function Battle:rangeToTiles(sk, dir, c)
+
+    local scale = #sk.range
+    local toGrid = function(x, k, flip)
+        local g = c[k] - (scale + 1) / 2 + x
+        if flip then
+            g = c[k] + (scale + 1) / 2 - x
+        end
+        return g
+    end
+
+    local tiles = {}
+    for i = 1, scale do
+        for j = 1, scale do
+            if sk.range[i][j] then
+                local gi = toGrid(i, 2, false)
+                local gj = toGrid(j, 1, false)
+                if dir == DOWN then
+                    gi = toGrid(i, 2, true)
+                    gj = toGrid(j, 1, true)
+                elseif dir == LEFT then
+                    gi = toGrid(j, 2, true)
+                    gj = toGrid(i, 1, false)
+                elseif dir == RIGHT then
+                    gi = toGrid(j, 2, false)
+                    gj = toGrid(i, 1, true)
+                end
+                table.insert(tiles, { gi, gj })
+            end
+        end
+    end
+    return tiles
+end
+
+function Battle:skillRange(sk, dir, c)
+    return filter(
+        function(t) return self.grid[t[1]] and self.grid[t[1]][t[2]] end,
+        self:rangeToTiles(sk, dir, c)
+    )
+end
+
+function Battle:getTargetDirection(sk, sp_c, sk_c)
+
+    -- Get skill and cursor info
+    local c  = ite(sk_c, sk_c, self:getCursor())
+    local sk = ite(sk, sk, self:getSkill())
+
+    -- Get direction to point the skill
+    local dir = UP
+    if sk.aim['type'] == DIRECTIONAL then
+        local o = ite(sp_c, sp_c, self:getCursor(2))
+        dir = ite(c[1] > o[1], RIGHT,
+                  ite(c[1] < o[1], LEFT,
+                      ite(c[2] > o[2], DOWN, UP)))
+    end
+    return dir
+end
+
+function Battle:dryrunAttack(sp, atk, sp_c, atk_c)
+    local dir = self:getTargetDirection(atk, sp_c, atk_c)
+    return self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+end
+
+function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
     local i, j = self:findSprite(sp:getId())
     local ass = self.grid[i][j].assists
     if sp_c then
         ass = self.grid[sp_c[2]][sp_c[1]].assists
     end
     local sp_a = ite(self:isAlly(sp), ass, {})
-    local t = self:skillRange(attack, attack_dir, c_attack)
+    local t = self:skillRange(atk, dir, atk_c)
     local ts = {}
     local ts_a = {}
     for k = 1, #t do
@@ -1042,7 +1105,7 @@ function Battle:useAttack(sp, attack, attack_dir, c_attack, dryrun, sp_c)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
         end
     end
-    return attack:use(sp, sp_a, ts, ts_a, attack_dir, self.status, self.grid, dryrun)
+    return atk:use(sp, sp_a, ts, ts_a, dir, self.status, self.grid, dryrun)
 end
 
 function Battle:kill(sp)
@@ -1231,47 +1294,6 @@ function Battle:playAction()
         ['sp'] = sp,
         ['views'] = {}
     })
-end
-
-function Battle:rangeToTiles(sk, dir, c)
-
-    local scale = #sk.range
-    local toGrid = function(x, k, flip)
-        local g = c[k] - (scale + 1) / 2 + x
-        if flip then
-            g = c[k] + (scale + 1) / 2 - x
-        end
-        return g
-    end
-
-    local tiles = {}
-    for i = 1, scale do
-        for j = 1, scale do
-            if sk.range[i][j] then
-                local gi = toGrid(i, 2, false)
-                local gj = toGrid(j, 1, false)
-                if dir == DOWN then
-                    gi = toGrid(i, 2, true)
-                    gj = toGrid(j, 1, true)
-                elseif dir == LEFT then
-                    gi = toGrid(j, 2, true)
-                    gj = toGrid(i, 1, false)
-                elseif dir == RIGHT then
-                    gi = toGrid(j, 2, false)
-                    gj = toGrid(i, 1, true)
-                end
-                table.insert(tiles, { gi, gj })
-            end
-        end
-    end
-    return tiles
-end
-
-function Battle:skillRange(sk, dir, c)
-    return filter(
-        function(t) return self.grid[t[1]] and self.grid[t[1]][t[2]] end,
-        self:rangeToTiles(sk, dir, c)
-    )
 end
 
 function Battle:newCursorMove(up, down, left, right)
@@ -1969,23 +1991,6 @@ function Battle:renderAssistSpaces()
     end
 end
 
-function Battle:getTargetDirection(sk, sp_c, sk_c)
-
-    -- Get skill and cursor info
-    local c  = ite(sk_c, sk_c, self:getCursor())
-    local sk = ite(sk, sk, self:getSkill())
-
-    -- Get direction to point the skill
-    local dir = UP
-    if sk.aim['type'] == DIRECTIONAL then
-        local o = ite(sp_c, sp_c, self:getCursor(2))
-        dir = ite(c[1] > o[1], RIGHT,
-                  ite(c[1] < o[1], LEFT,
-                      ite(c[2] > o[2], DOWN, UP)))
-    end
-    return dir
-end
-
 function Battle:outlineTile(tx, ty, edges, clr)
     local x1 = (self.origin_x + tx - 1) * TILE_WIDTH
     local y1 = (self.origin_y + ty - 1) * TILE_HEIGHT
@@ -2146,125 +2151,6 @@ function Battle:renderStatus(sp)
     end
 end
 
-function Battle:mkOuterHoverBox(w)
-
-    -- Check for an ally sprite or empty space
-    local c = self:getCursor()
-    local g = self.grid[c[2]][c[1]]
-    local sp = g.occupied
-    if ((not sp) or self:isAlly(sp)) and g.n_assists > 0 then
-
-        -- Make an element for each assist
-        local eles = { mkEle('text', 'Assists', HALF_MARGIN, HALF_MARGIN) }
-        for i = 1, #g.assists do
-            local str = g.assists[i]:toStr()
-            table.insert(eles, mkEle('text', str,
-                w - #str * CHAR_WIDTH - HALF_MARGIN,
-                HALF_MARGIN + LINE_HEIGHT * i
-            ))
-        end
-        return eles, LINE_HEIGHT * (#eles) + BOX_MARGIN
-    end
-    return {}, 0
-end
-
-function Battle:hoverBoxFromDryrun(sp, result)
-    local hp = sp.health - result['flat']
-    local stat = result['new_stat']
-    local ign = sp.ignea
-    if sp == self:getSprite() then ign = sp.ignea - self:getSkill().cost end
-    return self:hoverBoxFromInfo(sp, hp, ign, stat)
-end
-
-function Battle:hoverBoxFromTile(tx, ty)
-    local sp = self.grid[ty][tx].occupied
-    if not sp then return nil, nil, nil, nil end
-    local hp = sp.health
-    local stat = self.status[sp:getId()]['effects']
-    return self:hoverBoxFromInfo(sp, hp, sp.ignea, stat)
-end
-
-function Battle:hoverBoxFromInfo(sp, hp, ign, statuses)
-    local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
-
-    -- Box contains sprite's name and status
-    local name_str = sp.name
-    local hp_str   = hp  .. "/" .. (sp.attributes['endurance'] * 2)
-    local ign_str  = ign .. "/" ..  sp.attributes['focus']
-
-    -- Compute box width from longest status
-    local longest_status = 0
-    for i = 1, #statuses do
-
-        -- Space (in characters) between two strings in hover box
-        local buf = 3
-
-        -- Length of duration string
-        local d = statuses[i].duration
-        local dlen = ite(d == math.huge, 0, ite(d < 2, 2, ite(d < 10, 2, 3)))
-
-        -- Length of buff string
-        local b = statuses[i].buff
-        local blen = #b:toStr()
-
-        -- Combine them all to get character size
-        longest_status = math.max(longest_status, dlen + blen + buf)
-    end
-    w = math.max(w, longest_status * CHAR_WIDTH + BOX_MARGIN)
-
-    -- Add sprite basic info
-    local sp_eles = {
-        mkEle('text', sp.name, HALF_MARGIN, HALF_MARGIN),
-        mkEle('text', hp_str, w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
-              HALF_MARGIN + LINE_HEIGHT + 3),
-        mkEle('text', ign_str, w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
-              HALF_MARGIN + LINE_HEIGHT * 2 + 9),
-        mkEle('image', icons[str_to_icon['endurance']],
-              HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, icon_texture),
-        mkEle('image', icons[str_to_icon['focus']],
-              HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2 + 6, icon_texture)
-    }
-
-    -- Add sprite statuses
-    local stat_eles = {}
-    local y = HALF_MARGIN + LINE_HEIGHT * 3 + BOX_MARGIN
-    for i = 1, #statuses do
-        local cy = y + LINE_HEIGHT * (i - 1)
-        local b = statuses[i].buff
-        local d = statuses[i].duration
-        local dur = ''
-        if d ~= math.huge then
-            dur = d .. 't'
-        end
-        table.insert(stat_eles, mkEle('text', dur,
-            w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
-        ))
-        local str = b:toStr()
-        table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
-    end
-
-    -- Concat info with statuses
-    local h = BOX_MARGIN + HALF_MARGIN + LINE_HEIGHT
-            * (#sp_eles - 2 + #stat_eles / 2)
-    if next(statuses) ~= nil then
-        h = h + HALF_MARGIN
-    end
-    local clr = ite(self:isAlly(sp), { 0, 0.1, 0.1 }, { 0.1, 0, 0 })
-    return concat(sp_eles, stat_eles), w, h, clr
-end
-
-function Battle:mkInnerHoverBox()
-    local c = self:getCursor()
-    local hbox, bw, bh, bclr = self:hoverBoxFromTile(c[1], c[2])
-    if not hbox then
-        local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
-        local h = BOX_MARGIN + LINE_HEIGHT
-        local clr = { 0, 0, 0 }
-        return { mkEle('text', 'Empty', HALF_MARGIN, HALF_MARGIN) }, w, h, clr
-    end
-    return hbox, bw, bh, bclr
-end
-
 function Battle:renderDisplacement()
 
     -- If an attack exists
@@ -2319,212 +2205,6 @@ function Battle:renderDisplacement()
             end
         end
     end
-end
-
-function Battle:renderAttackHoverBoxes(sk)
-
-    function renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
-
-        -- Result box goes to the right
-        local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - w2
-        table.insert(clr2, RECT_ALPHA)
-        love.graphics.setColor(unpack(clr2))
-        love.graphics.rectangle('fill', cur_x, cur_y, w2, h2)
-        self:renderBoxElements(box2, cur_x, cur_y)
-
-        -- Arrow connecting them
-        cur_x = cur_x - BOX_MARGIN - 10
-        love.graphics.setColor(unpack(WHITE))
-        love.graphics.print(">>", cur_x, cur_y + (h + h2) / 4 - TEXT_MARGIN_Y / 2)
-
-        -- Initial box left of it
-        cur_x = cur_x - BOX_MARGIN - w
-        table.insert(clr, RECT_ALPHA)
-        love.graphics.setColor(unpack(clr))
-        love.graphics.rectangle('fill', cur_x, cur_y, w, h)
-        self:renderBoxElements(box, cur_x, cur_y)
-    end
-
-    -- Get skill range
-    local dir    = self:getTargetDirection()
-    local c      = self:getCursor()
-    local sp     = self:getSprite()
-    local tiles  = self:skillRange(sk, dir, c)
-
-    -- Do dryrun with simulated caster position
-    -- return value has distinct target effects and an optional caster effect
-    -- target effects in dryrun will appear in the same order as they do here.
-    -- Render them all, and then caster effects.
-    local dryrun = self:useAttack(sp, sk, dir, c, true, self:getCursor(2))
-
-    -- Iterate over tiles to see which ones need to render boxes
-    local max_y = VIRTUAL_HEIGHT - BOX_MARGIN * 2 - FONT_SIZE - LINE_HEIGHT
-    local cur_y = BOX_MARGIN
-    local k = 1
-    for i = 1, #tiles do
-
-        -- Switch tile of current sprite with prospective tile it's moving to
-        local t = self.grid[tiles[i][1]][tiles[i][2]].occupied
-        local move_c = self:getCursor(2)
-        if t == sp then
-            tiles[i][1] = move_c[2]
-            tiles[i][2] = move_c[1]
-        elseif tiles[i][1] == move_c[2] and tiles[i][2] == move_c[1] then
-            local y, x = self:findSprite(sp:getId())
-            tiles[i][1] = y
-            tiles[i][2] = x
-        end
-        t = self.grid[tiles[i][1]][tiles[i][2]].occupied
-
-        -- If there's a sprite on the tile and the skill affects that sprite,
-        -- render the sprite's hover box
-        if t then
-            if sk:hits(sp, t, self.status) then
-                local result = dryrun[k]
-                local box, w, h, clr = self:hoverBoxFromTile(tiles[i][2], tiles[i][1])
-                local box2, w2, h2, clr2 = self:hoverBoxFromDryrun(t, result)
-
-                -- Only render if there's room for the whole box on screen
-                if cur_y + math.max(h, h2) <= max_y then
-                    renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
-                    cur_y = cur_y + math.max(h, h2) + BOX_MARGIN
-                else
-                    local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
-                    renderString("...", cur_x, cur_y)
-                    break
-                end
-            end
-            k = k + 1
-        end
-    end
-
-    if dryrun['caster'] then
-        local y, x = self:findSprite(sp:getId())
-        local box, w, h, clr = self:hoverBoxFromTile(x, y)
-        local box2, w2, h2, clr2 = self:hoverBoxFromDryrun(sp, dryrun['caster'])
-        if cur_y + math.max(h, h2) <= max_y then
-            renderBeforeAfterBoxes(cur_y, box, w, h, clr, box2, w2, h2, clr2)
-        else
-            local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
-            renderString("...", cur_x, cur_y)
-        end
-    end
-end
-
-function Battle:renderAssistHoverBox(sk)
-
-    -- Get attack info
-    local sp = self:getSprite()
-    local attack_loc = self:getCursor(4)
-    local attack_c = self:getCursor(3)
-    local atk = self.stack[4]['sk']
-
-    -- Recover the status effects on the sprite that would
-    -- result from the attack to create a spoofed copy of their stats
-    local spoof_effects = self.status[sp:getId()]['effects']
-    if atk then
-        local dir = self:getTargetDirection(atk, attack_loc, attack_c)
-        local dryrun = self:useAttack(sp, atk, dir, attack_c, true, attack_loc)
-        if dryrun['caster'] then
-            spoof_effects = dryrun['caster']['new_stat']
-        else
-            local i = 1
-            while dryrun[i] do
-                if dryrun[i]['sp'] == sp then
-                    spoof_effects = dryrun[i]['new_stat']
-                    break
-                end
-                i = i + 1
-            end
-        end
-    end
-
-    -- Get the grid tile (y, x) that the sprite would use the assist from.
-    local assist_loc = self:getCursor(2)
-    local spoof_tile = { assist_loc[2], assist_loc[1] }
-
-    -- Pass the spoofed grid tile and spoofed status effects to getTmpAttributes
-    -- to get the buffs that would be applied
-    local buffs = sk:use(self:getTmpAttributes(sp, spoof_effects, spoof_tile))
-
-    -- Compute buff strings
-    local eles = { mkEle('text', 'Assist', HALF_MARGIN, HALF_MARGIN) }
-    local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
-    for i = 1, #buffs do
-        local str = buffs[i]:toStr()
-        table.insert(eles, mkEle('text', str,
-            w - #str * CHAR_WIDTH - HALF_MARGIN,
-            HALF_MARGIN + LINE_HEIGHT * i
-        ))
-    end
-    local x = VIRTUAL_WIDTH - w - BOX_MARGIN
-    local y = BOX_MARGIN
-    local h = LINE_HEIGHT * (#eles) + BOX_MARGIN
-
-    -- Render assist box
-    love.graphics.setColor(0.05, 0.15, 0.05, RECT_ALPHA)
-    love.graphics.rectangle('fill', x, y, w, h)
-    self:renderBoxElements(eles, x, y)
-end
-
-function Battle:renderTargetHoverBoxes()
-
-    local sk = self:getSkill()
-    if sk.type == ASSIST then
-        self:renderAssistHoverBox(sk)
-    else
-        self:renderAttackHoverBoxes(sk)
-    end
-end
-
-function Battle:renderBoxElements(box, base_x, base_y)
-    for i = 1, #box do
-        local e = box[i]
-        if e['type'] == 'text' then
-            local clr = ite(e['color'], e['color'], WHITE)
-            renderString(e['data'],
-                base_x + e['x'], base_y + e['y'], clr, e['auto_color']
-            )
-        else
-            love.graphics.setColor(unpack(WHITE))
-            love.graphics.draw(
-                e['texture'],
-                e['data'],
-                base_x + e['x'],
-                base_y + e['y'],
-                0, 1, 1, 0, 0
-            )
-        end
-    end
-end
-
-function Battle:renderHoverBoxes(ibox, w, ih, obox, oh, clr)
-
-    -- Base coordinates for both boxes
-    local outer_x = VIRTUAL_WIDTH - BOX_MARGIN - w
-    local inner_x = outer_x
-    local inner_y = BOX_MARGIN
-    local outer_y = inner_y + ih
-
-
-    -- If there are assists
-    if next(obox) ~= nil then
-
-        -- Draw outer box
-        love.graphics.setColor(0.05, 0.15, 0.05, RECT_ALPHA)
-        love.graphics.rectangle('fill', outer_x, outer_y, w, oh)
-
-        -- Draw outer box elements
-        self:renderBoxElements(obox, outer_x, outer_y)
-    end
-
-    -- Draw inner box
-    table.insert(clr, RECT_ALPHA)
-    love.graphics.setColor(unpack(clr))
-    love.graphics.rectangle('fill', inner_x, inner_y, w, ih)
-
-    -- Draw inner box elements
-    self:renderBoxElements(ibox, inner_x, inner_y)
 end
 
 function Battle:renderBattleText()
@@ -2586,6 +2266,252 @@ function Battle:renderGrid()
     end
 end
 
+function Battle:mkAssistElements(assists, w)
+    local eles = { mkEle('text', 'Assist', HALF_MARGIN, HALF_MARGIN) }
+    for i = 1, #assists do
+        local str = assists[i]:toStr()
+        table.insert(eles, mkEle('text', str,
+            w - #str * CHAR_WIDTH - HALF_MARGIN,
+            HALF_MARGIN + LINE_HEIGHT * i
+        ))
+    end
+    local h = LINE_HEIGHT * (#eles) + BOX_MARGIN
+    return eles, h
+end
+
+function Battle:boxElementsFromInfo(sp, hp, ign, statuses)
+    local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
+
+    -- Box contains sprite's name and status
+    local name_str = sp.name
+    local hp_str   = hp  .. "/" .. (sp.attributes['endurance'] * 2)
+    local ign_str  = ign .. "/" ..  sp.attributes['focus']
+
+    -- Compute box width from longest status
+    local longest_status = 0
+    for i = 1, #statuses do
+
+        -- Space (in characters) between two strings in hover box
+        local buf = 3
+
+        -- Length of duration string
+        local d = statuses[i].duration
+        local dlen = ite(d == math.huge, 0, ite(d < 2, 2, ite(d < 10, 2, 3)))
+
+        -- Length of buff string
+        local b = statuses[i].buff
+        local blen = #b:toStr()
+
+        -- Combine them all to get character size
+        longest_status = math.max(longest_status, dlen + blen + buf)
+    end
+    w = math.max(w, longest_status * CHAR_WIDTH + BOX_MARGIN)
+
+    -- Add sprite basic info
+    local sp_eles = {
+        mkEle('text', sp.name, HALF_MARGIN, HALF_MARGIN),
+        mkEle('text', hp_str, w - HALF_MARGIN - #hp_str * CHAR_WIDTH,
+              HALF_MARGIN + LINE_HEIGHT + 3),
+        mkEle('text', ign_str, w - HALF_MARGIN - #ign_str * CHAR_WIDTH,
+              HALF_MARGIN + LINE_HEIGHT * 2 + 9),
+        mkEle('image', icons[str_to_icon['endurance']],
+              HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT, icon_texture),
+        mkEle('image', icons[str_to_icon['focus']],
+              HALF_MARGIN, HALF_MARGIN + LINE_HEIGHT * 2 + 6, icon_texture)
+    }
+
+    -- Add sprite statuses
+    local stat_eles = {}
+    local y = HALF_MARGIN + LINE_HEIGHT * 3 + BOX_MARGIN
+    for i = 1, #statuses do
+        local cy = y + LINE_HEIGHT * (i - 1)
+        local b = statuses[i].buff
+        local d = statuses[i].duration
+        local dur = ite(d ~= math.huge, d .. 't', '')
+        table.insert(stat_eles, mkEle('text', dur,
+            w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
+        ))
+        local str = b:toStr()
+        table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+    end
+
+    -- Concat info with statuses
+    local h = BOX_MARGIN + HALF_MARGIN + LINE_HEIGHT
+            * (#sp_eles - 2 + #stat_eles / 2)
+    if next(statuses) ~= nil then h = h + HALF_MARGIN end
+    local clr = ite(self:isAlly(sp), { 0, 0.1, 0.1 }, { 0.1, 0, 0 })
+    return concat(sp_eles, stat_eles), w, h, clr
+end
+
+function Battle:boxElementsFromDryrun(sp, sk, result)
+    local hp = sp.health - result['flat']
+    local ign = ite(sp == self:getSprite(), sp.ignea - sk.cost, sp.ignea)
+    return self:boxElementsFromInfo(sp, hp, ign, result['new_stat'])
+end
+
+function Battle:boxElementsFromSprite(sp)
+    local stat = self.status[sp:getId()]['effects']
+    return self:boxElementsFromInfo(sp, sp.health, sp.ignea, stat)
+end
+
+function Battle:renderAttackHoverBoxes(sk)
+
+    -- Function to render before/after dryrun boxes with an arrow between
+    local max_y = VIRTUAL_HEIGHT - BOX_MARGIN * 2 - FONT_SIZE - LINE_HEIGHT
+    local cur_y = BOX_MARGIN
+    function renderBoxIfRoom(t, result)
+        
+        local box, w, h, clr = self:boxElementsFromSprite(t)
+        local box2, w2, h2, _ = self:boxElementsFromDryrun(t, sk, result)
+
+        -- Only render if there's room for the whole box on screen
+        if cur_y + math.max(h, h2) <= max_y then
+
+            -- Result box goes to the right
+            local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - w2
+            self:renderHoverBox(box2, cur_x, cur_y, w2, h2, clr)
+
+            -- Arrow connecting them
+            cur_x = cur_x - BOX_MARGIN - 10
+            love.graphics.setColor(unpack(WHITE))
+            love.graphics.print(">>", cur_x, cur_y + (h + h2) / 4 - TEXT_MARGIN_Y / 2)
+
+            -- Initial box left of it
+            cur_x = cur_x - BOX_MARGIN - w
+            self:renderHoverBox(box, cur_x, cur_y, w, h, clr)
+            cur_y = cur_y + math.max(h, h2) + BOX_MARGIN
+
+        else
+            -- Render '...' if out of room
+            local cur_x = VIRTUAL_WIDTH - BOX_MARGIN - CHAR_WIDTH * 3
+            renderString("...", cur_x, cur_y)
+            return true
+        end
+        return false
+    end
+
+    -- Dryrun and render all boxes
+    local sp = self:getSprite()
+    local dry = self:dryrunAttack(sp, sk, self:getCursor(2), self:getCursor())
+    local room = true
+    for i = 1, #dry do
+        if renderBoxIfRoom(dry[i]['sp'], dry[i]) then
+            room = false
+            break
+        end
+    end
+    if room and dry['caster'] then
+        renderBoxIfRoom(sp, dry['caster'])
+    end
+end
+
+function Battle:renderAssistHoverBox(sk)
+
+    -- Recover the status effects on the sprite that would
+    -- result from the attack to create a spoofed copy of their stats
+    local sp = self:getSprite()
+    local atk = self.stack[4]['sk']
+    local eff = self.status[sp:getId()]['effects']
+    if atk then
+        local dry = self:dryrunAttack(sp, atk, self:getCursor(4), self:getCursor(3))
+        if dry['caster'] then
+            eff = dry['caster']['new_stat']
+        else
+            for i=1, #dry do
+                if dry[i]['sp'] == sp then
+                    eff = dry[i]['new_stat']
+                    break
+                end
+            end
+        end
+    end
+
+    -- Pass the dryrun grid tile and status effects to getTmpAttributes
+    -- to get the buffs that would be applied
+    local assist_loc = self:getCursor(2)
+    local loc = { assist_loc[2], assist_loc[1] }
+    local buffs = sk:use(self:getTmpAttributes(sp, eff, loc))
+    
+    -- Get box elements and render box
+    local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
+    local x = VIRTUAL_WIDTH - w - BOX_MARGIN
+    local eles, h = self:mkAssistElements(buffs, w)
+    self:renderHoverBox(eles, x, BOX_MARGIN, w, h, { 0.05, 0.15, 0.05 })
+end
+
+function Battle:renderTargetHoverBoxes()
+    local sk = self:getSkill()
+    if sk.type == ASSIST then self:renderAssistHoverBox(sk)
+    else                      self:renderAttackHoverBoxes(sk)
+    end
+end
+
+-- Render a box of the specified dimensions and color, and the elements inside
+function Battle:renderHoverBox(box, x, y, w, h, clr)
+
+    -- Render box rectangle
+    table.insert(clr, RECT_ALPHA)
+    love.graphics.setColor(unpack(clr))
+    love.graphics.rectangle('fill', x, y, w, h)
+
+    -- Render box elements
+    for i = 1, #box do
+        local e = box[i]
+        if e['type'] == 'text' then
+            local clr = ite(e['color'], e['color'], WHITE)
+            renderString(e['data'], x + e['x'], y + e['y'], clr, e['auto_color'])
+        else
+            love.graphics.setColor(unpack(WHITE))
+            love.graphics.draw(
+                e['texture'],
+                e['data'],
+                x + e['x'],
+                y + e['y'],
+                0, 1, 1, 0, 0
+            )
+        end
+    end
+end
+
+-- Render both inner (sprite/status) and outer (assists) hover boxes
+function Battle:renderHoverBoxes()
+
+    -- Sprite at cursor
+    local c = self:getCursor()
+    local g = self.grid[c[2]][c[1]]
+    local sp = g.occupied
+
+    -- Get box elements for sprite and statuses, or 'empty' if no sprite
+    function mkInnerHoverBox()
+        if sp then
+            return self:boxElementsFromSprite(sp)
+        end
+        local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
+        local h = BOX_MARGIN + LINE_HEIGHT
+        local clr = { 0, 0, 0 }
+        return { mkEle('text', 'Empty', HALF_MARGIN, HALF_MARGIN) }, w, h, clr
+    end
+    
+    -- Get box elements for assists, only for ally sprite or empty space
+    function mkOuterHoverBox(w)
+        if ((not sp) or self:isAlly(sp)) and g.n_assists > 0 then
+            return self:mkAssistElements(g.assists, w)
+        end
+        return {}, 0
+    end
+
+    -- Draw inner box
+    local ibox, w, ih, clr = mkInnerHoverBox()
+    local x = VIRTUAL_WIDTH - BOX_MARGIN - w
+    self:renderHoverBox(ibox, x, BOX_MARGIN, w, ih, clr)
+    
+    -- If there are assists, draw outer box
+    local obox, oh = mkOuterHoverBox(w)
+    if next(obox) ~= nil then
+        self:renderHoverBox(obox, x, BOX_MARGIN + ih, w, oh, { 0.05, 0.15, 0.05 })
+    end
+end
+
 function Battle:renderUnderlay()
 
     -- Render green squares on assisted grid tiles
@@ -2633,9 +2559,7 @@ function Battle:renderOverlay()
             if s == STAGE_TARGET then
                 self:renderTargetHoverBoxes()
             elseif not (s == STAGE_MENU and self:getCursor(4)) then
-                local ibox, w, ih, clr = self:mkInnerHoverBox()
-                local obox, oh = self:mkOuterHoverBox(w)
-                self:renderHoverBoxes(ibox, w, ih, obox, oh, clr)
+                self:renderHoverBoxes()
             end
 
             -- Render battle text if not in a menu
