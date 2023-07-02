@@ -10,7 +10,7 @@
 ~~south-forest Dying-Forest
 
 ~elaine 36 9 R
-~bigwolf 38 10 L
+~alphawolf 38 10 L
 ~medallion 34 34 R
 
 ~~west-forest Dying-Forest

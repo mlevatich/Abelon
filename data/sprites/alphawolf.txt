@@ -1,6 +1,6 @@
 // Sprite attributes
 
-Name: Wolf
+Name: Alpha wolf
 Depth: 5
 Interactive: no
 Hitbox:

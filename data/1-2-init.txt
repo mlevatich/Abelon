@@ -8,10 +8,10 @@
 
 ~~south-forest Dying-Forest
 
-~bigwolf 1 1 L
-~smallwolf1 1 1 L
-~smallwolf2 1 1 L
-~smallwolf3 1 1 L
+~alphawolf 1 1 L
+~wolf1 1 1 L
+~wolf2 1 1 L
+~wolf3 1 1 L
 
 ~~west-forest Dying-Forest
 

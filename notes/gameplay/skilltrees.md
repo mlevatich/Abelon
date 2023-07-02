@@ -51,7 +51,8 @@ Goal for Mona: 4 assists, 5 attacks
 #### Elaine
 
 - apprentice spell - galeforce: push a huge wall of enemies a few spaces away
-- 1 more for sniper: piercing shot that goes in a diagonal line? Then change one-in-a-million to a straight line.
+- sniper weapon piercing shot that goes in a diagonal line? Then change one-in-a-million to a straight line that pushes.
+- hunter assist
 
 #### Lester
 

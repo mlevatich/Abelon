@@ -905,21 +905,11 @@ skills = {
     -- ELAINE
     ['hunting_shot'] = Skill:new('hunting_shot', 'Hunting Shot',
         "Elaine fires an arrow from close range as though hunting an animal, \z
-         dealing 8 + (Force * 0.5) Weapon damage.",
+         dealing 16 Weapon damage.",
         'Huntress', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { F, F, F },
           { T, F, F },
-          { F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(8, 'force', 0.5)
-    ),
-    ['knife_toss'] = Skill:new('knife_toss', 'Knife Toss',
-        "Elaine throws a small spinning knife at a target nearby, \z
-         dealing 16 Weapon damage.",
-        'Huntress', WEAPON, MANUAL, str_to_icon['empty'],
-        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
-        { { F, T, F },
-          { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(16)
     ),

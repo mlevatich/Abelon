@@ -1319,7 +1319,13 @@ sprite_data = {
         ['animations'] = living
     },
     {
-        ['id'] = 'bigwolf',
+        ['id'] = 'alphawolf',
+        ['w'] = 31,
+        ['h'] = 31,
+        ['animations'] = living
+    },
+    {
+        ['id'] = 'wolf',
         ['w'] = 31,
         ['h'] = 31,
         ['animations'] = living,
@@ -1402,13 +1408,6 @@ sprite_data = {
         ['id'] = 'bloodstain2',
         ['w'] = 416,
         ['h'] = 608
-    },
-    {
-        ['id'] = 'smallwolf',
-        ['w'] = 31,
-        ['h'] = 31,
-        ['animations'] = living,
-        ['n'] = 3
     }
 }
 sprite_graphics = {}
