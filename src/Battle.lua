@@ -1508,7 +1508,7 @@ function Battle:update(keys, dt)
             if self:checkTriggers(END_ACTION) then
                 return
             end
-f
+
             -- Check win and loss
             if self:checkWinLose() then return end
 
