@@ -10,8 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2
 
-- Fix turn auto-end no longer working for some reason
-
 - In battle, first move should drag direction of sprite and first shadow. Attack target should drag direction of first shadow. Second move should drag direction of second shadow. Assist target should drag direction of second shadow. Initial cursor suggestion should also induce a change in direction. Make sure attacking and assisting in opposite directions from the same tile looks ok.
 
 - In battle, dryrun should record killed sprites (make sure their position is accurate even if a movement skill is what killed them). Render dryrun-dead sprites as faded out. If attack results in a kill OR displacement, wait after attack during playAction(). Permit sprites to move into grid spaces with dead sprites.

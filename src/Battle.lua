@@ -1584,15 +1584,16 @@ function Battle:update(keys, dt)
                 return
             end
 
+            -- Check triggers
+            if self:checkTriggers(END_ACTION) then
+                self.stall_battle_cam = true
+                return
+            end
+
             -- Say this sprite acted and reset stack
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
-
-            -- Check triggers
-            if self:checkTriggers(END_ACTION) then
-                return
-            end
 
             -- Check win and loss
             if self:checkWinLose() then return end
@@ -1657,6 +1658,10 @@ function Battle:update(keys, dt)
 end
 
 function Battle:updateBattleCam()
+    if self.stall_battle_cam then
+        self.stall_battle_cam = false
+        return
+    end
     local focus = self.action_in_progress
     local c = self:getCursor()
     if focus then
