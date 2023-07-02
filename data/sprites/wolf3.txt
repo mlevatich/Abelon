@@ -1,9 +1,9 @@
 // Sprite attributes
 
 Name: Wolf
-Depth: 5
+Ground: no
 Interactive: no
-Hitbox: 0,0,31,31
+Hitbox: 0,20,31,11
 Resting: idle
 Impression: 0
 Awareness: 0

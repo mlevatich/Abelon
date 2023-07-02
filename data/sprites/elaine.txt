@@ -1,9 +1,9 @@
 // Sprite attributes
 
 Name: Elaine
-Depth: 5
+Ground: no
 Interactive: yes
-Hitbox: 7,1,20,31
+Hitbox: 7,21,20,11
 Resting: idle
 Impression: 50
 Awareness: 0

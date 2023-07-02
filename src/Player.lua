@@ -445,7 +445,7 @@ function Player:getId() return self.sp:getId() end
 function Player:getName() return self.sp:getName() end
 function Player:getPosition() return self.sp:getPosition() end
 function Player:getPositionOnScreen() return self.sp:getPositionOnScreen() end
-function Player:getDepth() return self.sp:getDepth() end
+function Player:isGround() return self.sp:isGround() end
 function Player:getDimensions() return self.sp:getDimensions() end
 function Player:getImpression() return self.sp:getImpression() end
 function Player:getAwareness() return self.sp:getAwareness() end

@@ -1,7 +1,7 @@
 // Sprite attributes
 
 Name: Grass2
-Depth: 7
+Ground: yes
 Interactive: no
 Hitbox:
 Resting: idle

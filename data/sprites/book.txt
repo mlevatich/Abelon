@@ -1,7 +1,7 @@
 // Sprite attributes
 
 Name: Book
-Depth: 6
+Ground: no
 Interactive: yes
 Hitbox: 1,4,23,16
 Resting: idle

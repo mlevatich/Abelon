@@ -120,17 +120,13 @@ end
 
 -- Populate the map with a sprite object
 function Map:addSprite(sp)
-
-    -- Insert sprite in order of depth
     for i = 1, #self.sprites do
-        if self.sprites[i]:getDepth() <= sp:getDepth() then
+        if sp.y <= self.sprites[i].y then
             table.insert(self.sprites, i, sp)
             return
         end
     end
-
-    -- If no sprite had lower depth, insert at end
-    self.sprites[#self.sprites+1] = sp
+    table.insert(self.sprites, sp)
 end
 
 -- Create a sprite from string fields and add it to the map
@@ -256,12 +252,39 @@ function Map:checkTransitionTiles(player)
     return nil
 end
 
+-- Maintain rendering order when sprites move
+function Map:updateSpriteY(sp, dy)
+    if dy ~= 0 then
+        local i = find(self.sprites, sp)
+        while true do
+            local j = i + ite(dy > 0, 1, -1)
+            while self.sprites[j] and self.sprites[j]:isGround() do
+                j = j + ite(dy > 0, 1, -1)
+            end
+            local other = self.sprites[j]
+            if other then
+                local sp_g = sp.y + sp.h
+                local o_g = other.y + other.h
+                if (dy > 0 and o_g < sp_g) or (dy < 0 and o_g > sp_g) then
+                    self.sprites[i] = other
+                    self.sprites[j] = sp
+                    i = j
+                else
+                    break
+                end
+            else
+                break
+            end
+        end
+    end
+end
+
 -- Update the map
 function Map:update(dt, player)
 
     -- Update each sprite on the map
     for _, sp in pairs(self.sprites) do
-        sp:update(dt)
+        self:updateSpriteY(sp, sp:update(dt))
     end
 
     -- Check if the map needs to be switched
@@ -350,18 +373,16 @@ function Map:renderGroundSprites()
 
     -- Render all sprites at or below ground depth
     for _, sp in pairs(self.sprites) do
-        if sp:getDepth() >= GROUND_DEPTH then
-            sp:render()
-        end
+        if sp:isGround() then sp:render() end
     end
 end
 
 function Map:renderStandingSprites()
 
     -- Render all sprites above ground depth
-    for _, sp in pairs(self.sprites) do
-        if sp:getDepth() < GROUND_DEPTH then
-            sp:render()
+    for i=1, #self.sprites do
+        if not self.sprites[i]:isGround() then
+            self.sprites[i]:render()
         end
     end
 end

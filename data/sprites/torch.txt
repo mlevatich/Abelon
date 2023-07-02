@@ -1,9 +1,9 @@
 // Sprite attributes
 
 Name: Torch
-Depth: 5
+Ground: no
 Interactive: no
-Collides: 7,4,10,25
+Collides: 7,18,10,11
 Resting: idle
 Impression: 0
 Awareness: 0

@@ -1,7 +1,7 @@
 // Sprite attributes
 
 Name: Wornfleet
-Depth: 6
+Ground: yes
 Interactive: no
 Hitbox:
 Resting: idle

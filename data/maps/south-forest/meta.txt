@@ -23,14 +23,14 @@ LIGHTING DATA
 10 10 20
 
 FIXED SPRITES
-~log 44 27 R
+~log 44 27.5 R
 ~log 42 28 L
 ~log 43 51 R
 ~log 40 8 L
-~log 34 41 R
+~log 34 41.3 R
 ~log 37 41 L
 ~log 35 42 L
-~log 38 42 R
+~log 37.5 42 R
 ~log 6 26 L
 ~grass 35 40 L
 ~grass 37 40 L

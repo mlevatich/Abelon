@@ -47,7 +47,6 @@ function Sprite:initialize(id, game)
     -- Position
     self.x = 0
     self.y = 0
-    self.z = readField(data[4], tonumber) -- Affects rendering order
 
     -- Anchor position for a wandering sprite
     self.leash_x = 0
@@ -74,6 +73,7 @@ function Sprite:initialize(id, game)
     self.interactive = readField(data[5], tobool)
 
     -- Can other sprites walk through/over this sprite?
+    self.ground = readField(data[4], tobool)
     self.hitbox = readArray(data[6], tonumber)
 
     -- Sprite's opinions
@@ -123,11 +123,6 @@ function Sprite:getPositionOnScreen()
     return self.x - self.game.camera_x, self.y - self.game.camera_y
 end
 
--- Get sprite's depth for rendering order
-function Sprite:getDepth()
-    return self.z
-end
-
 -- Get sprite's dimensions
 function Sprite:getDimensions()
     return self.w, self.h
@@ -151,6 +146,11 @@ end
 -- Is this sprite interactive?
 function Sprite:isInteractive()
     return self.interactive
+end
+
+-- Is this a ground sprite or standing sprite?
+function Sprite:isGround()
+    return self.ground
 end
 
 -- Is this sprite blocking?
@@ -1230,6 +1230,9 @@ end
 -- Per-frame updates to a sprite's state
 function Sprite:update(dt)
 
+    -- Store starting y value, in case it changes
+    local y_init = self.y
+
     -- Update velocity, direction, behavior,
     -- and animation based on current behavior
     self.behaviors[self.current_behavior](self, dt)
@@ -1241,6 +1244,7 @@ function Sprite:update(dt)
     if self:isBlocking() then
         self:checkCollisions()
     end
+    return self.y - y_init
 end
 
 -- Render a sprite to the screen
