@@ -1246,20 +1246,20 @@ end
 -- Render a sprite to the screen
 function Sprite:render()
 
+    -- Set special rendering color based on battle
     local b = self.game.battle
-    local s = self.game.current_scene
-    local mono = not s and b
-                       and b.status[self.id]
-                       and b.status[self.id]['acted']
-
-    if mono then
-        love.graphics.setColor(0.4, 0.4, 0.4, 1)
-    else
-        love.graphics.setColor(unpack(WHITE))
+    local mono, alpha = false, 1
+    if b and not self.game.current_scene then
+        mono, alpha = b:getSpriteRenderFlags(self)
     end
-
+    local clr = { 1, 1, 1, 1 }
+    if mono then clr = { 0.4, 0.4, 0.4, 1 } end
+    clr[4] = alpha
+    
     -- Draw sprite's current animation frame, at its current position,
     -- in its current direction
+    love.graphics.push('all')
+    love.graphics.setColor(unpack(clr))
     love.graphics.draw(
         spritesheet,
         self:getCurrentQuad(),
@@ -1271,6 +1271,7 @@ function Sprite:render()
         self.w / 2,
         self.h / 2
     )
+    love.graphics.pop()
 end
 
 -- INITIALIZE GRAPHICAL DATA

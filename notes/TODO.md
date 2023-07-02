@@ -10,11 +10,12 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2
 
-- During playAction(), the sprite slides to the displacement destination while looping a static 'displace' animation, and has their grid location adjusted
+- First move should drag direction of sprite and first shadow. Attack target should drag direction of first shadow. Second move should drag direction of second shadow. Assist target should drag direction of second shadow.
 
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
 - Clean up 1-2 scene
+
 - test game balance, presentation, bug-hunt, using 1-2 battle and all skills
 - Add optional test battle after 1-2 battle, to the west
 

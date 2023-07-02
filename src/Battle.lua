@@ -297,26 +297,8 @@ function Battle:getSkill()
     end
 end
 
-function Battle:gridCopy()
-    local g = {}
-    for h = 1, self.grid_h do
-        g[h] = {}
-        for k = 1, self.grid_w do
-            if self.grid[h][k] then
-                g[h][k] = GridSpace:new()
-                g[h][k].occupied  = self.grid[h][k].occupied
-                g[h][k].assists   = self.grid[h][k].assists
-                g[h][k].n_assists = self.grid[h][k].n_assists
-            else
-                g[h][k] = F
-            end
-        end
-    end
-    return g
-end
-
-function Battle:findSprite(sp_id)
-    local loc = self.status[sp_id]['location']
+function Battle:findSprite(sp)
+    local loc = self.status[sp:getId()]['location']
     return loc[2], loc[1]
 end
 
@@ -330,7 +312,7 @@ function Battle:moveCursor(x, y)
 end
 
 function Battle:moveSprite(sp, x, y)
-    local old_y, old_x = self:findSprite(sp:getId())
+    local old_y, old_x = self:findSprite(sp)
     self.status[sp:getId()]['location'] = { x, y }
     self.grid[old_y][old_x].occupied = nil
     self.grid[y][x].occupied = sp
@@ -341,7 +323,7 @@ function Battle:isAlly(sp)
 end
 
 function Battle:getTmpAttributes(sp, with_eff, with_tile)
-    local y, x = self:findSprite(sp:getId())
+    local y, x = self:findSprite(sp)
     if with_tile then
         y = with_tile[1]
         x = with_tile[2]
@@ -351,6 +333,37 @@ function Battle:getTmpAttributes(sp, with_eff, with_tile)
         ite(with_eff, with_eff, self.status[sp:getId()]['effects']),
         ite(self:isAlly(sp), self.grid[y][x].assists, {})
     )
+end
+
+function Battle:getSpriteRenderFlags(sp)
+
+    -- Sprite has acted and needs to be rendered monochrome
+    local mono, alpha = false, 1
+    if self.status[sp:getId()] and self.status[sp:getId()]['acted'] then
+        mono = true
+    end
+
+    if self:getStage() ~= STAGE_WATCH then
+        -- Sprite is moving and original position should be translucent
+        if self:getSprite() == sp and self.stack[2] then
+            local y, x = self:findSprite(sp)
+            local c = self.stack[2]['cursor']
+            if c[1] ~= x or c[2] ~= y then
+                alpha = 0.5
+            end
+        end
+        
+        -- Sprite is being moved by another action and should be translucent
+        local dry = self:dryrunAttack()
+        if dry then
+            for i = 1, #dry do
+                if dry[i]['sp'] == sp and dry[i]['moved'] then
+                    alpha = 0.5
+                end
+            end
+        end
+    end
+    return mono, alpha
 end
 
 function Battle:getStage()
@@ -622,7 +635,7 @@ function Battle:openBeginTurnMenu()
             self:closeMenu()
             self:turnRefresh()
             self.stack = { self:stackBase() }
-            local y, x = self:findSprite(self.player:getId())
+            local y, x = self:findSprite(self.player.sp)
             local c = self:getCursor()
             c[1] = x
             c[2] = y
@@ -919,8 +932,15 @@ function Battle:selectAlly(sp)
         ['views'] = {
             { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end },
             { AFTER, PERSIST, function(b)
-                local y, x = b:findSprite(sp:getId())
-                b:renderSpriteImage(new_c[1], new_c[2], x, y, sp)
+                local y, x = b:findSprite(sp)
+                local alpha = 1
+                if b.stack[5] then
+                    local c_move2 = b.stack[5]['cursor']
+                    if c_move2[1] ~= new_c[1] or c_move2[2] ~= new_c[2] then
+                        alpha = 0.5
+                    end
+                end
+                b:renderSpriteImage(new_c[1], new_c[2], x, y, sp, alpha)
             end }
         }
     })
@@ -952,18 +972,8 @@ function Battle:validMoves(sp, i, j)
     -- Get sprite's base movement points
     local move = self:getMovement(sp, i, j)
 
-    -- Spoof a shallow copy of the grid
-    -- dryrun-move tiles occupied
-    local grid = self:gridCopy()
-    local dry = self:dryrunAttack()
-    if dry then
-        for z = 1, #dry do
-            local d = dry[z]
-            if d['moved'] then
-                grid[d['moved']['y']][d['moved']['x']] = GridSpace:new(d['sp'])
-            end
-        end
-    end
+    -- Spoof a shallow copy of the grid dryrun-move tiles occupied
+    local grid = self:dryrunGrid()
 
     -- Run djikstra's algorithm on grid
     local dist, _ = sp:djikstra(grid, { i, j }, nil, move)
@@ -1070,6 +1080,54 @@ function Battle:getTargetDirection(sk, sp_c, sk_c)
     return dir
 end
 
+function Battle:gridCopy()
+    local g = {}
+    for h = 1, self.grid_h do
+        g[h] = {}
+        for k = 1, self.grid_w do
+            if self.grid[h][k] then
+                g[h][k] = GridSpace:new()
+                g[h][k].occupied  = self.grid[h][k].occupied
+                g[h][k].assists   = self.grid[h][k].assists
+                g[h][k].n_assists = self.grid[h][k].n_assists
+            else
+                g[h][k] = F
+            end
+        end
+    end
+    return g
+end
+
+function Battle:dryrunGrid()
+    local grid = self.grid
+    local dry = self:dryrunAttack()
+    if dry then
+
+        -- Move 'moved' sprites to new locations on grid copy
+        grid = self:gridCopy()
+        if dry then
+            for z = 1, #dry do
+                local d = dry[z]
+                if d['moved'] then
+                    local sp = d['sp']
+                    local i, j = self:findSprite(sp) 
+                    grid[d['moved']['y']][d['moved']['x']].occupied = sp
+                    grid[i][j].occupied = nil
+                end
+            end
+        end
+
+        -- Move current sprite to where they attacked from
+        local sp = self:getSprite()
+        local i, j = self:findSprite(sp) 
+        local sp_c = self.stack[2]['cursor']
+        grid[i][j].occupied = grid[sp_c[2]][sp_c[1]].occupied
+        grid[sp_c[2]][sp_c[1]].occupied = sp
+    end
+
+    return grid
+end
+
 function Battle:dryrunAttributes(standing, other)
 
     local sp = ite(other, other, self:getSprite())
@@ -1109,7 +1167,7 @@ function Battle:dryrunAttack()
 end
 
 function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
-    local i, j = self:findSprite(sp:getId())
+    local i, j = self:findSprite(sp)
     local ass = self.grid[i][j].assists
     local grid = self:gridCopy()
     if sp_c then
@@ -1133,7 +1191,7 @@ function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
 end
 
 function Battle:kill(sp)
-    local i, j = self:findSprite(sp:getId())
+    local i, j = self:findSprite(sp)
     self.grid[i][j].occupied = nil
     self.status[sp:getId()]['alive'] = false
 end
@@ -1196,7 +1254,7 @@ function Battle:playAction()
     -- Shorthand
     local ox = self.origin_x
     local oy = self.origin_y
-    local sp_y, sp_x = self:findSprite(sp:getId())
+    local sp_y, sp_x = self:findSprite(sp)
 
     -- Make behavior sequence
 
@@ -1273,16 +1331,7 @@ function Battle:playAction()
     end
 
     -- Move 2 (with spoofed grid)
-    local grid = self:gridCopy()
-    local dry = self:dryrunAttack()
-    if dry then
-        for z = 1, #dry do
-            local d = dry[z]
-            if d['moved'] then
-                grid[d['moved']['y']][d['moved']['x']] = GridSpace:new(d['sp'])
-            end
-        end
-    end
+    local grid = self:dryrunGrid()
     local move2_path = sp:djikstra(grid,
         { c_move1[2], c_move1[1] },
         { c_move2[2], c_move2[1] }
@@ -1442,22 +1491,19 @@ function Battle:update(keys, dt)
             local x, y = self:newCursorPosition(up, down, left, right)
             self:moveCursor(x, y)
 
-            local space = self.grid[y][x].occupied
+            -- Sprite direction follows the cursor
+            -- local sp = self:getSprite()
+            -- local c = ite(self:getCursor(3), self:getCursor(3), self:getCursor(2))
+            -- if x > c[1] then
+            --     sp.dir = RIGHT
+            -- elseif x < c[1] then
+            --     sp.dir = LEFT
+            -- end
 
-            -- Make sure tile is still unoccupied after dryrun
-            local dry_occ = false
-            local dry = self:dryrunAttack()
-            if dry then
-                for i = 1, #dry do
-                    if dry[i]['moved'] and dry[i]['moved']['x'] == x 
-                    and dry[i]['moved']['y'] == y then
-                        dry_occ = true
-                        break
-                    end
-                end
-            end
-            
-            if f and not dry_occ and not (space and space ~= self:getSprite()) then
+            -- Make sure tile is unoccupied
+            local grid = self:dryrunGrid()
+            local space = grid[y][x].occupied
+            if f and not (space and space ~= self:getSprite()) then
                 local moves = self:getMoves()
                 for i = 1, #moves do
                     if moves[i]['to'][1] == y and moves[i]['to'][2] == x then
@@ -1483,23 +1529,32 @@ function Battle:update(keys, dt)
         else
             local c = self:getCursor(2)
             local x_move, y_move = self:newCursorMove(up, down, left, right)
+            local nx, ny = nil, nil
             if sk.aim['type'] == DIRECTIONAL then
                 if x_move == 1 then
-                    self:moveCursor(c[1] + 1, c[2])
+                    nx, ny = c[1] + 1, c[2]
                 elseif x_move == -1 then
-                    self:moveCursor(c[1] - 1, c[2])
+                    nx, ny = c[1] - 1, c[2]
                 elseif y_move == 1 then
-                    self:moveCursor(c[1], c[2] + 1)
+                    nx, ny = c[1], c[2] + 1
                 elseif y_move == -1 then
-                    self:moveCursor(c[1], c[2] - 1)
+                    nx, ny = c[1], c[2] - 1
                 end
             elseif sk.aim['type'] == FREE then
                 local scale = sk.aim['scale']
                 local c_cur = self:getCursor()
                 if abs(c_cur[1] + x_move - c[1]) +
                    abs(c_cur[2] + y_move - c[2]) <= scale then
-                    self:moveCursor(c_cur[1] + x_move, c_cur[2] + y_move)
+                    nx, ny = c_cur[1] + x_move, c_cur[2] + y_move
                 end
+            end
+            if nx then
+                self:moveCursor(nx, ny)
+                -- if nx > c[1] then
+                --     sp.dir = RIGHT
+                -- elseif nx < c[1] then
+                --     sp.dir = LEFT
+                -- end
             end
 
             if f then
@@ -1746,8 +1801,8 @@ end
 function Battle:getAttackAngles(e, sp, sk)
 
     -- Initializing stuff
-    local y,  x  = self:findSprite(sp:getId())
-    local ey, ex = self:findSprite(e:getId())
+    local y,  x  = self:findSprite(sp)
+    local ey, ex = self:findSprite(e)
     local g = self.grid
     local attacks = {}
 
@@ -1788,7 +1843,7 @@ function Battle:mkInitialPlan(e, sps)
     local sk = self.status[e:getId()]['prepare']['sk']
 
     -- Preemptively get shortest paths for the grid, and enemy movement
-    local y, x = self:findSprite(e:getId())
+    local y, x = self:findSprite(e)
     local paths_dist, paths_prev = e:djikstra(self.grid, { y, x })
     local movement = math.floor(self:getTmpAttributes(e)['agility'] / 4)
 
@@ -1876,7 +1931,7 @@ function Battle:planNextEnemyAction()
     -- If the current enemy is stunned, it misses it's action
     local stat = self.status[e:getId()]
     if hasSpecial(stat['effects'], {}, 'stun') then
-        local y, x = self:findSprite(e:getId())
+        local y, x = self:findSprite(e)
         local move = { ['cursor'] = { x, y }, ['sp'] = e }
         self.enemy_action = { self:stackBase(), move, {}, {}, move, {}, {} }
         return
@@ -1974,9 +2029,9 @@ function Battle:renderSkillInUse()
     renderString(sk.name, x + HALF_MARGIN, y + HALF_MARGIN + 3)
 end
 
-function Battle:renderSpriteImage(cx, cy, x, y, sp)
+function Battle:renderSpriteImage(cx, cy, x, y, sp, a)
     if cx ~= x or cy ~= y then
-        love.graphics.setColor(1, 1, 1, 0.5)
+        love.graphics.setColor(1, 1, 1, a)
         love.graphics.draw(
             spritesheet,
             sp:getCurrentQuad(),
@@ -2109,7 +2164,7 @@ function Battle:renderMovementHover()
     local c = self:getCursor()
     local sp = self.grid[c[2]][c[1]].occupied
     if sp and not self.status[sp:getId()]['acted'] then
-        local i, j = self:findSprite(sp:getId())
+        local i, j = self:findSprite(sp)
         self:renderMovement(self:validMoves(sp, i, j), 0.5)
     end
 end
@@ -2199,7 +2254,7 @@ function Battle:renderDisplacement()
                 local dir = dry[i]['moved']['dir']
                 local to_x = dry[i]['moved']['x']
                 local to_y = dry[i]['moved']['y']
-                local from_y, from_x = self:findSprite(t:getId())
+                local from_y, from_x = self:findSprite(t)
                 local arrow_x = (self.origin_x + (from_x + to_x - 1) / 2) * TILE_WIDTH
                 local arrow_y = (self.origin_y + (from_y + to_y - 1) / 2) * TILE_HEIGHT
                 
@@ -2225,7 +2280,7 @@ function Battle:renderDisplacement()
                 love.graphics.pop()
 
                 -- Render sprite image at the new location
-                self:renderSpriteImage(to_x, to_y, from_x, from_y, t)
+                self:renderSpriteImage(to_x, to_y, from_x, from_y, t, 1)
             end
         end
     end
@@ -2485,7 +2540,9 @@ function Battle:renderHoverBoxes()
 
     -- Sprite at cursor
     local c = self:getCursor()
-    local g = self.grid[c[2]][c[1]]
+    local grid = self:dryrunGrid()
+
+    local g = grid[c[2]][c[1]]
     local sp = g.occupied
 
     -- Get box elements for sprite and statuses, or 'empty' if no sprite
