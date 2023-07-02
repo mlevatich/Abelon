@@ -694,7 +694,8 @@ function Battle:openEnemyMenu(sp)
         ['elements'] = self:buildReadyingBox(sp),
         ['w'] = HBOX_WIDTH
     })
-    local skills = sp:mkSkillsMenu(false, true, nil, nil, nil, 390)
+    local attrs = self:getTmpAttributes(sp)
+    local skills = sp:mkSkillsMenu(false, true, attrs, nil, nil, 380)
     local opts = { skills, readying }
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function(b) b:renderMovementHover() end }
