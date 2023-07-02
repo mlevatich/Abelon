@@ -9,8 +9,8 @@ Impression: 50
 Awareness: 100
 Discard: no
 Present:
-Level: 6
+Level: 8
 Attributes: endurance:13 focus:11 force:17 affinity:4 reaction:2 agility:12
-Skilltrees: Demon:conflagration,contempt,clutches,crucible Veteran:guard_blindspot,inspire,trust,confidence,gambit Executioner:sever,judgement,punish,execute
-Skills: sever,guard_blindspot,judgement,trust,punish,inspire,conflagration,clutches,confidence,gambit,contempt,execute,crucible
+Skilltrees: Demon:conflagration,clutches,contempt,crucible Veteran:guard_blindspot,trust,inspire,confidence,gambit Executioner:sever,punish,judgement,execute
+Skills: sever,guard_blindspot,trust,punish,inspire,conflagration,clutches,confidence
 Description: The knight Abelon. EOS

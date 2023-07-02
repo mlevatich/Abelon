@@ -678,7 +678,7 @@ skills = {
     ['sweep'] = Skill:new('sweep', 'Sweep',
         "Slash in a wide arc. Deals (Force * 0.8) Weapon damage to enemies in \z
          front of Kath, and grants 2 Reaction for 1 turn.",
-        'Hero', WEAPON, MANUAL, str_to_icon['force'],
+        'Defender', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
@@ -770,7 +770,7 @@ skills = {
     ),
     ['storm_thrust'] = Skill:new('storm_thrust', 'Storm Thrust',
         "Kath launches a thrust powered by lightning, dealing (Force * 1.0) \z
-         Weapon damage to up to 4 enemies in a line.",
+         Spell damage to up to 4 enemies in a line.",
         'Hero', SPELL, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 0 } },
         { { F, F, F, T, F, F, F },
@@ -779,7 +779,7 @@ skills = {
           { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 1.0)
     ),
     ['caution'] = Skill:new('caution', 'Caution',
@@ -829,10 +829,10 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 2.0), nil, nil, { UP, 2 }
     ),
     ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep',
-        "Kath swings an ignaeic crescent which deals (Force * 1.5) \z
+        "Kath swings an ignaeic crescent which deals (Force * 1.0) \z
          Weapon Damage and raises Kath's Reaction by 5.",
-        'Hero', WEAPON, MANUAL, str_to_icon['force'],
-        { { 'Defender', 2 }, { 'Hero', 3 }, { 'Cleric', 0 } },
+        'Defender', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Defender', 3 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
@@ -840,7 +840,7 @@ skills = {
           { T, T, T, F, T, T, T },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
-        ENEMY, Scaling:new(0, 'force', 1.5)
+        ENEMY, Scaling:new(0, 'force', 1.0)
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance',
         "Kath receives all attacks meant for an adjacent assisted ally.",

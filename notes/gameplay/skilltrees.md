@@ -11,24 +11,47 @@ Mona:   Caretaker
 
 ## Skill ideas
 
-#### Elaine
+Goal for Abelon/Kath: 8 assists, 16 attacks
+- 8 in each tree
+- Start with 8 at level 8 (3 assists, 5 attacks)
+- Learn 5 over the game (5 levelups, expected level 13/15), 11 remain
 
-- galeforce: push a huge wall of enemies a few spaces away
+Goal for Elaine: 7 assists, 14 attacks
+- 7 in each tree
+- Start with 3 at level 3 (1 of each)
+- Learn 8 over the game (8 levelups, expected level 11/15), 10 remain
+
+Goal for Shanti/Lester: 6 assists, 12 attacks
+- 9 in each tree
+- Start with 6 at level 6 (2 assists, 4 attacks)
+- Learn 5 over the game (5 levelups, expected level 11/15), 7 remain
+
+Goal for Mona: 4 assists, 5 attacks
+- 9 in the tree
+- Start with 5 at level 10 (2 assists, 3 attacks)
+- Learn 2 over the game (2 levelups, expected level 12/15), 2 remain
 
 #### Abelon
 
-- executioner - Execute: Force * 1.5 weapon damage to enemy below half
-- veteran - Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
-
-- demon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
-- executioner - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
+- veteran assist - Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
+- demon weapon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
+- executioner assist - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
+- 3 more for demon (2 spell, 1 assist)
+- 3 more for executioner (1 spell, 1 atk, 1 assist)
+- 2 more for veteran (1 atk, 1 assist)
 
 #### Kath
 
-- cleric - regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
-- cleric - Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
-- defender - riposte: kath retaliates against any weapon damage dealt to him
-- cleric - Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
+- cleric spell - regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
+- cleric spell - Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
+- defender weapon - riposte: kath retaliates against any weapon damage dealt to him. Scales on reaction
+- cleric spell - Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
+- Assist for hero
+
+#### Elaine
+
+- apprentice spell - galeforce: push a huge wall of enemies a few spaces away
+- 1 more for sniper: piercing shot that goes in a diagonal line? Then change one-in-a-million to a straight line.
 
 #### Lester
 
