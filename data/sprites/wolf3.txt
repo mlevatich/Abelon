@@ -3,7 +3,7 @@
 Name: Wolf
 Depth: 5
 Interactive: no
-Hitbox:
+Hitbox: 0,0,31,31
 Resting: idle
 Impression: 0
 Awareness: 0

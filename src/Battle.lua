@@ -297,6 +297,24 @@ function Battle:getSkill()
     end
 end
 
+function Battle:gridCopy()
+    local g = {}
+    for h = 1, self.grid_h do
+        g[h] = {}
+        for k = 1, self.grid_w do
+            if self.grid[h][k] then
+                g[h][k] = GridSpace:new()
+                g[h][k].occupied  = self.grid[h][k].occupied
+                g[h][k].assists   = self.grid[h][k].assists
+                g[h][k].n_assists = self.grid[h][k].n_assists
+            else
+                g[h][k] = F
+            end
+        end
+    end
+    return g
+end
+
 function Battle:findSprite(sp_id)
     local loc = self.status[sp_id]['location']
     return loc[2], loc[1]
@@ -934,13 +952,8 @@ function Battle:validMoves(sp, i, j)
     local move = self:getMovement(sp, i, j)
 
     -- Spoof a shallow copy of the grid
-    local grid = {}
-    for h = 1, self.grid_h do
-        grid[h] = {}
-        for k = 1, self.grid_w do grid[h][k] = self.grid[h][k]  end
-    end
-
     -- dryrun-move tiles occupied
+    local grid = self:gridCopy()
     local dry = self:dryrunAttack()
     if dry then
         for z = 1, #dry do
@@ -1097,29 +1110,25 @@ end
 function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
     local i, j = self:findSprite(sp:getId())
     local ass = self.grid[i][j].assists
+    local grid = self:gridCopy()
     if sp_c then
         ass = self.grid[sp_c[2]][sp_c[1]].assists
+        grid[i][j].occupied = grid[sp_c[2]][sp_c[1]].occupied
+        grid[sp_c[2]][sp_c[1]].occupied = sp
     end
     local sp_a = ite(self:isAlly(sp), ass, {})
     local t = self:skillRange(atk, dir, atk_c)
     local ts = {}
     local ts_a = {}
     for k = 1, #t do
-        local space = self.grid[t[k][1]][t[k][2]]
-        if sp_c then
-            if space.occupied == sp then
-                space = self.grid[sp_c[2]][sp_c[1]]
-            elseif t[k][1] == sp_c[2] and t[k][2] == sp_c[1] then
-                space = self.grid[i][j]
-            end
-        end
-        target = space.occupied
+        local space = grid[t[k][1]][t[k][2]]
+        local target = space.occupied
         if target then
             table.insert(ts, target)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
         end
     end
-    return atk:use(sp, sp_a, ts, ts_a, dir, self.status, self.grid, dryrun)
+    return atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
 end
 
 function Battle:kill(sp)
@@ -1211,19 +1220,22 @@ function Battle:playAction()
                 if lvlups[k] > 0 then self.levelup_queue[k] = v end
             end
             local dont_hurt = { [sp:getId()] = true }
-            -- for i = 1, #moved do
-            --     local t = moved[i]['sp']
-            --     t:behaviorSequence({ function(d)
-            --         t:walkToBehaviorGeneric(function()
-            --             t:changeBehavior('battle')
-            --             if abs(t.x - sp.x) > TILE_WIDTH / 2 then
-            --                 t.dir = ite(t.x > sp.x, LEFT, RIGHT)
-            --             end
-            --             self:moveSprite(t, moved[i]['x'], moved[i]['y'])
-            --         end, moved[i]['x'], moved[i]['y'], true, 'displace')
-            --     end }, pass)
-            --     dont_hurt[t:getId()] = true
-            -- end
+            for i = 1, #moved do
+                any_displaced = true
+                local t = moved[i]['sp']
+                t:behaviorSequence({ function(d)
+                    local to_x = self.origin_x + moved[i]['x']
+                    local to_y = self.origin_y + moved[i]['y']
+                    return t:walkToBehaviorGeneric(function()
+                        t:changeBehavior('battle')
+                        if abs(t.x - sp.x) > TILE_WIDTH / 2 then
+                            t.dir = ite(t.x > sp.x, LEFT, RIGHT)
+                        end
+                        self:moveSprite(t, moved[i]['x'], moved[i]['y'])
+                    end, to_x, to_y, true, 'displace')
+                end }, pass)
+                dont_hurt[t:getId()] = true
+            end
             for i = 1, #hurt do
                 local t = hurt[i]
                 if dont_hurt[t:getId()] == nil then
@@ -1252,8 +1264,25 @@ function Battle:playAction()
         end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy)
     end)
 
-    -- Move 2
-    local move2_path = sp:djikstra(self.grid,
+    -- If using a displacement skill, wait a moment before continuing
+    if attack and attack.ts_displace then
+        table.insert(seq, function(d)
+            return sp:waitBehaviorGeneric(d, 'combat', 0.5)
+        end)
+    end
+
+    -- Move 2 (with spoofed grid)
+    local grid = self:gridCopy()
+    local dry = self:dryrunAttack()
+    if dry then
+        for z = 1, #dry do
+            local d = dry[z]
+            if d['moved'] then
+                grid[d['moved']['y']][d['moved']['x']] = GridSpace:new(d['sp'])
+            end
+        end
+    end
+    local move2_path = sp:djikstra(grid,
         { c_move1[2], c_move1[1] },
         { c_move2[2], c_move2[1] }
     )
