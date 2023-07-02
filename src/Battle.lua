@@ -1499,16 +1499,16 @@ function Battle:update(keys, dt)
                 return
             end
 
-            -- Check triggers
-            if self:checkTriggers(END_ACTION) then
-                return
-            end
-
             -- Say this sprite acted and reset stack
             local sp = self:getSprite()
             self.status[sp:getId()]['acted'] = true
             self.stack = { self.stack[1] }
 
+            -- Check triggers
+            if self:checkTriggers(END_ACTION) then
+                return
+            end
+f
             -- Check win and loss
             if self:checkWinLose() then return end
 
