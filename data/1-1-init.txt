@@ -1,6 +1,6 @@
 ~~east-forest Dying-Forest
 
-abelon 28.5 50.5 L P
+~abelon 28.5 50.5 L P
 ~torch 31 49 R
 ~torch 31 52 R
 ~torch 26 49 L
@@ -9,10 +9,9 @@ abelon 28.5 50.5 L P
 
 ~~south-forest Dying-Forest
 
-~abelon 34 34 L P
 ~elaine 36 9 R
 ~alphawolf 38 10 L
-~medallion 34 34 R
+~medallion 45 28 R
 
 ~~west-forest Dying-Forest
 
