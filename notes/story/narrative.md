@@ -58,7 +58,7 @@ Getting Elaine up to speed is a good opportunity to fill in the relevant context
 TODO: ROUGH DRAFT
 
 - The three go after Shanti and Lester (roam, talk). After going ahead, Elaine and Kath catch up, brief discussion. Where did the two go? Need to find them. Roam, chat, solve environmental puzzle, find goodies, etc. Can encounter the magical barrier of the monastery.
-- find them in a predicament with mysterious stone monsters, Lester incapacitated (battle: elaine kath abelon shanti).
+- find them in a predicament with mysterious stone monsters, Lester incapacitated (battle: elaine kath abelon shanti). Battle is a defense map - defender where lester is! Enemies go for Lester.
 - Resolve the encounter, but Lester is unconscious. Need to heal him. Shanti has realized that the monastery they are looking for is magically guarded somehow (talk).
 - Follow trail of Shanti's discovery, solve the puzzle of the magical ward, find monastery entrance (roam).
 - On finding it, Abelon briefly is able to talk to the player (as ???). Angry, confused, vague. Not clear that it is Abelon speaking. Perhaps in "broad daylight", not as a black screen? (talk).

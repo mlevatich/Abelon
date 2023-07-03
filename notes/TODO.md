@@ -10,9 +10,10 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
+- Consider: During STAGE_MOVE, if you move outside movement range, cursor can roam, but leave sprite behind. Look to ITB for inspiration
+- Remove dryran dead sprites from dryrun grid
 - Render dryran dead sprites as faded out or otherwise marked in some way.
 - When sprites gain exp at the end of their action, render an experience splash (like "+15xp" in light blue or something).
-- Consider preventing allies from moving outside of their movement range during STAGE_MOVE.
 
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
