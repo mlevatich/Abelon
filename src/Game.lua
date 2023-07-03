@@ -183,13 +183,21 @@ function Game:loadFresh()
             elseif fname == 'Inventory' then
                 for i=1, #vals do
                     local sp = self.sprites[vals[i]]
-                    if not sp then sp = Sprite:new(vals[i], self) end
+                    if not sp then
+                        sp = Sprite:new(vals[i], self)
+                        self.sprites[vals[i]] = sp
+                    end
+                    self.player:introduce(sp:getId())
                     self.player:acquire(sp)
                 end
             elseif fname == 'Party' then
                 for i=1, #vals do
                     local sp = self.sprites[vals[i]]
-                    if not sp then sp = Sprite:new(vals[i], self) end
+                    if not sp then
+                        sp = Sprite:new(vals[i], self)
+                        self.sprites[vals[i]] = sp
+                    end
+                    self.player:introduce(sp:getId())
                     self.player:joinParty(sp)
                 end
             else
