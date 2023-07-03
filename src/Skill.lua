@@ -146,10 +146,11 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
             -- Dryrun just computes results, doesn't deal damage or apply effects
             dryrun_res[z] = {
-                ['sp'] = t, 
-                ['flat'] = 0, 
-                ['percent'] = 0, 
-                ['new_stat'] = t_stat
+                ['sp'] = t,
+                ['flat'] = 0,
+                ['percent'] = 0,
+                ['new_stat'] = t_stat,
+                ['died'] = false
             }
 
             -- Some modifiers prevent a target from taking damage
@@ -198,6 +199,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     -- Determine if target is hurt, or dead
                     if t.health == 0 then
                         table.insert(dead, t)
+                        dryrun_res[z]['died'] = true
                     elseif t.health < pre_hp then
                         table.insert(hurt, t)
                     end

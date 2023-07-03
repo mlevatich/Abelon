@@ -1110,32 +1110,33 @@ function Battle:gridCopy()
     return g
 end
 
-function Battle:dryrunGrid()
+function Battle:dryrunGrid(keep_sprite, keep_dead)
 
     local grid = self:gridCopy()
     local dry = self:dryrunAttack()
-    if dry then
 
-        -- Move 'moved' sprites to new locations on grid copy
-        if dry then
-            for z = 1, #dry do
-                local d = dry[z]
-                if d['moved'] then
-                    local sp = d['sp']
-                    local i, j = self:findSprite(sp) 
-                    grid[d['moved']['y']][d['moved']['x']].occupied = sp
-                    grid[i][j].occupied = nil
-                end
+    -- Move 'moved' sprites to new locations on grid copy
+    -- Delete dead sprites if keep_dead was not given
+    if dry then
+        for _,d in pairs(dry) do
+            local sp = d['sp']
+            local i, j = self:findSprite(sp)
+            if d['moved'] then
+                grid[i][j].occupied = nil
+                grid[d['moved']['y']][d['moved']['x']].occupied = sp
+            end
+            if d['died'] and not keep_dead then
+                grid[i][j].occupied = nil
             end
         end
     end
 
-    local n = ite(self.stack[2], 2, nil)
+    local n = ite(self.stack[5] and keep_sprite, 5, ite(self.stack[2], 2, nil))
     if n and self:getSprite() then
 
         -- Move current sprite to where they attacked from
         local sp = self:getSprite()
-        local i, j = self:findSprite(sp) 
+        local i, j = self:findSprite(sp)
         local sp_c = self.stack[n]['cursor']
         grid[i][j].occupied = grid[sp_c[2]][sp_c[1]].occupied
         grid[sp_c[2]][sp_c[1]].occupied = sp
@@ -1298,18 +1299,20 @@ function Battle:playAction()
             for i = 1, #moved do
                 any_displaced = true
                 local t = moved[i]['sp']
-                t:behaviorSequence({ function(d)
-                    local to_x = self.origin_x + moved[i]['x']
-                    local to_y = self.origin_y + moved[i]['y']
-                    return t:walkToBehaviorGeneric(function()
-                        t:changeBehavior('battle')
-                        if abs(t.x - sp.x) > TILE_WIDTH / 2 then
-                            t.dir = ite(t.x > sp.x, LEFT, RIGHT)
-                        end
-                        self:moveSprite(t, moved[i]['x'], moved[i]['y'])
-                    end, to_x, to_y, true, 'displace')
-                end }, pass)
-                dont_hurt[t:getId()] = true
+                if not find(dead, t) then
+                    t:behaviorSequence({ function(d)
+                        local to_x = self.origin_x + moved[i]['x']
+                        local to_y = self.origin_y + moved[i]['y']
+                        return t:walkToBehaviorGeneric(function()
+                            t:changeBehavior('battle')
+                            if abs(t.x - sp.x) > TILE_WIDTH / 2 then
+                                t.dir = ite(t.x > sp.x, LEFT, RIGHT)
+                            end
+                            self:moveSprite(t, moved[i]['x'], moved[i]['y'])
+                        end, to_x, to_y, true, 'displace')
+                    end }, pass)
+                    dont_hurt[t:getId()] = true
+                end
             end
             for i = 1, #hurt do
                 local t = hurt[i]
@@ -1339,11 +1342,17 @@ function Battle:playAction()
         end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy)
     end)
 
-    -- If using a displacement skill, wait a moment before continuing
-    if attack and attack.ts_displace then
-        table.insert(seq, function(d)
-            return sp:waitBehaviorGeneric(d, 'combat', 0.5)
-        end)
+    -- If a sprite moved or died, wait a moment before continuing
+    local dry = self:dryrunAttack()
+    if dry then
+        for i = 1, #dry do
+            if dry[i]['moved'] or dry[i]['died'] then
+                table.insert(seq, function(d)
+                    return sp:waitBehaviorGeneric(d, 'combat', 0.5)
+                end)
+                break
+            end
+        end
     end
 
     -- Move 2 (with spoofed grid)
@@ -1505,25 +1514,35 @@ function Battle:update(keys, dt)
         else
             -- Move a sprite to a new location
             local x, y = self:newCursorPosition(up, down, left, right)
-            self:moveCursor(x, y)
-
-            -- Sprite direction follows the cursor
-            local sp = self:getSprite()
-            local c = self:getCursor(2)
-            local stack_n = 2
-            if self:getCursor(3) then
-                c = self:getCursor(3)
-                stack_n = 5
+            local moves = self:getMoves()
+            local valid = false
+            for i = 1, #moves do
+                if moves[i]['to'][1] == y and moves[i]['to'][2] == x then
+                    valid = true
+                    break
+                end
             end
-            if x > c[1] then
-                self.stack[stack_n]['sp_dir'] = RIGHT
-                if stack_n == 2 then sp.dir = RIGHT end
-            elseif x < c[1] then
-                self.stack[stack_n]['sp_dir'] = LEFT
-                if stack_n == 2 then sp.dir = LEFT end
-            else
-                if stack_n == 5 then
-                    self.stack[stack_n]['sp_dir'] = self.stack[2]['sp_dir']
+            if valid then
+                self:moveCursor(x, y)
+
+                -- Sprite direction follows the cursor
+                local sp = self:getSprite()
+                local c = self:getCursor(2)
+                local stack_n = 2
+                if self:getCursor(3) then
+                    c = self:getCursor(3)
+                    stack_n = 5
+                end
+                if x > c[1] then
+                    self.stack[stack_n]['sp_dir'] = RIGHT
+                    if stack_n == 2 then sp.dir = RIGHT end
+                elseif x < c[1] then
+                    self.stack[stack_n]['sp_dir'] = LEFT
+                    if stack_n == 2 then sp.dir = LEFT end
+                else
+                    if stack_n == 5 then
+                        self.stack[stack_n]['sp_dir'] = self.stack[2]['sp_dir']
+                    end
                 end
             end
 
@@ -2663,15 +2682,31 @@ function Battle:renderHoverBoxes()
 
     -- Sprite at cursor
     local c = self:getCursor()
-    local grid = self:dryrunGrid()
+    local grid = self:dryrunGrid(true, true)
 
     local g = grid[c[2]][c[1]]
     local sp = g.occupied
 
+    local res, atk = nil
+    local dry = self:dryrunAttack()
+    if dry then
+        atk = self:getAttack()
+        for _,v in pairs(dry) do
+            if sp and v['sp'] == sp then res = v end
+        end
+        if sp and not res then
+            res = { ['flat'] = 0, ['new_stat'] = self.status[sp:getId()]['effects'] }
+        end
+    end
+
     -- Get box elements for sprite and statuses, or 'empty' if no sprite
     function mkInnerHoverBox()
         if sp then
-            return self:boxElementsFromSprite(sp)
+            if res then
+                return self:boxElementsFromDryrun(sp, atk, res)
+            else
+                return self:boxElementsFromSprite(sp)
+            end
         end
         local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
         local h = BOX_MARGIN + LINE_HEIGHT

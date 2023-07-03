@@ -10,9 +10,9 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Why can't I see medallion portrait when I use it? or present it?
-- In battle, dryrun should record killed sprites (make sure their position is accurate even if a movement skill is what killed them). Render dryrun-dead sprites as faded out or otherwise marked in some way. If attack results in a kill OR displacement, wait after attack during playAction(). Remove dead sprites from a dryrun grid.
+- Render dryran dead sprites as faded out or otherwise marked in some way.
 - When sprites gain exp at the end of their action, render an experience splash (like "+15xp" in light blue or something).
+- Consider preventing allies from moving outside of their movement range during STAGE_MOVE.
 
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
