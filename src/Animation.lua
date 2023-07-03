@@ -53,13 +53,19 @@ function Animation:update(dt)
         if self.current_frame == 0 then
             self.current_frame = 1
             if self.doneAction then
-                self.current_frame = #self.frames
-                local action = self.doneAction
-                self.firedDoneAction = true
-                action()
+                self:fireDoneAction()
                 return
             end
         end
+    end
+end
+
+function Animation:fireDoneAction()
+    if self.doneAction and not self.firedDoneAction then
+        self.current_frame = #self.frames
+        local action = self.doneAction
+        self.firedDoneAction = true
+        action()
     end
 end
 

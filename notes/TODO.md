@@ -10,9 +10,8 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- In battle, first move should drag direction of sprite and first shadow. Attack target should drag direction of first shadow. Second move should drag direction of second shadow. Assist target should drag direction of second shadow. Initial cursor suggestion should also induce a change in direction. Make sure attacking and assisting in opposite directions from the same tile looks ok.
+- Why can't I see medallion portrait when I use it? or present it?
 - In battle, dryrun should record killed sprites (make sure their position is accurate even if a movement skill is what killed them). Render dryrun-dead sprites as faded out or otherwise marked in some way. If attack results in a kill OR displacement, wait after attack during playAction(). Remove dead sprites from a dryrun grid.
-- In battle, render the sprite image on the current cursor OVER all sprites on the map.
 - When sprites gain exp at the end of their action, render an experience splash (like "+15xp" in light blue or something).
 
 - Make the lead-up to battle cooler, with pans and moving wolves
@@ -57,7 +56,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
 
 - #73: Make executable cross-platform app
-- Mini-release for people I trust. Gia, Sam, Preet.
+- Mini-release Gia, Sam, Preet.
 
 ## 1-3
 

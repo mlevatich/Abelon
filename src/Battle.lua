@@ -221,7 +221,7 @@ function Battle:stackBase()
     }
 end
 
-function Battle:stackBubble(c, moves)
+function Battle:stackBubble(c, moves, dir, views)
     local x = 1
     local y = 1
     if c then
@@ -231,7 +231,8 @@ function Battle:stackBubble(c, moves)
     bubble = {
         ['stage'] = STAGE_BUBBLE,
         ['cursor'] = { x, y, false, { 0, 0, 0, 0 } },
-        ['views'] = {}
+        ['sp_dir'] = dir,
+        ['views'] = ite(views, views, {})
     }
     if moves then bubble['moves'] = moves end
     return bubble
@@ -344,14 +345,9 @@ function Battle:getSpriteRenderFlags(sp)
     end
 
     if self:getStage() ~= STAGE_WATCH then
+
         -- Sprite is moving and original position should be translucent
-        if self:getSprite() == sp and self.stack[2] then
-            local y, x = self:findSprite(sp)
-            local c = self.stack[2]['cursor']
-            if c[1] ~= x or c[2] ~= y then
-                alpha = 0.5
-            end
-        end
+        if self:getSprite() == sp then alpha = 0.5 end
         
         -- Sprite is being moved by another action and should be translucent
         local dry = self:dryrunAttack()
@@ -762,7 +758,7 @@ function Battle:endAction(used_assist)
     local views = {}
     if used_assist then
         views = {{ BEFORE, TEMP, function(b)
-            b:renderSkillRange({ 0, 1, 0 })
+            b:renderSkillRange()
         end }}
     end
     self:openMenu(Menu:new(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN, false), views)
@@ -841,10 +837,14 @@ function Battle:getCursorSuggestion(sp, sk)
 
     -- Assemble options for initial cursor position. Favor the direction
     -- the sprite is already facing
+    local try_dir = self.stack[2]['sp_dir']
+    if self.stack[5] then
+        try_dir = self.stack[5]['sp_dir']
+    end
     local options = {}
     if sk.aim['type'] ~= SELF_CAST then
-        if self.grid[cy][cx + sp.dir] then options[#options+1] = {cx + sp.dir,cy,c3} end
-        if self.grid[cy][cx - sp.dir] then options[#options+1] = {cx - sp.dir,cy,c3} end
+        if self.grid[cy][cx+try_dir] then options[#options+1] = {cx+try_dir,cy,c3} end
+        if self.grid[cy][cx-try_dir] then options[#options+1] = {cx-try_dir,cy,c3} end
         if self.grid[cy + 1] and self.grid[cy + 1][cx] then 
             options[#options+1] = {cx,cy + 1,c3} 
         end
@@ -904,15 +904,24 @@ function Battle:mkUsable(sp, sk_menu)
             local cclr = ite(sk.type == ASSIST, { 0.4, 1, 0.4, 1 },
                                                 { 1, 0.4, 0.4, 1 })
             local new_c = { best_c[1], best_c[2], best_c[3], cclr }
-            local zclr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
+
+            -- Set initial direction of sprite copy based on new cursor
+            local move_c = self:getCursor()
+            local stk = self.stack[ite(sk.type == ASSIST, 5, 2)]
+            local sp_dir = stk['sp_dir']
+            if best_c[1] > move_c[1] then
+                stk['sp_dir'] = RIGHT
+            elseif best_c[1] < move_c[1] then
+                stk['sp_dir'] = LEFT
+            end
             self:push({
                 ['stage'] = STAGE_TARGET,
                 ['cursor'] =  new_c,
                 ['sp'] = sp,
                 ['sk'] = sk,
                 ['views'] = {
-                    { BEFORE, TEMP, function(b)
-                        b:renderSkillRange(zclr)
+                    { BEFORE, PERSIST, function(b)
+                        b:renderSkillRange(sk, move_c, new_c)
                     end }
                 }
             })
@@ -927,20 +936,16 @@ function Battle:selectAlly(sp)
     self:push({
         ['stage'] = STAGE_MOVE,
         ['sp'] = sp,
+        ['sp_dir'] = sp.dir,
         ['cursor'] = new_c,
         ['moves'] = moves,
         ['views'] = {
             { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end },
             { AFTER, PERSIST, function(b)
                 local y, x = b:findSprite(sp)
-                local alpha = 1
-                if b.stack[5] then
-                    local c_move2 = b.stack[5]['cursor']
-                    if c_move2[1] ~= new_c[1] or c_move2[2] ~= new_c[2] then
-                        alpha = 0.5
-                    end
-                end
-                b:renderSpriteImage(new_c[1], new_c[2], x, y, sp, alpha)
+                local alpha = ite(b.stack[5], 0.5, 1)
+                local dir = b.stack[2]['sp_dir']
+                b:renderSpriteImage(new_c[1], new_c[2], sp, dir, alpha)
             end }
         }
     })
@@ -997,7 +1002,12 @@ function Battle:selectTarget()
     local c = self:getCursor(2)
     local moves = self:validMoves(sp, c[2], c[1])
     if #moves <= 1 then
-        self:push(self:stackBubble(c, moves))
+        self:push(self:stackBubble(c, moves, self.stack[2]['sp_dir'], {{ 
+            AFTER, PERSIST, function(b)
+                local dir = b.stack[5]['sp_dir']
+                b:renderSpriteImage(c[1], c[2], sp, dir)
+            end 
+        }}))
         if self.n_allies > 1 then
             self:openAssistMenu(sp)
         else
@@ -1008,6 +1018,7 @@ function Battle:selectTarget()
         self:push({
             ['stage'] = STAGE_MOVE,
             ['sp'] = sp,
+            ['sp_dir'] = self.stack[2]['sp_dir'],
             ['cursor'] = nc,
             ['moves'] = moves,
             ['views'] = {
@@ -1015,7 +1026,8 @@ function Battle:selectTarget()
                     b:renderMovement(moves, 1)
                 end },
                 { AFTER, PERSIST, function(b)
-                    b:renderSpriteImage(nc[1], nc[2], c[1], c[2], sp)
+                    local dir = b.stack[5]['sp_dir']
+                    b:renderSpriteImage(nc[1], nc[2], sp, dir)
                 end }
             }
         })
@@ -1099,12 +1111,12 @@ function Battle:gridCopy()
 end
 
 function Battle:dryrunGrid()
-    local grid = self.grid
+
+    local grid = self:gridCopy()
     local dry = self:dryrunAttack()
     if dry then
 
         -- Move 'moved' sprites to new locations on grid copy
-        grid = self:gridCopy()
         if dry then
             for z = 1, #dry do
                 local d = dry[z]
@@ -1116,11 +1128,15 @@ function Battle:dryrunGrid()
                 end
             end
         end
+    end
+
+    local n = ite(self.stack[2], 2, nil)
+    if n and self:getSprite() then
 
         -- Move current sprite to where they attacked from
         local sp = self:getSprite()
         local i, j = self:findSprite(sp) 
-        local sp_c = self.stack[2]['cursor']
+        local sp_c = self.stack[n]['cursor']
         grid[i][j].occupied = grid[sp_c[2]][sp_c[1]].occupied
         grid[sp_c[2]][sp_c[1]].occupied = sp
     end
@@ -1492,13 +1508,24 @@ function Battle:update(keys, dt)
             self:moveCursor(x, y)
 
             -- Sprite direction follows the cursor
-            -- local sp = self:getSprite()
-            -- local c = ite(self:getCursor(3), self:getCursor(3), self:getCursor(2))
-            -- if x > c[1] then
-            --     sp.dir = RIGHT
-            -- elseif x < c[1] then
-            --     sp.dir = LEFT
-            -- end
+            local sp = self:getSprite()
+            local c = self:getCursor(2)
+            local stack_n = 2
+            if self:getCursor(3) then
+                c = self:getCursor(3)
+                stack_n = 5
+            end
+            if x > c[1] then
+                self.stack[stack_n]['sp_dir'] = RIGHT
+                if stack_n == 2 then sp.dir = RIGHT end
+            elseif x < c[1] then
+                self.stack[stack_n]['sp_dir'] = LEFT
+                if stack_n == 2 then sp.dir = LEFT end
+            else
+                if stack_n == 5 then
+                    self.stack[stack_n]['sp_dir'] = self.stack[2]['sp_dir']
+                end
+            end
 
             -- Make sure tile is unoccupied
             local grid = self:dryrunGrid()
@@ -1525,6 +1552,20 @@ function Battle:update(keys, dt)
         local sp = self:getSprite()
         local sk = self:getSkill()
         if d then
+            local stack_n = 2
+            if sk.type == ASSIST then stack_n = 5 end
+            local stk = self.stack[stack_n]
+            if stack_n == 2 then
+                stk['sp_dir'] = sp.dir
+            else
+                if stk['cursor'][1] < self.stack[2]['cursor'][1] then
+                    stk['sp_dir'] = LEFT
+                elseif stk['cursor'][1] > self.stack[2]['cursor'][1] then
+                    stk['sp_dir'] = RIGHT
+                else
+                    stk['sp_dir'] = self.stack[2]['sp_dir']
+                end
+            end
             self:pop()
         else
             local c = self:getCursor(2)
@@ -1550,11 +1591,26 @@ function Battle:update(keys, dt)
             end
             if nx then
                 self:moveCursor(nx, ny)
-                -- if nx > c[1] then
-                --     sp.dir = RIGHT
-                -- elseif nx < c[1] then
-                --     sp.dir = LEFT
-                -- end
+                local stack_n = 2
+                if sk.type == ASSIST then stack_n = 5 end
+                local stk = self.stack[stack_n]
+                if nx > c[1] then
+                    stk['sp_dir'] =  RIGHT
+                elseif nx < c[1] then
+                    stk['sp_dir'] =  LEFT
+                else
+                    if stack_n == 2 then
+                        stk['sp_dir'] = sp.dir
+                    else
+                        if stk['cursor'][1] < self.stack[2]['cursor'][1] then
+                            stk['sp_dir'] = LEFT
+                        elseif stk['cursor'][1] > self.stack[2]['cursor'][1] then
+                            stk['sp_dir'] = RIGHT
+                        else
+                            stk['sp_dir'] = self.stack[2]['sp_dir']
+                        end
+                    end
+                end
             end
 
             if f then
@@ -2034,21 +2090,25 @@ function Battle:renderSkillInUse()
     renderString(sk.name, x + HALF_MARGIN, y + HALF_MARGIN + 3)
 end
 
-function Battle:renderSpriteImage(cx, cy, x, y, sp, a)
-    if cx ~= x or cy ~= y then
+function Battle:renderSpriteImage(x, y, sp, dir, a)
+    love.graphics.push('all')
+    if self.status[sp:getId()]['acted'] then
+        love.graphics.setColor(0.3, 0.3, 0.3, a)
+    else
         love.graphics.setColor(1, 1, 1, a)
-        love.graphics.draw(
-            spritesheet,
-            sp:getCurrentQuad(),
-            TILE_WIDTH * (cx + self.origin_x - 1) + sp.w / 2,
-            TILE_HEIGHT * (cy + self.origin_y - 1) + sp.h / 2,
-            0,
-            sp.dir,
-            1,
-            sp.w / 2,
-            sp.h / 2
-        )
     end
+    love.graphics.draw(
+        spritesheet,
+        sp:getCurrentQuad(),
+        TILE_WIDTH * (x + self.origin_x - 1) + sp.w / 2,
+        TILE_HEIGHT * (y + self.origin_y - 1) + sp.h / 2,
+        0,
+        dir,
+        1,
+        sp.w / 2,
+        sp.h / 2
+    )
+    love.graphics.pop()
 end
 
 function Battle:shadeSquare(i, j, clr, alpha)
@@ -2120,24 +2180,28 @@ function Battle:outlineTile(tx, ty, edges, clr)
     end
 end
 
-function Battle:renderSkillRange(clr)
+function Battle:renderSkillRange(sk, sp_c, sk_c)
 
     -- What skill?
-    local c = self:getCursor()
-    local sk = self:getSkill()
+    if not sk then
+        sp_c = self:getCursor(2)
+        sk_c = self:getCursor()
+        sk = self:getSkill()
+    end
+    local clr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
 
     -- Get direction to point the skill
-    local dir = self:getTargetDirection()
+    local dir = self:getTargetDirection(sk, sp_c, sk_c)
 
-    -- Render red squares given by the skill range
-    local tiles = self:skillRange(sk, dir, c)
+    -- Render squares given by the skill range
+    local tiles = self:skillRange(sk, dir, sk_c)
     for i = 1, #tiles do
         self:shadeSquare(tiles[i][1], tiles[i][2], clr, 1)
     end
 
     -- For bounded free aim skills, render the boundary
     if sk.aim['type'] == FREE and sk.aim['scale'] < 100 then
-        local t = self:getCursor(2)
+        local t = sp_c
         for x = 0, sk.aim['scale'] do
             for y = 0, sk.aim['scale'] - x do
                 local l = t[1] - x
@@ -2186,9 +2250,8 @@ function Battle:renderViews(depth)
     end
 end
 
-function Battle:renderHealthbar(sp)
-    local x, y = sp:getPositionOnScreen()
-    local ratio = sp.health / (sp.attributes['endurance'] * 2)
+function Battle:renderHealthbar(sp, x, y, ratio)
+    
     y = y + sp.h + ite(self.pulse, 0, -1) - 1
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.rectangle('fill', x + 3, y, sp.w - 6, 3)
@@ -2198,11 +2261,7 @@ function Battle:renderHealthbar(sp)
     love.graphics.rectangle('line', x + 3, y, sp.w - 6, 3)
 end
 
-function Battle:renderStatus(sp)
-
-    -- Get statuses
-    local x, y = sp:getPositionOnScreen()
-    local statuses = self.status[sp:getId()]['effects']
+function Battle:renderStatus(x, y, statuses)
 
     -- Collect what icons need to be rendered
     local buffed    = false
@@ -2241,6 +2300,65 @@ function Battle:renderStatus(sp)
         love.graphics.draw(icon_texture, status_icons[3],
             x, y + y_off, 0, 1, 1, 0, 0
         )
+    end
+end
+
+function Battle:renderSpriteOverlays()
+
+    local dry = self:dryrunAttack()
+    for i = 1, #self.participants do
+        local sp = self.participants[i]
+        if self.game:getMap():getSprite(sp:getId()) then
+
+            -- Defaults
+            local x, y = sp:getPositionOnScreen()
+            local ratio = sp.health / (sp.attributes['endurance'] * 2)
+            local statuses = self.status[sp:getId()]['effects']
+
+            -- If we aren't watching an action play out!
+            if self:getStage() and self:getStage() ~= STAGE_WATCH then
+
+                -- Get post-dryrun health and status effects
+                if dry then
+                    for _,v in pairs(dry) do
+                        if v['sp'] == sp then
+                            statuses = v['new_stat']
+                            local hp = sp.health - v['flat']
+                            ratio = hp / (sp.attributes['endurance'] * 2)
+                            break
+                        end
+                    end
+                end
+
+                -- Figure out where this sprite is after dryrun
+                local t_y, t_x = self:findSprite(sp)
+                if sp == self:getSprite() then
+                    local n = ite(self.stack[5], 5, ite(self.stack[2], 2, nil))
+                    if n then
+                        local c = self.stack[n]['cursor']
+                        t_y, t_x = c[2], c[1]
+                    end
+                elseif dry then
+                    for _,v in pairs(dry) do
+                        if v['sp'] == sp and v['moved'] then
+                            t_y, t_x = v['moved']['y'], v['moved']['x']
+                            break
+                        end
+                    end
+                end
+                
+                -- Convert tile coords to x and y on screen
+                local px, py = self.game.current_map:tileToPixels(
+                    self.origin_x + t_x, self.origin_y + t_y
+                )
+                x = px - self.game.camera_x
+                y = py - self.game.camera_y
+            end
+            
+            -- Render everything
+            self:renderHealthbar(sp, x, y, ratio)
+            self:renderStatus(x, y, statuses)
+        end
     end
 end
 
@@ -2285,7 +2403,7 @@ function Battle:renderDisplacement()
                 love.graphics.pop()
 
                 -- Render sprite image at the new location
-                self:renderSpriteImage(to_x, to_y, from_x, from_y, t, 1)
+                self:renderSpriteImage(to_x, to_y, t, t.dir, 1)
             end
         end
     end
@@ -2581,6 +2699,17 @@ function Battle:renderHoverBoxes()
     end
 end
 
+function Battle:renderActingSpriteImage()
+    local sp = self:getSprite()
+    local st = self:getStage()
+    if self.stack[2] and sp and st ~= STAGE_WATCH then
+        local n = ite(self.stack[5], 5, 2)
+        local c = self.stack[n]['cursor']
+        local dir = self.stack[n]['sp_dir']
+        self:renderSpriteImage(c[1], c[2], sp, dir, 1)
+    end
+end
+
 function Battle:renderUnderlay()
 
     -- Render green squares on assisted grid tiles
@@ -2590,14 +2719,14 @@ function Battle:renderUnderlay()
     local s = self:getStage()
     if s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
 
-        -- Render arrow on grid associated with displacement skills dryrun
-        self:renderDisplacement()
-
         -- Render active views below the cursor, in stack order
         self:renderViews(BEFORE)
 
         -- Draw cursors always
         self:renderCursors()
+
+        -- Render arrow on grid associated with displacement skills dryrun
+        self:renderDisplacement()
 
         -- Render active views above the cursor, in stack order
         self:renderViews(AFTER)
@@ -2609,12 +2738,7 @@ function Battle:renderOverlay()
     -- Render healthbars below each sprite, and status markers above
     love.graphics.push()
     love.graphics.origin()
-    for i = 1, #self.participants do
-        if self.game:getMap():getSprite(self.participants[i]:getId()) then
-            self:renderHealthbar(self.participants[i])
-            self:renderStatus(self.participants[i])
-        end
-    end
+    self:renderSpriteOverlays()
     love.graphics.pop()
 
     -- No overlay if stack has no cursors

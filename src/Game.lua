@@ -664,6 +664,10 @@ function Game:render()
     -- Render standing sprites
     self.current_map:renderStandingSprites()
 
+    if self.battle then
+        self.battle:renderActingSpriteImage()
+    end
+
     -- Apply lighting
     self.current_map:renderLighting()
 

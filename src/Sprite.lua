@@ -772,6 +772,9 @@ function Sprite:changeAnimation(new_animation_name)
     if new_animation ~= current_animation then
         new_animation:restart()
     end
+
+    -- Fire done action if the old animation had one
+    current_animation:fireDoneAction()
 end
 
 -- Change a sprite's behavior so that they perform different actions
@@ -1257,7 +1260,7 @@ function Sprite:render()
         mono, alpha = b:getSpriteRenderFlags(self)
     end
     local clr = { 1, 1, 1, 1 }
-    if mono then clr = { 0.4, 0.4, 0.4, 1 } end
+    if mono then clr = { 0.3, 0.3, 0.3, 1 } end
     clr[4] = alpha
     
     -- Draw sprite's current animation frame, at its current position,
@@ -1420,27 +1423,38 @@ local sheet_y = 0
 for i = 1, #sprite_data do
     local data = sprite_data[i]
     local id = data['id']
-    sprite_graphics[id] = {}
     if data['animations'] == nil then data['animations'] = inanimate end
-    if data['n']          == nil then data['n']          = 0 end
-    for x = 1, data['n'] do sprite_graphics[id .. x] = sprite_graphics[id] end
-    local g = sprite_graphics[id]
-    local portrait_file = 'graphics/portraits/' .. id .. '.png'
-    if love.filesystem.getInfo(portrait_file) then
-        g['ptexture'] = love.graphics.newImage(portrait_file)
-        g['portraits'] = getSpriteQuads(PORTRAIT_INDICES, g['ptexture'],
-            PORTRAIT_SIZE, PORTRAIT_SIZE, 0
-        )
+
+    local gs = {}
+    if data['n'] then
+        for x = 1, data['n'] do
+            sprite_graphics[id .. x] = {}
+            table.insert(gs, sprite_graphics[id .. x])
+        end
+    else
+        sprite_graphics[id] = {}
+        table.insert(gs, sprite_graphics[id])
     end
-    g['w'] = data['w']
-    g['h'] = data['h']
-    g['animations'] = {}
-    for name, frames in pairs(data['animations']) do
-        local spd, idxs = frames[1], frames[2]
-        g['animations'][name] = Animation:new(
-            getSpriteQuads(idxs, spritesheet, data['w'], data['h'], sheet_y),
-            spd
-        )
+
+    for j = 1, #gs do
+        local g = gs[j]
+        local portrait_file = 'graphics/portraits/' .. id .. '.png'
+        if love.filesystem.getInfo(portrait_file) then
+            g['ptexture'] = love.graphics.newImage(portrait_file)
+            g['portraits'] = getSpriteQuads(PORTRAIT_INDICES, g['ptexture'],
+                PORTRAIT_SIZE, PORTRAIT_SIZE, 0
+            )
+        end
+        g['w'] = data['w']
+        g['h'] = data['h']
+        g['animations'] = {}
+        for name, frames in pairs(data['animations']) do
+            local spd, idxs = frames[1], frames[2]
+            g['animations'][name] = Animation:new(
+                getSpriteQuads(idxs, spritesheet, data['w'], data['h'], sheet_y),
+                spd
+            )
+        end
     end
     sheet_y = sheet_y + (data['h'] + 1)
 end

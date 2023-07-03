@@ -142,9 +142,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
 
         -- Only hit targets passing the team filter
-        if self:hits(sp, t, t_team) and (not modifiers['br']
-        or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status))
-        then
+        if self:hits(sp, t, t_team) then
 
             -- Dryrun just computes results, doesn't deal damage or apply effects
             dryrun_res[z] = {
@@ -154,144 +152,150 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 ['new_stat'] = t_stat
             }
 
-            -- If there's no scaling, the attack does no damage
-            if scaling then
+            -- Some modifiers prevent a target from taking damage
+            -- except under special circumstances
+            if not modifiers['br'] 
+            or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status) then
 
-                -- Compute damage or healing (MUST be a SPELL to heal)
-                local atk = scaling.base
-                          + math.floor(sp_tmp_attrs[scaling.attr]
-                          * scaling.mul)
-                local dmg = atk
-                if dmg_type == WEAPON then
-                    local def = math.floor(t_tmp_attrs['reaction'] / 1)
-                    dmg = math.max(0, atk - def)
+                -- If there's no scaling, the attack does no damage
+                if scaling then
+
+                    -- Compute damage or healing (MUST be a SPELL to heal)
+                    local atk = scaling.base
+                            + math.floor(sp_tmp_attrs[scaling.attr]
+                            * scaling.mul)
+                    local dmg = atk
+                    if dmg_type == WEAPON then
+                        local def = math.floor(t_tmp_attrs['reaction'] / 1)
+                        dmg = math.max(0, atk - def)
+                    end
+
+                    -- If this is a self hit or the target has guardian angel
+                    -- they can't die
+                    local min = 0
+                    if (t == sp and modifiers['self'])
+                    or hasSpecial(t_stat, t_ass, 'guardian_angel') then
+                        min = 1
+                    end
+
+                    -- Deal damage or healing
+                    local max_hp = t_tmp_attrs['endurance'] * 2
+                    local pre_hp = t.health
+                    local n_hp = math.max(min, math.min(max_hp, t.health - dmg))
+                    local dealt = pre_hp - n_hp
+                    if not dryrun then
+                        t.health = n_hp
+                    end
+
+                    dryrun_res[z]['flat'] = dealt
+                    dryrun_res[z]['percent'] = dealt / pre_hp
+
+                    -- Allies gain exp for damage dealt to enemies
+                    if sp_team == ALLY and t_team == ENEMY then
+                        exp_gain = exp_gain + abs(dealt)
+                    end
+
+                    -- Determine if target is hurt, or dead
+                    if t.health == 0 then
+                        table.insert(dead, t)
+                    elseif t.health < pre_hp then
+                        table.insert(hurt, t)
+                    end
+
+                    -- If the target is an ally hit by an enemy and didn't die,
+                    -- gain exp for taking damage
+                    if not dryrun and sp_team == ENEMY and t_team == ALLY
+                    and t.health > 0
+                    then
+                        exp_dealt = math.max(0, math.floor(dealt / 2))
+                        exp_mitigated = atk - dmg
+                        lvlups[t:getId()] = t:gainExp(exp_dealt + exp_mitigated)
+                    end
                 end
 
-                -- If this is a self hit or the target has guardian angel
-                -- they can't die
-                local min = 0
-                if (t == sp and modifiers['self'])
-                or hasSpecial(t_stat, t_ass, 'guardian_angel') then
-                    min = 1
+                -- Apply status effects to target
+                if dryrun then
+                    t_stat = copy(t_stat)
+                end
+                for j = 1, #ts_effects do
+                    local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
+                    addStatus(t_stat, Effect:new(b, ts_effects[j][2]))
+
+                    -- Allies gain exp for applying negative status to enemies
+                    -- or applying positive statuses to allies
+                    local exp = 0
+                    if (b.type == DEBUFF and sp_team == ALLY and t_team == ENEMY)
+                    or (b.type == BUFF and sp_team == ALLY and t_team == ALLY)
+                    then
+                        exp = 10
+                        if b.attr ~= 'special' then exp = abs(b.val) end
+                    end
+                    exp_gain = exp_gain + exp
+                end
+                dryrun_res[z]['new_stat'] = t_stat
+
+                -- Compute x/y displacement tile based on direction and grid state
+                -- Only record if displacement is non-zero
+                if #ts_displace > 0 then
+                    
+                    -- Compute actual direction
+                    local dirs = { UP, RIGHT, DOWN, LEFT }
+                    local dir = ts_displace[1]
+                    local k = find(dirs, dir) - 1
+                    local h = find(dirs, atk_dir) - 1
+                    dir = dirs[((k + h) % 4) + 1]
+
+                    -- Compute actual displacement
+                    local d = ts_displace[2]
+                    local loc = status[t:getId()]['location']
+                    local x, y = loc[1], loc[2]
+                    if dir == UP then
+                        while y > loc[2] - d and grid[y-1] and grid[y-1][x] 
+                        and not grid[y-1][x].occupied do
+                            y = y - 1
+                        end
+                    elseif dir == RIGHT then
+                        while x < loc[1] + d and grid[y] and grid[y][x+1] 
+                        and not grid[y][x+1].occupied do
+                            x = x + 1
+                        end
+                    elseif dir == DOWN then
+                        while y < loc[2] + d and grid[y+1] and grid[y+1][x] 
+                        and not grid[y+1][x].occupied do
+                            y = y + 1
+                        end
+                    elseif dir == LEFT then
+                        while x > loc[1] - d and grid[y] and grid[y][x-1] 
+                        and not grid[y][x-1].occupied do
+                            x = x - 1
+                        end
+                    end
+
+                    -- Record final tile displaced to
+                    if x ~= loc[1] or y ~= loc[2] then
+                        table.insert(moved, { ['sp'] = t, ['x'] = x, ['y'] = y })
+                        if dryrun then
+                            dryrun_res[z]['moved'] = {
+                                ['x'] = x, ['y'] = y, ['dir'] = dir
+                            }
+                        end
+                    end
                 end
 
-                -- Deal damage or healing
-                local max_hp = t_tmp_attrs['endurance'] * 2
-                local pre_hp = t.health
-                local n_hp = math.max(min, math.min(max_hp, t.health - dmg))
-                local dealt = pre_hp - n_hp
+                -- Target turns to face the caster
                 if not dryrun then
-                    t.health = n_hp
-                end
-
-                dryrun_res[z]['flat'] = dealt
-                dryrun_res[z]['percent'] = dealt / pre_hp
-
-                -- Allies gain exp for damage dealt to enemies
-                if sp_team == ALLY and t_team == ENEMY then
-                    exp_gain = exp_gain + abs(dealt)
-                end
-
-                -- Determine if target is hurt, or dead
-                if t.health == 0 then
-                    table.insert(dead, t)
-                elseif t.health < pre_hp then
-                    table.insert(hurt, t)
-                end
-
-                -- If the target is an ally hit by an enemy and didn't die,
-                -- gain exp for taking damage
-                if not dryrun and sp_team == ENEMY and t_team == ALLY
-                and t.health > 0
-                then
-                    exp_dealt = math.max(0, math.floor(dealt / 2))
-                    exp_mitigated = atk - dmg
-                    lvlups[t:getId()] = t:gainExp(exp_dealt + exp_mitigated)
-                end
-            end
-
-            -- Apply status effects to target
-            if dryrun then
-                t_stat = copy(t_stat)
-            end
-            for j = 1, #ts_effects do
-                local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
-                addStatus(t_stat, Effect:new(b, ts_effects[j][2]))
-
-                -- Allies gain exp for applying negative status to enemies
-                -- or applying positive statuses to allies
-                local exp = 0
-                if (b.type == DEBUFF and sp_team == ALLY and t_team == ENEMY)
-                or (b.type == BUFF and sp_team == ALLY and t_team == ALLY)
-                then
-                    exp = 10
-                    if b.attr ~= 'special' then exp = abs(b.val) end
-                end
-                exp_gain = exp_gain + exp
-            end
-            dryrun_res[z]['new_stat'] = t_stat
-
-            -- Compute x/y displacement tile based on direction and grid state
-            -- Only record if displacement is non-zero
-            if #ts_displace > 0 then
-                
-                -- Compute actual direction
-                local dirs = { UP, RIGHT, DOWN, LEFT }
-                local dir = ts_displace[1]
-                local k = find(dirs, dir) - 1
-                local h = find(dirs, atk_dir) - 1
-                dir = dirs[((k + h) % 4) + 1]
-
-                -- Compute actual displacement
-                local d = ts_displace[2]
-                local loc = status[t:getId()]['location']
-                local x, y = loc[1], loc[2]
-                if dir == UP then
-                    while y > loc[2] - d and grid[y-1] and grid[y-1][x] 
-                    and not grid[y-1][x].occupied do
-                        y = y - 1
-                    end
-                elseif dir == RIGHT then
-                    while x < loc[1] + d and grid[y] and grid[y][x+1] 
-                    and not grid[y][x+1].occupied do
-                        x = x + 1
-                    end
-                elseif dir == DOWN then
-                    while y < loc[2] + d and grid[y+1] and grid[y+1][x] 
-                    and not grid[y+1][x].occupied do
-                        y = y + 1
-                    end
-                elseif dir == LEFT then
-                    while x > loc[1] - d and grid[y] and grid[y][x-1] 
-                    and not grid[y][x-1].occupied do
-                        x = x - 1
+                    if abs(t.x - sp.x) > TILE_WIDTH / 2 then
+                        t.dir = ite(t.x > sp.x, LEFT, RIGHT)
                     end
                 end
 
-                -- Record final tile displaced to
-                if x ~= loc[1] or y ~= loc[2] then
-                    table.insert(moved, { ['sp'] = t, ['x'] = x, ['y'] = y })
-                    if dryrun then
-                        dryrun_res[z]['moved'] = {
-                            ['x'] = x, ['y'] = y, ['dir'] = dir
-                        }
-                    end
+                -- Additional effects given by the 'and' modifier
+                if not dryrun and modifiers['and'] then
+                    modifiers['and'](sp, sp_tmp_attrs, t, t_tmp_attrs, status)
                 end
-            end
 
-            -- Target turns to face the caster
-            if not dryrun then
-                if abs(t.x - sp.x) > TILE_WIDTH / 2 then
-                    t.dir = ite(t.x > sp.x, LEFT, RIGHT)
-                end
+                z = z + 1
             end
-
-            -- Additional effects given by the 'and' modifier
-            if not dryrun and modifiers['and'] then
-                modifiers['and'](sp, sp_tmp_attrs, t, t_tmp_attrs, status)
-            end
-
-            z = z + 1
         end
     end
 
@@ -312,7 +316,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         exp_gain = exp_gain + exp
     end
     if #sp_effects > 0 then
-        dryrun_res['caster'] = { ['flat'] = 0, ['new_stat'] = sp_stat }
+        dryrun_res['caster'] = { ['sp'] = sp, ['flat'] = 0, ['new_stat'] = sp_stat }
     end
 
     if not dryrun then
