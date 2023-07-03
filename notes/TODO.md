@@ -10,7 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- If the active sprite image is on the same tile as another sprite image, don't render the lower sprite image.
 - When sprites gain exp at the end of their action, render an experience splash (like "+15xp" in light blue or something).
 - Profile batte.lua and game.lua to find performance bottlenecks and improve
 

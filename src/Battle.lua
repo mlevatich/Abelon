@@ -347,7 +347,20 @@ function Battle:getSpriteRenderFlags(sp)
     if self:getStage() ~= STAGE_WATCH then
 
         -- Sprite is moving and original position should be translucent
-        if self:getSprite() == sp then alpha = 0.5 end
+        if self:getSprite() == sp then
+            alpha = 0.5
+
+            local n = ite(self.stack[5], 5, ite(self.stack[2], 2, nil))
+            if n then
+                local active_c = self.stack[n]['cursor']
+                local lb = self.stack[n]['leave_behind']
+                if lb then active_c = lb end
+                if  self.stack[1]['cursor'][1] == active_c[1]
+                and self.stack[1]['cursor'][2] == active_c[2] then
+                    alpha = 0
+                end
+            end
+        end
         
         -- Sprite is being moved by another action and should be translucent
         local dry = self:dryrunAttack()
@@ -952,9 +965,15 @@ function Battle:selectAlly(sp)
             { BEFORE, TEMP, function(b) b:renderMovement(moves, 1) end },
             { AFTER, PERSIST, function(b)
                 if b.stack[5] then
+                    local active_c = self.stack[5]['cursor']
+                    local lb = self.stack[5]['leave_behind']
+                    if lb then active_c = lb end
+
                     local y, x = b:findSprite(sp)
                     local dir = b.stack[2]['sp_dir']
-                    b:renderSpriteImage(new_c[1], new_c[2], sp, dir, 0.5)
+                    if new_c[1] ~= active_c[1] or new_c[2] ~= active_c[2] then
+                        b:renderSpriteImage(new_c[1], new_c[2], sp, dir, 0.5)
+                    end
                 end
             end }
         }
