@@ -352,9 +352,14 @@ function Battle:getSpriteRenderFlags(sp)
         -- Sprite is being moved by another action and should be translucent
         local dry = self:dryrunAttack()
         if dry then
-            for i = 1, #dry do
-                if dry[i]['sp'] == sp and dry[i]['moved'] then
-                    alpha = 0.5
+            for _,d in pairs(dry) do
+                if d['sp'] == sp then 
+                    if d['moved'] and not d['died'] then
+                        alpha = 0.5
+                    elseif d['died'] then
+                        alpha = 0.5
+                        mono = true
+                    end
                 end
             end
         end
@@ -2368,9 +2373,11 @@ function Battle:renderSpriteOverlays()
                     end
                 elseif dry then
                     for _,v in pairs(dry) do
-                        if v['sp'] == sp and v['moved'] then
+                        if v['sp'] == sp and v['moved'] and not v['died'] then
                             t_y, t_x = v['moved']['y'], v['moved']['x']
                             break
+                        elseif v['died'] then
+                            return
                         end
                     end
                 end
@@ -2399,7 +2406,7 @@ function Battle:renderDisplacement()
         -- Render arrow and shadow target for each target
         for i=1, #dry do
             local t = dry[i]['sp']
-            if dry[i]['moved'] then
+            if dry[i]['moved'] and not dry[i]['died'] then
 
                 -- Get position and rotation of arrow
                 local dir = dry[i]['moved']['dir']

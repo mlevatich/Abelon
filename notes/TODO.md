@@ -10,8 +10,10 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Render dryran dead sprites as faded out or otherwise marked in some way. Faded + monochrome, or faded + skull symbol
+- Render a little skull symbol over dryran-dead sprites (return skull = true from getSpriteRenderFlags, handle in Sprite:render())
+- If sprite aims a directed attack without having moved first, sprite's direction should change to match target direction. STAGE_TARGET
 - When sprites gain exp at the end of their action, render an experience splash (like "+15xp" in light blue or something).
+- Profile batte.lua and game.lua to find performance bottlenecks and improve
 
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
@@ -50,6 +52,7 @@ Bullets that reference a github issue should close the issue when committed.
 - #65: Enemy approaches theme - for rising action before a fight! Consider Face of Shadow
 
 - #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite parameter deciding whether it blocks light may be needed. e.g. abelon blocks light but a log doesn't), proper color computation. Look up lua/love shaders. Alternate, darken with patterns of black pixels over tiles? Shadows?
+- A static foreground (to outline and "frame" the game) per map could be fun and not that hard
 
 - #47: Better portraits
 - Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
