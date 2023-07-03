@@ -922,7 +922,10 @@ function Battle:mkUsable(sp, sk_menu)
                 ['views'] = {
                     { BEFORE, PERSIST, function(b)
                         b:renderSkillRange(sk, move_c, new_c)
-                    end }
+                    end },
+                    { BEFORE, TEMP, function(b)
+                        b:renderSkillRangeOutline(sk, move_c, new_c)
+                    end },
                 }
             })
         end
@@ -2198,26 +2201,10 @@ function Battle:outlineTile(tx, ty, edges, clr)
     end
 end
 
-function Battle:renderSkillRange(sk, sp_c, sk_c)
-
-    -- What skill?
-    if not sk then
-        sp_c = self:getCursor(2)
-        sk_c = self:getCursor()
-        sk = self:getSkill()
-    end
-    local clr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
-
-    -- Get direction to point the skill
-    local dir = self:getTargetDirection(sk, sp_c, sk_c)
-
-    -- Render squares given by the skill range
-    local tiles = self:skillRange(sk, dir, sk_c)
-    for i = 1, #tiles do
-        self:shadeSquare(tiles[i][1], tiles[i][2], clr, 1)
-    end
+function Battle:renderSkillRangeOutline(sk, sp_c, sk_c)
 
     -- For bounded free aim skills, render the boundary
+    local clr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
     if sk.aim['type'] == FREE and sk.aim['scale'] < 100 then
         local t = sp_c
         for x = 0, sk.aim['scale'] do
@@ -2238,6 +2225,26 @@ function Battle:renderSkillRange(sk, sp_c, sk_c)
                 self:outlineTile(l, u, {}, clr)
             end
         end
+    end
+end
+
+function Battle:renderSkillRange(sk, sp_c, sk_c)
+
+    -- What skill?
+    if not sk then
+        sp_c = self:getCursor(2)
+        sk_c = self:getCursor()
+        sk = self:getSkill()
+    end
+    local clr = ite(sk.type == ASSIST, { 0, 1, 0 }, { 1, 0, 0 })
+
+    -- Get direction to point the skill
+    local dir = self:getTargetDirection(sk, sp_c, sk_c)
+
+    -- Render squares given by the skill range
+    local tiles = self:skillRange(sk, dir, sk_c)
+    for i = 1, #tiles do
+        self:shadeSquare(tiles[i][1], tiles[i][2], clr, 1)
     end
 end
 
