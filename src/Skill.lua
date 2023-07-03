@@ -198,10 +198,14 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
                     -- Determine if target is hurt, or dead
                     if t.health == 0 then
-                        table.insert(dead, t)
-                        dryrun_res[z]['died'] = true
+                        if not find(dead, t) then
+                            table.insert(dead, t)
+                            dryrun_res[z]['died'] = true
+                        end
                     elseif t.health < pre_hp then
-                        table.insert(hurt, t)
+                        if not find(hurt, t) then
+                            table.insert(hurt, t)
+                        end
                     end
 
                     -- If the target is an ally hit by an enemy and didn't die,
@@ -211,7 +215,11 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     then
                         exp_dealt = math.max(0, math.floor(dealt / 2))
                         exp_mitigated = atk - dmg
-                        lvlups[t:getId()] = t:gainExp(exp_dealt + exp_mitigated)
+                        local lvls = t:gainExp(exp_dealt + exp_mitigated)
+                        if not lvlups[t:getId()] then
+                            lvlups[t:getId()] = 0
+                        end
+                        lvlups[t:getId()] = lvlups[t:getId()] + lvls
                     end
                 end
 
@@ -275,7 +283,15 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
                     -- Record final tile displaced to
                     if x ~= loc[1] or y ~= loc[2] then
-                        table.insert(moved, { ['sp'] = t, ['x'] = x, ['y'] = y })
+                        local do_move = true
+                        for w=1, #moved do
+                            if moved[w]['sp'] == t then
+                                do_move = false
+                            end
+                        end
+                        if do_move then
+                            table.insert(moved, { ['sp'] = t, ['x'] = x, ['y'] = y })
+                        end
                         if dryrun then
                             dryrun_res[z]['moved'] = {
                                 ['x'] = x, ['y'] = y, ['dir'] = dir
