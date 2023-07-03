@@ -197,12 +197,12 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     end
 
                     -- Determine if target is hurt, or dead
-                    if t.health == 0 then
+                    if n_hp == 0 then
                         if not find(dead, t) then
                             table.insert(dead, t)
                             dryrun_res[z]['died'] = true
                         end
-                    elseif t.health < pre_hp then
+                    elseif n_hp < pre_hp then
                         if not find(hurt, t) then
                             table.insert(hurt, t)
                         end

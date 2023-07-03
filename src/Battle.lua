@@ -982,7 +982,7 @@ function Battle:validMoves(sp, i, j)
     local move = self:getMovement(sp, i, j)
 
     -- Spoof a shallow copy of the grid dryrun-move tiles occupied
-    local grid = self:dryrunGrid()
+    local grid = self:dryrunGrid(false)
 
     -- Run djikstra's algorithm on grid
     local dist, _ = sp:djikstra(grid, { i, j }, nil, move)
@@ -1105,22 +1105,23 @@ function Battle:gridCopy()
     return g
 end
 
-function Battle:dryrunGrid(keep_sprite, keep_dead)
+function Battle:dryrunGrid(keep_sprite)
 
     local grid = self:gridCopy()
     local dry = self:dryrunAttack()
 
     -- Move 'moved' sprites to new locations on grid copy
-    -- Delete dead sprites if keep_dead was not given
+    -- Delete dead sprites
     if dry then
         for _,d in pairs(dry) do
             local sp = d['sp']
             local i, j = self:findSprite(sp)
             if d['moved'] then
                 grid[i][j].occupied = nil
-                grid[d['moved']['y']][d['moved']['x']].occupied = sp
-            end
-            if d['died'] and not keep_dead then
+                if not d['died'] then
+                    grid[d['moved']['y']][d['moved']['x']].occupied = sp
+                end
+            elseif d['died'] then
                 grid[i][j].occupied = nil
             end
         end
@@ -1353,7 +1354,7 @@ function Battle:playAction()
     end
 
     -- Move 2 (with spoofed grid)
-    local grid = self:dryrunGrid()
+    local grid = self:dryrunGrid(false)
     local move2_path = sp:djikstra(grid,
         { c_move1[2], c_move1[1] },
         { c_move2[2], c_move2[1] }
@@ -1548,7 +1549,7 @@ function Battle:update(keys, dt)
                 end
 
                 -- Make sure tile is unoccupied before continuing
-                local grid = self:dryrunGrid()
+                local grid = self:dryrunGrid(false)
                 local space = grid[y][x].occupied
                 if f and not (space and space ~= self:getSprite()) then
                     if not self:getCursor(3) then
@@ -2690,7 +2691,7 @@ function Battle:renderHoverBoxes()
 
     -- Sprite at cursor
     local c = self:getCursor()
-    local grid = self:dryrunGrid(true, true)
+    local grid = self:dryrunGrid(true)
 
     local g = grid[c[2]][c[1]]
     local sp = g.occupied

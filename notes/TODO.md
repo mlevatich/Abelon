@@ -10,8 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Remove dryran dead sprites from dryrun grid
-- Render dryran dead sprites as faded out or otherwise marked in some way.
+- Render dryran dead sprites as faded out or otherwise marked in some way. Faded + monochrome, or faded + skull symbol
 - When sprites gain exp at the end of their action, render an experience splash (like "+15xp" in light blue or something).
 
 - Make the lead-up to battle cooler, with pans and moving wolves
