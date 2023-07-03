@@ -8,7 +8,7 @@ icons = getSpriteQuads(
     , 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 },
     icon_texture, 22, 22, 0
 )
-status_icons = getSpriteQuads({0, 1, 2, 3}, icon_texture, 8, 8, 23)
+status_icons = getSpriteQuads({0, 1, 2, 3, 4}, icon_texture, 8, 8, 23)
 spritesheet = love.graphics.newImage('graphics/spritesheet.png')
 
 require 'src.Player'

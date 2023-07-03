@@ -339,7 +339,7 @@ end
 function Battle:getSpriteRenderFlags(sp)
 
     -- Sprite has acted and needs to be rendered monochrome
-    local mono, alpha = false, 1
+    local mono, alpha, skull = false, 1, false
     if self.status[sp:getId()] and self.status[sp:getId()]['acted'] then
         mono = true
     end
@@ -359,12 +359,13 @@ function Battle:getSpriteRenderFlags(sp)
                     elseif d['died'] then
                         alpha = 0.5
                         mono = true
+                        skull = true
                     end
                 end
             end
         end
     end
-    return mono, alpha
+    return mono, alpha, skull
 end
 
 function Battle:getStage()
@@ -1351,7 +1352,7 @@ function Battle:playAction()
         for i = 1, #dry do
             if dry[i]['moved'] or dry[i]['died'] then
                 table.insert(seq, function(d)
-                    return sp:waitBehaviorGeneric(d, 'combat', 0.5)
+                    return sp:waitBehaviorGeneric(d, 'combat', 0.8)
                 end)
                 break
             end

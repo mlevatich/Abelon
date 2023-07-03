@@ -1255,9 +1255,9 @@ function Sprite:render()
 
     -- Set special rendering color based on battle
     local b = self.game.battle
-    local mono, alpha = false, 1
+    local mono, alpha, skull = false, 1, false
     if b and not self.game.current_scene then
-        mono, alpha = b:getSpriteRenderFlags(self)
+        mono, alpha, skull = b:getSpriteRenderFlags(self)
     end
     local clr = { 1, 1, 1, 1 }
     if mono then clr = { 0.3, 0.3, 0.3, 1 } end
@@ -1278,6 +1278,13 @@ function Sprite:render()
         self.w / 2,
         self.h / 2
     )
+    love.graphics.setColor(1, 1, 1, 0.3)
+    if skull then
+        local y_off = ite(b.pulse, 0, 1)
+        love.graphics.draw(icon_texture, status_icons[5],
+            self.x + self.w / 2 - 3, self.y + 11
+        )
+    end
     love.graphics.pop()
 end
 
