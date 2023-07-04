@@ -39,7 +39,7 @@ Need:
 - 2 more for veteran (1 atk, 1 assist)
 
 Ideas:
-- Demon: Spell: The Price: Gain 3 force, reaction, affinity, agility every turn in exchange for one ignea. Don't run out. (if you run out, you lose all stats and hp drops to 1).
+- Demon: Spell: The Contract: Gain 3 force, reaction, affinity, agility every turn in exchange for one ignea. Don't run out. (if you run out, you lose all stats and hp drops to 1).
 - Demon: Spell: Retribution: Enemies that attack Abelon suffer a big debuff. Moderate cost.
 - Demon: Assist:
 - Executioner: Assist: Death Blessing: Grants allies agility and affinity on kill, scales with abelon's affinity. Moderate cost.

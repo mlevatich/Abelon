@@ -10,7 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Add a few more skills for Abelon, test all skills in 1-2
+- Test all skills in 1-2
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
 - Clean up 1-2 scene
