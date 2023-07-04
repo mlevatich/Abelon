@@ -88,6 +88,7 @@ function Battle:initialize(player, game)
     self.action_in_progress = nil
     self.skill_in_use = nil
     self.render_bexp = false
+    self.render_exp = {}
     self.levelup_queue = {}
 
     -- Music
@@ -344,14 +345,14 @@ function Battle:getSpriteRenderFlags(sp)
         mono = true
     end
 
-    if self:getStage() ~= STAGE_WATCH then
+    if self:getStage() ~= STAGE_WATCH and self:getStage() ~= STAGE_LEVELUP then
 
         -- Sprite is moving and original position should be translucent
         if self:getSprite() == sp then
             alpha = 0.5
 
-            local n = ite(self.stack[5], 5, ite(self.stack[2], 2, nil))
-            if n then
+            local ns = ite(self.stack[5], {5,2}, ite(self.stack[2], {2}, {}))
+            for _,n in pairs(ns) do
                 local active_c = self.stack[n]['cursor']
                 local lb = self.stack[n]['leave_behind']
                 if lb then active_c = lb end
@@ -1306,14 +1307,16 @@ function Battle:playAction()
     local seq = self:pathToWalk(sp, move1_path, attack)
 
     -- Attack
+    local exp = {}
     table.insert(seq, function(d)
         if not attack then
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
         return sp:skillBehaviorGeneric(function()
-            local moved, hurt, dead, lvlups = self:useAttack(sp,
+            local moved, hurt, dead, lvlups, expg = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
+            exp = expg
             sp.ignea = sp.ignea - attack.cost
             for k, v in pairs(lvlups) do
                 if lvlups[k] > 0 then self.levelup_queue[k] = v end
@@ -1363,6 +1366,19 @@ function Battle:playAction()
             end
             d()
         end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy)
+    end)
+
+    table.insert(seq, function(d)
+        for t_id,exp_t in pairs(exp) do
+            local t = self.status[t_id]['sp']
+            if self:isAlly(t) and t ~= sp then
+                local y, x = self:findSprite(t)
+                if exp_t > 0 then
+                    table.insert(self.render_exp, { x, y, exp_t, 2 })
+                end
+            end
+        end
+        return sp:waitBehaviorGeneric(d, 'combat', 0.05)
     end)
 
     -- If a sprite moved or died, wait a moment before continuing
@@ -1415,6 +1431,14 @@ function Battle:playAction()
     sp:behaviorSequence(seq, function()
             self.action_in_progress = nil
             self.skill_in_use = nil
+
+            -- Wait until this point to gain experience from attack,
+            -- so that level up does not affect assist stats
+            if exp[sp:getId()] and exp[sp:getId()] > 0 and self:isAlly(sp) then 
+                sp:gainExp(exp[sp:getId()])
+                local y, x = self:findSprite(sp)
+                table.insert(self.render_exp, { x, y, exp[sp:getId()], 2 })
+            end
             sp:changeBehavior('battle')
         end
     )
@@ -1480,6 +1504,16 @@ function Battle:update(keys, dt)
     elseif self.shading < 0.2 then
         self.shading = 0.2
         self.shade_dir = 1
+    end
+    local i = 1
+    while i <= #self.render_exp do
+        local re = self.render_exp[i]
+        re[4] = re[4] - dt
+        if re[4] < 0 then
+            table.remove(self.render_exp, i)
+        else
+            i = i + 1
+        end
     end
 
     -- Control determined by stage
@@ -2367,7 +2401,8 @@ function Battle:renderSpriteOverlays()
             local statuses = self.status[sp:getId()]['effects']
 
             -- If we aren't watching an action play out!
-            if self:getStage() and self:getStage() ~= STAGE_WATCH then
+            local s = self:getStage()
+            if s and s ~= STAGE_WATCH and s ~= STAGE_LEVELUP then
 
                 -- Get post-dryrun health and status effects
                 if dry then
@@ -2397,7 +2432,7 @@ function Battle:renderSpriteOverlays()
                             t_y, t_x = v['moved']['y'], v['moved']['x']
                             break
                         elseif v['died'] then
-                            return
+                            goto continue
                         end
                     end
                 end
@@ -2414,6 +2449,25 @@ function Battle:renderSpriteOverlays()
             self:renderHealthbar(sp, x, y, ratio)
             self:renderStatus(x, y, statuses)
         end
+        ::continue::
+    end
+end
+
+function Battle:renderExpGain()
+    for i=1, #self.render_exp do
+        local re = self.render_exp[i]
+        local t_x, t_y, e, timer = re[1], re[2], re[3], re[4]
+        local x,y = self.game.current_map:tileToPixels(
+            self.origin_x + t_x, self.origin_y + t_y
+        )
+        x = x - self.game.camera_x + 20
+        y = y - self.game.camera_y + timer * 5
+        love.graphics.push('all')
+        local clr = { HIGHLIGHT[1], HIGHLIGHT[2], HIGHLIGHT[3], timer / 2 }
+        love.graphics.setColor(unpack(clr))
+        love.graphics.setFont(EXP_FONT)
+        love.graphics.print(e .. "xp", x, y)
+        love.graphics.pop()
     end
 end
 
@@ -2812,6 +2866,7 @@ function Battle:renderOverlay()
     love.graphics.push()
     love.graphics.origin()
     self:renderSpriteOverlays()
+    self:renderExpGain()
     love.graphics.pop()
 
     -- No overlay if stack has no cursors

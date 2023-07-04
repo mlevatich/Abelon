@@ -149,7 +149,6 @@ function say(p1, portrait, requires_response, line)
 end
 
 function _lookAt(sp1, sp2)
-    sp1:changeBehavior('idle')
     sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
 end
 

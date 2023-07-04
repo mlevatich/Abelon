@@ -633,7 +633,8 @@ function Game:renderTutorial()
     local hide_tutorial = self.alpha ~= 1 or self.current_scene
     if self.battle then
         local st = self.battle:getStage()
-        if st == STAGE_WATCH or st == STAGE_TARGET or #self.battle.levelup_queue ~= 0 then
+        if st == STAGE_WATCH or st == STAGE_TARGET or st == STAGE_LEVELUP
+        or #self.battle.levelup_queue ~= 0 then
             hide_tutorial = true
         end
     end

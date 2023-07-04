@@ -154,7 +154,6 @@ Title = class('Title')
 function Title:initialize()
 
     -- Fonts
-    local SUBFONT_SIZE = 18
     self.titlefont = love.graphics.newFont(FONT_FILE, TITLE_FONT_SIZE)
     self.subfont = love.graphics.newFont(FONT_FILE, SUBFONT_SIZE)
 

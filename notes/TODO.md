@@ -10,15 +10,14 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- When sprites gain exp at the end of their action, render an experience splash (like "+15xp" in light blue or something).
-- Profile batte.lua and game.lua to find performance bottlenecks and improve
+- Tune skull and xp drop until I'm happy
 
+- Add a few more skills for Abelon, test all skills in 1-2
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene
 - Clean up 1-2 scene
 
-- Add a few more skills for Abelon, test all skills in 1-2
-- Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent. Re-balance skills and their learning requirements. Consider: small buff to inspire, make gambit a late unlock.
+- Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent. Re-balance skills and their learning requirements. Consider: small buff to inspire, make gambit a late unlock. Note building high reaction and tanking enemies is too effective for gaining xp, especially on Normal.
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
@@ -30,6 +29,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Finish script 1-2
 - #69: Implement rest of 1-2 and empty start of 1-3
 - Add more optional content to 1-1 and 1-2.
+- Level up tutorial
 
 ## Game presentation, mini-release
 

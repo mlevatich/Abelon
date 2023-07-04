@@ -110,7 +110,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
     -- Levelups gained by each sprite
     local lvlups = {}
-    local exp_gain = 0
+    local exp_gain = { [sp:getId()] = 0 }
 
     -- Temporary attributes and special effects for the caster
     local sp_team = status[sp:getId()]['team']
@@ -193,7 +193,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
                     -- Allies gain exp for damage dealt to enemies
                     if sp_team == ALLY and t_team == ENEMY then
-                        exp_gain = exp_gain + abs(dealt)
+                        exp_gain[sp:getId()] = exp_gain[sp:getId()] + abs(dealt)
                     end
 
                     -- Determine if target is hurt, or dead
@@ -213,13 +213,20 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     if not dryrun and sp_team == ENEMY and t_team == ALLY
                     and t.health > 0
                     then
-                        exp_dealt = math.max(0, math.floor(dealt / 2))
-                        exp_mitigated = atk - dmg
-                        local lvls = t:gainExp(exp_dealt + exp_mitigated)
-                        if not lvlups[t:getId()] then
-                            lvlups[t:getId()] = 0
+                        local exp_dealt = math.max(0, math.floor(dealt / 2))
+                        local exp_mitigated = atk - dmg
+                        local exp_t = exp_dealt + exp_mitigated
+                        local lvls = t:gainExp(exp_t)
+                        local tid = t:getId()
+                        if exp_gain[tid] then
+                            exp_gain[tid] = exp_gain[tid] + exp_t
+                        else
+                            exp_gain[tid] = exp_t
                         end
-                        lvlups[t:getId()] = lvlups[t:getId()] + lvls
+                        if not lvlups[tid] then
+                            lvlups[tid] = 0
+                        end
+                        lvlups[tid] = lvlups[tid] + lvls
                     end
                 end
 
@@ -240,7 +247,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                         exp = 10
                         if b.attr ~= 'special' then exp = abs(b.val) end
                     end
-                    exp_gain = exp_gain + exp
+                    exp_gain[sp:getId()] = exp_gain[sp:getId()] + exp
                 end
                 dryrun_res[z]['new_stat'] = t_stat
 
@@ -331,18 +338,21 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
             exp = 10
             if b.attr ~= 'special' then exp = abs(b.val) end
         end
-        exp_gain = exp_gain + exp
+        exp_gain[sp:getId()] = exp_gain[sp:getId()] + exp
     end
     if #sp_effects > 0 then
         dryrun_res['caster'] = { ['sp'] = sp, ['flat'] = 0, ['new_stat'] = sp_stat }
     end
 
     if not dryrun then
-        -- If the attacker is an ally, gain exp
-        if sp_team == ALLY then lvlups[sp:getId()] = sp:gainExp(exp_gain) end
+        -- If the attacker is an ally, record exp gained
+        if sp_team == ALLY then
+            local _, levels = sp:computeLevels(exp_gain[sp:getId()])
+            lvlups[sp:getId()] = levels
+        end
 
         -- Return which targets were hurt/killed
-        return moved, hurt, dead, lvlups
+        return moved, hurt, dead, lvlups, exp_gain
     else
         return dryrun_res
     end

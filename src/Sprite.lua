@@ -540,19 +540,25 @@ function Sprite:learn(sk_id)
     end
 end
 
+function Sprite:computeLevels(e)
+
+    -- How many level ups?
+    local total = EXP_NEXT[self.level]
+    local new = self.exp + e
+    local levels = 0
+    while new > total do
+        new = new - total
+        levels = levels + 1
+        total = EXP_NEXT[self.level + levels]
+    end
+    return new, levels
+end
+
 -- Gain exp and potentially level up, increasing attributes and
 -- earning skill points
 function Sprite:gainExp(e)
-
-    -- Get exp needed to level up
-    local total = EXP_NEXT[self.level]
-
-    -- Add exp
-    local new = self.exp + e
-    self.exp = new % total
-
-    -- Handle level up
-    local levels = math.floor(new / total)
+    local new, levels = self:computeLevels(e)
+    self.exp = new
     self.level = self.level + levels
     self.skill_points = self.skill_points + levels
     for k, v in pairs(self.attributes) do

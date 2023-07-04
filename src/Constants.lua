@@ -31,22 +31,27 @@ RELOAD_BATTLE  = 0
 RELOAD_CHAPTER = 1
 END_CHAPTER    = 2
 
--- Text variables
-FONT           = 'VT323-Regular'
-FONT_FILE      = 'graphics/fonts/' .. FONT .. '.ttf'
-FONT_SIZE      = 16
+-- Font variables
+FONT            = 'VT323-Regular'
+FONT_FILE       = 'graphics/fonts/' .. FONT .. '.ttf'
+FONT_SIZE       = 16
 TITLE_FONT_SIZE = 40
-PORTRAIT_SIZE  = 120
-BOX_MARGIN     = 20
-TEXT_MARGIN_X  = -7
-TEXT_MARGIN_Y  = 5
-LINES_PER_PAGE = 3
-TEXT_INTERVAL  = 0.03
-MAX_MENU_ITEMS = 6
-SUB_MENU_ITEMS = 5
-RECT_ALPHA     = 0.6
-HBOX_WIDTH     = 540
-MAX_WORD       = 14
+EXP_FONT_SIZE   = 14
+SUBFONT_SIZE    = 18
+EXP_FONT        = love.graphics.newFont(FONT_FILE, EXP_FONT_SIZE)
+
+-- Text variables
+PORTRAIT_SIZE   = 120
+BOX_MARGIN      = 20
+TEXT_MARGIN_X   = -7
+TEXT_MARGIN_Y   = 5
+LINES_PER_PAGE  = 3
+TEXT_INTERVAL   = 0.03
+MAX_MENU_ITEMS  = 6
+SUB_MENU_ITEMS  = 5
+RECT_ALPHA      = 0.6
+HBOX_WIDTH      = 540
+MAX_WORD        = 14
 
 -- Derived text variables
 LINE_HEIGHT = FONT_SIZE + TEXT_MARGIN_Y
