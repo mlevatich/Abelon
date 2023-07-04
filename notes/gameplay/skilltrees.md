@@ -33,18 +33,30 @@ Goal for Mona: 4 assists, 5 attacks
 
 #### Abelon
 
-- executioner assist - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
+Need:
 - 3 more for demon (2 spell, 1 assist)
-- 3 more for executioner (1 spell, 1 atk, 1 assist)
+- 4 more for executioner (1 spell, 1 atk, 2 assist)
 - 2 more for veteran (1 atk, 1 assist)
+
+Ideas:
+- Demon: Spell: The Price: Gain 3 force, reaction, affinity, agility every turn in exchange for one ignea. Don't run out. (if you run out, you lose all stats and hp drops to 1).
+- Demon: Spell: Retribution: Enemies that attack Abelon suffer a big debuff. Moderate cost.
+- Demon: Assist:
+- Executioner: Assist: Death Blessing: Grants allies agility and affinity on kill, scales with abelon's affinity. Moderate cost.
+- Executioner: Spell: Gallows: Every turn, all stats of an enemy will permanently lower by one. Big cost.
+- Executioner: Weapon: Pursuit: Gain some agility scaling with force, and force scaling with agility. No cost.
+- Executioner: Assist:
+- Veteran: Assist: Knights of Ebonach: High cost assist with massive range and an assortment of stat buffs. Scales well with Affinity.
+- Veteran: Attack:
 
 #### Kath
 
-- cleric spell - regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
-- cleric spell - Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
-- defender weapon - riposte: kath retaliates against any weapon damage dealt to him. Scales on reaction
-- cleric spell - Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
-- Assist for hero
+Ideas:
+- Cleric: Spell: Regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
+- Cleric: Assist: Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
+- Defender: Weapon: Riposte: kath retaliates against any weapon damage dealt to him. Scales on reaction
+- Cleric: Assist: Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
+- Hero: Assist: 
 
 #### Elaine
 

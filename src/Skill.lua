@@ -239,7 +239,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 ts_effects = copy(ts_effects)
                 if hasSpecial(sp_stat, sp_assists, 'flanking') then
                     table.insert(ts_effects,
-                        { { 'reaction', Scaling:new(-6, 'force', 0) }, 1 }
+                        { { 'reaction', Scaling:new(-6) }, 1 }
                     )
                 end
                 for j = 1, #ts_effects do
@@ -588,26 +588,21 @@ skills = {
         nil, nil, nil,
         { ['br'] = function(a, a_a, b, b_a, st) return isDebuffed(b, st) end }
     ),
-    ['execute'] = Skill:new('execute', 'Execute',
-        "Finish off an enemy. Deals (Force * 1.5) Weapon damage \z
-         to an adjacent enemy with less than half of their health \z
-         remaining.",
-        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
-        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
-        { { T } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.5),
-        nil, nil, nil,
-        {
-            ['br'] = function(a, a_a, b, b_a, st)
-                return b.health < b_a['endurance'] / 2
-            end
-        }
+    ['pursuit'] = Skill:new('pursuit', 'Pursuit',
+        "Give chase. Gain (Agility * 0.5) Force and (Force * 0.5) Agility \z
+         for 2 turns.",
+        'Executioner', WEAPON, MANUAL, str_to_icon['agility'],
+        { { 'Demon', 3 }, { 'Veteran', 3 }, { 'Executioner', 3 } },
+        { { T } }, SELF_CAST_AIM, 0,
+        ALLY, nil,
+        nil, { { { 'force', Scaling:new(0, 'agility', 0.5) }, 2 }, 
+               { { 'agility', Scaling:new(0, 'force', 0.5) }, 2 } }
     ),
     ['siphon'] = Skill:new('siphon', 'Siphon',
         "Strike an evil, life-draining blow. Deals \z
          (Force * 1.0) Weapon damage to an adjacent enemy and \z
          heals you for the damage dealt.",
-        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        'Demon', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Demon', 3 }, { 'Veteran', 0 }, { 'Executioner', 2 } },
         { { T } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 1.0),
@@ -624,12 +619,27 @@ skills = {
         { { { 'affinity', Scaling:new(-99) }, 1 }, 
           { { 'agility',  Scaling:new(-99) }, 1 } }, nil
     ),
+    ['execute'] = Skill:new('execute', 'Execute',
+        "Fulfill your duty. Deals (Force * 2.0) Weapon damage \z
+         to an adjacent enemy with less than half of their health \z
+         remaining.",
+        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 4 } },
+        { { T } }, DIRECTIONAL_AIM, 2,
+        ENEMY, Scaling:new(0, 'force', 2.0),
+        nil, nil, nil,
+        {
+            ['br'] = function(a, a_a, b, b_a, st)
+                return b.health < b_a['endurance'] / 2
+            end
+        }
+    ),
     ['conflagration'] = Skill:new('conflagration', 'Conflagration',
         "Scour the battlefield with unholy fire. Deals 30 Spell \z
          damage to all enemies in a line across the entire field.",
         'Demon', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
-        mkLine(10), DIRECTIONAL_AIM, 5,
+        mkLine(10), DIRECTIONAL_AIM, 4,
         ENEMY, Scaling:new(30)
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches',
