@@ -10,8 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Tune skull and xp drop until I'm happy
-
 - Add a few more skills for Abelon, test all skills in 1-2
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Add elaine join scene

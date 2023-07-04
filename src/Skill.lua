@@ -605,7 +605,7 @@ skills = {
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches',
         "Pull an enemy to you, dealing (Force * 0.5) Spell damage and \z
-         reducing the enemy's Reaction by (Force * 0.2) for 1 turn.",
+         reducing the enemy's Reaction by (Force * 0.2) for 2 turns.",
         'Demon', SPELL, MANUAL, str_to_icon['force'],
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { F, F, T, F, F },

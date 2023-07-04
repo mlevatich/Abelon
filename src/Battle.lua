@@ -2428,11 +2428,13 @@ function Battle:renderSpriteOverlays()
                     end
                 elseif dry then
                     for _,v in pairs(dry) do
-                        if v['sp'] == sp and v['moved'] and not v['died'] then
-                            t_y, t_x = v['moved']['y'], v['moved']['x']
-                            break
-                        elseif v['died'] then
-                            goto continue
+                        if v['sp'] == sp then
+                            if v['moved'] and not v['died'] then
+                                t_y, t_x = v['moved']['y'], v['moved']['x']
+                                break
+                            elseif v['died'] then
+                                goto continue
+                            end
                         end
                     end
                 end
