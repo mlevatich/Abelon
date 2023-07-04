@@ -199,10 +199,13 @@ TUTORIALS = {
         "To access the settings and other information during battle, select any empty tile."
     },
     ['Experience and skill learning'] = {
-        ""
+        "By battling, units gain experience and level up, granting attributes and a skill point.",
+        "Spend your skill points in the party menu to learn new skills, if you meet their requirements."
     },
     ['Using and presenting items'] = {
-        ""
+        "In some situations, it may be appropriate to use an item or cast a spell on a particular location or target.",
+        "Move close to the target and open your inventory. Navigate to the spell or item and 'Use' it.",
+        "To show an item to someone, select 'Present'."
     }
 }
 
