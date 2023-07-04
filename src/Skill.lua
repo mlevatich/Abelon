@@ -120,6 +120,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     -- Affect targets
     local dryrun_res = {}
     local z = 1
+    local total_dealt = 0
     for i = 1, #ts do
 
         -- Temporary attributes and special effects for the target
@@ -184,6 +185,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     local pre_hp = t.health
                     local n_hp = math.max(min, math.min(max_hp, t.health - dmg))
                     local dealt = pre_hp - n_hp
+                    total_dealt = total_dealt + dealt
                     if not dryrun then
                         t.health = n_hp
                     end
@@ -233,6 +235,12 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 -- Apply status effects to target
                 if dryrun then
                     t_stat = copy(t_stat)
+                end
+                ts_effects = copy(ts_effects)
+                if hasSpecial(sp_stat, sp_assists, 'flanking') then
+                    table.insert(ts_effects,
+                        { { 'reaction', Scaling:new(-6, 'force', 0) }, 1 }
+                    )
                 end
                 for j = 1, #ts_effects do
                     local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
@@ -340,8 +348,16 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
         exp_gain[sp:getId()] = exp_gain[sp:getId()] + exp
     end
-    if #sp_effects > 0 then
+    if #sp_effects > 0 or modifiers['lifesteal'] then
         dryrun_res['caster'] = { ['sp'] = sp, ['flat'] = 0, ['new_stat'] = sp_stat }
+        if modifiers['lifesteal'] then
+            local heal = math.floor(total_dealt * modifiers['lifesteal'])
+            local healed = math.min(sp.attributes['endurance'] * 2 - sp.health, heal)
+            dryrun_res['caster']['flat'] = -healed
+            if not dryrun then
+                sp.health = sp.health + healed
+            end
+        end
     end
 
     if not dryrun then
@@ -572,6 +588,42 @@ skills = {
         nil, nil, nil,
         { ['br'] = function(a, a_a, b, b_a, st) return isDebuffed(b, st) end }
     ),
+    ['execute'] = Skill:new('execute', 'Execute',
+        "Finish off an enemy. Deals (Force * 1.5) Weapon damage \z
+         to an adjacent enemy with less than half of their health \z
+         remaining.",
+        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(0, 'force', 1.5),
+        nil, nil, nil,
+        {
+            ['br'] = function(a, a_a, b, b_a, st)
+                return b.health < b_a['endurance'] / 2
+            end
+        }
+    ),
+    ['siphon'] = Skill:new('siphon', 'Siphon',
+        "Strike an evil, life-draining blow. Deals \z
+         (Force * 1.0) Weapon damage to an adjacent enemy and \z
+         heals you for the damage dealt.",
+        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Demon', 3 }, { 'Veteran', 0 }, { 'Executioner', 2 } },
+        { { T } }, DIRECTIONAL_AIM, 2,
+        ENEMY, Scaling:new(0, 'force', 1.0),
+        nil, nil, nil,
+        { ['lifesteal'] = 1 }
+    ),
+    ['gambit'] = Skill:new('gambit', 'Gambit',
+        "Attack relentlessly. Deals 40 Weapon damage to an adjacent enemy, \z
+         but lowers your Affinity and Agility to 0 for 1 turn.",
+        'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
+        { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 1 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(40),
+        { { { 'affinity', Scaling:new(-99) }, 1 }, 
+          { { 'agility',  Scaling:new(-99) }, 1 } }, nil
+    ),
     ['conflagration'] = Skill:new('conflagration', 'Conflagration',
         "Scour the battlefield with unholy fire. Deals 30 Spell \z
          damage to all enemies in a line across the entire field.",
@@ -579,6 +631,20 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 5,
         ENEMY, Scaling:new(30)
+    ),
+    ['clutches'] = Skill:new('clutches', 'Clutches',
+        "Pull an enemy to you, dealing (Force * 0.5) Spell damage and \z
+         reducing the enemy's Reaction by (Force * 0.2) for 2 turns.",
+        'Demon', SPELL, MANUAL, str_to_icon['force'],
+        { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
+        { { F, F, T, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+        ENEMY, Scaling:new(0, 'force', 0.5),
+        nil, { { { 'reaction', Scaling:new(0, 'force', -0.2) }, 2 } },
+        { DOWN, 2 }
     ),
     ['judgement'] = Skill:new('judgement', 'Judgement',
         "Instantly kill an enemy anywhere on the field with less than 10 \z
@@ -602,45 +668,6 @@ skills = {
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
         nil, { { { 'force', Scaling:new(0, 'focus', -0.5) }, 2 } }
-    ),
-    ['clutches'] = Skill:new('clutches', 'Clutches',
-        "Pull an enemy to you, dealing (Force * 0.5) Spell damage and \z
-         reducing the enemy's Reaction by (Force * 0.2) for 2 turns.",
-        'Demon', SPELL, MANUAL, str_to_icon['force'],
-        { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
-        { { F, F, T, F, F },
-          { F, F, F, F, F },
-          { F, F, F, F, F },
-          { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
-        ENEMY, Scaling:new(0, 'force', 0.5),
-        nil, { { { 'reaction', Scaling:new(0, 'force', -0.2) }, 2 } },
-        { DOWN, 2 }
-    ),
-    ['execute'] = Skill:new('execute', 'Execute',
-        "Finish off an enemy. Deals (Force * 1.5) Weapon damage \z
-         to an adjacent enemy with less than half of their health \z
-         remaining.",
-        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
-        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
-        { { T } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.5),
-        nil, nil, nil,
-        {
-            ['br'] = function(a, a_a, b, b_a, st)
-                return b.health < b_a['endurance'] / 2
-            end
-        }
-    ),
-    ['gambit'] = Skill:new('gambit', 'Gambit',
-        "Attack relentlessly. Deals 40 Weapon damage to an adjacent enemy, \z
-         but lowers your Affinity and Agility to 0 for 1 turn.",
-        'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
-        { { 'Demon', 0 }, { 'Veteran', 2 }, { 'Executioner', 1 } },
-        { { T } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(40),
-        { { { 'affinity', Scaling:new(-99) }, 1 }, 
-          { { 'agility',  Scaling:new(-99) }, 1 } }, nil
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
@@ -703,6 +730,17 @@ skills = {
             { 'reaction', Scaling:new(0, 'affinity', -1.0) },
             { 'affinity', Scaling:new(0, 'affinity', -1.0) }
         }
+    ),
+    ['flank'] = Skill:new('flank', 'Flank',
+        "Prepare to surround and overwhelm an enemy. Ally \z
+         attacks will reduce enemy Reaction by 6 for 1 turn.",
+        'Veteran', ASSIST, MANUAL, str_to_icon['empty'],
+        { { 'Demon', 0 }, { 'Veteran', 3 }, { 'Executioner', 2 } },
+        { { F, T, F },
+          { T, F, T },
+          { F, F, F } }, DIRECTIONAL_AIM, 0,
+        nil, nil, nil, nil, nil, nil,
+        { { 'special', 'flanking', BUFF } }
     ),
 
 

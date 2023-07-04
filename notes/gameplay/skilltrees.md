@@ -33,8 +33,6 @@ Goal for Mona: 4 assists, 5 attacks
 
 #### Abelon
 
-- veteran assist - Abelon should get an assist that surrounds an enemy abelon is adjacent to. Cause attacks to lower reaction for one turn or something? encourage dogpiling.
-- demon weapon - Siphon: lifesteal by hitting an enemy. Regen all damage dealt (1.0 * force), costs 2-3 ignea.
 - executioner assist - death blessing - Assist, grants allies agility and affinity on kill, scales with abelon's affinity.
 - 3 more for demon (2 spell, 1 assist)
 - 3 more for executioner (1 spell, 1 atk, 1 assist)

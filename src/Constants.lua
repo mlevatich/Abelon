@@ -130,7 +130,8 @@ EFFECT_NAMES = {
     ['stun']           = "Stunned",
     ['observe']        = "Observing",
     ['hidden']         = "Hidden",
-    ['flight']         = "Flight"
+    ['flight']         = "Flight",
+    ['flanking']       = "Flanking"
 }
 
 ATTRIBUTE_DESC = {
