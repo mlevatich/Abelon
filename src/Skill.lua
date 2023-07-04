@@ -599,7 +599,7 @@ skills = {
                { { 'agility', Scaling:new(0, 'force', 0.5) }, 2 } }
     ),
     ['siphon'] = Skill:new('siphon', 'Siphon',
-        "Strike an evil, life-draining blow. Deals \z
+        "Strike an evil, life draining blow. Deals \z
          (Force * 1.0) Weapon damage to an adjacent enemy and \z
          heals you for the damage dealt.",
         'Demon', WEAPON, MANUAL, str_to_icon['force'],
@@ -669,7 +669,7 @@ skills = {
     ['contempt'] = Skill:new('contempt', 'Contempt',
         "Glare with an evil eye lit by ignea, reducing the Force of \z
          affected enemies by (Focus * 0.5) for 2 turns.",
-        'Veteran', SPELL, MANUAL, str_to_icon['focus'],
+        'Demon', SPELL, MANUAL, str_to_icon['focus'],
         { { 'Demon', 2 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { F, T, F, T, F },
           { F, F, T, F, F },
@@ -886,7 +886,7 @@ skills = {
         "Kath ignites a bond, raising his and an ally's \z
          Affinity by (Force * 0.5) for 3 turns. Can target any \z
          ally within 3 tiles.",
-        'Cleric', SPELL, MANUAL, str_to_icon['force'],
+        'Hero', SPELL, MANUAL, str_to_icon['force'],
         { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 3 } },
         { { T } }, FREE_AIM(3), 2,
         ALLY, nil,

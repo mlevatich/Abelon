@@ -35,7 +35,7 @@ Goal for Mona: 4 assists, 5 attacks
 
 Need:
 - 3 more for demon (2 spell, 1 assist)
-- 4 more for executioner (1 spell, 1 atk, 2 assist)
+- 3 more for executioner (1 spell, 2 assist)
 - 2 more for veteran (1 atk, 1 assist)
 
 Ideas:
@@ -44,7 +44,6 @@ Ideas:
 - Demon: Assist:
 - Executioner: Assist: Death Blessing: Grants allies agility and affinity on kill, scales with abelon's affinity. Moderate cost.
 - Executioner: Spell: Gallows: Every turn, all stats of an enemy will permanently lower by one. Big cost.
-- Executioner: Weapon: Pursuit: Gain some agility scaling with force, and force scaling with agility. No cost.
 - Executioner: Assist:
 - Veteran: Assist: Knights of Ebonach: High cost assist with massive range and an assortment of stat buffs. Scales well with Affinity.
 - Veteran: Attack:
