@@ -1040,22 +1040,6 @@ skills = {
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 0.8)
     ),
-    ['one_in_million'] = Skill:new('one_in_million', 'One in a Million',
-        "Elaine aims and fires an impossible shot from across the \z
-         battlefield, dealing (Force * 1.5) damage to the enemy hit.",
-        'Sniper', WEAPON, MANUAL, str_to_icon['force'],
-        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 4 } },
-        { { F, F, F, F, F, F, F, F, F },
-          { F, T, F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.5)
-    ),
     ['observe'] = Skill:new('observe', 'Observe',
         "Once per battle, Elaine picks an ally to learn from, permanently \z
          gaining 1 point in their strongest attribute.",

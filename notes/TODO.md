@@ -10,14 +10,16 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Make the lead-up to battle cooler, with pans and moving wolves.
-- Add elaine join scene.
-- Clean up 1-2 scene.
-- Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent battles.
+- Add elaine join scene
 - Re-balance Elaine's learning requirements, implement Elaine's skills
+- Levelups tutorial
+- Make the lead-up to battle cooler, with pans and moving wolves
+- Clean up 1-2 scene
+
+- Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent battles
+- Test all skills
 - Consider a small buff to inspire
 - Nerf building high reaction and tanking enemies for gaining xp
-- Test all skills
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
@@ -29,7 +31,6 @@ Bullets that reference a github issue should close the issue when committed.
 - Finish script 1-2
 - #69: Implement rest of 1-2 and empty start of 1-3
 - Add more optional content to 1-1 and 1-2.
-- Levelups tutorial
 
 ## Game presentation, mini-release
 

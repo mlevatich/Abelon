@@ -5,7 +5,7 @@
 Abelon: Demon, Veteran, Executioner
 Kath:   Defender, Hero, Cleric
 Elaine: Huntress, Apprentice, Sniper
-Shanti: Scholar, Sorceress
+Shanti: Lanternfaire, Sorceress
 Lester: Firebrand, Assassin
 Mona:   Caretaker
 
@@ -33,13 +33,8 @@ Goal for Mona: 4 assists, 5 attacks
 
 #### Abelon
 
-Need:
-- 3 more for demon (2 spell, 1 assist)
-- 3 more for executioner (1 spell, 2 assist)
-- 2 more for veteran (1 atk, 1 assist)
-
 Ideas:
-- Demon: Spell: The Contract: Gain 3 force, reaction, affinity, agility every turn in exchange for one ignea. Don't run out. (if you run out, you lose all stats and hp drops to 1).
+- Demon: Spell: The Contract: Invoke The Contract
 - Demon: Spell: Retribution: Enemies that attack Abelon suffer a big debuff. Moderate cost.
 - Demon: Assist:
 - Executioner: Assist: Death Blessing: Grants allies agility and affinity on kill, scales with abelon's affinity. Moderate cost.
@@ -50,18 +45,18 @@ Ideas:
 
 #### Kath
 
-Ideas:
 - Cleric: Spell: Regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
 - Cleric: Assist: Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
-- Defender: Weapon: Riposte: kath retaliates against any weapon damage dealt to him. Scales on reaction
 - Cleric: Assist: Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
-- Hero: Assist: 
+- Defender: Weapon: Riposte: kath retaliates against any weapon damage dealt to him. Scales on reaction
+- Hero: Assist: Reliance: Allies lose all force but gain big affinity.
 
 #### Elaine
 
-- apprentice spell - galeforce: push a huge wall of enemies a few spaces away
-- sniper weapon piercing shot that goes in a diagonal line? Then change one-in-a-million to a straight line that pushes.
-- hunter assist
+- Apprentice: Spell: Galeforce: push a huge wall of enemies a few spaces away
+- Sniper: Weapon: Piercing Shot: diagonal line AOE.
+- Sniper: Weapon: Perfect Shot: Single target long ranged directional that pushes.
+- Hunter: Assist:
 
 #### Lester
 
@@ -78,12 +73,24 @@ does 10 + Force x 3 weapon damage
 
 #### Shanti
 
-- searing_light: spell costing moderate ignea, scales with force. moderate range
-- detonate: spell costing high ignea, scales with focus. short range
-- heavy_swing: attack adjacent enemy for no cost, scales with force
-- shine: no cost assist, provides small unique effect in a large radius, scales with affinity
-- hypnotize: moderate cost assist, heavily improves force for nearby ally, scales minimally with affinity
-- Renewal: allies who kill an enemy while on the assist and end their turn on it have their turn refreshed.
+- Lanternfaire: Weapon: Heavy Swing: bring down lantern on enemy. attack an adjacent target, no cost, 1.0 force weapon damage
+- Lanternfaire: Weapon: Knockback: push three enemies back (same range as sweep), deal Force * 0.5 weapon damage. Free.
+- Lanternfaire: Weapon: Prepare Lantern: Free, reduces all Ignea costs by one for four turns.
+- Lanternfaire: Weapon: Throw Lantern: Thrown lantern explodes.
+- Lanternfaire: Assist: Shine: no cost, provides small unique effect in a large radius, scales with affinity
+- Lanternfaire: Weapon: Study: Does nothing, prep for findings.
+- Lanternfaire: Assist: Findings: Big buff to allies if used Study previously
+- Lanternfaire: Assist: Bleed Vitality: long range singe target (like inspire), give an ally 1.0 lifesteal (no scaling).
+- Lanternfaire: Assist: Bleed Ignea: single target assist, give an ally on-hit ignea drain scaling with affinity.
+- Sorceress: Spell: Searing Light: 1.0 force spell damage, 1 ignea cost. L shaped range (think knight in chess)
+- Sorceress: Spell: Detonate: 10 + 1.0 Focus spell damage, costing moderate ignea. Diagonal range.
+- Sorceress: Spell: Berserk: Free aim with small AOE. Raises enemy force by 10, lowers reaction by Focus * 0.5, 2 turns. Low cost.
+- Sorceress: Spell: Gravity: Damage five enemies (similar to guardian angel range) and pull them in a lot.
+- Sorceress: Spell: Illuminate: Some kind of non-attacking skill based on Agility. Something funky.
+- Sorceress: Spell: Radiance: big aoe, big damage, big cost. Force scaling
+- Sorceress: Spell: Rain of Shards: Target a ring far away from Shanti. Enemies take damage scaling with Focus. Allies caught in it recover 1 ignea.
+- Sorceress: Assist: Hypnotize: moderate cost, heavily improves force for nearby ally, scales minimally with affinity
+- Sorceress: Assist: Renewal: Massive cost. allies who kill an enemy while on the assist and end their turn on it have their turn refreshed.
 
 #### Enemies
 
