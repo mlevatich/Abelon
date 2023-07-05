@@ -403,14 +403,114 @@ s12['ally-turn-3'] = {
     ['events'] = {
         brState('carried-elaine',
             {
-                -- TODO
-                -- Camera pans to Elaine
-                -- Pause
-                -- Elaine speaks
-                -- Camera pans between Elaine and Kath
-                -- Kath speaks
-                -- Elaine gets up, looks around
-                -- Speaks
+                focus(3, 130),
+                waitForEvent('camera'),
+                say(3, 2, false, "Mmh..."),
+                -- getUp(3),
+                pan(0, 50, 100),
+                waitForEvent('camera'),
+                lookAt(2, 3),
+                wait(0.5),
+                lookAt(1, 2),
+                say(2, 1, false, "About time she started coming to. Hm, I wonder..."),
+                lookDir(3, LEFT),
+                wait(0.3),
+                lookDir(3, RIGHT),
+                wait(0.3),
+                lookDir(3, LEFT),
+                wait(0.3),
+                say(3, 2, false, "W-where am I? What's going on?"),
+                say(2, 1, false, 
+                    "Sensible questions, but we don't have time to answer them until \z
+                     we've dealt with these wolves. What I want to know is, can \z
+                     you help?"
+                ),
+                walk(false, 3, 53, 5, 'walk'),
+                waitForEvent('walk'),
+                lookAt(3, 2),
+                say(3, 2, false, "Help? W-what?"),
+                say(2, 1, false,
+                    "You have a bow, and arrows. I assume you're familiar with \z
+                     how to use them."
+                ),
+                wait(0.5),
+                say(3, 2, true, "Bow and... Oh Goddess, you want me to fight? I..."),
+                choice({
+                    {
+                        ['response'] = "Your assistance would be welcome",
+                        ['events'] = {},
+                        ['result'] = {}
+                    },
+                    {
+                        ['response'] = "We can't trust her",
+                        ['events'] = {
+                            say(2, 2, false,
+                                "What, you think she's our enemy? I have a hard \z
+                                 time believing that, given the state you \z
+                                 brought her in. I would expect more competence \z
+                                 from a spy or traitor. Anyway, she's a child."
+                            )
+                        },
+                        ['result'] = {
+                            ['impressions'] = {1, 0, 0}
+                        }
+                    },
+                    {
+                        ['response'] = "Kath, she's a child",
+                        ['events'] = {
+                            say(2, 3, false,
+                                "And what are you, her mother? All three of us \z
+                                 are in danger, and child or not, she has a \z
+                                 weapon."
+                            )
+                        },
+                        ['result'] = {
+                            ['impressions'] = {-1, 0, 0},
+                            ['awareness'] = {0, 1, 0}
+                        }
+                    },
+                    {
+                        ['response'] = "...",
+                        ['events'] = {},
+                        ['result'] = {}
+                    }
+
+                }),
+                wait(0.5),
+                say(2, 1, false,
+                    "Miss, if you fight, we'll protect you."
+                ),
+                focus(3, 100),
+                walk(false, 3, 52, 5, 'walk'),
+                waitForEvent('walk'),
+                say(3, 2, false,
+                    "I've never shot a w-wolf before. They're... Goddess, \z
+                     they're terrifying up close... But..."
+                ),
+                wait(1),
+                walk(false, 3, 52, 7, 'walk'),
+                say(3, 3, false,
+                    "...Ok. I can help. I'm ready."
+                ),
+                waitForEvent('walk'),
+                focus(2, 150),
+                say(2, 1, false,
+                    "Look at that, Abelon! She's only just woken up, but she \z
+                     has a knight's courage. Lucky us."
+                ),
+                wait(0.5),
+                say(2, 3, false,
+                    "Listen to me. Shoot them while they're circling one of us, \z
+                     and go for the kill, or you'll risk drawing their \z
+                     attention to you. We can parry their fangs - you can't."
+                ),
+                focus(3, 150),
+                waitForEvent('camera'),
+                -- combatReady(3),
+                say(3, 3, false,
+                    "R-right. Ok... Pretend it's a rabbit... Like shooting a \z
+                     rabbit... Breathe deep..."
+                )
             },
             {
                 -- TODO
@@ -428,6 +528,11 @@ s12['ally-turn-3'] = {
     ['result'] = {
         ['do'] = function(g)
             g:startTutorial("Battle: Attributes")
+            if g.state['carried-elaine'] then
+                local elaine = g.sprites['elaine']
+                g.player:joinParty(elaine)
+                g.battle:joinBattle(elaine, ALLY, 7, 1)
+            end
         end
     }
 }
@@ -651,13 +756,13 @@ s12['victory'] = {
              them they were picking a fight with the greatest knights in all \z
              the Kingdom!"
         ),
-        focus(1, 170),
+        focus(1, 100),
         brState('carried-elaine', 
             { choice(choices_carried_elaine) },
             { choice(choices_not_carried_elaine) }
         ),
         lookAt(2, 3),
-        focus(3, 170),
+        focus(3, 100),
         say(2, 3, false,
             "Now then..."
         )

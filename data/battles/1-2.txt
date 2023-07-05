@@ -12,7 +12,7 @@ Music: A-Single-Shard-Of-Ignea
 // Battle grid
 
 Dimensions: 11,10
-TTTTTTTTTTT
+TTTTTTFFFFF
 TTTTTTTTTTT
 TTTTTTTTTTT
 TTTTTTTTTTT

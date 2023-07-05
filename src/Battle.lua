@@ -142,6 +142,35 @@ function Battle:readEntities(data, idx)
     return t
 end
 
+function Battle:joinBattle(sp, team, t_x, t_y)
+
+    -- Add sprite to grid
+    if not self.grid[t_y][t_x] then
+        self.grid[t_y][t_x] = GridSpace:new()
+    end
+    self.grid[t_y][t_x].occupied = sp
+
+    -- Add status for sprite
+    self.status[sp:getId()] = {
+        ['sp']       = sp,
+        ['team']     = team,
+        ['location'] = { t_x, t_y },
+        ['effects']  = {},
+        ['alive']    = true,
+        ['acted']    = false,
+        ['attack']   = nil,
+        ['assist']   = nil,
+        ['prepare']  = nil
+    }
+
+    -- Add to participants, update n_allies
+    table.insert(self.participants, sp)
+    if team == ALLY then self.n_allies = self.n_allies + 1 end
+
+    -- Change behavior to battle
+    sp:changeBehavior('battle')
+end
+
 function Battle:adjustDifficultyFrom(old)
 
     -- Adjust enemy stats
