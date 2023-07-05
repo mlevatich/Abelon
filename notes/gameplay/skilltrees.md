@@ -6,42 +6,38 @@ Abelon: Demon, Veteran, Executioner
 Kath:   Defender, Hero, Cleric
 Elaine: Huntress, Apprentice, Sniper
 Shanti: Lanternfaire, Sorceress
-Lester: Firebrand, Assassin
+Lester: Assassin, Naturalist
 Mona:   Caretaker
 
 ## Skill ideas
 
-Goal for Abelon/Kath: 8 assists, 16 attacks
-- 8 in each tree
+Goal for Abelon/Kath:
 - Start with 8 at level 8 (3 assists, 5 attacks)
-- Learn 5 over the game (5 levelups, expected level 13/15), 11 remain
+- Learn 5 over the game (expected level 13/15), 11 remain
 
-Goal for Elaine: 7 assists, 14 attacks
-- 7 in each tree
-- Start with 3 at level 3 (1 of each)
-- Learn 8 over the game (8 levelups, expected level 11/15), 10 remain
+Goal for Elaine:
+- Start with 3 at level 3 (1 assist, 2 attacks)
+- Learn 8 over the game (expected level 11/15), 10 remain
 
-Goal for Shanti/Lester: 6 assists, 12 attacks
-- 9 in each tree
+Goal for Shanti/Lester:
 - Start with 6 at level 6 (2 assists, 4 attacks)
-- Learn 5 over the game (5 levelups, expected level 11/15), 7 remain
+- Learn 5 over the game (expected level 11/15), 7 remain
 
-Goal for Mona: 4 assists, 5 attacks
-- 9 in the tree
+Goal for Mona:
 - Start with 5 at level 10 (2 assists, 3 attacks)
-- Learn 2 over the game (2 levelups, expected level 12/15), 2 remain
+- Learn 2 over the game (expected level 12/15), 2 remain
 
 #### Abelon
 
 Ideas:
 - Demon: Spell: The Contract: Invoke The Contract
 - Demon: Spell: Retribution: Enemies that attack Abelon suffer a big debuff. Moderate cost.
-- Demon: Assist:
+- Demon: Assist: ???:
 - Executioner: Assist: Death Blessing: Grants allies agility and affinity on kill, scales with abelon's affinity. Moderate cost.
 - Executioner: Spell: Gallows: Every turn, all stats of an enemy will permanently lower by one. Big cost.
-- Executioner: Assist:
+- Executioner: Assist: ???:
 - Veteran: Assist: Knights of Ebonach: High cost assist with massive range and an assortment of stat buffs. Scales well with Affinity.
-- Veteran: Attack:
+- Veteran: Attack: ???:
 
 #### Kath
 
@@ -56,20 +52,28 @@ Ideas:
 - Apprentice: Spell: Galeforce: push a huge wall of enemies a few spaces away
 - Sniper: Weapon: Piercing Shot: diagonal line AOE.
 - Sniper: Weapon: Perfect Shot: Single target long ranged directional that pushes.
-- Hunter: Assist:
+- Hunter: Assist: ???:
 
 #### Lester
 
-- first aid: Lester skill, heals an adjacent ally by 0.5 * Agility, costs 0 ignea
-- pinpoint: find a weak spot. Very specific range required.
-- assassinate: if pinpoint was used last turn, and you have at least 3 assists,
-does 10 + Force x 3 weapon damage
-- overload: high spell damage, cost to self, cost to ignea, scale with force
-- bounty: assist skill costing small ignea, scale with affinity
-- thrown dagger: low damage free ranged attack, no scaling
-- in shadow: passive ability - if no assists, enemies wont target you
-- free assist that costs health, scales with affinity
-- free weak assist, scales with reaction
+- Assassin: Weapon: Thrown Dagger: No cost, free aim in radius 2, scales with 8 + Force * 0.5.
+- Assassin: Weapon: Pinpoint: Find a weak spot. Specific range required, puts a debuff on the enemy for 3 turns. No cost.
+- Assassin: Weapon: Assassinate: if pinpoint is on enemy, and you have at least 3 assists, does 10 + Force x 3 weapon damage to adjacent enemy. No cost.
+- Assassin: Weapon: Shadowed: 1 ignea. Gain Agility * 0.5 Force for two turns, and enemies won't target you for one turn.
+- Assassin: Weapon: Weave: Deal (1.0 * Force) weapon damage to adjacent enemy and gain 8 agility for a turn.
+- Assassin: Weapon: Blade Dance: Deal (1.0 * Agility) weapon damage to a tight group of enemies.
+- Assassin: Spell: Martyr: Cost 4 ignea, deal (1.5 * Force) spell damage to all adjacent enemies and Lester, and pull them in.
+- Assassin: Assist: Escape: No cost, grants some faraway allies (Affinity * 1.0) agility, but they lose 10 force.
+- Assassin: Assist: Adrenaline: Long-ranged-only assist with an ignea cost that scales with affinity.
+- Naturalist: Weapon: First Aid: No cost, heal an adjacent ally by Agility.
+- Naturalist: Spell: Stalagmite: 2 ignea, 5 + (force * 1) spell damage to an enemy 1 tile away (javelin range)
+- Naturalist: Spell: Rain: 1 Ignea, rain heals every ally by 2 each turn for 5 turns and grants +2 affinity for 5 turns
+- Naturalist: Spell: Grasping Roots: cost 2 ignea, reduce Agility by 2 + (Focus * 0.5) for 2 turns to a group of enemies in a 3x3 nearby.
+- Naturalist: Spell: Quake: 1 ignea, deals 10 spell damage to a big AOE of enemies. Free aim in a short range. Checkerboard pattern.
+- Naturalist: Assist: Warning: No cost, far away range (like inspire), raises reaction, scales with affinity.
+- Naturalist: Assist: Poison Coating: No cost, range is all adjacent tiles. Assisted allies lower enemy force by 4 on hit.
+- Naturalist: Assist: Herbal Tonic: No cost. A home remedy. Adjacent ally receives a random buff.
+- Naturalist: Assist: Eruta's Bounty: Costly, powerful assist. Scales with affinity.
 
 #### Shanti
 
@@ -77,9 +81,9 @@ does 10 + Force x 3 weapon damage
 - Lanternfaire: Weapon: Knockback: push three enemies back (same range as sweep), deal Force * 0.5 weapon damage. Free.
 - Lanternfaire: Weapon: Prepare Lantern: Free, reduces all Ignea costs by one for four turns.
 - Lanternfaire: Weapon: Throw Lantern: Thrown lantern explodes.
-- Lanternfaire: Assist: Shine: no cost, provides small unique effect in a large radius, scales with affinity
 - Lanternfaire: Weapon: Study: Does nothing, prep for findings.
-- Lanternfaire: Assist: Findings: Big buff to allies if used Study previously
+- Lanternfaire: Assist: Shine: no cost, provides small unique effect in a large radius, scales with affinity
+- Lanternfaire: Assist: Findings: Big buff to allies if used Study previously. Scales with affinity.
 - Lanternfaire: Assist: Bleed Vitality: long range singe target (like inspire), give an ally 1.0 lifesteal (no scaling).
 - Lanternfaire: Assist: Bleed Ignea: single target assist, give an ally on-hit ignea drain scaling with affinity.
 - Sorceress: Spell: Searing Light: 1.0 force spell damage, 1 ignea cost. L shaped range (think knight in chess)
@@ -88,9 +92,21 @@ does 10 + Force x 3 weapon damage
 - Sorceress: Spell: Gravity: Damage five enemies (similar to guardian angel range) and pull them in a lot.
 - Sorceress: Spell: Illuminate: Some kind of non-attacking skill based on Agility. Something funky.
 - Sorceress: Spell: Radiance: big aoe, big damage, big cost. Force scaling
-- Sorceress: Spell: Rain of Shards: Target a ring far away from Shanti. Enemies take damage scaling with Focus. Allies caught in it recover 1 ignea.
+- Sorceress: Spell: Hail of Ignea: Target a ring far away from Shanti. Enemies take damage scaling with Focus. Allies caught in it recover 1 ignea.
 - Sorceress: Assist: Hypnotize: moderate cost, heavily improves force for nearby ally, scales minimally with affinity
 - Sorceress: Assist: Renewal: Massive cost. allies who kill an enemy while on the assist and end their turn on it have their turn refreshed.
+
+#### Mona
+
+- Caretaker: Weapon: ???:
+- Caretaker: Weapon: ???:
+- Caretaker: Spell: ???: Single target heal and buff.
+- Caretaker: Spell: ???:
+- Caretaker: Spell: ???:
+- Caretaker: Assist: ???:
+- Caretaker: Assist: ???:
+- Caretaker: Assist: ???:
+- Caretaker: Assist: ???:
 
 #### Enemies
 

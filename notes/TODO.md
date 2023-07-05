@@ -20,6 +20,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Test all skills
 - Consider a small buff to inspire
 - Nerf building high reaction and tanking enemies for gaining xp
+- Balance difficulty levels; each monster has stats specific to difficulty
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
@@ -64,7 +65,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Write 1-3, 1-4 of narrative.md
 - Write script 1-3
 
-- #70: Lester, Shanti, Living Rock sprites and animations
+- #70: Shanti, Living Rock sprites and animations
 
 - #71: Implement 1-3. Includes additional map to the north of north forest, the monastery approach.
 
@@ -73,7 +74,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Write 1-4 script
 - #68: Last pass over script for consistency
 
-- Forest terror sprite and animations
+- Lester, Forest terror sprite and animations
 
 - #72: Implement 1-4
 - Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.
