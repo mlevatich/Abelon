@@ -17,7 +17,6 @@ Bullets that reference a github issue should close the issue when committed.
     - Using an assist that scales with an assisted stat.
     - Taking weapon damage on a reaction assist.
 - Re-balance bonus experience and turn limits.
-- Make the lead-up to battle cooler, with pans and moving wolves
 - Clean up 1-2 scene
 
 - Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent battles
