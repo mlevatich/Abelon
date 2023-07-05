@@ -10,10 +10,13 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Levelups tutorial
-- Use Elaine on Master
-- Nerf building high reaction and tanking enemies for gaining xp, re-balance bonus experience and turn limits. Consider: extra exp for getting a kill? Exp when allies benefit from your assists?
-
+- Gain experience only from dealing and taking damage (not from damage mitigated).
+- Gain a small fixed amount of experience for landing the killing blow.
+- Gain small fixed experience when allies benefit from your assist:
+    - Using an attack that scales with an assisted stat.
+    - Using an assist that scales with an assisted stat.
+    - Taking weapon damage on a reaction assist.
+- Re-balance bonus experience and turn limits.
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Clean up 1-2 scene
 

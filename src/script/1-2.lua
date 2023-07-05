@@ -403,16 +403,20 @@ s12['ally-turn-3'] = {
     ['events'] = {
         brState('carried-elaine',
             {
-                focus(3, 130),
+                focus(3, 170),
                 waitForEvent('camera'),
-                say(3, 2, false, "Mmh..."),
                 -- getUp(3),
-                pan(0, 50, 100),
-                waitForEvent('camera'),
+                say(3, 2, false, "Mmh..."),
                 lookAt(2, 3),
+                focus(2, 200),
+                pan(0, -70, 200),
+                waitForEvent('camera'),
                 wait(0.5),
                 lookAt(1, 2),
                 say(2, 1, false, "About time she started coming to. Hm, I wonder..."),
+                focus(3, 200),
+                pan(0, 70, 200),
+                waitForEvent('camera'),
                 lookDir(3, LEFT),
                 wait(0.3),
                 lookDir(3, RIGHT),
@@ -426,7 +430,6 @@ s12['ally-turn-3'] = {
                      you help?"
                 ),
                 walk(false, 3, 53, 5, 'walk'),
-                waitForEvent('walk'),
                 lookAt(3, 2),
                 say(3, 2, false, "Help? W-what?"),
                 say(2, 1, false,
@@ -444,6 +447,7 @@ s12['ally-turn-3'] = {
                     {
                         ['response'] = "We can't trust her",
                         ['events'] = {
+                            lookAt(2, 1),
                             say(2, 2, false,
                                 "What, you think she's our enemy? I have a hard \z
                                  time believing that, given the state you \z
@@ -458,6 +462,7 @@ s12['ally-turn-3'] = {
                     {
                         ['response'] = "Kath, she's a child",
                         ['events'] = {
+                            lookAt(2, 1),
                             say(2, 3, false,
                                 "And what are you, her mother? All three of us \z
                                  are in danger, and child or not, she has a \z
@@ -477,10 +482,12 @@ s12['ally-turn-3'] = {
 
                 }),
                 wait(0.5),
+                lookAt(2, 3),
                 say(2, 1, false,
                     "Miss, if you fight, we'll protect you."
                 ),
-                focus(3, 100),
+                waitForText(),
+                focus(3, 200),
                 walk(false, 3, 52, 5, 'walk'),
                 waitForEvent('walk'),
                 say(3, 2, false,
@@ -493,7 +500,7 @@ s12['ally-turn-3'] = {
                     "...Ok. I can help. I'm ready."
                 ),
                 waitForEvent('walk'),
-                focus(2, 150),
+                focus(2, 200),
                 say(2, 1, false,
                     "Look at that, Abelon! She's only just woken up, but she \z
                      has a knight's courage. Lucky us."
@@ -504,7 +511,7 @@ s12['ally-turn-3'] = {
                      and go for the kill, or you'll risk drawing their \z
                      attention to you. We can parry their fangs - you can't."
                 ),
-                focus(3, 150),
+                focus(3, 200),
                 waitForEvent('camera'),
                 -- combatReady(3),
                 say(3, 3, false,
