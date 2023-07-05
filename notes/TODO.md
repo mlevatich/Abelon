@@ -10,18 +10,14 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Why is special buff status icon so dark?
-- In stage-target, don't change direction unless the cursor actually moves.
-- Re-balance Elaine's learning requirements, implement Elaine's skills
 - Levelups tutorial
+- Nerf building high reaction and tanking enemies for gaining xp, re-balance bonus experience and turn limits
+
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Clean up 1-2 scene
 
 - Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent battles
 - Test all skills
-- Consider a small buff to inspire
-- Nerf building high reaction and tanking enemies for gaining xp, re-balance bonus experience.
-- Balance difficulty levels; each monster has stats specific to difficulty
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest

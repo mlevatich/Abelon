@@ -175,19 +175,18 @@ function Battle:adjustDifficultyFrom(old)
 
     -- Adjust enemy stats
     local new = self.game.difficulty
-    local factor = 3 * (old - new)
+    local factor = 2 * (old - new)
     for i = 1, #self.participants do
         local sp = self.participants[i]
         if not self:isAlly(sp) then
             local attrs = sp.attributes
             local adjust = {
-                'endurance', 'focus', 'force', 'affinity', 'reaction'
+                'endurance', 'force', 'reaction'
             }
             for j = 1, #adjust do
-                local real = factor
-                if adjust[j] == 'endurance' then real = 2 * (old - new) end
+                local real = ite(adjust[j] == 'endurance', factor / 2, factor)
                 attrs[adjust[j]] = math.max(0, attrs[adjust[j]] - real)
-            end
+            end 
             sp.health = math.min(sp.health, attrs['endurance'] * 2)
             sp.ignea = math.min(sp.ignea, attrs['focus'])
         end
@@ -337,8 +336,10 @@ function Battle:moveCursor(x, y)
     local c = self:getCursor()
     if self.grid[y] and self.grid[y][x] and (x ~= c[1] or y ~= c[2]) then
         sfx['hover']:play()
+        local change = (c[1] ~= x) or (c[2] ~= y)
         c[1] = x
         c[2] = y
+        return change
     end
 end
 
@@ -1700,24 +1701,26 @@ function Battle:update(keys, dt)
                 end
             end
             if nx then
-                self:moveCursor(nx, ny)
-                local stack_n = 2
-                if sk.type == ASSIST then stack_n = 5 end
-                local stk = self.stack[stack_n]
-                if nx > c[1] then
-                    stk['sp_dir'] =  RIGHT
-                elseif nx < c[1] then
-                    stk['sp_dir'] =  LEFT
-                else
-                    if stack_n == 2 then
-                        stk['sp_dir'] = sp.dir
+                local change = self:moveCursor(nx, ny)
+                if change then
+                    local stack_n = 2
+                    if sk.type == ASSIST then stack_n = 5 end
+                    local stk = self.stack[stack_n]
+                    if nx > c[1] then
+                        stk['sp_dir'] =  RIGHT
+                    elseif nx < c[1] then
+                        stk['sp_dir'] =  LEFT
                     else
-                        if stk['cursor'][1] < self.stack[2]['cursor'][1] then
-                            stk['sp_dir'] = LEFT
-                        elseif stk['cursor'][1] > self.stack[2]['cursor'][1] then
-                            stk['sp_dir'] = RIGHT
+                        if stack_n == 2 then
+                            stk['sp_dir'] = sp.dir
                         else
-                            stk['sp_dir'] = self.stack[2]['sp_dir']
+                            if stk['cursor'][1] < self.stack[2]['cursor'][1] then
+                                stk['sp_dir'] = LEFT
+                            elseif stk['cursor'][1] > self.stack[2]['cursor'][1] then
+                                stk['sp_dir'] = RIGHT
+                            else
+                                stk['sp_dir'] = self.stack[2]['sp_dir']
+                            end
                         end
                     end
                 end
@@ -2396,21 +2399,25 @@ function Battle:renderStatus(x, y, statuses)
     -- Render icons
     local y_off = ite(self.pulse, 0, 1)
     if buffed then
+        love.graphics.setColor(0.5, 0.5, 0.5, 1)
         love.graphics.draw(icon_texture, status_icons[1],
             x + TILE_WIDTH - 8, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if debuffed then
+        love.graphics.setColor(0.5, 0.5, 0.5, 1)
         love.graphics.draw(icon_texture, status_icons[2],
             x + TILE_WIDTH - 16, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if augmented then
+        love.graphics.setColor(0.8, 0.8, 0.8, 1)
         love.graphics.draw(icon_texture, status_icons[4],
             x + 8, y + y_off, 0, 1, 1, 0, 0
         )
     end
     if impaired then
+        love.graphics.setColor(0.5, 0.5, 0.5, 1)
         love.graphics.draw(icon_texture, status_icons[3],
             x, y + y_off, 0, 1, 1, 0, 0
         )

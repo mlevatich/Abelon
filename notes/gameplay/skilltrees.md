@@ -50,8 +50,6 @@ Ideas:
 #### Elaine
 
 - Apprentice: Spell: Galeforce: push a huge wall of enemies a few spaces away
-- Sniper: Weapon: Piercing Shot: diagonal line AOE.
-- Sniper: Weapon: Perfect Shot: Single target long ranged directional that pushes.
 - Hunter: Assist: ???:
 
 #### Lester

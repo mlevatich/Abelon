@@ -705,8 +705,8 @@ skills = {
         { { 'reaction', Scaling:new(0, 'affinity', 0.5) } }
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire',
-        "Inspire a distant ally with a courageous cry. Adds (Affinity * 0.5) \z
-         to ally's Force, Reaction, and Affinity.",
+        "Inspire an ally with a courageous cry. They gain (Affinity * 1.0) \z
+         Force and Affinity, and (Affinity * 0.5) Reaction.",
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 1 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { F, F, F, T, F, F, F },
@@ -718,9 +718,9 @@ skills = {
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'force',    Scaling:new(0, 'affinity', 0.5) },
-            { 'reaction', Scaling:new(0, 'affinity', 0.5) },
-            { 'affinity', Scaling:new(0, 'affinity', 0.5) }
+            { 'force',    Scaling:new(0, 'affinity', 1.0) },
+            { 'affinity', Scaling:new(0, 'affinity', 1.0) },
+            { 'reaction', Scaling:new(0, 'affinity', 0.5) }
         }
     ),
     ['confidence'] = Skill:new('confidence', 'Confidence',
@@ -837,7 +837,7 @@ skills = {
         ALLY, Scaling:new(0, 'affinity', -1.0)
     ),
     ['haste'] = Skill:new('haste', 'Haste',
-        "Kath raises the Agility of allies around him by 8.",
+        "Kath raises the Agility of allies around him by 4 for 2 turns.",
         'Cleric', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { F, F, T, F, F },
@@ -846,7 +846,7 @@ skills = {
           { F, F, T, F, F },
           { F, F, T, F, F } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'agility', Scaling:new(8) }, 1 } }
+        nil, { { { 'agility', Scaling:new(4) }, 2 } }
     ),
     ['storm_thrust'] = Skill:new('storm_thrust', 'Storm Thrust',
         "Kath launches a thrust powered by lightning, dealing (Force * 1.0) \z
@@ -984,39 +984,39 @@ skills = {
 
     -- ELAINE
     ['hunting_shot'] = Skill:new('hunting_shot', 'Hunting Shot',
-        "Elaine fires an arrow from close range as though hunting an animal, \z
-         dealing 16 Weapon damage.",
+        "Elaine shoots from close range as though hunting, \z
+         dealing 12 + (Force * 0.5) Weapon damage.",
         'Huntress', WEAPON, MANUAL, str_to_icon['force'],
-        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
+        { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F },
           { T, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(16)
+        ENEMY, Scaling:new(12, 'force', 0.5)
     ),
     ['lay_traps'] = Skill:new('lay_traps', 'Lay Traps',
         "Elaine anticipates foes in her path and sets traps to reduce their \z
-         Reaction by (Reaction * 1.0) for 1 turn.",
+         Reaction by (Reaction * 1.0) for 2 turn.",
         'Huntress', WEAPON, MANUAL, str_to_icon['reaction'],
-        { { 'Huntress', 1 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
+        { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
         { { F, F, F, F, F },
           { F, T, T, T, F },
           { F, T, T, T, F },
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, nil,
-        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.0) }, 1 } }
+        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.0) }, 2 } }
     ),
     ['butcher'] = Skill:new('butcher', 'Butcher',
         "Elaine expertly carves up an adjacent enemy with her hunting knife, \z
          dealing 30 Weapon damage.",
         'Huntress', WEAPON, MANUAL, str_to_icon['empty'],
-        { { 'Huntress', 3 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
+        { { 'Huntress', 4 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(30)
     ),
     ['precise_shot'] = Skill:new('precise_shot', 'Precise Shot',
         "Elaine takes careful aim to hit a faraway target with an arrow, \z
-         dealing (Force * 1.0) Weapon damage.",
+         dealing 2 + (Force * 1.0) Weapon damage.",
         'Sniper', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { F, F, T, F, F },
@@ -1024,7 +1024,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.0)
+        ENEMY, Scaling:new(2, 'force', 1.0)
     ),
     ['volley'] = Skill:new('volley', 'Volley',
         "Elaine rapidly fires arrows across the field to stagger foes, \z
@@ -1040,9 +1040,37 @@ skills = {
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 0.8)
     ),
+    ['piercing_arrow'] = Skill:new('piercing_arrow', 'Piercing Arrow',
+        "Elaine shoots with such strength as to pierce through enemies, \z
+         dealing (Force * 1.0) Weapon damage to all targets.",
+        'Sniper', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 3 } },
+        { { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, T },
+          { F, F, F, F, F, T, F },
+          { F, F, F, F, T, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+        ENEMY, Scaling:new(0, 'force', 1)
+    ),
+    ['deadeye'] = Skill:new('deadeye', 'Deadeye',
+        "Elaine aims an impossible shot after a heavy draw, \z
+         dealing (Force * 1.5) Weapon damage and pushing the target 1 tile.",
+        'Sniper', WEAPON, MANUAL, str_to_icon['force'],
+        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 4 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(0, 'force', 1.5)
+    ),
     ['observe'] = Skill:new('observe', 'Observe',
-        "Once per battle, Elaine picks an ally to learn from, permanently \z
-         gaining 1 point in their strongest attribute.",
+        "Once per battle, Elaine chooses an ally to learn from, permanently \z
+         gaining 1 point in their signature attribute.",
         'Apprentice', WEAPON, MANUAL, str_to_icon['empty'],
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, FREE_AIM(100), 0,
@@ -1052,10 +1080,14 @@ skills = {
             function(a, a_a, b, b_a, st)
                 best_attr = nil
                 hi = 0
-                for k,v in pairs(b.attributes) do
-                    if v > hi then
-                        hi = v
-                        best_attr = k
+                if b:getId() == 'kath' then
+                    best_attr = 'reaction'
+                else
+                    for k,v in pairs(b.attributes) do
+                        if v > hi then
+                            hi = v
+                            best_attr = k
+                        end
                     end
                 end
                 a.attributes[best_attr] = a.attributes[best_attr] + 1
@@ -1066,7 +1098,7 @@ skills = {
         "Elaine swiftly lays a magical hunting snare, reducing a nearby foe's \z
          Agility by 4 + (Agility * 0.5) for 1 turn.",
         'Huntress', SPELL, MANUAL, str_to_icon['agility'],
-        { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
+        { { 'Huntress', 3 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, F, F },
           { T, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 1,
@@ -1075,27 +1107,27 @@ skills = {
     ),
     ['ignea_arrowtips'] = Skill:new('ignea_arrowtips', 'Ignea Arrowtips',
         "Elaine fashions arrowtips from Ignea and charges them with magic, \z
-         increasing her Force by 2 + (Focus * 1.0) for 2 turns.",
+         increasing her Force by 2 + (Focus * 1.0) for 4 turns.",
         'Apprentice', SPELL, MANUAL, str_to_icon['focus'],
-        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 2 } }
+        nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 4 } }
     ),
     ['mimic'] = Skill:new('mimic', 'Mimic',
         "Elaine chooses any ally on the field and magically copies their \z
-         strongest attribute (excluding Focus or Endurance) for 2 turns.",
+         signature attribute for 4 turns.",
         'Apprentice', SPELL, MANUAL, str_to_icon['empty'],
-        { { 'Huntress', 1 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
-        { { T } }, FREE_AIM(100), 2,
+        { { 'Huntress', 1 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
+        { { T } }, FREE_AIM(100), 1,
         ALLY, nil,
         nil, nil -- TODO: change this
     ),
     ['exploding_shot'] = Skill:new('exploding_shot', 'Exploding Shot',
         "Elaine primes a chunk of Ignea to explode and ties it to an arrow, \z
-         dealing (Force * 1.0) Spell damage to all foes hit.",
+         dealing (Force * 1.2) Spell damage to all foes hit.",
         'Apprentice', SPELL, MANUAL, str_to_icon['force'],
-        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 1 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F },
@@ -1103,13 +1135,13 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
-        ENEMY, Scaling:new(0, 'force', 1.0)
+        ENEMY, Scaling:new(0, 'force', 1.2)
     ),
     ['seeking_arrow'] = Skill:new('seeking_arrow', 'Seeking Arrow',
-        "Elaine enchants an arrow to hunt down a target, firing at any foe in \z
-         eyesight to deal 20 + (Force * 0.5) Spell damage.",
+        "Elaine enchants an arrow to hunt down a target, firing at any foe \z
+         on the field to deal 20 + (Force * 0.5) Spell damage.",
         'Sniper', SPELL, MANUAL, str_to_icon['force'],
-        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 2 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 3 } },
         { { T } }, FREE_AIM(6), 3,
         ENEMY, Scaling:new(20, 'force', 0.5)
     ),
@@ -1117,7 +1149,7 @@ skills = {
         "Elaine surveys the field and how to navigate it. Allies on the \z
          assist share her knowledge and gain (Affinity * 0.5) Agility.",
         'Huntress', ASSIST, MANUAL, str_to_icon['affinity'],
-        { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'agility', Scaling:new(0, 'affinity', 0.5) } }
@@ -1126,7 +1158,7 @@ skills = {
         "Elaine builds a makeshift camouflaged shelter. The assisted ally \z
          will not be directly targeted by enemies.",
         'Huntress', ASSIST, MANUAL, str_to_icon['empty'],
-        { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
+        { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'special', 'hidden', BUFF } } -- TODO: implement hidden
@@ -1142,13 +1174,13 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'hidden', BUFF } } -- TODO: change this
+        { { 'special', 'harmony', BUFF } } -- TODO: change this
     ),
     ['flight'] = Skill:new('flight', 'Flight',
         "Elaine whips the wind into currents, letting allies fly. They gain \z
          (Affinity * 1.0) Agility and can move through foes.",
         'Apprentice', ASSIST, MANUAL, str_to_icon['affinity'],
-        { { 'Huntress', 0 }, { 'Apprentice', 4 }, { 'Sniper', 0 } },
+        { { 'Huntress', 2 }, { 'Apprentice', 4 }, { 'Sniper', 0 } },
         { { F, T, F },
           { T, F, T },
           { F, T, F } }, SELF_CAST_AIM, 4,
@@ -1162,7 +1194,7 @@ skills = {
         "Elaine extends her superior perception to those nearby, granting \z
          assisted allies 2 + (Affinity * 0.5) Reaction.",
         'Sniper', ASSIST, MANUAL, str_to_icon['affinity'],
-        { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 1 } },
         { { T, T, T, T, T },
           { T, F, F, F, T },
           { T, F, F, F, T },
@@ -1175,10 +1207,10 @@ skills = {
         "Elaine lays down a hail of arrows around an ally position, granting \z
          them the advantage and (Affinity * 0.5) Reaction and Force.",
         'Sniper', ASSIST, MANUAL, str_to_icon['affinity'],
-        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
+        { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
-          { F, F, F, F, F, F, F },
+          { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
