@@ -11,13 +11,14 @@ Bullets that reference a github issue should close the issue when committed.
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
 - Levelups tutorial
-- Nerf building high reaction and tanking enemies for gaining xp, re-balance bonus experience and turn limits
+- Use Elaine on Master
+- Nerf building high reaction and tanking enemies for gaining xp, re-balance bonus experience and turn limits. Consider: extra exp for getting a kill? Exp when allies benefit from your assists?
 
 - Make the lead-up to battle cooler, with pans and moving wolves
 - Clean up 1-2 scene
 
 - Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent battles
-- Test all skills
+- Test all skills, more balancing
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest

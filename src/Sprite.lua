@@ -323,6 +323,10 @@ function Sprite:mkLearnable(sk_id, sk_item)
             return HIGHLIGHT
         end
         sk_item.action = function(g)
+
+            if g.current_tutorial == "Experience and skill learning" then
+                g:endTutorial()
+            end
             self:learn(sk_id)
             local m = nil
             if g.player.open_menu then

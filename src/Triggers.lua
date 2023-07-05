@@ -38,13 +38,21 @@ scene_triggers = {
             function(x) return x < 47 end,
             function(y) return y < 15 end
         ),
-        ['close-tutorial1'] = mkAreaTrigger('1-1-close-tutorial1', 'south-forest',
+        ['end-tutorial1'] = mkAreaTrigger('1-1-close-tutorial-1', 'south-forest',
             function(x) return true end,
             function(y) return true end
         )
     },
     ['1-2'] = {
         ['1-2-battle'] = mkAreaTrigger('1-2-battle', 'west-forest',
+            function(x) return true end,
+            function(y) return true end
+        ),
+        ['end-tutorial-lvl'] = mkAreaTrigger('1-2-close-tutorial-lvl', 'south-forest',
+            function(x) return true end,
+            function(y) return true end
+        ),
+        ['end-tutorial-lvl'] = mkAreaTrigger('1-2-close-tutorial-lvl', 'north-forest',
             function(x) return true end,
             function(y) return true end
         )

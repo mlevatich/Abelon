@@ -768,7 +768,27 @@ s12['victory'] = {
         )
     },
     ['result'] = {
-        ['do'] = function(g) g:healAll() end
+        ['do'] = function(g) 
+            g:healAll()
+            local k = g.sprites['kath']
+            local a = g.sprites['abelon']
+            local e = g.sprites['elaine']
+            if k.level > 8 or a.level > 8 or e.level > 3 then
+                g:startTutorial("Experience and skill learning")
+            end
+        end
+    }
+}
+
+
+
+s12['close-tutorial-lvl'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:endTutorial()
+        end
     }
 }
 

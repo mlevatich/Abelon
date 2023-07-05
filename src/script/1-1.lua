@@ -27,7 +27,7 @@ s11['entry'] = {
 
 
 
-s11['close-tutorial1'] = {
+s11['close-tutorial-1'] = {
     ['ids'] = {},
     ['events'] = {},
     ['result'] = {
