@@ -32,7 +32,11 @@ function Sprite:initialize(id, game)
     self.id = id
 
     -- Parse data file and helpers
-    local data_file = 'Abelon/data/sprites/' .. self.id .. '.txt'
+    local file_id = self.id
+    if tonumber(self.id:sub(#self.id, #self.id)) then
+        file_id = self.id:sub(1, #self.id - 1)
+    end
+    local data_file = 'Abelon/data/sprites/' .. file_id .. '.txt'
     local data = readLines(data_file)
     local tobool = function(s) return s == 'yes' end
     local getSk = function(sk_id) return skills[sk_id] end
@@ -1355,7 +1359,7 @@ sprite_data = {
         ['w'] = 31,
         ['h'] = 31,
         ['animations'] = living,
-        ['n'] = 3
+        ['n'] = 4
     },
     {
         ['id'] = 'living_rock',

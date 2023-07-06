@@ -10,18 +10,18 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Add more wolves and panning to wolf den
-- Test all skills in wolf-den, more balancing
+- Need a stronger wolf to punch through reaction. Can use the sprites I already have. Just change the stats of the basic wolf so it has >31 hp on Normal, have first fight be all basic wolves, and then make alpha wolf crazy strong.
+- Test all skills in wolf-den, more balancing.
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
 - West forest more claustraphobic, adjust road.
 - add campsite, stone reliefs. Lester-down, Shanti-down, Kath-down (for sleeping)
-- Elaine-down, Elaine sprite, Elaine portrait, Elaine-idle, Elaine-walk, Elaine-getup
+- Elaine-idle, Elaine-walk, Elaine-down, Elaine-getup, Elaine portrait.
 
 - Implement 1-1, connect to 1-2 battle
 - Finish script 1-2
-- #69: Implement rest of 1-2 and empty start of 1-3
+- #69: Implement rest of 1-2 and barrier dialogue preventing going north
 - Add more optional content to 1-1 and 1-2. Ignea stones.
 
 - Gain experience only from dealing and taking damage (not from damage mitigated).

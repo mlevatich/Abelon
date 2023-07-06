@@ -40,7 +40,7 @@ s11['close-tutorial-1'] = {
 
 
 s11['battle'] = {
-    ['ids'] = {'abelon', 'alphawolf1'},
+    ['ids'] = {'abelon', 'wolf1'},
     ['events'] = {
         lookAt(1, 2),
         focus(2, 100),

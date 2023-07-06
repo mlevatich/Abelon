@@ -2,8 +2,8 @@
 
 TileOrigin: 37,9
 Allies: abelon:5,2
-Enemies: alphawolf1:2,2
-Order: alphawolf1
+Enemies: wolf1:2,2
+Order: wolf1
 Wincon: rout
 Losscon: death
 Turnlimits: 3,3,3

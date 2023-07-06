@@ -24,7 +24,8 @@ end
 function Battle:initialize(player, game, id)
 
     self.game = game
-    self.id = game.chapter_id .. ite(id, "-" .. id, "")
+    self.id = game.chapter_id
+    if id then self.id = self.id .. "-" .. id end
 
     -- Tracking state
     self.turn = 0

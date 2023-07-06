@@ -1,6 +1,6 @@
 // Sprite attributes
 
-Name: Alpha wolf
+Name: Wolf
 Ground: no
 Interactive: no
 Hitbox: 0,20,31,11

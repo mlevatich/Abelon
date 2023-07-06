@@ -205,7 +205,7 @@ before_wolves = {
     }),
 }
 s12['battle'] = {
-    ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'alphawolf1'},
+    ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'wolf4'},
     ['events'] = {
         blackout(),
         daytime(),

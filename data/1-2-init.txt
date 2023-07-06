@@ -8,16 +8,10 @@
 
 ~~south-forest Dying-Forest
 
-~alphawolf1 1 1 L
-~alphawolf2 1 1 L
-~wolf1 1 1 L
-~wolf2 1 1 L
-~wolf3 1 1 L
-
 ~~west-forest Dying-Forest
 
-abelon 52 6 L P
-~abelon 17 14 L P
+~abelon 52 6 L P
+abelon 17 14 L P
 ~elaine 54 5 L
 ~kath 50 8 L
 ~book 56 6 R
@@ -26,29 +20,23 @@ abelon 52 6 L P
 ~~north-forest Dying-Forest
 
 ~bloodstain2 3 40 R
+~alphawolf1 1 1 L
+~alphawolf2 1 1 L
+~wolf1 1 1 L
+~wolf2 1 1 L
+~wolf3 1 1 L
+~wolf4 1 1 L
 
 ->Day
 ->State saw-camp,carried-elaine
 ->Inventory medallion
-->Seen 1-2-battle
-->Party kath
-->Party elaine
-->elaine
-+Level 2
-+BonusAttrs force:1 affinity:1 focus:1
-->abelon
-+Exp 90
-->kath
-+Exp 90
-
-// EXAMPLE FAST-FORWARD
-// ->State saw-camp,carried-elaine
-// ->Seen 1-1-entry
-// ->Inventory journal
-// ->Party kath
-// ->abelon
-// +Impression 100
-// +Awareness 100
-// +Level 2
-// +Skills contempt
-// +BonusAttrs force:1 reaction:1
+//->Seen 1-2-battle
+//->Party kath
+//->Party elaine
+//->elaine
+//+Level 2
+//+BonusAttrs force:1 affinity:1 focus:1
+//->abelon
+//+Exp 90
+//->kath
+//+Exp 90
