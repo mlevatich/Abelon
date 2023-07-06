@@ -10,17 +10,8 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Gain experience only from dealing and taking damage (not from damage mitigated).
-- Gain a small fixed amount of experience for landing the killing blow.
-- Gain small fixed experience when allies benefit from your assist:
-    - Using an attack that scales with an assisted stat.
-    - Using an assist that scales with an assisted stat.
-    - Taking weapon damage on a reaction assist.
-- Re-balance bonus experience and turn limits.
-- Clean up 1-2 scene
-
-- Add optional battle after 1-2 battle to test balancing: Taking care of the wolf den to the west. Chapter-independent battles
-- Test all skills, more balancing
+- Add more wolves and panning to wolf den
+- Test all skills in wolf-den, more balancing
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
@@ -31,7 +22,15 @@ Bullets that reference a github issue should close the issue when committed.
 - Implement 1-1, connect to 1-2 battle
 - Finish script 1-2
 - #69: Implement rest of 1-2 and empty start of 1-3
-- Add more optional content to 1-1 and 1-2.
+- Add more optional content to 1-1 and 1-2. Ignea stones.
+
+- Gain experience only from dealing and taking damage (not from damage mitigated).
+- Gain a small fixed amount of experience for landing the killing blow.
+- Gain small fixed experience when allies benefit from your assist:
+    - Using an attack that scales with an assisted stat.
+    - Using an assist that scales with an assisted stat.
+    - Taking weapon damage on a reaction assist.
+- Re-balance bonus experience and turn limits.
 
 ## Game presentation, mini-release
 

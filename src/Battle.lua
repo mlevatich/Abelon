@@ -21,16 +21,17 @@ function GridSpace:initialize(sp)
     self.n_assists = 0
 end
 
-function Battle:initialize(player, game)
+function Battle:initialize(player, game, id)
 
     self.game = game
+    self.id = game.chapter_id .. ite(id, "-" .. id, "")
 
     -- Tracking state
     self.turn = 0
     self.seen = {}
 
     -- Data file
-    local data_file = 'Abelon/data/battles/' .. self:getId() .. '.txt'
+    local data_file = 'Abelon/data/battles/' .. self.id .. '.txt'
     local data = readLines(data_file)
 
     -- Get base tile of the top left of the grid
@@ -212,10 +213,6 @@ function Battle:adjustDifficultyFrom(old)
             for i = 1, new - 1 do m:hover(DOWN) end
         end
     end
-end
-
-function Battle:getId()
-    return self.game.chapter_id
 end
 
 function Battle:getCamera()
@@ -438,13 +435,13 @@ function Battle:closeMenu()
 end
 
 function Battle:checkTriggers(phase, doneAction)
-    local triggers = battle_triggers[self:getId()][phase]
+    local triggers = battle_triggers[self.id][phase]
     for k, v in pairs(triggers) do
         if not self.seen[k] then
             local scene_id = v(self)
             if scene_id then
                 self.seen[k] = true
-                self:suspend(self:getId() .. '-' .. scene_id, doneAction)
+                self:suspend(self.id .. '-' .. scene_id, doneAction)
                 return true
             end
         end
@@ -544,7 +541,7 @@ function Battle:checkWinLose()
         local defeat_scene = self.lose[i][2](self)
         if defeat_scene then
             -- TODO: Change to defeat music
-            local scene_id = self:getId() .. '-' .. defeat_scene .. '-defeat'
+            local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
             self:suspend(scene_id, function()
                 self.stack = {}
                 self.battle_cam_x = self.game.camera_x
@@ -642,7 +639,7 @@ function Battle:openVictoryMenu()
                 })
             else
                 self:restoreIgnea()
-                self.game:launchScene(self:getId() .. '-victory')
+                self.game:launchScene(self.id .. '-victory')
                 self.game:startMapMusic()
                 self.game.battle = nil
             end

@@ -520,12 +520,15 @@ s12['ally-turn-3'] = {
                 focus(2, 200),
                 say(2, 1, false,
                     "Look at that, Abelon! She's only just woken up, but she \z
-                     has a knight's courage. Lucky us."
+                     has a knight's courage. Lucky us. What's your name, miss?"
                 ),
+                introduce('Elaine'),
+                say(3, 3, false, "...Elaine."),
                 wait(0.5),
+                say(3, 3, false, "Wait, 'Abelon'? You just called him Abelon-"),
                 say(2, 3, false,
-                    "Listen to me. Shoot them while they're circling one of us, \z
-                     and go for the kill, or you'll risk drawing their \z
+                    "Listen to me, Elaine. Shoot them while they're circling \z
+                     one of us, and go for the kill, or you'll risk drawing their \z
                      attention to you. We can parry their fangs - you can't."
                 ),
                 focus(3, 200),
@@ -821,6 +824,7 @@ s12['close-tutorial-lvl'] = {
 s12['kath'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
+        daytime(),
         face(1, 2),
         say(2, 1, false,
             "We've done it. Now it's time to find Lester and Shanti."
@@ -872,4 +876,183 @@ s12['book-callback'] = {
         )
     },
     ['result'] = {}
+}
+
+
+
+s12['wolf-den-battle'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'wolf1', 'wolf2', 'wolf3', 'alphawolf'},
+    ['events'] = {
+        focus(1, 200),
+        walk(false, 1, 8, 17, 'walk'),
+        teleport(2, 24, 15),
+        teleport(3, 23, 14),
+        walk(false, 2, 8, 15, 'walk1'),
+        walk(false, 3, 9, 14, 'walk2'),
+        waitForEvent('walk'),
+        say(2, 1, false,
+            "Abelon, what have you found over here? I didn't realize there was \z
+             anything of interest further west from our camp."
+        ),
+        waitForText(),
+        waitForEvent('walk1'),
+        waitForEvent('walk2'),
+        wait(0.5),
+        lookDir(4, RIGHT),
+        lookDir(5, RIGHT),
+        lookDir(6, RIGHT),
+        lookDir(7, RIGHT),
+        teleport(6, 3, 16),
+        wait(0.5),
+        teleport(7, 3, 15),
+        wait(0.5),
+        teleport(4, 8, 9),
+        wait(0.5),
+        teleport(5, 8, 26),
+        wait(1),
+        say(3, 2, false,
+            "...Eep..."
+        ),
+        walk(false, 2, 7, 16, 'walk'),
+        say(2, 3, false,
+            "Ah. This must be the den of the wolf pack that's been after us. \z
+             Doing away with them now will allow us to focus on finding the monastery."
+        ),
+        waitForEvent('walk'),
+        walk(false, 3, 8, 15, 'walk'),
+        wait(0.5),
+        say(2, 3, false,
+            "Elaine, are you ready?"
+        ),
+        waitForEvent('walk'),
+        say(3, 3, false,
+            "Ready as I'll ever be..."
+        )
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g:launchBattle('wolf-den')
+        end
+    }
+}
+s12['wolf-den-demonic-spell'] = {
+    ['ids'] = {'kath', 'abelon'},
+    ['events'] = {
+        focus(1, 170),
+        face(1, 2),
+        say(1, 3, true,
+            "By Ignus, what the hell did you just do, Abelon? I've \z
+             never seen such unbelievable magic!"
+        ),
+        choice({
+            {
+                ['response'] = "You haven't?",
+                ['events'] = {
+                    say(1, 1, false,
+                        "No, I haven't, in all the countless battles I've \z
+                         fought by your side. You aren't really trying to tell \z
+                         me you've been conjuring hellfire all this time and I \z
+                         just wasn't paying attention!"
+                    )
+                },
+                ['result'] = {
+                    ['awareness'] = {1}
+                }
+            },
+            {
+                ['response'] = "A useful spell I recently learned",
+                ['events'] = {
+                    wait(1),
+                    say(1, 2, false,
+                        "...You have a habit of understating things somewhat."
+                    )
+                },
+                ['result'] = {}
+            }
+        }),
+        wait(0.5),
+        say(1, 1, false,
+            "Well, I insist you teach me that incantation when we return to town."
+        ),
+        say(1, 1, false,
+            "Oh, but don't waste your entire supply of Ignea on a mere few \z
+             wolves. I expect we'll face many more battles before we return \z
+             to Ebonach, and I can tell that was no cheap cantrip."
+        )
+    },
+    ['result'] = {
+        ['state'] = 'kath-saw-spell'
+    }
+}
+s12['wolf-den-kath-defeat'] = {
+    ['ids'] = {'kath', 'abelon'},
+    ['events'] = {
+        focus(1, 170),
+        wait(0.5),
+        lookAt(2, 1),
+        say(1, 2, false,
+            "Urgh. Damn, hurts........ But I refuse... to........"
+        )
+    },
+    ['result'] = {}
+}
+s12['wolf-den-abelon-defeat'] = {
+    ['ids'] = {'kath', 'abelon'},
+    ['events'] = {
+        focus(1, 170),
+        wait(0.5),
+        lookAt(1, 2),
+        say(1, 2, false,
+            "Abelon, no! NO!"
+        )
+    },
+    ['result'] = {}
+}
+s12['wolf-den-elaine-defeat'] = {
+    ['ids'] = {'kath', 'elaine'},
+    ['events'] = {
+        focus(1, 170),
+        wait(0.5),
+        lookAt(1, 2),
+        say(2, 2, false,
+            "Ahhh!"
+        ),
+        say(1, 2, false,
+            "Elaine, no! Curses!"
+        )
+    },
+    ['result'] = {}
+}
+s12['wolf-den-turnlimit-defeat'] = {
+    ['ids'] = {'kath', 'abelon'},
+    ['events'] = {
+        focus(1, 170),
+        wait(0.5),
+        lookAt(2, 1),
+        say(1, 2, false,
+            "We're losing daylight, and we've not even found the ruins we're \z
+             looking for. And the longer we're out here, the more monsters will \z
+             arrive... To say nothing of how Lester and Shanti fare..."
+        ),
+        say(1, 2, false,
+            "...could it be this expedition has already failed?"
+        )
+    },
+    ['result'] = {}
+}
+s12['wolf-den-victory'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g) 
+            g:healAll()
+            local k = g.sprites['kath']
+            local a = g.sprites['abelon']
+            local e = g.sprites['elaine']
+            local seen = find(g.player.old_tutorials, "Experience and skill learning")
+            if k.level > 8 or a.level > 8 or e.level > 3 then
+                g:startTutorial("Experience and skill learning")
+            end
+        end
+    }
 }

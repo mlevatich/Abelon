@@ -55,6 +55,10 @@ scene_triggers = {
         ['end-tutorial-lvl'] = mkAreaTrigger('1-2-close-tutorial-lvl', 'north-forest',
             function(x) return true end,
             function(y) return true end
+        ),
+        ['wolf-den-battle'] = mkAreaTrigger('1-2-wolf-den-battle', 'west-forest',
+            function(x) return x < 12 end,
+            function(y) return true end
         )
     }
 }
@@ -159,6 +163,21 @@ battle_triggers = {
             ['end-tutorial4'] = function(b)
                 if b.game.current_tutorial == "Battle: Reminder" then
                     return 'close-tutorial-4'
+                end
+                return false
+            end
+        }
+    },
+    ['1-2-wolf-den'] = {
+        [SELECT] = {},
+        [ALLY] = {},
+        [ENEMY] = {},
+        [END_ACTION] = {
+            ['demonic-spell'] = function(b)
+                local unseen = not b.game.state['kath-saw-spell']
+                local atk = b.status['abelon']['attack']
+                if unseen and atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
+                    return 'wolf-den-demonic-spell'
                 end
                 return false
             end

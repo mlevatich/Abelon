@@ -1,0 +1,32 @@
+// Battle stats
+
+TileOrigin: 2,8
+Allies: abelon:6,9 kath:5,8 elaine:6,7
+Enemies: wolf1:6,1 wolf2:6,18 alphawolf:1,7 wolf3:1,8
+Order: wolf1,wolf2,wolf3,alphawolf
+Wincon: rout
+Losscon: death
+Turnlimits: 9,8,7
+Music: A-Single-Shard-Of-Ignea
+
+// Battle grid
+
+Dimensions: 6,18
+FFFFFT
+FFFFTT
+FFFTTT
+FFTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+TTTTTT
+FTTTTT
+FFTTTT
+FFFFFT

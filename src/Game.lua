@@ -200,6 +200,13 @@ function Game:loadFresh()
                     self.player:introduce(sp:getId())
                     self.player:joinParty(sp)
                 end
+            elseif fname == 'Day' then
+                for k,v in pairs(self.maps) do
+                    if k == 'east-forest' or k == 'west-forest' 
+                    or k == 'south-forest' or k == 'north-forest' then
+                        v.lit = 0.0
+                    end
+                end
             else
                 sprite_ff = self.sprites[fname]
             end
@@ -222,6 +229,8 @@ function Game:loadFresh()
                 end
                 sp.health = sp.health + (lvls * 2)
                 sp.ignea = sp.ignea + lvls
+            elseif fname == 'Exp' then
+                sp.exp = tonumber(vals[1])
             elseif fname == 'Skills' then
                 for i=1, #vals do
                     local known = false
@@ -364,9 +373,9 @@ function Game:flash(msg, rate)
     self.flash_msg = msg
 end
 
-function Game:launchBattle()
+function Game:launchBattle(id)
     self.current_scene = nil
-    self.battle = Battle:new(self.player, self)
+    self.battle = Battle:new(self.player, self, id)
     self:saveBattle()
     self.battle:openBattleStartMenu()
 end

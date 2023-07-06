@@ -10,7 +10,7 @@ Awareness: 100
 Discard: no
 Present:
 Level: 8
-Attributes: endurance:13 focus:11 force:17 affinity:4 reaction:2 agility:12
+Attributes: endurance:13 focus:11 force:17 affinity:4 reaction:2 agility:13
 Skilltrees: Demon:conflagration,clutches,contempt,siphon,crucible Veteran:guard_blindspot,trust,inspire,confidence,flank,gambit Executioner:sever,punish,judgement,pursuit,execute
 Skills: sever,guard_blindspot,trust,punish,inspire,conflagration,clutches,confidence
 Description: The knight Abelon. EOS
