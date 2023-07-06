@@ -30,13 +30,14 @@ abelon 17 14 L P
 ->Day
 ->State saw-camp,carried-elaine
 ->Inventory medallion
-//->Seen 1-2-battle
-//->Party kath
-//->Party elaine
-//->elaine
-//+Level 2
-//+BonusAttrs force:1 affinity:1 focus:1
-//->abelon
-//+Exp 90
-//->kath
-//+Exp 90
+->abelon
+->Seen 1-2-battle
+->Party kath
+->Party elaine
+->elaine
++Level 2
++BonusAttrs force:2 agility:1
+->abelon
++Exp 90
+->kath
++Exp 90

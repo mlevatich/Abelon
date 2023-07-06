@@ -64,7 +64,8 @@ function Battle:initialize(player, game, id)
     )
     self.n_allies = 0
     for i = 1, #self.participants do
-        if self:isAlly(self.participants[i]) then
+        local p = self.participants[i]
+        if self:isAlly(p) then
             self.n_allies = self.n_allies + 1
         end
     end
@@ -564,23 +565,29 @@ function Battle:checkWinLose()
     return false
 end
 
-function Battle:restoreIgnea()
+-- After battle is over
+function Battle:cleanupBattle()
 
+    -- Restore ignea, health, and stats to all participants
     -- Ignea is restored by 0% on master, 25% on adept, 50% on normal
-    local factor = 0.0
-    if self.game.difficulty == ADEPT then
-        factor = 0.25
-    elseif self.game.difficulty == NORMAL then
-        factor = 0.5
-    end
-
-    -- Restore to all allied participants
+    local ign_mul = 0.75 - (self.game.difficulty * 0.25)
     for i = 1, #self.participants do
         local sp = self.participants[i]
+        local max_ign = sp.attributes['focus']
         if self:isAlly(sp) then
-            local max_ign = sp.attributes['focus']
-            sp.ignea = math.min(sp.ignea + math.floor(max_ign * factor), max_ign)
+            sp.ignea = math.min(sp.ignea + math.floor(max_ign * ign_mul), max_ign)
+        else
+            sp.ignea = max_ign
+            local factor = 2 * (MASTER - self.game.difficulty)
+            local attrs = sp.attributes
+            local adjust = { 'endurance', 'force', 'reaction' }
+            for j = 1, #adjust do
+                local real = ite(adjust[j] == 'endurance', factor / 2, factor)
+                attrs[adjust[j]] = attrs[adjust[j]] + real
+            end
+            sp:changeBehavior('idle')
         end
+        sp.health = sp.attributes['endurance'] * 2
     end
 end
 
@@ -594,7 +601,11 @@ function Battle:awardBonusExp()
         local sp = self.participants[i]
         if self:isAlly(sp) then
             local lvlups = sp:gainExp(bexp)
-            if lvlups > 0 then self.levelup_queue[sp:getId()] = lvlups end
+            if lvlups > 0 then
+                local lq = self.levelup_queue
+                if not lq[sp:getId()] then lq[sp:getId()] = 0 end
+                lq[sp:getId()] = lq[sp:getId()] + lvlups
+            end
         end
     end
     return bexp
@@ -639,7 +650,7 @@ function Battle:openVictoryMenu()
                     ['views'] = {}
                 })
             else
-                self:restoreIgnea()
+                self:cleanupBattle()
                 self.game:launchScene(self.id .. '-victory')
                 self.game:startMapMusic()
                 self.game.battle = nil
@@ -698,7 +709,7 @@ function Battle:openAttackMenu()
     local sp = self:getSprite()
     local atk_loc = self:getCursor()
     local loc = { atk_loc[2], atk_loc[1] }
-    local attrs = self:getTmpAttributes(sp, nil, loc)
+    local attrs, _ = self:getTmpAttributes(sp, nil, loc)
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s attack", nil, function(c)
             self:push(self:stackBubble())
@@ -736,9 +747,10 @@ function Battle:openAssistMenu()
 end
 
 function Battle:openAllyMenu(sp)
+    local tmp_attrs, _ = self:getTmpAttributes(sp)
     local attrs = MenuItem:new('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
-        ['elements'] = sp:buildAttributeBox(self:getTmpAttributes(sp)),
+        ['elements'] = sp:buildAttributeBox(tmp_attrs),
         ['w'] = HBOX_WIDTH
     })
     local sks = sp:mkSkillsMenu(true, false)
@@ -751,7 +763,7 @@ function Battle:openEnemyMenu(sp)
         ['elements'] = self:buildReadyingBox(sp),
         ['w'] = HBOX_WIDTH
     })
-    local attrs = self:getTmpAttributes(sp)
+    local attrs, _ = self:getTmpAttributes(sp)
     local skills = sp:mkSkillsMenu(false, true, attrs, nil, nil, 380)
     local opts = { skills, readying }
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
@@ -1220,7 +1232,7 @@ function Battle:dryrunAttributes(standing, other)
         end
     end
     local loc = { standing[2], standing[1] }
-    local attrs = self:getTmpAttributes(sp, eff, loc)
+    local attrs, _ = self:getTmpAttributes(sp, eff, loc)
     return attrs, hp, ign
 end
 
@@ -1341,14 +1353,11 @@ function Battle:playAction()
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
         return sp:skillBehaviorGeneric(function()
-            local moved, hurt, dead, lvlups, expg = self:useAttack(sp,
+            local moved, hurt, dead, exp_gained = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
-            exp = expg
+            exp = exp_gained
             sp.ignea = sp.ignea - attack.cost
-            for k, v in pairs(lvlups) do
-                if lvlups[k] > 0 then self.levelup_queue[k] = v end
-            end
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do
                 any_displaced = true
@@ -1396,19 +1405,6 @@ function Battle:playAction()
         end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy)
     end)
 
-    table.insert(seq, function(d)
-        for t_id,exp_t in pairs(exp) do
-            local t = self.status[t_id]['sp']
-            if self:isAlly(t) and t ~= sp then
-                local y, x = self:findSprite(t)
-                if exp_t > 0 then
-                    table.insert(self.render_exp, { x, y, exp_t, 2 })
-                end
-            end
-        end
-        return sp:waitBehaviorGeneric(d, 'combat', 0.05)
-    end)
-
     -- If a sprite moved or died, wait a moment before continuing
     local dry = self:dryrunAttack()
     if dry then
@@ -1442,7 +1438,18 @@ function Battle:playAction()
 
                 -- Get the buffs this assist will confer, based on
                 -- the sprite's attributes
-                local buffs = assist:use(self:getTmpAttributes(sp))
+                local attrs, helpers = self:getTmpAttributes(sp)
+                local buffs = assist:use(attrs, sp)
+
+                -- Each buff owner with an EXP_TAG_ASSIST buff 
+                -- gets EXP_FOR_ASSIST
+                for owner_id,tags in pairs(helpers) do
+                    if tags[EXP_TAG_ASSIST] then
+                        if owner_id ~= sp:getId() then
+                            exp[owner_id] = EXP_FOR_ASSIST
+                        end
+                    end
+                end
 
                 -- Put the buffs on the grid
                 local g = self.grid[t[i][1]][t[i][2]]
@@ -1457,19 +1464,29 @@ function Battle:playAction()
 
     -- Register behavior sequence with sprite
     sp:behaviorSequence(seq, function()
-            self.action_in_progress = nil
-            self.skill_in_use = nil
 
-            -- Wait until this point to gain experience from attack,
-            -- so that level up does not affect assist stats
-            if exp[sp:getId()] and exp[sp:getId()] > 0 and self:isAlly(sp) then 
-                sp:gainExp(exp[sp:getId()])
-                local y, x = self:findSprite(sp)
-                table.insert(self.render_exp, { x, y, exp[sp:getId()], 2 })
+        -- Set action finished
+        self.action_in_progress = nil
+        self.skill_in_use = nil
+
+        -- Everyone gains experience
+        for sp_id, e in pairs(exp) do
+            local s = self.status[sp_id]['sp']
+            if self:isAlly(s) and e > 0 then
+
+                -- Render experience gained
+                local y, x = self:findSprite(s)
+                table.insert(self.render_exp, { x, y, e, 2 })
+
+                -- Gain experience and queue levelups
+                local lvls = s:gainExp(e)
+                if lvls > 0 then self.levelup_queue[sp_id] = lvls end
             end
-            sp:changeBehavior('battle')
         end
-    )
+
+        -- Back to battle
+        sp:changeBehavior('battle')
+    end)
 
     -- Process other battle results of actions
     c_sp[1] = c_move2[1]
@@ -1930,7 +1947,7 @@ function Battle:planTarget(e, plan)
         -- Target whichever sprite poses the biggest threat
         local max_attrs = 0
         for i = 1, #tgts do
-            local attrs = self:getTmpAttributes(tgts[i]['sp'])
+            local attrs, _ = self:getTmpAttributes(tgts[i]['sp'])
             local sum = 0
             for _,v in pairs(attrs) do sum = sum + v end
             if sum >= max_attrs then
@@ -2017,7 +2034,8 @@ function Battle:mkInitialPlan(e, sps)
     -- Preemptively get shortest paths for the grid, and enemy movement
     local y, x = self:findSprite(e)
     local paths_dist, paths_prev = e:djikstra(self.grid, { y, x })
-    local movement = math.floor(self:getTmpAttributes(e)['agility'] / 4)
+    local attrs, _ = self:getTmpAttributes(e)
+    local movement = math.floor(attrs['agility'] / 4)
 
     -- Compute ALL movement options!
     local opts = {}

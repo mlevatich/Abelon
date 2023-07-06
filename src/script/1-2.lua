@@ -795,8 +795,7 @@ s12['victory'] = {
         )
     },
     ['result'] = {
-        ['do'] = function(g) 
-            g:healAll()
+        ['do'] = function(g)
             local k = g.sprites['kath']
             local a = g.sprites['abelon']
             local e = g.sprites['elaine']
@@ -1051,8 +1050,7 @@ s12['wolf-den-victory'] = {
     ['ids'] = {},
     ['events'] = {},
     ['result'] = {
-        ['do'] = function(g) 
-            g:healAll()
+        ['do'] = function(g)
             local k = g.sprites['kath']
             local a = g.sprites['abelon']
             local e = g.sprites['elaine']

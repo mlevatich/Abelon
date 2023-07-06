@@ -10,7 +10,9 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Test all skills in wolf-den, more balancing.
+- Fix bug: wolf3 not spawning into wolf den
+- Experience for helper if moving off an agility assist
+- Test all skills in wolf-den, more balancing
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
@@ -23,12 +25,7 @@ Bullets that reference a github issue should close the issue when committed.
 - #69: Implement rest of 1-2 and barrier dialogue preventing going north
 - Add more optional content to 1-1 and 1-2. Ignea stones.
 
-- Rework exp gain:
-    - gain +5xp when an ally is attacked on your reaction assist or other defense mod assist (e.g. guardian angel).
-    - gain +5xp when an ally deals damage on your force or other damage mod assist (e.g. bleed vitality).
-    - gain +5xp when an ally moves off of your agility assist.
-
-## Game presentation, mini-release
+## Game presentation
 
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-entry-exit, Abelon-combat-idle, Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.
 - Two mostly identical wolf sprites, Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run).

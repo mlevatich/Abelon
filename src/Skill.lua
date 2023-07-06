@@ -13,10 +13,12 @@ end
 
 Buff = class('Buff')
 
-function Buff:initialize(attr, val, type)
-    self.attr = attr
-    self.val  = val
-    self.type = type
+function Buff:initialize(attr, val, ty, owner, xp_tags)
+    self.attr    = attr
+    self.val     = val
+    self.type    = ty
+    self.owner   = owner
+    self.xp_tags = ite(xp_tags ~= nil, xp_tags, {})
 end
 
 function Buff:toStr()
@@ -41,7 +43,7 @@ Skill = class('Skill')
 
 function Skill:initialize(id, n, desc, ti, st, prio, si, tr, r, at, c,
                           affects, scaling, sp_effects, ts_effects, ts_displace,
-                          modifiers, buff_templates)
+                          modifiers, buff_templates, owner_exp_when)
 
     -- Identifying info
     self.id           = id
@@ -73,10 +75,11 @@ function Skill:initialize(id, n, desc, ti, st, prio, si, tr, r, at, c,
     self.ts_displace = ite(ts_displace, ts_displace, {})
     self.modifiers = ite(modifiers, modifiers, {})
     self.buff_templates = buff_templates
+    self.owner_exp_when = owner_exp_when
 end
 
 function Skill:use(a, b, c, d, e, f, g, h)
-    if self.type == ASSIST then return self:assist(a)
+    if self.type == ASSIST then return self:assist(a, b)
     else                        return self:attack(a, b, c, d, e, f, g, h)
     end
 end
@@ -88,8 +91,13 @@ function Skill:hits(caster, target, t_team)
         or (caster == target and self.modifiers['self'])
 end
 
-function Skill:assist(attrs)
-    return mapf(function(b) return mkBuff(attrs, b) end, self.buff_templates)
+function Skill:assist(attrs, sp)
+    local buffs = {}
+    for i = 1, #self.buff_templates do
+        local exp_tag = ite(i == 1, self.owner_exp_when, {})
+        table.insert(buffs, mkBuff(attrs, self.buff_templates[i], sp, exp_tag))
+    end
+    return buffs
 end
 
 function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dryrun)
@@ -115,7 +123,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     -- Temporary attributes and special effects for the caster
     local sp_team = status[sp:getId()]['team']
     local sp_stat = status[sp:getId()]['effects']
-    local sp_tmp_attrs = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
+    local sp_tmp_attrs, sp_helpers = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
 
     -- Affect targets
     local dryrun_res = {}
@@ -129,7 +137,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         local t_team = status[t:getId()]['team']
         local t_stat = status[t:getId()]['effects']
         local t_ass = ts_assists[i]
-        local t_tmp_attrs = mkTmpAttrs(t.attributes, t_stat, t_ass)
+        local t_tmp_attrs, t_helpers = mkTmpAttrs(t.attributes, t_stat, t_ass)
 
         -- If attacker is an enemy and target has forbearance, the target
         -- switches to Kath
@@ -140,7 +148,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
             t = s_kath['sp']
             t_stat = s_kath['effects']
             t_ass = grid[loc[2]][loc[1]].assists
-            t_tmp_attrs = mkTmpAttrs(t.attributes, t_stat, t_ass)
+            t_tmp_attrs, t_helpers = mkTmpAttrs(t.attributes, t_stat, t_ass)
         end
 
         -- Only hit targets passing the team filter
@@ -197,7 +205,18 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     -- Allies gain exp for damage dealt to enemies
                     -- and half exp for healing dealt to allies
                     if sp_team == ALLY and t_team == ENEMY and dealt > 0 then
-                        exp_gain[sp:getId()] = exp_gain[sp:getId()] + dealt
+                        local xp = math.floor(dealt * EXP_DMG_RATIO)
+                        exp_gain[sp:getId()] = exp_gain[sp:getId()] + xp
+
+                        -- Each buff owner with an EXP_TAG_ATTACK buff 
+                        -- gets EXP_FOR_ASSIST
+                        for owner_id,tags in pairs(sp_helpers) do
+                            if tags[EXP_TAG_ATTACK] then
+                                if owner_id ~= sp:getId() then
+                                    exp_gain[owner_id] = EXP_FOR_ASSIST
+                                end
+                            end
+                        end
                     elseif sp_team == ALLY and t_team == ALLY and dealt < 0 then
                         local xp = math.floor(abs(dealt) * EXP_HEAL_RATIO)
                         exp_gain[sp:getId()] = exp_gain[sp:getId()] + xp
@@ -219,18 +238,25 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
                     -- If the target is an ally hit by an enemy and didn't die,
                     -- gain exp for getting hit
+                    -- Assisting allies gain xp if one of their assists has 
+                    -- tag RECV
                     if not dryrun and sp_team == ENEMY and t_team == ALLY
                     and t.health > 0
                     then
-                        -- Exp
+                        -- Exp for taking damage
                         local tid = t:getId()
                         if not exp_gain[tid] then exp_gain[tid] = 0 end
                         exp_gain[tid] = exp_gain[tid] + EXP_ON_ATTACKED
 
-                        -- Levelups
-                        local lvls = t:gainExp(EXP_ON_ATTACKED)
-                        if not lvlups[tid] then lvlups[tid] = 0 end
-                        lvlups[tid] = lvlups[tid] + lvls
+                        -- Each buff owner with an EXP_TAG_RECV buff 
+                        -- gets EXP_FOR_ASSIST
+                        for owner_id,tags in pairs(t_helpers) do
+                            if tags[EXP_TAG_RECV] then
+                                if owner_id ~= tid then
+                                    exp_gain[owner_id] = EXP_FOR_ASSIST
+                                end
+                            end
+                        end
                     end
                 end
 
@@ -362,16 +388,14 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
     end
 
-    if not dryrun then
-        -- If the attacker is an ally, record exp gained
-        if sp_team == ALLY then
-            exp_gain[sp:getId()] = exp_gain[sp:getId()] + status_xp
-            local _, levels = sp:computeLevels(exp_gain[sp:getId()])
-            lvlups[sp:getId()] = levels
-        end
+    -- If the attacker is an ally, record exp gained
+    if sp_team == ALLY then
+        exp_gain[sp:getId()] = exp_gain[sp:getId()] + status_xp
+    end
 
-        -- Return which targets were hurt/killed
-        return moved, hurt, dead, lvlups, exp_gain
+    if not dryrun then
+        -- Return which targets were hurt/killed, and exp gained
+        return moved, hurt, dead, exp_gain
     else
         return dryrun_res
     end
@@ -483,9 +507,20 @@ end
 -- effects and assists on the sprite
 function mkTmpAttrs(bases, effects, assists)
 
-    -- Retrieve buffs
+    -- Retrieve buffs and collect buff owners (for xp gain)
     local buffs = {}
-    for i = 1, #assists do table.insert(buffs, assists[i]) end
+    local helpers = {}
+    for i = 1, #assists do
+        local a = assists[i]
+        table.insert(buffs, a)
+        for j = 1, #a.xp_tags do
+            local tag = a.xp_tags[j]
+            if not helpers[a.owner:getId()] then
+                helpers[a.owner:getId()] = {}
+            end
+            helpers[a.owner:getId()][tag] = true
+        end
+    end
     for i = 1, #effects do table.insert(buffs, effects[i].buff) end
 
     -- Make attrs
@@ -502,17 +537,18 @@ function mkTmpAttrs(bases, effects, assists)
     for k,v in pairs(tmp_attrs) do
         tmp_attrs[k] = math.max(0, tmp_attrs[k])
     end
-    return tmp_attrs
+    return tmp_attrs, helpers
 end
 
 -- Create a buff, given an attribute set, the buffed stat, and buff scaling
-function mkBuff(attrs, template)
+function mkBuff(attrs, template, sp, exp_tag)
     if template[1] == 'special' then
-        return Buff:new(unpack(template))
+        return Buff:new(template[1], template[2], template[3], sp, exp_tag)
     else
         local s = template[2]
-        local tp = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF)
-        return Buff:new(template[1], s.base + math.floor(attrs[s.attr] * s.mul), tp)
+        local ty = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF)
+        local val = s.base + math.floor(attrs[s.attr] * s.mul)
+        return Buff:new(template[1], val, ty, sp, exp_tag)
     end
 end
 
@@ -705,7 +741,7 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(0, 'affinity', 0.5) } }
+        { { 'reaction', Scaling:new(0, 'affinity', 0.5) } }, { EXP_TAG_RECV }
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire',
         "Inspire an ally with a courageous cry. They gain (Affinity * 1.0) \z
@@ -724,11 +760,11 @@ skills = {
             { 'force',    Scaling:new(0, 'affinity', 1.0) },
             { 'affinity', Scaling:new(0, 'affinity', 1.0) },
             { 'reaction', Scaling:new(0, 'affinity', 0.5) }
-        }
+        }, { EXP_TAG_ATTACK, EXP_TAG_RECV, EXP_TAG_ASSIST }
     ),
     ['confidence'] = Skill:new('confidence', 'Confidence',
         "Fill allies with reckless confidence. They gain \z
-        (Affinity * 1.0) Force, but lose (Affinity * 1.0) Reaction \z
+        (Affinity * 1.0) Force, but lose 6 Reaction \z
          and Affinity.",
         'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
         { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 1 } },
@@ -739,10 +775,10 @@ skills = {
           { T, T, T, T, T } }, SELF_CAST_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'force',    Scaling:new(0, 'affinity', 1.0) },
-            { 'reaction', Scaling:new(0, 'affinity', -1.0) },
-            { 'affinity', Scaling:new(0, 'affinity', -1.0) }
-        }
+            { 'force',    Scaling:new(0,  'affinity', 1.0) },
+            { 'reaction', Scaling:new(-6, 'affinity',   0) },
+            { 'affinity', Scaling:new(-6, 'affinity',   0) }
+        }, { EXP_TAG_ATTACK }
     ),
     ['flank'] = Skill:new('flank', 'Flank',
         "Prepare to surround and overwhelm an enemy. Ally \z
@@ -753,8 +789,9 @@ skills = {
           { T, F, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'flanking', BUFF } }
+        { { 'special', 'flanking', BUFF } }, { EXP_TAG_ATTACK }
     ),
+
 
 
     -- KATH
@@ -931,7 +968,7 @@ skills = {
         { { 'Defender', 2 }, { 'Hero', 1 }, { 'Cleric', 1 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'forbearance', BUFF } }
+        { { 'special', 'forbearance', BUFF } }, { EXP_TAG_RECV }
     ),
     ['invigorate'] = Skill:new('invigorate', 'Invigorate',
         "Kath renews allies near him with a cantrip. Allies on the assist gain \z
@@ -942,7 +979,7 @@ skills = {
           { F, F, F },
           { T, F, T } }, SELF_CAST_AIM, 2,
         nil, nil, nil, nil, nil, nil,
-        { { 'force', Scaling:new(0, 'affinity', 1.0) } }
+        { { 'force', Scaling:new(0, 'affinity', 1.0) } }, { EXP_TAG_ATTACK }
     ),
     ['hold_the_line'] = Skill:new('hold_the_line', 'Hold the Line',
         "Kath forms a wall with his allies, raising the Reaction of assisted \z
@@ -951,7 +988,7 @@ skills = {
         { { 'Defender', 2 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(0, 'reaction', 0.5) } }
+        { { 'reaction', Scaling:new(0, 'reaction', 0.5) } }, { EXP_TAG_RECV }
     ),
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel',
         "Kath casts a powerful protective ward. Allies on the assist cannot \z
@@ -966,7 +1003,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'guardian_angel', BUFF } }
+        { { 'special', 'guardian_angel', BUFF } }, { EXP_TAG_RECV }
     ),
     ['steadfast'] = Skill:new('steadfast', 'Steadfast',
         "Kath helps allies fortify their positions. Allies on the assist \z
@@ -981,7 +1018,10 @@ skills = {
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'agility', Scaling:new(-99) }, { 'reaction', Scaling:new(0, 'affinity', 1.0) } }
+        { 
+            { 'agility', Scaling:new(-99) }, 
+            { 'reaction', Scaling:new(0, 'affinity', 1.0) }
+        }, { EXP_TAG_RECV }
     ),
 
 
@@ -1155,7 +1195,7 @@ skills = {
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'agility', Scaling:new(0, 'affinity', 0.5) } }
+        { { 'agility', Scaling:new(0, 'affinity', 0.5) } }, { EXP_TAG_MOVE }
     ),
     ['camouflage'] = Skill:new('camouflage', 'Camouflage',
         "Elaine builds a makeshift camouflaged shelter. The assisted ally \z
@@ -1164,7 +1204,7 @@ skills = {
         { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'hidden', BUFF } } -- TODO: implement hidden
+        { { 'special', 'hidden', BUFF } }, {} -- TODO: implement hidden
     ),
     ['harmonize'] = Skill:new('harmonize', 'Harmonize',
         "Elaine channels her power into Ignea and projects it outwards. \z
@@ -1177,7 +1217,8 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'harmony', BUFF } } -- TODO: change this
+        { { 'special', 'harmony', BUFF } }, -- TODO: change this
+        { EXP_TAG_ATTACK, EXP_TAG_RECV, EXP_TAG_MOVE }
     ),
     ['flight'] = Skill:new('flight', 'Flight',
         "Elaine whips the wind into currents, letting allies fly. They gain \z
@@ -1191,7 +1232,7 @@ skills = {
         {
             { 'special', 'flight', BUFF }, -- TODO: implement flight
             { 'agility', Scaling:new(0, 'affinity', 1.0) }
-        }
+        }, { EXP_TAG_MOVE }
     ),
     ['farsight'] = Skill:new('farsight', 'Farsight',
         "Elaine extends her superior perception to those nearby, granting \z
@@ -1204,7 +1245,7 @@ skills = {
           { T, F, F, F, T },
           { T, T, T, T, T } }, SELF_CAST_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(2, 'affinity', 0.5) } }
+        { { 'reaction', Scaling:new(2, 'affinity', 0.5) } }, { EXP_TAG_RECV }
     ),
     ['cover_fire'] = Skill:new('cover_fire', 'Cover Fire',
         "Elaine lays down a hail of arrows around an ally position, granting \z
@@ -1222,7 +1263,7 @@ skills = {
         {
             { 'reaction', Scaling:new(0, 'affinity', 0.5) },
             { 'force', Scaling:new(0, 'affinity', 0.5) },
-        }
+        }, { EXP_TAG_ATTACK, EXP_TAG_RECV }
     ),
 
 

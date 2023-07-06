@@ -554,7 +554,7 @@ function Sprite:computeLevels(e)
     local total = EXP_NEXT[self.level]
     local new = self.exp + e
     local levels = 0
-    while new > total do
+    while new >= total do
         new = new - total
         levels = levels + 1
         total = EXP_NEXT[self.level + levels]

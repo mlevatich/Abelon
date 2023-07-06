@@ -111,11 +111,7 @@ s11['turnlimit-defeat'] = {
 s11['victory'] = {
     ['ids'] = {},
     ['events'] = {},
-    ['result'] = {
-        ['do'] = function(g)
-            g:healAll()
-        end
-    }
+    ['result'] = {}
 }
 
 

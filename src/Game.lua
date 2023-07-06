@@ -392,13 +392,6 @@ function Game:battleInput(up, down, left, right, f, d)
     }
 end
 
-function Game:healAll()
-    for i = 1, #self.player.party do
-        local sp = self.player.party[i]
-        sp.health = (sp.attributes['endurance'] * 2)
-    end
-end
-
 -- Start scene with the given scene id
 function Game:launchScene(s_id, returnToBattle)
     self.player:changeMode('scene')
