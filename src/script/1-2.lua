@@ -205,7 +205,7 @@ before_wolves = {
     }),
 }
 s12['battle'] = {
-    ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'alphawolf'},
+    ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'alphawolf1'},
     ['events'] = {
         blackout(),
         daytime(),
@@ -881,7 +881,7 @@ s12['book-callback'] = {
 
 
 s12['wolf-den-battle'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'wolf1', 'wolf2', 'wolf3', 'alphawolf'},
+    ['ids'] = {'abelon', 'kath', 'elaine', 'wolf1', 'wolf2', 'wolf3', 'alphawolf1', 'alphawolf2'},
     ['events'] = {
         focus(1, 200),
         walk(false, 1, 8, 17, 'walk'),
@@ -902,13 +902,19 @@ s12['wolf-den-battle'] = {
         lookDir(5, RIGHT),
         lookDir(6, RIGHT),
         lookDir(7, RIGHT),
+        lookDir(8, RIGHT),
         teleport(6, 3, 16),
         wait(0.5),
         teleport(7, 3, 15),
         wait(0.5),
-        teleport(4, 8, 9),
-        wait(0.5),
+        teleport(4, 6, 11),
         teleport(5, 8, 26),
+        walk(false, 5, 8, 22, 'walk'),
+        waitForEvent('walk'),
+        wait(0.5),
+        teleport(8, 3, 23),
+        walk(false, 8, 3, 20, 'walk'),
+        waitForEvent('walk'),
         wait(1),
         say(3, 2, false,
             "...Eep..."
@@ -922,7 +928,8 @@ s12['wolf-den-battle'] = {
         walk(false, 3, 8, 15, 'walk'),
         wait(0.5),
         say(2, 3, false,
-            "Elaine, are you ready?"
+            "Elaine, I expect it will be one battle after another for as long as \z
+             you're with us. Are you ready?"
         ),
         waitForEvent('walk'),
         say(3, 3, false,

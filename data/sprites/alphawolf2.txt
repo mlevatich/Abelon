@@ -1,0 +1,16 @@
+// Sprite attributes
+
+Name: Alpha wolf
+Ground: no
+Interactive: no
+Hitbox: 0,20,31,11
+Resting: idle
+Impression: 0
+Awareness: 0
+Discard: no
+Present:
+Level: 5
+Attributes: endurance:18 focus:0 force:17 affinity:0 reaction:5 agility:14
+Skilltrees:
+Skills: bite
+Description: A wolf.

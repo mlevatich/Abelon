@@ -1347,7 +1347,8 @@ sprite_data = {
         ['id'] = 'alphawolf',
         ['w'] = 31,
         ['h'] = 31,
-        ['animations'] = living
+        ['animations'] = living,
+        ['n'] = 2
     },
     {
         ['id'] = 'wolf',

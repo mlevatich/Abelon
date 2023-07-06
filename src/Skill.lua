@@ -639,7 +639,7 @@ skills = {
          damage to all enemies in a line across the entire field.",
         'Demon', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
-        mkLine(10), DIRECTIONAL_AIM, 4,
+        mkLine(10), DIRECTIONAL_AIM, 5,
         ENEMY, Scaling:new(30)
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches',
