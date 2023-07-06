@@ -234,6 +234,14 @@ STRONGEST = 4 -- Invert when targeting allies (heal strongest ally)
 MANUAL    = 5 -- For the player team
 FORCED    = 6
 
+-- Experience
+EXP_STATUS_MAX  = 20
+EXP_ON_SPECIAL  = 10
+EXP_ON_ATTACKED = 5
+EXP_ON_KILL     = 10
+EXP_FOR_ASSIST  = 5
+EXP_HEAL_RATIO  = 0.5
+
 -- Battle stages
 STAGE_FREE    = 1
 STAGE_MOVE    = 2

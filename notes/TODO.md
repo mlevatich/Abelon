@@ -10,7 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Need a stronger wolf to punch through reaction. Can use the sprites I already have. Just change the stats of the basic wolf so it has >31 hp on Normal, have first fight be all basic wolves, and then make alpha wolf crazy strong.
 - Test all skills in wolf-den, more balancing.
 
 - Scroll and journal, change book interaction
@@ -24,13 +23,10 @@ Bullets that reference a github issue should close the issue when committed.
 - #69: Implement rest of 1-2 and barrier dialogue preventing going north
 - Add more optional content to 1-1 and 1-2. Ignea stones.
 
-- Gain experience only from dealing and taking damage (not from damage mitigated).
-- Gain a small fixed amount of experience for landing the killing blow.
-- Gain small fixed experience when allies benefit from your assist:
-    - Using an attack that scales with an assisted stat.
-    - Using an assist that scales with an assisted stat.
-    - Taking weapon damage on a reaction assist.
-- Re-balance bonus experience and turn limits.
+- Rework exp gain:
+    - gain +5xp when an ally is attacked on your reaction assist or other defense mod assist (e.g. guardian angel).
+    - gain +5xp when an ally deals damage on your force or other damage mod assist (e.g. bleed vitality).
+    - gain +5xp when an ally moves off of your agility assist.
 
 ## Game presentation, mini-release
 
