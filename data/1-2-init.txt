@@ -10,8 +10,8 @@
 
 ~~west-forest Dying-Forest
 
-~abelon 52 6 L P
-abelon 17 14 L P
+abelon 52 6 L P
+~abelon 17 14 L P
 ~elaine 54 5 L
 ~kath 50 8 L
 ~book 56 6 R

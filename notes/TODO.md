@@ -10,8 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Fix bug: wolf3 not spawning into wolf den
-- Experience for helper if moving off an agility assist
 - Test all skills in wolf-den, more balancing
 
 - Scroll and journal, change book interaction

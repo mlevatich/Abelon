@@ -1426,6 +1426,22 @@ function Battle:playAction()
     )
     seq = concat(seq, self:pathToWalk(sp, move2_path, assist))
 
+    -- Helper gains exp if sprite started on, or moved off, their agility
+    -- assist
+    if self:isAlly(sp) then
+        local assists_1 = self.grid[sp_y][sp_x].assists
+        local assists_2 = self.grid[c_move1[2]][c_move1[1]].assists
+        local all_assists = concat(assists_1, assists_2)
+        for i = 1, #all_assists do
+            local a = all_assists[i]
+            for j = 1, #a.xp_tags do
+                if a.xp_tags[j] == EXP_TAG_MOVE then
+                    exp[a.owner:getId()] = EXP_FOR_ASSIST
+                end
+            end
+        end
+    end
+
     -- Assist
     table.insert(seq, function(d)
         if not assist then
