@@ -11,7 +11,7 @@
 ~~west-forest Dying-Forest
 
 abelon 52 6 L P
-~abelon 17 14 L P
+~abelon 13 17 L P
 ~elaine 54 5 L
 ~kath 50 8 L
 ~book 56 6 R
@@ -36,7 +36,7 @@ abelon 52 6 L P
 ->Party elaine
 ->elaine
 +Level 2
-+BonusAttrs force:2 agility:1
++BonusAttrs force:1 focus:2
 ->abelon
 +Exp 90
 ->kath

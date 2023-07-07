@@ -50,6 +50,7 @@ Ideas:
 #### Elaine
 
 - Apprentice: Spell: Galeforce: push a huge wall of enemies a few spaces away
+- Apprentice: Spell: ???: Replace mimic with something better. Perhaps a ranged stun or push?
 - Hunter: Assist: ???:
 
 #### Lester

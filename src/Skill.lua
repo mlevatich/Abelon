@@ -807,12 +807,12 @@ skills = {
         { { { 'reaction', Scaling:new(2) }, 1 } }, nil
     ),
     ['stun'] = Skill:new('stun', 'Stun',
-        "Kath pushes ignea into his lance and strikes. If Kath's Reaction is \z
-         higher than his foe's, they are unable to act for 1 turn.",
+        "A blunt lance blow. Deals (Force * 0.5) Weapon damage. If Kath's \z
+         Reaction is higher than his foe's, they cannot act for 1 turn.",
         'Defender', WEAPON, MANUAL, str_to_icon['reaction'],
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
-        { { T } }, DIRECTIONAL_AIM, 1,
-        ENEMY, nil,
+        { { T } }, DIRECTIONAL_AIM, 2,
+        ENEMY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'special', 'stun', DEBUFF }, 1 } }, nil,
         { ['br'] = function(a, a_a, b, b_a, st)
             return a_a['reaction'] > b_a['reaction'] end
@@ -1254,7 +1254,7 @@ skills = {
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
-          { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },

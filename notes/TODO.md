@@ -10,7 +10,10 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Test all skills in wolf-den, more balancing
+- Try wolf-den on adept and normal. May need to adjust stats of alpha wolf dynamically.
+- Replace mimic
+- Test all unlockable skills to make sure they work.
+- Benefits of an agility assist should persist until the end of the turn if you start on it. Gain xp from agility assist sometimes doesnt work?
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
@@ -43,6 +46,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 - #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite parameter deciding whether it blocks light may be needed. e.g. abelon blocks light but a log doesn't), proper color computation. Look up lua/love shaders. Alternate, darken with patterns of black pixels over tiles? Shadows?
 - A static foreground (to outline and "frame" the game) per map could be fun and not that hard
+- Add a turn reset mechanic, from the in-battle options menu. Single-use.
 
 - #47: Better portraits
 - Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
