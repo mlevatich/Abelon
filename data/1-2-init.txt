@@ -30,7 +30,6 @@ abelon 52 6 L P
 ->Day
 ->State saw-camp,carried-elaine
 ->Inventory medallion
-->abelon
 ->Seen 1-2-battle
 ->Party kath
 ->Party elaine

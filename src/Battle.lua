@@ -2677,7 +2677,8 @@ function Battle:boxElementsFromInfo(sp, hp, ign, statuses)
 
         -- Length of buff string
         local b = statuses[i].buff
-        local blen = ite(b:toStr(), #b:toStr(), 0)
+        local blen = 0
+        if b:toStr() then blen = #b:toStr() end
 
         -- Combine them all to get character size
         longest_status = math.max(longest_status, dlen + blen + buf)

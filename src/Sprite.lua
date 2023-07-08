@@ -23,7 +23,7 @@ LEASH_DISTANCE = TILE_WIDTH * 1.5
 PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
 -- EXP_NEXT[i] = how much experience is needed to level up at level i?
-EXP_NEXT = { 0, 5, 15, 30, 50, 75, 100, 130, 160, 200, 240, 290, 340, 400 }
+EXP_NEXT = { 1, 5, 15, 30, 50, 75, 100, 130, 160, 200, 240, 290, 340, 400 }
 
 -- Initialize a new sprite
 function Sprite:initialize(id, game)
@@ -460,7 +460,11 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
                             .. tostring(self.attributes['endurance'] * 2)
     local ign_str = 'Ign: ' .. tostring(ite(tmp_ign, tmp_ign, self.ignea)) .. '/'
                             .. tostring(self.attributes['focus'])
-    local exp_str = 'Exp: ' .. tostring(self.exp) .. '/' .. EXP_NEXT[self.level]
+    local nxt = "MAX"
+    if self.level <= #EXP_NEXT then
+        nxt = EXP_NEXT[self.level]
+    end
+    local exp_str = 'Exp: ' .. tostring(self.exp) .. '/' .. nxt
     local icon = function(i)
         return icons[str_to_icon[self.skill_trees[i]['name']]]
     end
@@ -553,6 +557,7 @@ function Sprite:computeLevels(e)
 
     -- How many level ups?
     local total = EXP_NEXT[self.level]
+    if not total then total = math.huge end
     local new = self.exp + e
     local levels = 0
     while new >= total do

@@ -10,8 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Replace mimic
-- Test all unlockable skills to make sure they work.
 - Benefits of an agility assist should persist until the end of the turn if you start on it. Gain xp from agility assist sometimes doesnt work?
 
 - Scroll and journal, change book interaction
@@ -24,6 +22,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Finish script 1-2
 - #69: Implement rest of 1-2 and barrier dialogue preventing going north
 - Add more optional content to 1-1 and 1-2. Ignea stones.
+- Profiling, fix battle slowness
 
 ## Game presentation
 

@@ -547,7 +547,8 @@ function mkBuff(attrs, template, sp, exp_tag)
     else
         local s = template[2]
         local ty = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF)
-        local val = s.base + math.floor(attrs[s.attr] * s.mul)
+        local val = attrs[s.attr] * s.mul
+        val = s.base + ite(val < 0, math.ceil(val), math.floor(val))
         return Buff:new(template[1], val, ty, sp, exp_tag)
     end
 end
@@ -669,7 +670,7 @@ skills = {
         nil, nil, nil,
         {
             ['br'] = function(a, a_a, b, b_a, st)
-                return b.health < b_a['endurance'] / 2
+                return b.health < b_a['endurance']
             end
         }
     ),
@@ -820,7 +821,7 @@ skills = {
     ),
     ['shove'] = Skill:new('shove', 'Shove',
         "Kath shoves an ally or enemy, moving them by 1 tile and raising \z
-         Kath's Reaction by 3.",
+         Kath's Reaction by 3 for 1 turn.",
         'Hero', WEAPON, MANUAL, str_to_icon['empty'],
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
@@ -950,7 +951,7 @@ skills = {
     ),
     ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep',
         "Kath swings an ignaeic crescent which deals (Force * 1.0) \z
-         Weapon Damage and raises Kath's Reaction by 5.",
+         Weapon Damage and grants 5 Reaction for 1 turn.",
         'Defender', WEAPON, MANUAL, str_to_icon['force'],
         { { 'Defender', 5 }, { 'Hero', 4 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
@@ -960,7 +961,9 @@ skills = {
           { T, T, T, F, T, T, T },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
-        ENEMY, Scaling:new(0, 'force', 1.0)
+        ENEMY, Scaling:new(0, 'force', 1.0),
+        { { { 'reaction', Scaling:new(5) }, 1 } }, nil
+
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance',
         "Kath receives all attacks meant for an adjacent assisted ally.",
@@ -1109,7 +1112,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.5)
+        ENEMY, Scaling:new(0, 'force', 1.5), nil, nil, { UP, 1 }
     ),
     ['observe'] = Skill:new('observe', 'Observe',
         "Once per battle, Elaine chooses an ally to learn from, permanently \z
@@ -1184,10 +1187,10 @@ skills = {
     ),
     ['seeking_arrow'] = Skill:new('seeking_arrow', 'Seeking Arrow',
         "Elaine enchants an arrow to hunt down a target, firing at any foe \z
-         on the field to deal 20 + (Force * 0.5) Spell damage.",
+         within 8 tiles to deal 20 + (Force * 0.5) Spell damage.",
         'Sniper', SPELL, MANUAL, str_to_icon['force'],
         { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 3 } },
-        { { T } }, FREE_AIM(6), 3,
+        { { T } }, FREE_AIM(8), 3,
         ENEMY, Scaling:new(20, 'force', 0.5)
     ),
     ['terrain_survey'] = Skill:new('terrain_survey', 'Terrain Survey',
