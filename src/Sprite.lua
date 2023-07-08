@@ -87,12 +87,13 @@ function Sprite:initialize(id, game)
     -- Info that allows this sprite to be treated as an item
     self.can_discard = readField(data[10], tobool)
     self.present_to = readArray(data[11])
-    self.description = readMultiline(data, 16)
+    self.description = readMultiline(data, 17)
 
     -- Info that allows this sprite to be treated as a party member
     self.attributes = readDict(data[13], VAL, nil, tonumber)
-    self.skill_trees = readDict(data[14], ARR, {'name', 'skills'}, getSk)
-    self.skills = readArray(data[15], getSk)
+    self.attr_difficulty_mods = readDict(data[14], VAL, nil, tonumber)
+    self.skill_trees = readDict(data[15], ARR, {'name', 'skills'}, getSk)
+    self.skills = readArray(data[16], getSk)
     self.skill_points = 0
 
     self.health = 0

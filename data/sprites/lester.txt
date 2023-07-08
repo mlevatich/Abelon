@@ -11,6 +11,7 @@ Discard: no
 Present:
 Level: 6
 Attributes: endurance:9 focus:4 force:12 affinity:7 reaction:3 agility:16
+DiffiucultySubtraction:
 Skilltrees: Assassin:thrown_dagger,pinpoint,assassinate,shadowed,escape,weave,martyr,adrenaline,blade_dance Naturalist:first_aid,warning,stalagmite,poison_coating,rain,grasping_roots,herbal_tonic,quake,erutas_bounty
 Skills: thrown_dagger,first_aid,warning,pinpoint,stalagmite,assassinate
 Description: The knight Lester. EOS

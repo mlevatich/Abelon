@@ -11,6 +11,7 @@ Discard: no
 Present:
 Level: 0
 Attributes:
+DiffiucultySubtraction:
 Skilltrees:
 Skills:
 Description: A rock. EOS

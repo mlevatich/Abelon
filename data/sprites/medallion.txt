@@ -11,6 +11,7 @@ Discard: yes
 Present: kath
 Level: 0
 Attributes:
+DiffiucultySubtraction:
 Skilltrees:
 Skills:
 Description: A crude medallion hammered out of silver, strung on a thin rope

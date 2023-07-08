@@ -178,17 +178,13 @@ function Battle:adjustDifficultyFrom(old)
 
     -- Adjust enemy stats
     local new = self.game.difficulty
-    local factor = 2 * (old - new)
+    local factor = old - new
     for i = 1, #self.participants do
         local sp = self.participants[i]
         if not self:isAlly(sp) then
             local attrs = sp.attributes
-            local adjust = {
-                'endurance', 'force', 'reaction'
-            }
-            for j = 1, #adjust do
-                local real = ite(adjust[j] == 'endurance', factor / 2, factor)
-                attrs[adjust[j]] = math.max(0, attrs[adjust[j]] - real)
+            for a,mod in pairs(sp.attr_difficulty_mods) do
+                attrs[a] = math.max(0, attrs[a] - (mod * factor))
             end 
             sp.health = math.min(sp.health, attrs['endurance'] * 2)
             sp.ignea = math.min(sp.ignea, attrs['focus'])
@@ -578,12 +574,10 @@ function Battle:cleanupBattle()
             sp.ignea = math.min(sp.ignea + math.floor(max_ign * ign_mul), max_ign)
         else
             sp.ignea = max_ign
-            local factor = 2 * (MASTER - self.game.difficulty)
+            local factor = MASTER - self.game.difficulty
             local attrs = sp.attributes
-            local adjust = { 'endurance', 'force', 'reaction' }
-            for j = 1, #adjust do
-                local real = ite(adjust[j] == 'endurance', factor / 2, factor)
-                attrs[adjust[j]] = attrs[adjust[j]] + real
+            for a,mod in pairs(sp.attr_difficulty_mods) do
+                attrs[a] = math.max(0, attrs[a] + (mod * factor))
             end
             sp:changeBehavior('idle')
         end

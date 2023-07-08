@@ -11,6 +11,7 @@ Discard: no
 Present:
 Level: 6
 Attributes: endurance:10 focus:15 force:13 affinity:5 reaction:4 agility:9
+DiffiucultySubtraction:
 Skilltrees: Lanternfaire:heavy_swing,shine,prepare_lantern,knockback,study,bleed_vitality,findings,throw_lantern,bleed_ignea Sorceress:searing_light,detonate,hypnotize,berserk,gravity,illuminate,rain_of_shards,renewal,radiance
 Skills: heavy_swing,prepare_lantern,searing_light,detonate,shine,hypnotize
 Description: The scholar Shanti. EOS
