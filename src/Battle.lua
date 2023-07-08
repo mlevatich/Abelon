@@ -1350,7 +1350,9 @@ function Battle:playAction()
             local moved, hurt, dead, exp_gained = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
-            exp = exp_gained
+            for k,v in pairs(exp_gained) do 
+                if v ~= 0 then exp[k] = v end
+            end
             sp.ignea = sp.ignea - attack.cost
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do

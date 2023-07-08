@@ -10,7 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Basic battle mechanics, 1-1, 1-2, wolf-den
 
-- Benefits of an agility assist should persist until the end of the turn if you start on it. Gain xp from agility assist sometimes doesnt work?
+- Benefits of an agility assist should persist until the end of the turn if you start on it.
 
 - Scroll and journal, change book interaction
 - Object in the way that Abelon must interact with in east forest
