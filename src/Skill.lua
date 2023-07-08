@@ -1148,8 +1148,8 @@ skills = {
         ENEMY, nil,
         nil, { { { 'agility', Scaling:new(-4, 'agility', -0.5) }, 1 } }
     ),
-    ['ignea_arrowtips'] = Skill:new('ignea_arrowtips', 'Ignea Arrowtips',
-        "Elaine fashions arrowtips from Ignea and charges them with magic, \z
+    ['ignea_arrowheads'] = Skill:new('ignea_arrowheads', 'Ignea Arrowheads',
+        "Elaine fashions arrowheads from Ignea and charges them with magic, \z
          increasing her Force by 2 + (Focus * 1.0) for 4 turns.",
         'Apprentice', SPELL, MANUAL, str_to_icon['focus'],
         { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
@@ -1157,14 +1157,16 @@ skills = {
         ALLY, nil,
         nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 4 } }
     ),
-    ['mimic'] = Skill:new('mimic', 'Mimic',
-        "Elaine chooses any ally on the field and magically copies their \z
-         signature attribute for 4 turns.",
+    ['wind_blast'] = Skill:new('wind_blast', 'Wind Blast',
+        "Elaine conjures a concussive gust of wind to blow an enemy back \z
+         3 tiles.",
         'Apprentice', SPELL, MANUAL, str_to_icon['empty'],
         { { 'Huntress', 1 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
-        { { T } }, FREE_AIM(100), 1,
-        ALLY, nil,
-        nil, nil -- TODO: change this
+        { { F, T, F },
+          { F, F, F },
+          { F, F, F } }, DIRECTIONAL_AIM, 2,
+        ENEMY, nil,
+        nil, nil, { UP, 3 }
     ),
     ['exploding_shot'] = Skill:new('exploding_shot', 'Exploding Shot',
         "Elaine primes a chunk of Ignea to explode and ties it to an arrow, \z
