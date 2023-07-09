@@ -1,0 +1,18 @@
+// Sprite attributes
+
+Name: Journal
+Ground: yes
+Interactive: yes
+Hitbox:
+Resting: idle
+Impression: 0
+Awareness: 0
+Discard: yes
+Present:
+Level: 0
+Attributes:
+DiffiucultySubtraction:
+Skilltrees:
+Skills:
+Description: A compact, leather-bound book of some kind.
+It looks as though it has been through a lot. EOS

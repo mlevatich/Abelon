@@ -23,7 +23,5 @@
 
 ~bloodstain2 3 40 R
 
+->Inventory journal
 ->Seen 1-1-entry
-
-// Add this after I make journal sprite
-// ->Inventory journal

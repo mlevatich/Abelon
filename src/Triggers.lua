@@ -76,6 +76,9 @@ end
 item_triggers = {
     ['medallion'] = mkUseTrigger('medallion',
         function(g) return true end
+    ),
+    ['journal'] = mkUseTrigger('journal',
+        function(g) return true end
     )
 }
 

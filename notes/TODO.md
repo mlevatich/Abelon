@@ -8,58 +8,61 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Basic battle mechanics, 1-1, 1-2, wolf-den
+## 1-1
 
-- Scroll and journal, change book interaction
-- Object in the way that Abelon must interact with in east forest
-- West forest more claustraphobic, adjust road.
-- add campsite, stone reliefs. Lester-down, Shanti-down, Kath-down (for sleeping)
+- Change book interaction, add scroll and journal. Scroll in the way.
+- West forest more claustraphobic.
+- Adjust road. Patchy, starts in west forest, leads north. Change tileset.
+- Add campsite, stone reliefs. Lester-down, Shanti-down, Kath-down (for sleeping)
 - Elaine-idle, Elaine-walk, Elaine-down, Elaine-getup, Elaine portrait.
-
 - Implement 1-1, connect to 1-2 battle
+- Add optional pickups to 1-1: Ignea stones.
+- Briefly re-visit torch lighting
+
+## 1-2
+
 - Finish script 1-2
-- #69: Implement rest of 1-2 and barrier dialogue preventing going north
-- Add more optional content to 1-1 and 1-2. Ignea stones.
-- Profiling, fix battle slowness
+- #69: Implement rest of 1-2, its optional content (ignea stones, present medallion, extra convos, etc) and barrier dialogue preventing going north
 
 ## Game presentation
+
+- #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite parameter deciding whether it blocks light may be needed. e.g. abelon blocks light but a log doesn't), proper color computation. Look up lua/love shaders. Alternate, darken with patterns of black pixels over tiles? Shadows?
 
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-entry-exit, Abelon-combat-idle, Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.
 - Two mostly identical wolf sprites, Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run).
 - #52: Every skill has an associated single-fire animation, with render position determined by the cursor location of the cast. This has nothing to do with the sprite casting the skill. For some skills, the animation should play at every affected tile, for others, the animation should play centered on the cursor and affected by direction. This should be provided as an option. Make skill animations for all basic skills.
 - #53: Each sprite that battles has single-fire animations: one for weapon skills, one for spells, one for assists, one for being injured, and one for dying. Displacement is a still frame from the 'injured' animation. Abelon-weapon, Abelon-spell, Abelon-assist, Abelon-util, Abelon-hurt, Abelon-death, Kath-weapon, Kath-spell, Kath-assist, Kath-util, Kath-hurt, Kath-death, Elaine-weapon, Elaine-spell, Elaine-assist, Elaine-util, Elaine-hurt, Elaine-death, Wolf-weapon, Wolf-hurt, Wolf-death.
+
 - Animation sound effects: Explore "animation sound effects": looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps.
+- #4: SFX for:, menu select (not too different from current), text sound effects, start game (from title screen).
+- #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up, use weapon skill, use spell, use assist, skills (can re-use liberally).
+
+- Profiling, fix battle slowness
+- Add a turn reset mechanic, from the in-battle options menu. Single-use.
+- A static foreground (to outline and "frame" the game) per map could be fun and not that hard
 
 - Music fade is quieter than it should be
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
 - #64: Defeat theme: Despair - Short theme that plays during the battle loss scene.
-
-- #4: SFX for:, menu select (not too different from current), text sound effects, start game (from title screen).
-- #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up, use weapon skill, use spell, use assist, skills (can re-use liberally).
-
 - #67: Better forest theme - more tense investigation, less funeral march
 - #65: Enemy approaches theme - for rising action before a fight! Consider Face of Shadow
 
-- #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite parameter deciding whether it blocks light may be needed. e.g. abelon blocks light but a log doesn't), proper color computation. Look up lua/love shaders. Alternate, darken with patterns of black pixels over tiles? Shadows?
-- A static foreground (to outline and "frame" the game) per map could be fun and not that hard
-- Add a turn reset mechanic, from the in-battle options menu. Single-use.
-
-- #47: Better portraits
 - Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
+- #47: Better portraits
 
 - #73: Make executable cross-platform app
-- Mini-release Gia, Sam, Preet.
+- Mini-release
 
 ## 1-3
 
-- Write 1-3, 1-4 of narrative.md
-- Write script 1-3
-
 - #70: Shanti, Living Rock sprites and animations
+
+- Update narrative.md 1-1 and 1-2. Write 1-3, 1-4 of narrative.md.
+- Write script 1-3.md
 
 - #71: Implement 1-3. Includes additional map to the north of north forest, the monastery approach.
 
-## 1-4, closed release
+## 1-4
 
 - Write 1-4 script
 - #68: Last pass over script for consistency

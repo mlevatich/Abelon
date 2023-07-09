@@ -1444,6 +1444,11 @@ sprite_data = {
         ['id'] = 'bloodstain2',
         ['w'] = 416,
         ['h'] = 608
+    },
+    {
+        ['id'] = 'journal',
+        ['w'] = 0,
+        ['h'] = 0
     }
 }
 sprite_graphics = {}

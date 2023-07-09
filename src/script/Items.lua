@@ -4,6 +4,19 @@ si = {}
 
 
 
+si['journal-use'] = {
+    ['ids'] = {'journal'},
+    ['events'] = {
+        say(1, 1, false,
+            "You remove the leather binding and attempt to read the journal, but \z
+             it will not open. There must be something else sealing it shut."
+        )
+    },
+    ['result'] = {}
+}
+
+
+
 si['medallion-use'] = {
     ['ids'] = {'medallion'},
     ['events'] = {
