@@ -10,18 +10,15 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- Adjust road. Patchy, starts in west forest, leads north.
-- Add campfire, camp beds, stone reliefs. Lester-down, Shanti-down, Kath-down
-- Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait.
+- Assets: ignea-stone, campfire, camp beds, stone reliefs, Lester-down, Shanti-down, Kath-down Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
 - Implement 1-1, connect to 1-2 battle
-- Add optional pickups to 1-1: Ignea stones.
 - Fix all transition tiles
 - Briefly re-visit torch lighting
 
 ## 1-2
 
 - Finish script 1-2
-- #69: Implement rest of 1-2, its optional content (ignea stones, present medallion, extra convos, etc) and barrier dialogue preventing going north
+- #69: Implement rest of 1-2, its optional content (present medallion, extra convos, etc) and barrier dialogue preventing going north
 
 ## Game presentation
 
