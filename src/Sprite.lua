@@ -1439,14 +1439,14 @@ sprite_data = {
         ['h'] = 127
     },
     {
-        ['id'] = 'journal',
-        ['w'] = 0,
-        ['h'] = 0
-    },
-    {
         ['id'] = 'scroll',
         ['w'] = 30,
         ['h'] = 26
+    },
+    {
+        ['id'] = 'journal',
+        ['w'] = 0,
+        ['h'] = 0
     }
 }
 sprite_graphics = {}

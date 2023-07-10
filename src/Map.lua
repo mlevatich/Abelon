@@ -72,10 +72,7 @@ function Map:initialize(name, c)
         table.insert(self.lights, {
             ['x'] = xc,
             ['y'] = yc,
-            ['r'] = data[3]/255,
-            ['g'] = data[4]/255,
-            ['b'] = data[5]/255,
-            ['intensity'] = data[6]
+            ['intensity'] = data[3]
         })
         idx = idx + 1
     end
@@ -313,19 +310,16 @@ function Map:applyLightSources()
                 local x_dist, y_dist = l['x'] - xc, l['y'] - yc
                 local dist = math.sqrt(x_dist * x_dist + y_dist * y_dist)
 
-                -- Calculate whether light reaches tile using bresenhem
-                -- (short circuit if initial dist is too big)
-
                 -- Add this light's intensity to total based on distance
                 local contribution = math.max(0,
                     (l['intensity'] - dist) / l['intensity'])
-                for _, c in pairs({'r', 'g', 'b'}) do
-                    total[c] = math.min(1, total[c] + contribution * l[c])
-                end
                 alpha = alpha * (1 - contribution)
             end
 
             -- Draw rectangle of light at the total intensity over tile
+            if alpha ~= self.lit then
+                alpha = alpha + math.random() * 0.05 - 0.05
+            end
             love.graphics.setColor(total['r'], total['g'], total['b'], alpha)
             love.graphics.rectangle(
                 "fill",

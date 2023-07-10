@@ -10,9 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- Fix all transition tiles
-- Briefly re-visit torch lighting
-
 - Assets: ignea-stone, campfire, camp beds, stone reliefs, Lester-down, Shanti-down, Kath-down Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
 - Implement 1-1, connect to 1-2 battle
 
@@ -22,8 +19,6 @@ Bullets that reference a github issue should close the issue when committed.
 - #69: Implement rest of 1-2, its optional content (present medallion, extra convos, etc) and barrier dialogue preventing going north
 
 ## Game presentation
-
-- #9: Lighting engine. Flickering, smoothing, obstacle detection (sprite parameter deciding whether it blocks light may be needed. e.g. abelon blocks light but a log doesn't), proper color computation. Look up lua/love shaders. Alternate, darken with patterns of black pixels over tiles? Shadows?
 
 - #51: Support animation on combat entry (bridges idle -> combat), and on for  combat exit (this can just be the combat entry animation played in reverse). Abelon-combat-entry-exit, Abelon-combat-idle, Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run.
 - Two mostly identical wolf sprites, Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run).
