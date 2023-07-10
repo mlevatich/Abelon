@@ -1,6 +1,6 @@
 // Sprite attributes
 
-Name: Journal
+Name: Scroll
 Ground: yes
 Interactive: yes
 Hitbox:
@@ -14,5 +14,4 @@ Attributes:
 DiffiucultySubtraction:
 Skilltrees:
 Skills:
-Description: A compact, leather-bound book of some kind.
-It looks as though it has endured much. EOS
+Description: A torn and faded old scroll of unknown provenance and purpose. EOS

@@ -27,6 +27,58 @@ s11['entry'] = {
 
 
 
+local scroll_choice = choice({
+    {
+        ['response'] = "Pick it up",
+        ['events'] = {
+            say(2, 1, false,
+                "You carefully roll up the scroll and place it in your pack."
+            )
+        },
+        ['result'] = {
+            ['do'] = function(g)
+                local sp = g:getMap():dropSprite('scroll')
+                g.player:acquire(sp)
+            end
+        }
+    },
+    {
+        ['response'] = "Leave it",
+        ['events'] = {},
+        ['result'] = {}
+    }
+})
+s11['scroll'] = {
+    ['ids'] = {'abelon', 'scroll'},
+    ['events'] = {
+        lookAt(1, 2),
+        introduce('scroll'),
+        say(2, 1, true,
+            "An unfurled scroll lies among the twigs and leaves of the forest \z
+             floor. It is full of strange drawings and scrawled paragraphs \z
+             resembling instructions."
+        ),
+        scroll_choice
+    },
+    ['result'] = {
+        ['callback'] = { 'scroll-callback' }
+    }
+}
+s11['scroll-callback'] = {
+    ['ids'] = {'abelon', 'scroll'},
+    ['events'] = {
+        lookAt(1, 2),
+        say(2, 1, true,
+            "The scroll rests unmoving on the ground, but for wisps of wind \z
+             gently rustling it."
+        ),
+        scroll_choice
+    },
+    ['result'] = {}
+}
+
+
+
 s11['close-tutorial-1'] = {
     ['ids'] = {},
     ['events'] = {},

@@ -4,6 +4,20 @@ si = {}
 
 
 
+si['scroll-use'] = {
+    ['ids'] = {'scroll'},
+    ['events'] = {
+        say(1, 1, false,
+            "You attempt to read the scroll, but quickly give up. The words are \z
+             organized as though imparting a set of instructions, but the language \z
+             is indecipherable."
+        )
+    },
+    ['result'] = {}
+}
+
+
+
 si['journal-use'] = {
     ['ids'] = {'journal'},
     ['events'] = {

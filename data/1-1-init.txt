@@ -6,6 +6,7 @@
 ~torch 26 49 L
 ~torch 26 52 L
 ~bloodrite 26 49 R
+~scroll 17.5 52.5 R
 
 ~~south-forest Dying-Forest
 
@@ -17,11 +18,8 @@
 
 ~kath 53 8 L
 ~book 56 6 R
-~bloodstain 41 1 R
 
 ~~north-forest Dying-Forest
-
-~bloodstain2 3 40 R
 
 ->Inventory journal
 ->Seen 1-1-entry

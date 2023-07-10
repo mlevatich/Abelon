@@ -79,6 +79,9 @@ item_triggers = {
     ),
     ['journal'] = mkUseTrigger('journal',
         function(g) return true end
+    ),
+    ['scroll'] = mkUseTrigger('scroll',
+        function(g) return true end
     )
 }
 

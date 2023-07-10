@@ -10,7 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- Add scroll in the way.
 - West forest more claustraphobic.
 - Adjust road. Patchy, starts in west forest, leads north. Change tileset.
 - Add campsite, stone reliefs. Lester-down, Shanti-down, Kath-down (for sleeping)

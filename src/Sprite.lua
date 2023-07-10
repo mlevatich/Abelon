@@ -1436,19 +1436,14 @@ sprite_data = {
         ['h'] = 127
     },
     {
-        ['id'] = 'bloodstain',
-        ['w'] = 289,
-        ['h'] = 352
-    },
-    {
-        ['id'] = 'bloodstain2',
-        ['w'] = 416,
-        ['h'] = 608
-    },
-    {
         ['id'] = 'journal',
         ['w'] = 0,
         ['h'] = 0
+    },
+    {
+        ['id'] = 'scroll',
+        ['w'] = 30,
+        ['h'] = 26
     }
 }
 sprite_graphics = {}
