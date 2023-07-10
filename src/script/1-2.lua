@@ -846,20 +846,67 @@ s12['elaine'] = {
 }
 
 
-
+map_reading = {
+    say(2, 0, false,
+        "The open, two-page spread is taken up entirely by a map hand-drawn in ink. It depicts a winding valley of trees vertically dividing two large mountain ranges."
+    ),
+    say(2, 0, false,
+        'Near the top of the page is a drawing of a city in the valley labeled "Lefellen". The valley and mountains appear to extend further north past Lefellen, off the page.'
+    ),
+    say(2, 0, false,
+        'To the south, the mountain ranges end and the valley of trees opens into a wide plain. At the mouth of the valley is depicted a larger, walled city. Printed next to the city is the label "Ebonach".'
+    ),
+    say(2, 0, false,
+        'A river, originating from somewhere in the mountains, passes by Ebonach and flows out into the plains. By the river is written "Ebon", and on the plains, "Sonder".'
+    ),
+    say(2, 0, true,
+        'In the bottom corner of the two pages, a compass is drawn, and next to it, a title: "The Red Mountain Valley".'
+    ),
+    choice({
+        {
+            ['response'] = "Turn the page",
+            ['events'] = {
+                say(2, 0, false,
+                    'You turn over the parchment. This page is titled "The Lefally Road", and depicts a closer view of the forested valley. A road runs from the top of the page to the bottom, embellished with guiding landmarks.'
+                ),
+                say(2, 0, false,
+                    'A paper insert is included. It appears to be a rough copy of this page, drawn more recently. On closer inspection, it includes a new path branching east from the road and into the trees.'
+                ),
+                say(2, 0, false,
+                    'The eastern path ends in a depiction of a campfire, which has been circled. Two similar campfire drawings have been added along the main road, south of where the path diverges.'
+                )
+            },
+            ['result'] = {}
+        },
+        {
+            ['response'] = "Leave",
+            ['events'] = {},
+            ['result'] = {}
+        }
+    })
+}
+to_read = choice({
+    {
+        ['response'] = "Start reading",
+        ['events'] = map_reading,
+        ['result'] = {}
+    },
+    {
+        ['response'] = "Leave",
+        ['events'] = {},
+        ['result'] = {}
+    }
+})
 s12['book'] = {
     ['ids'] = {'abelon', 'book'},
     ['events'] = {
         lookAt(1, 2),
         introduce('book'),
-        say(2, 0, false,
-            "An open book lies on the ground, full of strange drawings and \z
-             hastily scrawled paragraphs. The writing is faded and barely \z
-             legible,"
+        say(2, 0, true,
+            "A large book with old, sturdy pages lies open amidst the \z
+             clutter of the campsite."
         ),
-        say(2, 0, false,
-            "and the pages practically crumble to dust at the slightest touch."
-        )
+        to_read
     },
     ['result'] = {
         ['callback'] = { 'book-callback' }
@@ -869,10 +916,11 @@ s12['book-callback'] = {
     ['ids'] = {'abelon', 'book'},
     ['events'] = {
         lookAt(1, 2),
-        say(2, 0, false,
-            "On a second glance, it looks like there's another small book \z
-             beneath the first."
-        )
+        say(2, 0, true,
+            "The large book looks slightly out of place next to the many \z
+             practical necessities strewn about the camp."
+        ),
+        to_read
     },
     ['result'] = {}
 }
