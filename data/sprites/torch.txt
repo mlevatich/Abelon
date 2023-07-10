@@ -4,7 +4,6 @@ Name: Torch
 Ground: no
 Interactive: no
 Collides: 7,18,10,11
-Resting: idle
 Impression: 0
 Awareness: 0
 Discard: no

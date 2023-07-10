@@ -65,12 +65,12 @@ function Sprite:initialize(id, game)
     self.animation_name = INIT_ANIMATION
 
     -- Sprite behaviors
-    self.resting_behavior = readField(data[7])
-    self.current_behavior = self.resting_behavior
+    self.current_behavior = 'idle'
     self.behaviors = {
         ['wander'] = function(sp, dt) sp:_wanderBehavior(dt) end,
         ['battle'] = function(sp, dt) sp:_battleBehavior(dt) end,
-        ['idle']   = function(sp, dt) sp:_idleBehavior(dt)   end
+        ['idle']   = function(sp, dt) sp:_idleBehavior(dt)   end,
+        ['down']   = function(sp, dt) sp:_downBehavior(dt)   end,
     }
 
     -- Can the player interact with this sprite to start a scene?
@@ -81,19 +81,19 @@ function Sprite:initialize(id, game)
     self.hitbox = readArray(data[6], tonumber)
 
     -- Sprite's opinions
-    self.impression = readField(data[8], tonumber)
-    self.awareness = readField(data[9], tonumber)
+    self.impression = readField(data[7], tonumber)
+    self.awareness = readField(data[8], tonumber)
 
     -- Info that allows this sprite to be treated as an item
-    self.can_discard = readField(data[10], tobool)
-    self.present_to = readArray(data[11])
-    self.description = readMultiline(data, 17)
+    self.can_discard = readField(data[9], tobool)
+    self.present_to = readArray(data[10])
+    self.description = readMultiline(data, 16)
 
     -- Info that allows this sprite to be treated as a party member
-    self.attributes = readDict(data[13], VAL, nil, tonumber)
-    self.attr_difficulty_mods = readDict(data[14], VAL, nil, tonumber)
-    self.skill_trees = readDict(data[15], ARR, {'name', 'skills'}, getSk)
-    self.skills = readArray(data[16], getSk)
+    self.attributes = readDict(data[12], VAL, nil, tonumber)
+    self.attr_difficulty_mods = readDict(data[13], VAL, nil, tonumber)
+    self.skill_trees = readDict(data[14], ARR, {'name', 'skills'}, getSk)
+    self.skills = readArray(data[15], getSk)
     self.skill_points = 0
 
     self.health = 0
@@ -101,7 +101,7 @@ function Sprite:initialize(id, game)
         self.health = self.attributes['endurance'] * 2
     end
     self.ignea = self.attributes['focus']
-    self.level = readField(data[12], tonumber)
+    self.level = readField(data[11], tonumber)
     self.exp = 0
 
     -- Pointer to game
@@ -802,11 +802,6 @@ function Sprite:changeBehavior(new_behavior)
     self.current_behavior = new_behavior
 end
 
--- Change sprite to resting behavior
-function Sprite:atEase()
-    self:changeBehavior(self.resting_behavior)
-end
-
 -- Add new behavior functions or replace old ones for this sprite
 function Sprite:addBehaviors(new_behaviors)
     for name, fxn in pairs(new_behaviors) do
@@ -1045,6 +1040,12 @@ end
 function Sprite:_battleBehavior(dt)
     self:stop()
     self:changeAnimation('combat')
+end
+
+-- Sprite downed behavior
+function Sprite:_downBehavior(dt)
+    self:stop()
+    self:changeAnimation('downed')
 end
 
 -- Check whether a sprite is on a tile and return displacement
@@ -1319,7 +1320,9 @@ living = {
     ['hurt'] = { 6.5, { 7, 7, 7, 7 } },
     ['death'] = { 6.5, { 8, 8, 8, 8 } },
     ['displace'] = { 6.5, { 6, 6, 6, 6 } },
-    ['entry'] = { 6.5, { 0 } }
+    ['entry'] = { 6.5, { 0 } },
+    ['downed'] = { 6.5, { 16 } },
+    ['getup'] = { 6.5, { 17, 18, 19, 20, 21, 22 } } 
 }
 inanimate = { ['idle'] = { 3.25, { 0 } } }
 sprite_data = {

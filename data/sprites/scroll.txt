@@ -4,7 +4,6 @@ Name: Scroll
 Ground: yes
 Interactive: yes
 Hitbox:
-Resting: idle
 Impression: 0
 Awareness: 0
 Discard: yes

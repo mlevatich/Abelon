@@ -4,7 +4,6 @@ Name: Blood sign
 Ground: yes
 Interactive: no
 Hitbox:
-Resting: idle
 Impression: 0
 Awareness: 0
 Discard: no

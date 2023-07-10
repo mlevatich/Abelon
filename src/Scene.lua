@@ -64,9 +64,6 @@ function Scene:close()
         self.player:changeMode('battle')
         self.returnToBattle()
     else
-        for i = 1, #self.participants do
-            self.participants[i]:atEase()
-        end
         self.player:changeMode('free')
     end
 

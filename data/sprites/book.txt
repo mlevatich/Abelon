@@ -4,7 +4,6 @@ Name: Book
 Ground: no
 Interactive: yes
 Hitbox: 1,4,23,16
-Resting: idle
 Impression: 0
 Awareness: 0
 Discard: no

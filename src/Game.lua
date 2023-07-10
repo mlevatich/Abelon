@@ -281,10 +281,14 @@ function Game:loadFresh()
 
             -- If the sprite is the player character, we make the current map
             -- into the starting map, and initialize a player object
-            if fields[5] and fields[5] == 'P' then
-                self.current_map = self.maps[current_map_name]
-                self.player = Player:new(sp)
-                self:updateCamera(100)
+            if fields[5] then
+                if fields[5] == 'P' then
+                    self.current_map = self.maps[current_map_name]
+                    self.player = Player:new(sp)
+                    self:updateCamera(100)
+                else
+                    sp:changeBehavior(fields[5])
+                end
             end
         end
     end

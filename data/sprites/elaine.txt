@@ -4,7 +4,6 @@ Name: Elaine
 Ground: no
 Interactive: yes
 Hitbox: 7,21,20,11
-Resting: idle
 Impression: 50
 Awareness: 0
 Discard: no

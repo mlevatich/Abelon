@@ -4,7 +4,6 @@ Name: Log
 Ground: no
 Interactive: no
 Hitbox: 4,6,74,20
-Resting: idle
 Impression: 0
 Awareness: 0
 Discard: no
