@@ -82,6 +82,9 @@ item_triggers = {
     ),
     ['scroll'] = mkUseTrigger('scroll',
         function(g) return true end
+    ),
+    ['igneashard'] = mkUseTrigger('igneashard',
+        function(g) return true end
     )
 }
 

@@ -15,6 +15,7 @@ abelon 13 17 L P
 ~elaine 54 5 L
 ~kath 50 8 L
 ~book 56 6 R
+~igneashard 28 12.8 R
 
 ~~north-forest Dying-Forest
 

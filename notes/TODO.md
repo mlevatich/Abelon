@@ -10,13 +10,15 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- Assets: ignea-stone, campfire, camp beds, stone reliefs, Lester-down, Shanti-down, Kath-down Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
-- Implement 1-1, connect to 1-2 battle
+- Assets: campfire, camp beds, stone reliefs, Lester-down, Shanti-down, Kath-down Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
+- Place assets
+- Implement seeing camp scene, carrying elaine scene.
+- Implement camp dialogue, 1-2 transition
 
 ## 1-2
 
-- Finish script 1-2
-- #69: Implement rest of 1-2, its optional content (present medallion, extra convos, etc) and barrier dialogue preventing going north
+- Finish script 1-2 (dealing with elaine, conversations after, presenting the medallion, north barrier dialogue)
+- #69: Implement 1-2
 
 ## Game presentation
 
@@ -31,7 +33,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 - Profiling, fix battle slowness
 - Add a turn reset mechanic, from the in-battle options menu. Single-use.
-- A static foreground (to outline and "frame" the game) per map could be fun and not that hard
+- A static foreground (to outline and "frame" the game) per map could be fun and not that hard. Maybe only when underground?
 
 - Music fade is quieter than it should be
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.

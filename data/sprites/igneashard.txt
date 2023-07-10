@@ -1,0 +1,18 @@
+// Sprite attributes
+
+Name: Ignea shard
+Ground: yes
+Interactive: yes
+Hitbox:
+Impression: 0
+Awareness: 0
+Discard: yes
+Present: kath,elaine
+Level: 0
+Attributes:
+DiffiucultySubtraction:
+Skilltrees:
+Skills:
+Description: A shard of pure ignea, also known as spellstone. Currents of 
+magical power swirl on its smooth, glassy surface. Use it for yourself or
+give it to an ally to regain 3 Ignea. EOS

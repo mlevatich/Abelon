@@ -314,7 +314,7 @@ end
 function Game:playerNearSprite(sp_id)
     local x, y = self.player.sp:getPosition()
     local sp = self.current_map:getSprite(sp_id)
-    if sp then
+    if sp and (sp.current_behavior == 'idle' or sp.current_behavior == 'wander') then
         local kx, ky = sp:getPosition()
         return abs(x - kx) <= PRESENT_DISTANCE * TILE_WIDTH
            and abs(y - ky) <= PRESENT_DISTANCE * TILE_HEIGHT

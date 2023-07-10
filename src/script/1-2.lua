@@ -1109,3 +1109,39 @@ s12['wolf-den-victory'] = {
         end
     }
 }
+
+
+
+s12['igneashard'] = {
+    ['ids'] = {'abelon', 'igneashard'},
+    ['events'] = {
+        lookAt(1, 2),
+        introduce('igneashard'),
+        say(2, 0, true,
+            "You happen upon a shard of ignea embedded in the ground."
+        ),
+        choice({
+            {
+                ['response'] = "Take it",
+                ['events'] = {
+                    say(2, 0, false,
+                        "You wrest the shard from the earth and brush away \z
+                         the dirt before putting it in your pack."
+                    )
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        local sp = g:getMap():dropSprite('igneashard')
+                        g.player:acquire(sp)
+                    end
+                }
+            },
+            {
+                ['response'] = "Leave it",
+                ['events'] = {},
+                ['result'] = {}
+            }
+        })
+    },
+    ['result'] = {}
+}
