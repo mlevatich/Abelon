@@ -1,6 +1,6 @@
 // Battle stats
 
-TileOrigin: 2,8
+TileOrigin: 10,8
 Allies: abelon:6,9 kath:5,8 elaine:6,7
 Enemies: wolf1:4,3 wolf2:6,14 alphawolf1:1,7 wolf3:1,8 alphawolf2:1,12
 Order: wolf1,wolf2,wolf3,alphawolf1,alphawolf2
@@ -12,7 +12,7 @@ Music: A-Single-Shard-Of-Ignea
 // Battle grid
 
 Dimensions: 6,18
-FFFFFT
+FFFFFF
 FFFFTT
 FFFTTT
 FFTTTT

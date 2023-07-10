@@ -10,12 +10,12 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- West forest more claustraphobic.
-- Adjust road. Patchy, starts in west forest, leads north. Change tileset.
-- Add campsite, stone reliefs. Lester-down, Shanti-down, Kath-down (for sleeping)
+- Adjust road. Patchy, starts in west forest, leads north.
+- Add campfire, camp beds, stone reliefs. Lester-down, Shanti-down, Kath-down
 - Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait.
 - Implement 1-1, connect to 1-2 battle
 - Add optional pickups to 1-1: Ignea stones.
+- Fix all transition tiles
 - Briefly re-visit torch lighting
 
 ## 1-2

@@ -12,7 +12,7 @@
 
 ~elaine 36 9 R down
 ~wolf1 38 10 L
-~medallion 45 28 R
+~medallion 45 28.5 R
 
 ~~west-forest Dying-Forest
 

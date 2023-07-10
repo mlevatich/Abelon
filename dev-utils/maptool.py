@@ -49,7 +49,7 @@ mapping = {
 if len(sys.argv) != 2:
     print("Usage: python3 abelon/utilities/maptool.py destination-dir")
     exit(1)
-pth = 'abelon/utilities'
+pth = 'abelon/dev-utils'
 fs = [ join(pth, f) for f in listdir(pth) if isfile(join(pth, f)) and f[-4:] == '.bmp' ]
 im = Image.open(fs[0])
 pix = im.load()

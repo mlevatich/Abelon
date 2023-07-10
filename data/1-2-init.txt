@@ -28,7 +28,7 @@ abelon 13 17 L P
 ->Day
 ->State saw-camp,carried-elaine
 ->Inventory medallion
-//->Seen 1-2-battle
+->Seen 1-2-battle
 //->Party kath
 //->Party elaine
 //->elaine
