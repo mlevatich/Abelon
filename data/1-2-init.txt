@@ -1,9 +1,9 @@
 ~~east-forest Dying-Forest
 
-~torch 31 49 R
-~torch 31 52 R
-~torch 26 49 L
-~torch 26 52 L
+~torch 31 49 R down
+~torch 31 52 R down
+~torch 26 49 L down
+~torch 26 52 L down
 ~bloodrite 26 49 R
 
 ~~south-forest Dying-Forest
@@ -29,7 +29,7 @@ abelon 13 17 L P
 ->Day
 ->State saw-camp,carried-elaine
 ->Inventory medallion
-->Seen 1-2-battle
+//->Seen 1-2-battle
 //->Party kath
 //->Party elaine
 //->elaine

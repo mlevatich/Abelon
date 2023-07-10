@@ -10,14 +10,14 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- Assets: campfire, camp beds, stone reliefs, Lester-down, Shanti-down, Kath-down Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
-- Place assets
-- Implement seeing camp scene, carrying elaine scene.
+- Assets: campfire, camp beds, camp clutter, stone markers, Kath-down, Shanti-down, Lester-down
+- Implement seeing camp scene, carrying elaine scene
 - Implement camp dialogue, 1-2 transition
 
 ## 1-2
 
-- Finish script 1-2 (dealing with elaine, conversations after, presenting the medallion, north barrier dialogue)
+- Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
+- Finish script 1-2 (elaine not recruited ally phase 3, dealing with elaine, conversations after, presenting the medallion, north barrier dialogue)
 - #69: Implement 1-2
 
 ## Game presentation

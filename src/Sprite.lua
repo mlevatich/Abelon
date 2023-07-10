@@ -1381,7 +1381,10 @@ sprite_data = {
         ['id'] = 'torch',
         ['w'] = 22,
         ['h'] = 31,
-        ['animations'] = { ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 } } }
+        ['animations'] = {
+            ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 } },
+            ['downed'] = { 6.5, { 0 } }
+        }
     },
     {
         ['id'] = 'medallion',

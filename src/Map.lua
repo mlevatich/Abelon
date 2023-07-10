@@ -118,7 +118,7 @@ end
 -- Populate the map with a sprite object
 function Map:addSprite(sp)
     for i = 1, #self.sprites do
-        if sp.y <= self.sprites[i].y then
+        if (sp.y + sp.h) <= (self.sprites[i].y + self.sprites[i].h) then
             table.insert(self.sprites, i, sp)
             return
         end
