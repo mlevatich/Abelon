@@ -9,7 +9,7 @@ TRANSITION DATA
 1 70 south-forest 52 21
 1 71 south-forest 52 22
 1 72 south-forest 52 23
-1 73 south-forest 52 24
+1 73 south-forest 52 23
 1 31 north-forest 85 40
 1 32 north-forest 85 41
 1 33 north-forest 85 42

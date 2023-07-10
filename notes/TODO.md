@@ -10,10 +10,11 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- Assets: ignea-stone, campfire, camp beds, stone reliefs, Lester-down, Shanti-down, Kath-down Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
-- Implement 1-1, connect to 1-2 battle
 - Fix all transition tiles
 - Briefly re-visit torch lighting
+
+- Assets: ignea-stone, campfire, camp beds, stone reliefs, Lester-down, Shanti-down, Kath-down Elaine-idle, Elaine-walk, Elaine-getup, Elaine portrait
+- Implement 1-1, connect to 1-2 battle
 
 ## 1-2
 
