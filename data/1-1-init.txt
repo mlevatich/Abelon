@@ -6,7 +6,7 @@
 ~torch 26 49 L
 ~torch 26 52 L
 ~bloodrite 26 49 R
-~scroll 22 50.8 R
+~scroll 20 50.5 R
 ~igneashard 7 43 R
 
 ~~south-forest Dying-Forest

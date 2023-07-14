@@ -10,9 +10,9 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-1
 
-- Assets: campfire, camp beds, camp clutter, stone markers, Kath-down, Shanti-down, Lester-down
-- Implement seeing camp scene, carrying elaine scene
-- Implement camp dialogue, 1-2 transition
+- Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same script (re-purpose the items script for all chapter-independent scenes).
+- Campsite: campfire, camp beds, camp clutter, stone markers, Kath-down, Shanti-down, Lester-down
+- Implement seeing campsite scene, carrying elaine scene, camp dialogue scenes, 1-2 transition scene
 
 ## 1-2
 
@@ -34,6 +34,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Profiling, fix battle slowness
 - Add a turn reset mechanic, from the in-battle options menu. Single-use.
 - A static foreground (to outline and "frame" the game) per map could be fun and not that hard. Maybe only when underground?
+- Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.
 
 - Music fade is quieter than it should be
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
@@ -49,24 +50,15 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## 1-3
 
-- #70: Shanti, Living Rock sprites and animations
-
 - Update narrative.md 1-1 and 1-2. Write 1-3, 1-4 of narrative.md.
+- #70: Shanti, Living Rock sprites and animations
 - Write script 1-3.md
-
 - #71: Implement 1-3. Includes additional map to the north of north forest, the monastery approach.
 
 ## 1-4
 
-- Write 1-4 script
-- #68: Last pass over script for consistency
-
+- #68: Write 1-4 script, last pass over script for consistency
 - Lester, Forest terror sprite and animations
-
 - #72: Implement 1-4
-- Improve AI algorithm - use other plans! In particular, enemies shouldn't interfere with each other. If one enemy has only a single path to attack their target, the acting enemy shouldn't get in the way of that path unless it needs to in order to attack its own target. To minimize interference in general, the strongest enemies should take their turns first, and the enemies who start farther away from the allies should also be prioritized.
-
 - #66: 1-4 battle theme: "final boss"
-- #66: 1-1 battle theme
-
 - #74: Pre-alpha closed release

@@ -823,7 +823,6 @@ s12['close-tutorial-lvl'] = {
 s12['kath'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
-        daytime(),
         face(1, 2),
         say(2, 1, false,
             "We've done it. Now it's time to find Lester and Shanti."
