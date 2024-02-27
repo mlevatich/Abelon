@@ -31,7 +31,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 - #4: SFX for:, menu select (not too different from current), text sound effects, start game (from title screen).
 - #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up.
-- Animation sound effects: Explore "animation sound effects": looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. A particular frame of an animation should have an optional associated SFX and volume. Use this also for SFX for: use weapon skill, use spell, use assist, all skills (can re-use liberally).
+- Animation sound effects: Explore looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. A particular frame of an animation should have an optional associated SFX and volume. Use this also for SFX for: use weapon skill, use spell, use assist, all skills (can re-use liberally).
 
 - Profiling, fix battle slowness
 - Add a turn reset mechanic, from the in-battle options menu. Single-use.
