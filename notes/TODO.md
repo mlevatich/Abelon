@@ -11,9 +11,8 @@ Bullets that reference a github issue should close the issue when committed.
 ## 1-1
 
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same script (re-purpose the items script for all chapter-independent scenes).
-- Shanti sprite, Kath-down, Lester-down, Shanti-down
+- Kath-down, Camp beds, camp clutter, stone markers
 - Make campfire flicker a little bit
-- Camp beds, camp clutter, stone markers
 - Implement seeing campsite scene, camp dialogue scenes, carrying Elaine scene, 1-2 transition scene
 
 ## 1-2

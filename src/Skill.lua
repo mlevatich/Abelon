@@ -41,7 +41,7 @@ end
 
 Skill = class('Skill')
 
-function Skill:initialize(id, n, desc, ti, st, prio, si, tr, r, at, c,
+function Skill:initialize(id, n, desc, ti, st, prio, anim_type, si, tr, r, at, c,
                           affects, scaling, sp_effects, ts_effects, ts_displace,
                           modifiers, buff_templates, owner_exp_when)
 
@@ -65,6 +65,10 @@ function Skill:initialize(id, n, desc, ti, st, prio, si, tr, r, at, c,
                      -- free_aim(scale, target) (cursor on any target within
                      -- diamond of size scale centered on caster)
     self.cost   = c  -- Ignea cost
+
+    -- Is the skill animation played relative to the caster?
+    -- Or on each targeted grid tile?
+    self.anim_type = anim_type
 
     -- Upvalues for use function
     self.dmg_type = st
@@ -601,7 +605,7 @@ skills = {
     ['sever'] = Skill:new('sever', 'Sever',
         "Slice at an enemy's exposed limbs. Deals (Force * 1.0) Weapon damage \z
          to an enemy next to you and lowers their Force by 3.",
-        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        'Executioner', WEAPON, MANUAL, SKILL_ANIM_RELATIVE, str_to_icon['force'], -- RELATIVE
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.0),
@@ -610,7 +614,7 @@ skills = {
     ['trust'] = Skill:new('trust', 'Trust',
         "Place your faith in your comrades. Increases your Affinity by 8 \z
          for 1 turn.",
-        'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
+        'Veteran', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Demon', 0 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
@@ -619,7 +623,7 @@ skills = {
     ['punish'] = Skill:new('punish', 'Punish',
         "Exploit a brief weakness with a precise stab. Deals 10 + (Force * \z
          1.0) Weapon damage only if the enemy is impaired or debuffed.",
-        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        'Executioner', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Demon', 0 }, { 'Veteran', 1 }, { 'Executioner', 1 } },
         { { F, F, F },
           { T, F, F },
@@ -631,7 +635,7 @@ skills = {
     ['pursuit'] = Skill:new('pursuit', 'Pursuit',
         "Give chase. Gain (Agility * 0.5) Force and (Force * 0.5) Agility \z
          for 2 turns.",
-        'Executioner', WEAPON, MANUAL, str_to_icon['agility'],
+        'Executioner', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['agility'], -- GRID
         { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 3 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
@@ -642,7 +646,7 @@ skills = {
         "Strike an evil, life draining blow. Deals \z
          (Force * 1.0) Weapon damage to an adjacent enemy and \z
          heals you for the damage dealt.",
-        'Demon', WEAPON, MANUAL, str_to_icon['force'],
+        'Demon', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
         { { T } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 1.0),
@@ -652,7 +656,7 @@ skills = {
     ['gambit'] = Skill:new('gambit', 'Gambit',
         "Attack relentlessly. Deals 40 Weapon damage to an adjacent enemy, \z
          but lowers your Affinity and Agility to 0 for 1 turn.",
-        'Veteran', WEAPON, MANUAL, str_to_icon['empty'],
+        'Veteran', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- RELATIVE
         { { 'Demon', 3 }, { 'Veteran', 5 }, { 'Executioner', 3 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(40),
@@ -663,7 +667,7 @@ skills = {
         "Fulfill your duty. Deals (Force * 2.0) Weapon damage \z
          to an adjacent enemy with less than half of their health \z
          remaining.",
-        'Executioner', WEAPON, MANUAL, str_to_icon['force'],
+        'Executioner', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 4 } },
         { { T } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 2.0),
@@ -677,7 +681,7 @@ skills = {
     ['conflagration'] = Skill:new('conflagration', 'Conflagration',
         "Scour the battlefield with unholy fire. Deals 30 Spell \z
          damage to all enemies in a line across the entire field.",
-        'Demon', SPELL, MANUAL, str_to_icon['empty'],
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 5,
         ENEMY, Scaling:new(30)
@@ -685,7 +689,7 @@ skills = {
     ['clutches'] = Skill:new('clutches', 'Clutches',
         "Pull an enemy to you, dealing (Force * 0.5) Spell damage and \z
          reducing the enemy's Reaction by (Force * 0.2) for 2 turns.",
-        'Demon', SPELL, MANUAL, str_to_icon['force'],
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, T, F, F },
           { F, F, F, F, F },
@@ -699,7 +703,7 @@ skills = {
     ['judgement'] = Skill:new('judgement', 'Judgement',
         "Instantly kill an enemy anywhere on the field with less than 10 \z
          health remaining.",
-        'Executioner', SPELL, MANUAL, str_to_icon['empty'],
+        'Executioner', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 2 } },
         { { T } }, FREE_AIM(100), 1,
         ENEMY, Scaling:new(1000),
@@ -709,7 +713,7 @@ skills = {
     ['contempt'] = Skill:new('contempt', 'Contempt',
         "Glare with an evil eye lit by ignea, reducing the Force of \z
          affected enemies by (Focus * 0.5) for 2 turns.",
-        'Demon', SPELL, MANUAL, str_to_icon['focus'],
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['focus'], -- RELATIVE
         { { 'Demon', 2 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { F, T, F, T, F },
           { F, F, T, F, F },
@@ -722,7 +726,7 @@ skills = {
     ['crucible'] = Skill:new('crucible', 'Crucible',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
          (Force * 2.0) Spell damage (cannot kill you).",
-        'Demon', SPELL, MANUAL, str_to_icon['force'],
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- GRID
         { { 'Demon', 4 }, { 'Veteran', 0 }, { 'Executioner', 4 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
@@ -738,7 +742,7 @@ skills = {
     ['guard_blindspot'] = Skill:new('guard_blindspot', 'Guard Blindspot',
         "Protect an adjacent ally from wounds to the back. Adds \z
          (Affinity * 0.5) to the assisted ally's Reaction.",
-        'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
@@ -747,7 +751,7 @@ skills = {
     ['inspire'] = Skill:new('inspire', 'Inspire',
         "Inspire an ally with a courageous cry. They gain (Affinity * 1.0) \z
          Force and Affinity, and (Affinity * 0.5) Reaction.",
-        'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Demon', 1 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
@@ -767,7 +771,7 @@ skills = {
         "Fill allies with reckless confidence. They gain \z
         (Affinity * 1.0) Force, but lose 6 Reaction \z
          and Affinity.",
-        'Veteran', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 1 } },
         { { T, T, T, T, T },
           { T, T, T, T, T },
@@ -784,7 +788,7 @@ skills = {
     ['flank'] = Skill:new('flank', 'Flank',
         "Prepare to surround and overwhelm an enemy. Ally \z
          attacks will reduce enemy Reaction by 6 for 1 turn.",
-        'Veteran', ASSIST, MANUAL, str_to_icon['empty'],
+        'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Demon', 0 }, { 'Veteran', 4 }, { 'Executioner', 2 } },
         { { F, T, F },
           { T, F, T },
@@ -799,7 +803,7 @@ skills = {
     ['sweep'] = Skill:new('sweep', 'Sweep',
         "Slash in a wide arc. Deals (Force * 0.8) Weapon damage to enemies in \z
          front of Kath, and grants 2 Reaction for 1 turn.",
-        'Defender', WEAPON, MANUAL, str_to_icon['force'],
+        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
@@ -810,7 +814,7 @@ skills = {
     ['stun'] = Skill:new('stun', 'Stun',
         "A blunt lance blow. Deals (Force * 0.5) Weapon damage. If Kath's \z
          Reaction is higher than his foe's, they cannot act for 1 turn.",
-        'Defender', WEAPON, MANUAL, str_to_icon['reaction'],
+        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['reaction'], -- RELATIVE
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 0.5),
@@ -822,7 +826,7 @@ skills = {
     ['shove'] = Skill:new('shove', 'Shove',
         "Kath shoves an ally or enemy, moving them by 1 tile and raising \z
          Kath's Reaction by 3 for 1 turn.",
-        'Hero', WEAPON, MANUAL, str_to_icon['empty'],
+        'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- RELATIVE
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { F, T, F },
@@ -834,7 +838,7 @@ skills = {
     ['javelin'] = Skill:new('javelin', 'Javelin',
         "Kath hurls a javelin at an enemy, dealing (Force * 1.2) Weapon \z
          damage.",
-        'Hero', WEAPON, MANUAL, str_to_icon['force'],
+        'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, F, F },
@@ -844,7 +848,7 @@ skills = {
     ['thrust'] = Skill:new('thrust', 'Thrust',
         "Kath throws his body into a thrust, dealing (Force * 1.0) Weapon \z
          damage to up to 2 enemies in a line.",
-        'Hero', WEAPON, MANUAL, str_to_icon['force'],
+        'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, T, F },
@@ -854,7 +858,7 @@ skills = {
     ['enrage'] = Skill:new('enrage', 'Enrage',
         "Enrage nearby enemies with an ignaeic fog, so that their next \z
          actions will target Kath (whether or not they can reach him).",
-        'Defender', SPELL, MANUAL, str_to_icon['empty'],
+        'Defender', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Defender', 3 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
@@ -870,7 +874,7 @@ skills = {
         "Infuse the air to close wounds. Allies in the area recover \z
          (Affinity * 1.0) health. Can target a square within 3 spaces of \z
          Kath.",
-        'Cleric', SPELL, MANUAL, str_to_icon['affinity'],
+        'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
           { T, T, T },
@@ -879,7 +883,7 @@ skills = {
     ),
     ['haste'] = Skill:new('haste', 'Haste',
         "Kath raises the Agility of allies around him by 4 for 2 turns.",
-        'Cleric', SPELL, MANUAL, str_to_icon['empty'],
+        'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { F, F, T, F, F },
           { F, F, T, F, F },
@@ -892,7 +896,7 @@ skills = {
     ['storm_thrust'] = Skill:new('storm_thrust', 'Storm Thrust',
         "Kath launches a thrust powered by lightning, dealing (Force * 1.0) \z
          Spell damage to up to 4 enemies in a line.",
-        'Hero', SPELL, MANUAL, str_to_icon['force'],
+        'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Defender', 0 }, { 'Hero', 5 }, { 'Cleric', 0 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
@@ -906,7 +910,7 @@ skills = {
     ['caution'] = Skill:new('caution', 'Caution',
         "Kath enters a defensive stance, raising his Reaction by 4 and \z
          lowering his Force by 2 for 5 turns.",
-        'Defender', WEAPON, MANUAL, str_to_icon['empty'],
+        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil, nil,
@@ -915,7 +919,7 @@ skills = {
     ['sacrifice'] = Skill:new('sacrifice', 'Sacrifice',
         "Kath transfers his vitality, losing 10 Reaction for 1 turn \z
          to restore 10 + (Force * 1.0) health to nearby allies.",
-        'Cleric', SPELL, MANUAL, str_to_icon['force'],
+        'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 3 } },
         { { F, T, F },
           { T, F, T },
@@ -927,7 +931,7 @@ skills = {
         "Kath ignites a bond, raising his and an ally's \z
          Affinity by (Force * 0.5) for 3 turns. Can target any \z
          ally within 3 tiles.",
-        'Hero', SPELL, MANUAL, str_to_icon['force'],
+        'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- GRID
         { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 3 } },
         { { T } }, FREE_AIM(3), 2,
         ALLY, nil,
@@ -938,7 +942,7 @@ skills = {
     ['great_javelin'] = Skill:new('great_javelin', 'Great Javelin',
         "Kath catapults an empowered javelin which deals (Force * 2.0) \z
          Weapon Damage and pushes the enemy back 2 tiles.",
-        'Hero', WEAPON, MANUAL, str_to_icon['force'],
+        'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Defender', 4 }, { 'Hero', 6 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
@@ -952,7 +956,7 @@ skills = {
     ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep',
         "Kath swings an ignaeic crescent which deals (Force * 1.0) \z
          Weapon Damage and grants 5 Reaction for 1 turn.",
-        'Defender', WEAPON, MANUAL, str_to_icon['force'],
+        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Defender', 5 }, { 'Hero', 4 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -967,7 +971,7 @@ skills = {
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance',
         "Kath receives all attacks meant for an adjacent assisted ally.",
-        'Defender', ASSIST, MANUAL, str_to_icon['endurance'],
+        'Defender', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['endurance'], -- GRID
         { { 'Defender', 2 }, { 'Hero', 1 }, { 'Cleric', 1 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
@@ -976,7 +980,7 @@ skills = {
     ['invigorate'] = Skill:new('invigorate', 'Invigorate',
         "Kath renews allies near him with a cantrip. Allies on the assist gain \z
          (Affinity * 1.0) Force.",
-        'Cleric', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 1 } },
         { { T, F, T },
           { F, F, F },
@@ -987,7 +991,7 @@ skills = {
     ['hold_the_line'] = Skill:new('hold_the_line', 'Hold the Line',
         "Kath forms a wall with his allies, raising the Reaction of assisted \z
          allies by (Reaction * 0.5).",
-        'Hero', ASSIST, MANUAL, str_to_icon['reaction'],
+        'Hero', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['reaction'], -- GRID
         { { 'Defender', 2 }, { 'Hero', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
@@ -996,7 +1000,7 @@ skills = {
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel',
         "Kath casts a powerful protective ward. Allies on the assist cannot \z
          drop below 1 health.",
-        'Cleric', ASSIST, MANUAL, str_to_icon['empty'],
+        'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Defender', 4 }, { 'Hero', 0 }, { 'Cleric', 4 } },
         { { F, F, T, T, T, F, F },
           { F, F, F, F, F, F, F },
@@ -1011,7 +1015,7 @@ skills = {
     ['steadfast'] = Skill:new('steadfast', 'Steadfast',
         "Kath helps allies fortify their positions. Allies on the assist \z
          lose all Agility but gain (Affinity * 1.0) Reaction.",
-        'Defender', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Defender', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Defender', 4 }, { 'Hero', 3 }, { 'Cleric', 2 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1032,7 +1036,7 @@ skills = {
     ['hunting_shot'] = Skill:new('hunting_shot', 'Hunting Shot',
         "Elaine shoots from close range as though hunting, \z
          dealing 12 + (Force * 0.5) Weapon damage.",
-        'Huntress', WEAPON, MANUAL, str_to_icon['force'],
+        'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F },
           { T, F, F },
@@ -1042,7 +1046,7 @@ skills = {
     ['lay_traps'] = Skill:new('lay_traps', 'Lay Traps',
         "Elaine anticipates foes in her path and sets traps to reduce their \z
          Reaction by (Reaction * 1.0) for 2 turn.",
-        'Huntress', WEAPON, MANUAL, str_to_icon['reaction'],
+        'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['reaction'], -- GRID
         { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
         { { F, F, F, F, F },
           { F, T, T, T, F },
@@ -1055,7 +1059,7 @@ skills = {
     ['butcher'] = Skill:new('butcher', 'Butcher',
         "Elaine expertly carves up an adjacent enemy with her hunting knife, \z
          dealing 30 Weapon damage.",
-        'Huntress', WEAPON, MANUAL, str_to_icon['empty'],
+        'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- RELATIVE
         { { 'Huntress', 4 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(30)
@@ -1063,7 +1067,7 @@ skills = {
     ['precise_shot'] = Skill:new('precise_shot', 'Precise Shot',
         "Elaine takes careful aim to hit a faraway target with an arrow, \z
          dealing 2 + (Force * 1.0) Weapon damage.",
-        'Sniper', WEAPON, MANUAL, str_to_icon['force'],
+        'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { F, F, T, F, F },
           { F, F, F, F, F },
@@ -1075,7 +1079,7 @@ skills = {
     ['volley'] = Skill:new('volley', 'Volley',
         "Elaine rapidly fires arrows across the field to stagger foes, \z
          dealing (Force * 0.8) Weapon damage to each target.",
-        'Sniper', WEAPON, MANUAL, str_to_icon['force'],
+        'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, F, T, F, F },
@@ -1089,7 +1093,7 @@ skills = {
     ['piercing_arrow'] = Skill:new('piercing_arrow', 'Piercing Arrow',
         "Elaine shoots with such strength as to pierce through enemies, \z
          dealing (Force * 1.0) Weapon damage to all targets.",
-        'Sniper', WEAPON, MANUAL, str_to_icon['force'],
+        'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 3 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, T },
@@ -1103,7 +1107,7 @@ skills = {
     ['deadeye'] = Skill:new('deadeye', 'Deadeye',
         "Elaine aims an impossible shot after a heavy draw, \z
          dealing (Force * 1.5) Weapon damage and pushing the target 1 tile.",
-        'Sniper', WEAPON, MANUAL, str_to_icon['force'],
+        'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 4 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1117,7 +1121,7 @@ skills = {
     ['observe'] = Skill:new('observe', 'Observe',
         "Once per battle, Elaine chooses an ally to learn from, permanently \z
          gaining 1 point in their signature attribute.",
-        'Apprentice', WEAPON, MANUAL, str_to_icon['empty'],
+        'Apprentice', WEAPON, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, FREE_AIM(100), 0,
         ALLY, nil,
@@ -1143,7 +1147,7 @@ skills = {
     ['snare'] = Skill:new('snare', 'Snare',
         "Elaine swiftly lays a magical hunting snare, reducing a nearby foe's \z
          Agility by 4 + (Agility * 0.5) for 1 turn.",
-        'Huntress', SPELL, MANUAL, str_to_icon['agility'],
+        'Huntress', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['agility'], -- RELATIVE
         { { 'Huntress', 3 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, F, F },
           { T, F, F },
@@ -1154,7 +1158,7 @@ skills = {
     ['ignea_arrowheads'] = Skill:new('ignea_arrowheads', 'Ignea Arrowheads',
         "Elaine fashions arrowheads from Ignea and charges them with magic, \z
          increasing her Force by 2 + (Focus * 1.0) for 4 turns.",
-        'Apprentice', SPELL, MANUAL, str_to_icon['focus'],
+        'Apprentice', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['focus'], -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
@@ -1163,7 +1167,7 @@ skills = {
     ['wind_blast'] = Skill:new('wind_blast', 'Wind Blast',
         "Elaine conjures a concussive gust of wind to blow an enemy back \z
          3 tiles.",
-        'Apprentice', SPELL, MANUAL, str_to_icon['empty'],
+        'Apprentice', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- RELATIVE
         { { 'Huntress', 1 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, T, F },
           { F, F, F },
@@ -1174,7 +1178,7 @@ skills = {
     ['exploding_shot'] = Skill:new('exploding_shot', 'Exploding Shot',
         "Elaine primes a chunk of Ignea to explode and ties it to an arrow, \z
          dealing (Force * 1.2) Spell damage to all foes hit.",
-        'Apprentice', SPELL, MANUAL, str_to_icon['force'],
+        'Apprentice', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
@@ -1188,7 +1192,7 @@ skills = {
     ['seeking_arrow'] = Skill:new('seeking_arrow', 'Seeking Arrow',
         "Elaine enchants an arrow to hunt down a target, firing at any foe \z
          within 8 tiles to deal 20 + (Force * 0.5) Spell damage.",
-        'Sniper', SPELL, MANUAL, str_to_icon['force'],
+        'Sniper', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 3 } },
         { { T } }, FREE_AIM(8), 3,
         ENEMY, Scaling:new(20, 'force', 0.5)
@@ -1196,7 +1200,7 @@ skills = {
     ['terrain_survey'] = Skill:new('terrain_survey', 'Terrain Survey',
         "Elaine surveys the field and how to navigate it. Allies on the \z
          assist share her knowledge and gain (Affinity * 0.5) Agility.",
-        'Huntress', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Huntress', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
@@ -1205,7 +1209,7 @@ skills = {
     ['camouflage'] = Skill:new('camouflage', 'Camouflage',
         "Elaine builds a makeshift camouflaged shelter. The assisted ally \z
          will not be directly targeted by enemies.",
-        'Huntress', ASSIST, MANUAL, str_to_icon['empty'],
+        'Huntress', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
@@ -1214,7 +1218,7 @@ skills = {
     ['harmonize'] = Skill:new('harmonize', 'Harmonize',
         "Elaine channels her power into Ignea and projects it outwards. \z
          Allies on the assist take on Elaine's attributes.",
-        'Apprentice', ASSIST, MANUAL, str_to_icon['empty'],
+        'Apprentice', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 3 }, { 'Sniper', 0 } },
         { { F, F, T, F, F },
           { F, F, F, F, F },
@@ -1228,7 +1232,7 @@ skills = {
     ['flight'] = Skill:new('flight', 'Flight',
         "Elaine whips the wind into currents, letting allies fly. They gain \z
          (Affinity * 1.0) Agility and can move through foes.",
-        'Apprentice', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Apprentice', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Huntress', 2 }, { 'Apprentice', 4 }, { 'Sniper', 0 } },
         { { F, T, F },
           { T, F, T },
@@ -1242,7 +1246,7 @@ skills = {
     ['farsight'] = Skill:new('farsight', 'Farsight',
         "Elaine extends her superior perception to those nearby, granting \z
          assisted allies 2 + (Affinity * 0.5) Reaction.",
-        'Sniper', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Sniper', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 1 } },
         { { T, T, T, T, T },
           { T, F, F, F, T },
@@ -1255,7 +1259,7 @@ skills = {
     ['cover_fire'] = Skill:new('cover_fire', 'Cover Fire',
         "Elaine lays down a hail of arrows around an ally position, granting \z
          them the advantage and (Affinity * 0.5) Reaction and Force.",
-        'Sniper', ASSIST, MANUAL, str_to_icon['affinity'],
+        'Sniper', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
@@ -1276,7 +1280,7 @@ skills = {
     ['bite'] = Skill:new('bite', 'Bite',
         "Leap at an adjacent enemy and bite into them. Deals \z
          (Force * 1.0) Weapon damage to an enemy next to the user.",
-        'Enemy', WEAPON, KILL, str_to_icon['force'],
+        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
         {},
         { { T } }, DIRECTIONAL_AIM, 0,
         ALLY, Scaling:new(0, 'force', 1.0)

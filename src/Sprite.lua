@@ -37,7 +37,15 @@ function Sprite:initialize(id, game)
         file_id = self.id:sub(1, #self.id - 1)
     end
     local data_file = 'Abelon/data/sprites/' .. file_id .. '.txt'
-    local data = readLines(data_file)
+    local data = { -- Spoofed data when file doesn't exist
+        "", "", "Name: ", "Ground: no", "Interactive: no", "Hitbox:", "Impression: 0",
+        "Awareness: 0", "Discard: no", "Present:", "Level: 0", "Attributes:",
+        "DiffiucultySubtraction:", "Skilltrees:", "Skills:", "Description: None. EOS"
+    }
+    if fileExists(data_file) then
+        data = readLines(data_file)
+    end
+
     local tobool = function(s) return s == 'yes' end
     local getSk = function(sk_id) return skills[sk_id] end
 
@@ -63,6 +71,7 @@ function Sprite:initialize(id, game)
     -- Initial animation state
     self.dir = INIT_DIRECTION
     self.animation_name = INIT_ANIMATION
+    self.rot = 0 -- rotation, mainly for skill animations
 
     -- Sprite behaviors
     self.current_behavior = 'idle'
@@ -851,7 +860,35 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
         end
         local frame = self:getCurrentAnimation().current_frame
         if not fired and (frame >= 4 or skill_anim_done) then
-            -- TODO: fire skill animation
+            if sk.anim_type == SKILL_ANIM_RELATIVE then
+
+                -- Spawn animation with arbitrary high position so it renders above everything
+                local skill_anim_sp = self.game:spawnSprite(sk.id, 10000, 10000, self.dir)
+
+                -- Change its position to be centered on caster
+                skill_anim_sp:resetPosition(
+                    self.x - (skill_anim_sp.w - self.w) / 2, 
+                    self.y - (skill_anim_sp.h - self.h) / 2
+                )
+
+                -- Set rotation based on direction of skill and direction of caster
+                local turns = 0
+                if (sk_dir == UP and self.dir == RIGHT) or (sk_dir == DOWN and self.dir == LEFT)  then turns = 3 end
+                if (sk_dir == UP and self.dir == LEFT)  or (sk_dir == DOWN and self.dir == RIGHT) then turns = 1 end
+                skill_anim_sp.rot = math.pi * turns / 2
+
+                -- Play skill animation, delete its sprite when done
+                skill_anim_sp:behaviorSequence({ function(d)
+                    skill_anim_sp:fireAnimation('play', function()
+                        self.game:deleteSprite(skill_anim_sp:getId())
+                    end)
+                    return pass
+                end }, pass)
+
+            elseif sk.anim_type == SKILL_ANIM_GRID then
+                -- TODO: Create one skill animation for each targeted grid tile, positioned on the tile
+                    -- fire each sprite's 'play' animation in sync. As a done action, delete the sprite
+            end
             fired = true
         end
     end
@@ -1293,7 +1330,7 @@ function Sprite:render()
         self:getCurrentQuad(),
         self.x + self.w / 2,
         self.y + self.h / 2,
-        0,
+        self.rot,
         self.dir,
         1,
         self.w / 2,
@@ -1427,7 +1464,7 @@ sprite_data = {
         ['h'] = 21
     },
     {
-        ['id'] = 'grass2',
+        ['id'] = 'grass2nd',
         ['w'] = 31,
         ['h'] = 21
     },
@@ -1455,6 +1492,15 @@ sprite_data = {
         ['id'] = 'campfire',
         ['w'] = 65,
         ['h'] = 40
+    },
+    {
+        ['id'] = 'sever',
+        ['w'] = 64,
+        ['h'] = 32,
+        ['animations'] = {
+            ['idle'] = { 6.5, { 1 } },
+            ['play'] = { 18, { 0, 1, 2, 3 } }
+        }
     },
     {
         ['id'] = 'journal',
@@ -1494,7 +1540,7 @@ for i = 1, #sprite_data do
         g['animations'] = {}
         for name, frames in pairs(data['animations']) do
             local spd, idxs = frames[1], frames[2]
-            g['animations'][name] = Animation:new(
+            g['animations'][name] = Animation:new(id .. '_' .. name,
                 getSpriteQuads(idxs, spritesheet, data['w'], data['h'], sheet_y),
                 spd
             )

@@ -234,6 +234,11 @@ STRONGEST = 4 -- Invert when targeting allies (heal strongest ally)
 MANUAL    = 5 -- For the player team
 FORCED    = 6
 
+-- Skill animation enum
+SKILL_ANIM_GRID     = 1
+SKILL_ANIM_RELATIVE = 2
+SKILL_ANIM_NONE     = 3
+
 -- Experience
 EXP_STATUS_MAX  = 20
 EXP_ON_SPECIAL  = 10

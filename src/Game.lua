@@ -331,6 +331,18 @@ function Game:nextChapter()
     end
 end
 
+function Game:spawnSprite(sp_id, x, y, dir)
+    local fields = { sp_id, tostring(x), tostring(y), ite(dir == RIGHT, 'R', 'L') }
+    local sp = self.current_map:spawnSprite(fields, self)
+    self.sprites[sp:getId()] = sp
+    return sp
+end
+
+function Game:deleteSprite(sp_id)
+    self.current_map:dropSprite(sp_id)
+    self.sprites[sp_id] = nil
+end
+
 function Game:setDifficulty(d)
     local old = self.difficulty
     self.difficulty = d

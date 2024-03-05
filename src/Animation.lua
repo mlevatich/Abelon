@@ -4,7 +4,9 @@ require 'src.Constants'
 Animation = class('Animation')
 
 -- Initialize a new set of frames
-function Animation:initialize(frames, speed)
+function Animation:initialize(id, frames, speed)
+
+    self.id = id
 
     -- Time per frame and total time elapsed
     self.interval = 1 / speed
