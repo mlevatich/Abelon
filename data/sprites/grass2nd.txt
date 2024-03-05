@@ -1,6 +1,6 @@
 // Sprite attributes
 
-Name: Grass2
+Name: Grass2nd
 Ground: yes
 Interactive: no
 Hitbox:

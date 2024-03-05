@@ -1,4 +1,4 @@
-# Reads a map file into a grid, and outputs a placement of grass and grass2 
+# Reads a map file into a grid, and outputs a placement shrubs
 # onto random non-colliding tiles
 
 import sys
@@ -34,7 +34,7 @@ for i in range(len(grid)):
     for j in range(len(grid[i])):
         add = lambda s: new_meta.append("~{} {} {} {}\n".format(s, j + 1, i + 1, 'L' if LR else 'R'))
         if grid[i][j] not in colliding:
-            if   random() <= 0.100: add("grass2")
+            if   random() <= 0.100: add("grass2nd")
             elif random() <= 0.050: add("grass")
             elif random() <= 0.020: add("rock")
             elif random() <= 0.018: add("shafe")
