@@ -742,7 +742,7 @@ skills = {
     ['guard_blindspot'] = Skill:new('guard_blindspot', 'Guard Blindspot',
         "Protect an adjacent ally from wounds to the back. Adds \z
          (Affinity * 0.5) to the assisted ally's Reaction.",
-        'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, str_to_icon['affinity'], -- GRID
+        'Veteran', ASSIST, MANUAL, SKILL_ANIM_GRID, str_to_icon['affinity'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,

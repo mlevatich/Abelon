@@ -1408,9 +1408,11 @@ function Battle:playAction()
     end)
 
     -- Wait a moment before continuing
-    table.insert(seq, function(d)
-        return sp:waitBehaviorGeneric(d, 'combat', 0.8)
-    end)
+    if attack then
+        table.insert(seq, function(d)
+            return sp:waitBehaviorGeneric(d, 'combat', 1)
+        end)
+    end
 
     -- Move 2 (with spoofed grid)
     local grid = self:dryrunGrid(false)
@@ -1476,6 +1478,13 @@ function Battle:playAction()
             d()
         end, assist, assist_dir, c_assist[1] + ox, c_assist[2] + oy, ass_range)
     end)
+
+    -- Wait a moment before continuing
+    if assist then
+        table.insert(seq, function(d)
+            return sp:waitBehaviorGeneric(d, 'combat', 1)
+        end)
+    end
 
     -- Register behavior sequence with sprite
     sp:behaviorSequence(seq, function()
@@ -2512,11 +2521,11 @@ function Battle:renderSpriteOverlays()
                 )
                 x = px - self.game.camera_x
                 y = py - self.game.camera_y
-
-                -- Render everything
-                self:renderHealthbar(sp, x, y, ratio)
-                self:renderStatus(x, y, statuses)
             end
+
+            -- Render everything
+            self:renderHealthbar(sp, x, y, ratio)
+            self:renderStatus(x, y, statuses)
         end
         ::continue::
     end
