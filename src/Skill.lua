@@ -605,7 +605,7 @@ skills = {
     ['sever'] = Skill:new('sever', 'Sever',
         "Slice at an enemy's exposed limbs. Deals (Force * 1.0) Weapon damage \z
          to an enemy next to you and lowers their Force by 3.",
-        'Executioner', WEAPON, MANUAL, SKILL_ANIM_RELATIVE, str_to_icon['force'], -- RELATIVE
+        'Executioner', WEAPON, MANUAL, SKILL_ANIM_RELATIVE, str_to_icon['force'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.0),
@@ -681,7 +681,7 @@ skills = {
     ['conflagration'] = Skill:new('conflagration', 'Conflagration',
         "Scour the battlefield with unholy fire. Deals 30 Spell \z
          damage to all enemies in a line across the entire field.",
-        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['empty'], -- GRID
+        'Demon', SPELL, MANUAL, SKILL_ANIM_GRID, str_to_icon['empty'],
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 5,
         ENEMY, Scaling:new(30)

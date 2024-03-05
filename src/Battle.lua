@@ -1347,6 +1347,11 @@ function Battle:playAction()
         if not attack then
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
+        atk_range = self:skillRange(attack, attack_dir, c_attack)
+        for i = 1, #atk_range do
+            atk_range[i][1] = atk_range[i][1] + oy - 1
+            atk_range[i][2] = atk_range[i][2] + ox - 1
+        end
         return sp:skillBehaviorGeneric(function()
             local moved, hurt, dead, exp_gained = self:useAttack(sp,
                 attack, attack_dir, c_attack
@@ -1399,21 +1404,13 @@ function Battle:playAction()
                 self:kill(dead[i])
             end
             d()
-        end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy)
+        end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy, atk_range)
     end)
 
-    -- If a sprite moved or died, wait a moment before continuing
-    local dry = self:dryrunAttack()
-    if dry then
-        for i = 1, #dry do
-            if dry[i]['moved'] or dry[i]['died'] then
-                table.insert(seq, function(d)
-                    return sp:waitBehaviorGeneric(d, 'combat', 0.8)
-                end)
-                break
-            end
-        end
-    end
+    -- Wait a moment before continuing
+    table.insert(seq, function(d)
+        return sp:waitBehaviorGeneric(d, 'combat', 0.8)
+    end)
 
     -- Move 2 (with spoofed grid)
     local grid = self:dryrunGrid(false)
@@ -1444,6 +1441,11 @@ function Battle:playAction()
         if not assist then
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
+        ass_range = self:skillRange(assist, assist_dir, c_assist)
+        for i = 1, #ass_range do
+            ass_range[i][1] = ass_range[i][1] + oy - 1
+            ass_range[i][2] = ass_range[i][2] + ox - 1
+        end
         return sp:skillBehaviorGeneric(function()
             sp.ignea = sp.ignea - assist.cost
             local t = self:skillRange(assist, assist_dir, c_assist)
@@ -1472,7 +1474,7 @@ function Battle:playAction()
                 g.n_assists = g.n_assists + 1
             end
             d()
-        end, assist, assist_dir, c_assist[1] + ox, c_assist[2] + oy)
+        end, assist, assist_dir, c_assist[1] + ox, c_assist[2] + oy, ass_range)
     end)
 
     -- Register behavior sequence with sprite
@@ -2510,11 +2512,11 @@ function Battle:renderSpriteOverlays()
                 )
                 x = px - self.game.camera_x
                 y = py - self.game.camera_y
+
+                -- Render everything
+                self:renderHealthbar(sp, x, y, ratio)
+                self:renderStatus(x, y, statuses)
             end
-            
-            -- Render everything
-            self:renderHealthbar(sp, x, y, ratio)
-            self:renderStatus(x, y, statuses)
         end
         ::continue::
     end

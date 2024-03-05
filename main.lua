@@ -103,7 +103,13 @@ function love.update(dt)
 
     -- Update game and hot-reload a save if requested
     elseif game then
-        local signal = game:update(FRAME_DUR)
+        local timestep = FRAME_DUR
+        if love.keyboard.isDown(',') then
+            timestep = FRAME_DUR / 5
+        elseif love.keyboard.isDown('.') then
+            timestep = FRAME_DUR * 3
+        end
+        local signal = game:update(timestep)
         if signal == RELOAD_BATTLE then
             game = game:loadSave(BATTLE_SAVE)
         elseif signal == RELOAD_CHAPTER then

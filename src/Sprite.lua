@@ -839,7 +839,7 @@ function Sprite:behaviorSequence(mkBehaviors, doneAction)
     self:changeBehavior('seq')
 end
 
-function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
+function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y, affected_tiles)
     local anim_type = ite(sk.type == WEAPON, 'weapon',
                           ite(sk.type == SPELL, 'spell', 'assist'))
     local skill_anim_done = false
@@ -859,7 +859,7 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
             skill_anim_fired = true
         end
         local frame = self:getCurrentAnimation().current_frame
-        if not fired and (frame >= 4 or skill_anim_done) then
+        if not fired and (frame >= 6 or skill_anim_done) then
             if sk.anim_type == SKILL_ANIM_RELATIVE then
 
                 -- Spawn animation with arbitrary high position so it renders above everything
@@ -886,8 +886,26 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y)
                 end }, pass)
 
             elseif sk.anim_type == SKILL_ANIM_GRID then
-                -- TODO: Create one skill animation for each targeted grid tile, positioned on the tile
-                    -- fire each sprite's 'play' animation in sync. As a done action, delete the sprite
+                for i = 1, #affected_tiles do
+                    
+                    -- Spawn animation with arbitrary high position so it renders above everything
+                    local skill_anim_sp = self.game:spawnSprite(sk.id .. tostring(i), 10000, 10000, RIGHT)
+
+                    -- Change its position to be centered on tile
+                    local t = affected_tiles[i]
+                    skill_anim_sp:resetPosition(
+                        t[2] * TILE_WIDTH - (skill_anim_sp.w - self.w) / 2,
+                        t[1] * TILE_HEIGHT - (skill_anim_sp.h - self.h) / 2
+                    )
+
+                    -- Play skill animation, delete its sprite when done
+                    skill_anim_sp:behaviorSequence({ function(d)
+                        skill_anim_sp:fireAnimation('play', function()
+                            self.game:deleteSprite(skill_anim_sp:getId())
+                        end)
+                        return pass
+                    end }, pass)
+                end
             end
             fired = true
         end
@@ -1498,9 +1516,19 @@ sprite_data = {
         ['w'] = 64,
         ['h'] = 32,
         ['animations'] = {
-            ['idle'] = { 6.5, { 1 } },
+            ['idle'] = { 6.5, { 4 } },
             ['play'] = { 18, { 0, 1, 2, 3 } }
         }
+    },
+    {
+        ['id'] = 'conflagration',
+        ['w'] = 32,
+        ['h'] = 38,
+        ['animations'] = {
+            ['idle'] = { 6.5, { 13 } },
+            ['play'] = { 13, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 } }
+        },
+        ['n'] = 20
     },
     {
         ['id'] = 'journal',
