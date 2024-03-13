@@ -241,7 +241,7 @@ local elaine_choices_saw_camp = addChoice(elaine_choices_no_carry, {
     ['events'] = {
         say(2, 0, true,
             "With effort, you hoist the limp girl and her belongings onto \z
-                your back."
+             your back."
         )
     },
     ['result'] = {
@@ -272,7 +272,7 @@ s11['elaine'] = {
         say(2, 0, true,
             "It's a young girl with fair skin and fiery hair, facedown on \z
              the ground. She wears the garb of a hunter, with a bow and \z
-             quiver slung on her back. She has no visible injuries, but \z
+             quiver slung on her back. She has only minor injuries, but \z
              isn't moving."
         ),
         elaine_choices

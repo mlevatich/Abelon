@@ -8,12 +8,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Writing
-
-- Finish script 1-2:
-    - Free roam TODOs
-    - Dealing with Elaine TODOs
-
 ## Engine work
 
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same script (re-purpose the items script for all chapter-independent scenes).

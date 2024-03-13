@@ -100,7 +100,8 @@ si['igneashard-use'] = {
     ['ids'] = {'igneashard'},
     ['events'] = {
         say(1, 1, true,
-            "Activate the ignea shard and regain 3 Ignea?"
+            "Activate the ignea shard and regain 3 Ignea? You can also present \z
+             it to an ally to restore their ignea."
         ),
         choice({
             {
@@ -195,7 +196,8 @@ si['igneashard-present-elaine'] = {
                         local e = g:getSprite('elaine')
                         g.player:discard('igneashard')
                         e.ignea = math.min(e.ignea + 3, e.attributes['focus'])
-                    end
+                    end,
+                    ['impressions'] = {0, 1}
                 }
             },
             {

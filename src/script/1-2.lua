@@ -1083,7 +1083,7 @@ s12['wolf-den-turnlimit-defeat'] = {
         wait(0.5),
         lookAt(2, 1),
         say(1, 2, false,
-            "We're losing daylight, and we've not even found the ruins we're \z
+            "We're losing daylight, and we've not even found the monastery we're \z
              looking for. And the longer we're out here, the more monsters will \z
              arrive... To say nothing of how Lester and Shanti fare..."
         ),

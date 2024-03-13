@@ -15,4 +15,4 @@ Skilltrees:
 Skills:
 Description: A shard of pure ignea, also known as spellstone. Currents of 
 magical power swirl on its smooth, glassy surface. Use it for yourself or
-give it to an ally to regain 3 Ignea. EOS
+give it to an ally to restore 3 Ignea. EOS
