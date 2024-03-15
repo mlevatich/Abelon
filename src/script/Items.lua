@@ -1,10 +1,10 @@
 require 'src.script.Util'
 
-si = {}
+sitems = {}
 
 
 
-si['scroll-use'] = {
+sitems['scroll-use'] = {
     ['ids'] = {'scroll'},
     ['events'] = {
         say(1, 1, false,
@@ -18,7 +18,7 @@ si['scroll-use'] = {
 
 
 
-si['journal-use'] = {
+sitems['journal-use'] = {
     ['ids'] = {'journal'},
     ['events'] = {
         say(1, 1, false,
@@ -31,7 +31,7 @@ si['journal-use'] = {
 
 
 
-si['medallion-use'] = {
+sitems['medallion-use'] = {
     ['ids'] = {'medallion'},
     ['events'] = {
         say(1, 1, false,
@@ -45,7 +45,7 @@ si['medallion-use'] = {
     },
     ['result'] = {}
 }
-si['medallion-present-kath'] = {
+sitems['medallion-present-kath'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         face(1, 2),
@@ -83,7 +83,7 @@ si['medallion-present-kath'] = {
         ['callback'] = { 'medallion-present-kath-callback', true }
     }
 }
-si['medallion-present-kath-callback'] = {
+sitems['medallion-present-kath-callback'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         face(1, 2),
@@ -96,7 +96,7 @@ si['medallion-present-kath-callback'] = {
 
 
 
-si['igneashard-use'] = {
+sitems['igneashard-use'] = {
     ['ids'] = {'igneashard'},
     ['events'] = {
         say(1, 1, true,
@@ -130,7 +130,7 @@ si['igneashard-use'] = {
     },
     ['result'] = {}
 }
-si['igneashard-present-kath'] = {
+sitems['igneashard-present-kath'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         face(1, 2),
@@ -169,7 +169,7 @@ si['igneashard-present-kath'] = {
     },
     ['result'] = {}
 }
-si['igneashard-present-elaine'] = {
+sitems['igneashard-present-elaine'] = {
     ['ids'] = {'abelon', 'elaine'},
     ['events'] = {
         face(1, 2),

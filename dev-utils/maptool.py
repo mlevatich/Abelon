@@ -47,7 +47,7 @@ mapping = {
 # Read bmp file specified on the command line and write tile numbers to a
 # file according to pixel colors
 if len(sys.argv) != 2:
-    print("Usage: python3 abelon/utilities/maptool.py destination-dir")
+    print("Usage: python3 abelon/dev-utils/maptool.py destination-dir")
     exit(1)
 pth = 'abelon/dev-utils'
 fs = [ join(pth, f) for f in listdir(pth) if isfile(join(pth, f)) and f[-4:] == '.bmp' ]

@@ -5,7 +5,7 @@ require 'src.script.Items'
 local sources = {
     ['1-1'] = s11,
     ['1-2'] = s12,
-    ['items'] = si
+    ['items'] = sitems
 }
 script = {}
 for category,ss in pairs(sources) do

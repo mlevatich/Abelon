@@ -337,35 +337,3 @@ s11['igneashard'] = {
     },
     ['result'] = {}
 }
-
-
-
-s11['book'] = {
-    ['ids'] = {'abelon', 'book'},
-    ['events'] = {
-        lookAt(1, 2),
-        introduce('book'),
-        say(2, 0, false,
-            "An open book lies on the ground, full of strange drawings and \z
-             hastily scrawled paragraphs. The writing is faded and barely \z
-             legible,"
-        ),
-        say(2, 0, false,
-            "and the pages practically crumble to dust at the slightest touch."
-        )
-    },
-    ['result'] = {
-        ['callback'] = { 'book-callback' }
-    }
-}
-s11['book-callback'] = {
-    ['ids'] = {'abelon', 'book'},
-    ['events'] = {
-        lookAt(1, 2),
-        say(2, 0, false,
-            "On a second glance, it looks like there's another small book \z
-             beneath the first."
-        )
-    },
-    ['result'] = {}
-}

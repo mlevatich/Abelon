@@ -16,7 +16,11 @@ Bullets that reference a github issue should close the issue when committed.
 - Profiling, fix battle slowness
 - Add a turn reset mechanic, from the in-battle options menu. Single-use.
 - #73: Make executable cross-platform app
-- Mini-release
+
+## Scene work
+
+- Implement 1-1 seeing campsite scene, camp dialogue scenes, carrying Elaine scene, 1-2 transition scene
+- #69: Implement script 1-2
 
 ## SFX and music
 
@@ -24,17 +28,12 @@ Bullets that reference a github issue should close the issue when committed.
 
 - #4: SFX for: menu select (not too different from current), text sound effects, start game (from title screen).
 - #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up.
-- Animation sound effects for: use weapon skill, use spell, use assist, all skills (can re-use liberally).
+- Animation sound effects for: walking, torch crackle, use weapon skill, use spell, use assist, all skills (can re-use liberally).
 
 - #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
 - #64: Defeat theme: Despair - Short theme that plays during the battle loss scene.
 - #67: Better forest theme - more tense investigation, less funeral march
 - #65: Enemy approaches theme - for rising action before a fight! Consider Face of Shadow
-
-## Scene work
-
-- Implement 1-1 seeing campsite scene, camp dialogue scenes, carrying Elaine scene, 1-2 transition scene
-- #69: Implement script 1-2
 
 ## Art and animation
 
