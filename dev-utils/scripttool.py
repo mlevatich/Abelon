@@ -2,8 +2,9 @@ import sys
 import pprint
 
 # poor man's enums
-event_types = [ "seq", "comment", "say", "callback", "set-flag", "reply", "br", "label", "goto" ]
+event_types = [ "seq", "comment", "say", "callback", "set-flag", "pick-up", "discard", "reply", "br", "label", "goto" ]
 emotions    = [ "hidden", "content", "serious", "worried" ]
+signals     = [ "Event", "Set", "Gain", "Callback", "Discard", "Transition" ]
 
 def parse(contents, cname):
 
@@ -68,15 +69,19 @@ def parse(contents, cname):
             # If in a dialogue segment, process events, choices, and talking
             if in_dialogue:
 
-                # -> indicates something happens
+                # -> indicates a result or choreography
                 if l[:2] == "->":
-                    signal = l[3:].split(':')[0]
+                    signal = l[3:].split(':')[0].strip()
+                    assert signal in signals
                     if signal == 'Callback':
                         addGeneric("callback", {})
-                    elif signal == 'Set':
-                        addGeneric("set-flag", { "flag": l[3:].split(':')[1].strip() })
-                    else:
+                    elif signal == 'Event' or signal == 'Transition':
                         addComment(l[3:])
+                    else:
+                        val = l[3:].split(':')[1].strip()
+                        if   signal == 'Set':     addGeneric("set-flag", { "flag": val })
+                        elif signal == 'Gain':    addGeneric("pick-up",  { "sp":   val })
+                        elif signal == 'Discard': addGeneric("discard",  { "sp":   val })
 
                 # A: indicates an option the player can reply with
                 elif l[:2] == "A:":
@@ -153,10 +158,16 @@ def convert(pyscript, chapter_independent):
         header = '    ' * indent + "['result'] = {\n"
         footer = '\n' + '    ' * indent + '}'
         ind1 = '    ' * (indent + 1)
+        ind2 = '    ' * (indent + 2)
         result_strs = []
+        do_strs = []
         for r in results:
             if r['type'] == 'set':
                 result_strs.append(ind1 + "['state'] = '{}'".format(r['flag']))
+            if r['type'] == 'pick-up':
+                do_strs.append("g.player:acquire(g:getMap():dropSprite('{}'))".format(r['sp'].lower()))
+            if r['type'] == 'discard':
+                do_strs.append("g.player:discard({})".format(r['sp'].lower()))
             if r['type'] == 'callback':
                 f2 = "true" if chapter_independent else "false"
                 result_strs.append(ind1 + "['callback'] = {{ '{}', {} }}".format(r['id'], f2))
@@ -164,6 +175,10 @@ def convert(pyscript, chapter_independent):
                 result_strs.append(ind1 + "['impressions'] = {{{}}}".format(", ".join(r['vals'])))
             if r['type'] == 'awa':
                 result_strs.append(ind1 + "['awareness'] = {{{}}}".format(", ".join(r['vals'])))
+        if len(do_strs) > 0:
+            do_str_header = ind1 + "['do'] = function(g)\n" + ind2
+            do_str_footer = '\n' + ind1 + "end"
+            result_strs.append(do_str_header + "\n{}".format(ind2).join(do_strs) + do_str_footer)
         return header + ",\n".join(result_strs) + footer
 
     def mkComment(args, indent):
@@ -214,7 +229,7 @@ def convert(pyscript, chapter_independent):
         return ind + 'br({}, {{\n{}\n'.format(mkTest(args['conditions']), event_concat) + ind + '})'
     
     # Terrible awful horrible function
-    def mkChoice(sname, es, i, participants, indent):
+    def mkChoice(sname, es, i, participants, label_results, indent):
 
         # assemble responses
         next = 0
@@ -259,7 +274,7 @@ def convert(pyscript, chapter_independent):
             cs  = ind1 + '{\n'
             cs += ind2 + '["guard"] = {},\n'.format(mkTest(c['prereqs']))
             cs += ind2 + '["response"] = "{}",\n'.format(c['dialogue'])
-            events_str, results, new_frags = mkEventsWrapper(sname, c['events'], participants, indent + 2)
+            events_str, results, new_frags, label_results = mkEventsWrapper(sname, c['events'], participants, label_results, indent + 2)
             cs += events_str + ",\n"
             frags += new_frags
             imps = ["0"] * len(participants)
@@ -281,7 +296,7 @@ def convert(pyscript, chapter_independent):
             choice_strs.append(cs)
         
         choice_str = choice_header + ",\n".join(choice_strs) + choice_footer
-        return next, choice_str, frags
+        return next, choice_str, frags, label_results
         
     def responseLookahead(es, i):
         while i < len(es):
@@ -295,7 +310,7 @@ def convert(pyscript, chapter_independent):
             i += 1
         return False
 
-    def mkEvents(sname, es, participants, indent):
+    def mkEvents(sname, es, participants, label_results, indent):
         event_strs = []
         new_fragments = []
         results = []
@@ -304,7 +319,7 @@ def convert(pyscript, chapter_independent):
             ty = es[i]['type']
             args = es[i]['args']
             if ty == 'seq':
-                event_concat, sub_res, sub_frags = mkEvents(sname, args['events'], participants, indent)
+                event_concat, sub_res, sub_frags, label_results = mkEvents(sname, args['events'], participants, label_results, indent)
                 results += sub_res
                 new_fragments += sub_frags
                 event_strs += event_concat
@@ -315,15 +330,23 @@ def convert(pyscript, chapter_independent):
                 event_strs.append(mkSay(args, participants, needs_response, indent + 1))
             elif ty == 'callback':
                 assert es[i + 1]['type'] == 'seq'
-                cb_name = sname + '-callback'
-                cb_events = es[i + 1]['args']['events']
-                new_fragments += mkScene(cb_name, participants, cb_events)
-                results += [{ 'type': 'callback', 'id': cb_name }]
+                if sname[:-8] != 'callback':
+                    cb_name = sname + '-callback'
+                    cb_events = es[i + 1]['args']['events']
+                    scene_frags, label_results = mkScene(cb_name, participants, cb_events, label_results)
+                    new_fragments += scene_frags
+                    results += [{ 'type': 'callback', 'id': cb_name }]
+                else:
+                    print("WARN: nested callback ignored: {}".format(sname + '-callback'))
                 i += 1
             elif ty == 'set-flag':
                 results += [{ 'type': 'set', 'flag': args['flag'] }]
+            elif ty == 'pick-up':
+                results += [{ 'type': 'pick-up', 'sp': args['sp'] }]
+            elif ty == 'discard':
+                results += [{ 'type': 'discard', 'sp': args['sp'] }]
             elif ty == 'reply':
-                next, choice_str, sub_frags = mkChoice(sname, es, i, participants, indent + 1)
+                next, choice_str, sub_frags, label_results = mkChoice(sname, es, i, participants, label_results, indent + 1)
                 new_fragments += sub_frags
                 event_strs.append(choice_str)
                 i = next
@@ -331,7 +354,7 @@ def convert(pyscript, chapter_independent):
                 assert es[i + 1]['type'] == 'seq' or es[i + 1]['type'] == 'reply'
                 if es[i + 1]['type'] == 'seq':
                     sub_events = es[i + 1]['args']['events']
-                    event_concat, sub_res, sub_frags = mkEvents(sname, sub_events, participants, indent + 1)
+                    event_concat, sub_res, sub_frags, label_results = mkEvents(sname, sub_events, participants, label_results, indent + 1)
                     results += sub_res
                     if len(sub_res) > 0:
                         print("WARN: results inside a br() are processed regardless of whether branch is taken:\n{}".format(str(sub_res)))
@@ -341,34 +364,39 @@ def convert(pyscript, chapter_independent):
             elif ty == 'label':
                 assert es[i + 1]['type'] == 'seq'
                 sub_events = es[i + 1]['args']['events']
-                event_concat, sub_res, sub_frags = mkEvents(sname, sub_events, participants, 0)
+                event_concat, sub_res, sub_frags, label_results = mkEvents(sname, sub_events, participants, label_results, 0)
                 results += sub_res
+                label_results[args['id'].lower()] = sub_res
                 new_fragments += sub_frags
                 new_fragments.append("subscene_{} = {{\n{}\n}}".format(args['id'].lower(), event_concat))
                 event_strs.append(mkJump(args, indent + 1))
                 i += 1
             elif ty == 'goto':
                 event_strs.append(mkJump(args, indent + 1))
+                assert args['id'].lower() in label_results
+                results += label_results[args['id'].lower()]
             i += 1
-        return (",\n".join(event_strs), results, new_fragments)
+        return (",\n".join(event_strs), results, new_fragments, label_results)
 
-    def mkEventsWrapper(sname, es, participants, indent):
+    def mkEventsWrapper(sname, es, participants, label_results, indent):
         header = '    ' * indent + "['events'] = {\n"
         footer = '\n' + '    ' * indent + '}'
-        event_concat, results, new_fragments = mkEvents(sname, es, participants, indent)
-        return (header + event_concat + footer, results, new_fragments)
+        event_concat, results, new_fragments, label_results = mkEvents(sname, es, participants, label_results, indent)
+        return (header + event_concat + footer, results, new_fragments, label_results)
 
-    def mkScene(sname, participants, events):
+    def mkScene(sname, participants, events, label_results):
         ids_str = "['ids'] = {{{}}}".format(", ".join(["'{}'".format(i.lower()) for i in participants]))
-        events_str, results, new_fragments = mkEventsWrapper(sname, events, participants, 1)
+        events_str, results, new_fragments, label_results = mkEventsWrapper(sname, events, participants, label_results, 1)
         result_str = mkResult(results, 1)
         scene_str = "{}['{}'] = {{\n    {},\n{},\n{}\n}}".format(pyscript['name'], sname, ids_str, events_str, result_str)
-        return new_fragments + [scene_str]
+        return (new_fragments + [scene_str], label_results)
 
     scenes = pyscript['scenes']
     fragments = []
+    label_results = {}
     for s in scenes:
-        fragments.extend(mkScene(s['name'], s['participants'], s['events']))
+        new_fragments, label_results = mkScene(s['name'], s['participants'], s['events'], label_results)
+        fragments.extend(new_fragments)
 
     header = "require 'src.script.Util'\n\n{} = {{}}\n\n".format(pyscript['name'])
     return header + "\n\n".join(fragments)

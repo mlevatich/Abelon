@@ -76,7 +76,7 @@ A: Certainly (Elaine +2)
 
     Elaine (content): Thank you! I know it probably doesn't look like much. But it's important to me. It was a gift.
 
-    -> Discard -Medallion-
+    -> Discard: Medallion
 
 A: You wear this? It looks uncomfortable
 
@@ -88,20 +88,20 @@ A: You wear this? It looks uncomfortable
 
     Elaine (content): Thank you!
 
-    -> Discard -Medallion-
+    -> Discard: Medallion
 ```
 
 ## igneashard-use
 
 ```
-Ignea shard: Activate the ignea shard and regain 3 Ignea? You can also present it to an ally to restore their ignea.
+Igneashard: Activate the ignea shard and regain 3 Ignea? You can also present it to an ally to restore their ignea.
 
 A: Yes
 
-    Ignea shard: You grip the red stone tightly and focus your energy. It begins to glow softly. You add the activated shard to your supply.
+    Igneashard: You grip the red stone tightly and focus your energy. It begins to glow softly. You add the activated shard to your supply.
 
-    -> Discard: -Ignea shard-
-    -> Abelon gains 3 ignea
+    -> Discard: Igneashard
+    -> Event: Abelon gains 3 ignea
 
 A: No
 ```
@@ -115,8 +115,8 @@ A: Yes
 
     Kath (content): You must have enough for yourself, then. Well, I'll gladly take it. And as ever, I'll make sure your trust in me is well-placed.
 
-    -> Discard: -Ignea shard-
-    -> Kath gains 3 ignea
+    -> Discard: Igneashard
+    -> Event: Kath gains 3 ignea
 
 A: No
 
@@ -134,8 +134,8 @@ A: Yes (Elaine +1)
 
     Elaine (content): Thank you, Sir Abelon! I won't let it go to waste, I promise! I already have some ideas for spells.
 
-    -> Discard: -Ignea shard-
-    -> Elaine gains 3 ignea
+    -> Discard: Igneashard
+    -> Event: Elaine gains 3 ignea
 
 A: No
 

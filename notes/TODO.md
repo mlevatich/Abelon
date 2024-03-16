@@ -8,28 +8,28 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
+## Scene work
+
+- Test script converter until 1-2 runs out of the box
+- Implement 1-1 (use placeholder sprites):
+    - Pan over campsite when entering west forest
+    - Static camp dialogues
+    - Carrying Elaine transition
+    - 1-2 transition via camp bed
+- Implement 1-2: (#69)
+    - Ally phase 3 if Elaine not carried
+    - Dealing with Elaine
+    - North transition
+    - Post-battle dialogues
+
 ## Engine work
 
-- Finish script converter
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same script (re-purpose the items script for all chapter-independent scenes).
 - Make campfire flicker a little bit
 - Support animation sound effects: looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. A particular frame of an animation should have an optional associated SFX and volume.
 - Profiling, fix battle slowness
 - Add a turn reset mechanic, from the in-battle options menu. Single-use.
 - #73: Make executable cross-platform app
-
-## Scene work
-
-- 1-1:
-    - Pan over campsite when entering west forest
-    - Static camp dialogues
-    - Carrying Elaine transition
-    - 1-2 transition via camp bed
-- 1-2: (#69)
-    - Ally phase 3 if Elaine not carried
-    - Dealing with Elaine
-    - North transition
-    - Post-battle dialogues
 
 ## SFX and music
 
