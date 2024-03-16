@@ -13,10 +13,11 @@ function insertEvents(events)
     end
 end
 
-function br(test, t_events, f_events)
+function br(test, events)
     return function(scene)
-        local events = ite(test(scene.game), t_events, f_events)
-        addEvents(scene, events, scene.event + 1)
+        if test(scene.game) then
+            addEvents(scene, events, scene.event + 1)
+        end
     end
 end
 

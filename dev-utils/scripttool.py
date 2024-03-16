@@ -2,7 +2,7 @@ import sys
 import pprint
 
 # poor man's enums
-event_types = [ "comment", "say", "callback", "set-flag", "reply", "br", "label", "goto" ]
+event_types = [ "seq", "comment", "say", "callback", "set-flag", "reply", "br", "label", "goto" ]
 emotions    = [ "hidden", "content", "serious", "worried" ]
 
 def parse(contents, cname):
@@ -37,13 +37,16 @@ def parse(contents, cname):
             # When indentation level changes, we enter or exit a sublist of events
             l_indent = (len(l) - len(l.lstrip())) // 4
             if l_indent > indent:
-                events.append([])
+                assert l_indent - indent == 1
+                addGeneric('seq', { 'events': [] })
                 prev_events = (prev_events, events)
-                events = events[-1]
-            if l_indent < indent:
+                events = events[-1]['args']['events']
+                indent += 1
+            while l_indent < indent:
                 events = prev_events[1]
                 prev_events = prev_events[0]
-            indent = l_indent
+                indent -= 1
+            assert indent == l_indent
             l = l.strip()
 
             # If starting a new scene, save the last one and reset the scene state
@@ -88,6 +91,8 @@ def parse(contents, cname):
                         delta = change.strip().split()[1]
                         if delta[-1] == 'a': awa[participant] = int(delta[:-1])
                         else:                imp[participant] = int(delta)
+                        if participant not in scene["participants"]:
+                            scene["participants"].append(participant)
                     addGeneric("reply", {"dialogue": reply, "impressions": imp, "awareness": awa})
 
                 # Asterisks indicate a branch
@@ -101,7 +106,9 @@ def parse(contents, cname):
                         if c[0] == '#':
                             fs = c[1:].split()
                             assert fs[1] in [">", "<"]
-                            conds.append({"sp": fs[0], "val": int(fs[2]), "op": fs[1], "aware": len(fs) > 3})
+                            if fs[0] not in scene["participants"]:
+                                scene["participants"].append(fs[0])
+                            conds.append({"sp": fs[0], "val": fs[2], "op": fs[1], "aware": len(fs) > 3})
                         elif c[0] == '!':
                             conds.append({"b": False, "flag": c[1:]})
                         else:
@@ -112,12 +119,12 @@ def parse(contents, cname):
                 # Labels identify subscenes that may be referenced at multiple places in the script
                 elif l[:6] == "-LABEL":
                     subscene_id = l.replace("-","").split()[1]
-                    events.append({ "e_type": "label", "contents": { "id": subscene_id }})
+                    events.append({ "type": "label", "args": { "id": subscene_id }})
 
                 # Jump to a subscene
                 elif l[:5] == "-GOTO":
                     subscene_id = l.replace("-","").split()[1]
-                    events.append({ "e_type": "goto", "contents": { "id": subscene_id }})
+                    events.append({ "type": "goto", "args": { "id": subscene_id }})
 
                 # If none of the above, someone is saying something
                 else:
@@ -140,27 +147,248 @@ def parse(contents, cname):
     script['scenes'].append(scene)
     return script
 
-def convert(pyscript, cname):
-    return ""
+def convert(pyscript, chapter_independent):
+
+    def mkResult(results, indent):
+        header = '    ' * indent + "['result'] = {\n"
+        footer = '\n' + '    ' * indent + '}'
+        ind1 = '    ' * (indent + 1)
+        result_strs = []
+        for r in results:
+            if r['type'] == 'set':
+                result_strs.append(ind1 + "['state'] = '{}'".format(r['flag']))
+            if r['type'] == 'callback':
+                f2 = "true" if chapter_independent else "false"
+                result_strs.append(ind1 + "['callback'] = {{ '{}', {} }}".format(r['id'], f2))
+            if r['type'] == 'imp':
+                result_strs.append(ind1 + "['impressions'] = {{{}}}".format(", ".join(r['vals'])))
+            if r['type'] == 'awa':
+                result_strs.append(ind1 + "['awareness'] = {{{}}}".format(", ".join(r['vals'])))
+        return header + ",\n".join(result_strs) + footer
+
+    def mkComment(args, indent):
+        return '    ' * indent + "-- " + args['comment_text']
+    
+    def mkSay(args, participants, needs_response, indent):
+        ind = '    ' * indent
+        ind1 = '    ' * (indent + 1)
+        b = 'false, -- TODO: check if requires response (is there a choice() before the next say()?)'
+        if needs_response == True:  b = 'true,'
+        if needs_response == False: b = 'false,'
+        sp = participants.index(args['speaker']) + 1
+        emo = emotions.index(args['emotion'])
+        text = args['dialogue']
+        words = text.split()
+        chars = 0
+        starting_word = 0
+        split_text = []
+        for i in range(len(words)):
+            chars += len(words[i]) + 1
+            if chars > 70:
+                split_text.append(words[starting_word:i])
+                chars = 0
+                starting_word = i
+        split_text.append(words[starting_word:])
+        if len(split_text) >= 5:
+            print("WARN: text may be too long for dialogue box:\n" + text)
+        text_lines = ind1 + '"' + " \\z\n{} ".format(ind1).join([" ".join(words) for words in split_text]) + '"'
+        return '{}say({}, {}, {} \n{}\n{})'.format(ind, sp, emo, b, text_lines, ind)
+
+    def mkJump(args, indent):
+        return '    ' * indent + 'insertEvents({})'.format("subscene_{}".format(args['id'].lower()))
+    
+    def mkBr(args, event_concat, indent):
+        ind = '    ' * indent
+        conds = args['conditions']
+        lua_conds = []
+        for c in conds:
+            if 'flag' in c:
+                lua_conds.append("{}g.state['{}']".format("" if c['b'] else "not ", c['flag']))
+            elif c['aware']:
+                lua_conds.append("g:getSprite({}):getAwareness() {} {}".format(c['sp'].lower(), c['op'], c['val']))
+            else:
+                lua_conds.append("g:getSprite({}):getImpression() {} {}".format(c['sp'].lower(), c['op'], c['val']))
+        lua_str = ' and '.join(lua_conds)
+        return ind + 'br(function(g) return ({}) end, {{\n{}\n'.format(lua_str, event_concat) + ind + '})'
+    
+    # Terrible awful horrible function
+    def mkChoice(sname, es, i, participants, indent):
+
+        # assemble responses
+        next = 0
+        choices = []
+        while True:
+            t = es[i]['type']
+            assert t == 'reply'
+            choices.append(es[i]['args'])
+            choices[-1]['events'] = []
+            choices[-1]['prereq'] = None
+            if i - 1 >= 0 and es[i - 1]['type'] == 'br':
+                choices[-1]['prereq'] = str(es[i - 1]['args']['conditions'])
+            if i + 1 < len(es):
+                if es[i + 1]['type'] == 'seq':
+                    choices[-1]['events'] = es[i + 1]['args']['events']
+                    if i + 2 < len(es) and es[i + 2]['type'] == 'reply':
+                        i = i + 2
+                    elif i + 3 < len(es) and es[i + 2]['type'] == 'br' and es[i + 3]['type'] == 'reply':
+                        i = i + 3
+                    else:
+                        next = i + 1
+                        break
+                elif es[i + 1]['type'] == 'reply':
+                    i = i + 1
+                elif i + 2 < len(es) and es[i + 1]['type'] == 'br' and es[i + 2]['type'] == 'reply':
+                    i = i + 2
+                else:
+                    next = i
+                    break
+            else:
+                next = i
+                break
+        
+        # to string
+        frags = []
+        ind1 = '    ' * (indent + 1)
+        ind2 = '    ' * (indent + 2)
+        choice_header = '    ' * indent + "choice({\n"
+        choice_footer = '\n' + '    ' * indent + '})'
+        choice_strs = []
+        for c in choices:
+            cs  = ind1 + '{\n'
+            cs += ind2 + '["response"] = "{}",{}\n'.format(c['dialogue'], " -- " + c['prereq'] if c['prereq'] != None else "")
+            events_str, results, new_frags = mkEventsWrapper(sname, c['events'], participants, indent + 2)
+            cs += events_str + ",\n"
+            frags += new_frags
+            imps = ["0"] * len(participants)
+            any_imp = False
+            for sp in c['impressions']:
+                any_imp = True
+                imp = str(c['impressions'][sp])
+                imps[participants.index(sp)] = imp
+            awas = ["0"] * len(participants)
+            any_awa = False
+            for sp in c['awareness']:
+                any_awa = True
+                awa = str(c['awareness'][sp])
+                awas[participants.index(sp)] = awa
+            if any_imp: results += [{ 'type': 'imp', 'vals': imps }]
+            if any_awa: results += [{ 'type': 'awa', 'vals': awas }]
+            cs += mkResult(results, indent + 2)
+            cs += "\n" + ind1 + '}'
+            choice_strs.append(cs)
+        
+        choice_str = choice_header + ",\n".join(choice_strs) + choice_footer
+        return next, choice_str, frags
+        
+    def responseLookahead(es, i):
+        while i < len(es):
+            t = es[i]['type']
+            if t == 'goto':     return None # inconclusive, we can't follow gotos
+            if t == 'reply':    return True
+            if t == 'say':      return False
+            if t == 'seq':      return responseLookahead(es[i    ]['args']['events'], 0)
+            if t == 'label':    return responseLookahead(es[i + 1]['args']['events'], 0)
+            if t == 'callback': i += 1
+            i += 1
+        return False
+
+    def mkEvents(sname, es, participants, indent):
+        event_strs = []
+        new_fragments = []
+        results = []
+        i = 0
+        while i < len(es):
+            ty = es[i]['type']
+            args = es[i]['args']
+            if ty == 'seq':
+                event_concat, sub_res, sub_frags = mkEvents(sname, args['events'], participants, indent)
+                results += sub_res
+                new_fragments += sub_frags
+                event_strs += event_concat
+            elif ty == 'comment':
+                event_strs.append(mkComment(args, indent + 1))
+            elif ty == 'say':
+                needs_response = responseLookahead(es, i + 1)
+                event_strs.append(mkSay(args, participants, needs_response, indent + 1))
+            elif ty == 'callback':
+                assert es[i + 1]['type'] == 'seq'
+                cb_name = sname + '-callback'
+                cb_events = es[i + 1]['args']['events']
+                new_fragments += mkScene(cb_name, participants, cb_events)
+                results += [{ 'type': 'callback', 'id': cb_name }]
+                i += 1
+            elif ty == 'set-flag':
+                results += [{ 'type': 'set', 'flag': args['flag'] }]
+            elif ty == 'reply':
+                next, choice_str, sub_frags = mkChoice(sname, es, i, participants, indent + 1)
+                new_fragments += sub_frags
+                event_strs.append(choice_str)
+                i = next
+            elif ty == 'br':
+                assert es[i + 1]['type'] == 'seq' or es[i + 1]['type'] == 'reply'
+                if es[i + 1]['type'] == 'seq':
+                    sub_events = es[i + 1]['args']['events']
+                    event_concat, sub_res, sub_frags = mkEvents(sname, sub_events, participants, indent + 1)
+                    results += sub_res
+                    if len(sub_res) > 0:
+                        print("WARN: results inside a br() are processed regardless of whether branch is taken:\n{}".format(str(sub_res)))
+                    new_fragments += sub_frags
+                    event_strs.append(mkBr(args, event_concat, indent + 1))
+                    i += 1
+            elif ty == 'label':
+                assert es[i + 1]['type'] == 'seq'
+                sub_events = es[i + 1]['args']['events']
+                event_concat, sub_res, sub_frags = mkEvents(sname, sub_events, participants, 0)
+                results += sub_res
+                new_fragments += sub_frags
+                new_fragments.append("subscene_{} = {{\n{}\n}}".format(args['id'].lower(), event_concat))
+                event_strs.append(mkJump(args, indent + 1))
+                i += 1
+            elif ty == 'goto':
+                event_strs.append(mkJump(args, indent + 1))
+            i += 1
+        return (",\n".join(event_strs), results, new_fragments)
+
+    def mkEventsWrapper(sname, es, participants, indent):
+        header = '    ' * indent + "['events'] = {\n"
+        footer = '\n' + '    ' * indent + '}'
+        event_concat, results, new_fragments = mkEvents(sname, es, participants, indent)
+        return (header + event_concat + footer, results, new_fragments)
+
+    def mkScene(sname, participants, events):
+        ids_str = "['ids'] = {{{}}}".format(", ".join(["'{}'".format(i.lower()) for i in participants]))
+        events_str, results, new_fragments = mkEventsWrapper(sname, events, participants, 1)
+        result_str = mkResult(results, 1)
+        scene_str = "{}['{}'] = {{\n    {},\n{},\n{}\n}}".format(pyscript['name'], sname, ids_str, events_str, result_str)
+        return new_fragments + [scene_str]
+
+    scenes = pyscript['scenes']
+    fragments = []
+    for s in scenes:
+        fragments.extend(mkScene(s['name'], s['participants'], s['events']))
+
+    header = "require 'src.script.Util'\n\n{} = {{}}\n\n".format(pyscript['name'])
+    return header + "\n\n".join(fragments)
 
 def main():
 
     # Read script file
-    if len(sys.argv) != 2:
-        print("Usage: python3 abelon/dev-utils/scripttool.py chapter")
+    if len(sys.argv) != 3:
+        print("Usage: python3 abelon/dev-utils/scripttool.py chapter chapter_independent(true/false)")
         exit(1)
     cname = sys.argv[1]
+    chapter_independent = (sys.argv[2] == 'true')
     fname = "abelon/notes/script/{}.md".format(cname)
     with open(fname, 'r') as f: contents = f.read()
 
     # Parse string contents into a python data structure
     pyscript = parse(contents, cname)
 
-    pprint.PrettyPrinter(indent=4, width=118).pprint(pyscript)
-    exit(0)
+    # pprint.PrettyPrinter(indent=1, width=150).pprint(pyscript)
+    # exit(0)
 
     # Convert python struct to lua syntax
-    luascript = convert(pyscript, cname)
+    luascript = convert(pyscript, chapter_independent)
 
     # Write script to lua file
     lua_fname = "abelon/src/script/{}-template.lua".format(cname)

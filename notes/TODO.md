@@ -10,6 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Engine work
 
+- Finish script converter
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same script (re-purpose the items script for all chapter-independent scenes).
 - Make campfire flicker a little bit
 - Support animation sound effects: looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. A particular frame of an animation should have an optional associated SFX and volume.
@@ -19,8 +20,16 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene work
 
-- Implement 1-1 seeing campsite scene, camp dialogue scenes, carrying Elaine scene, 1-2 transition scene
-- #69: Implement script 1-2
+- 1-1:
+    - Pan over campsite when entering west forest
+    - Static camp dialogues
+    - Carrying Elaine transition
+    - 1-2 transition via camp bed
+- 1-2: (#69)
+    - Ally phase 3 if Elaine not carried
+    - Dealing with Elaine
+    - North transition
+    - Post-battle dialogues
 
 ## SFX and music
 
