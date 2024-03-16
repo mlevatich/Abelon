@@ -307,10 +307,10 @@ end
 function Player:freeMode()
 
     -- Get keypresses
-    local l = love.keyboard.isDown('left')
-    local r = love.keyboard.isDown('right')
-    local u = love.keyboard.isDown('up')
-    local d = love.keyboard.isDown('down')
+    local l = love.keyboard.isDown('left') or love.keyboard.isDown('l')
+    local r = love.keyboard.isDown('right') or love.keyboard.isDown("'")
+    local u = love.keyboard.isDown('up') or love.keyboard.isDown('p')
+    local d = love.keyboard.isDown('down') or love.keyboard.isDown(';')
     local f = love.keyboard.wasPressed('f')
     local inv = love.keyboard.wasPressed('e')
 
@@ -375,8 +375,8 @@ end
 function Player:sceneMode()
 
     -- Get keypresses
-    local u = love.keyboard.wasPressed('up')
-    local d = love.keyboard.wasPressed('down')
+    local u = love.keyboard.wasPressed('up') or love.keyboard.wasPressed('p')
+    local d = love.keyboard.wasPressed('down') or love.keyboard.wasPressed(';')
     local f = love.keyboard.wasPressed('f')
 
     -- Advance scene based on keypresses
@@ -386,10 +386,10 @@ end
 function Player:battleMode()
 
     -- Read keypresses
-    local up = love.keyboard.wasPressed('up')
-    local down = love.keyboard.wasPressed('down')
-    local left = love.keyboard.wasPressed('left')
-    local right = love.keyboard.wasPressed('right')
+    local up = love.keyboard.wasPressed('up') or love.keyboard.wasPressed('p')
+    local down = love.keyboard.wasPressed('down') or love.keyboard.wasPressed(';')
+    local left = love.keyboard.wasPressed('left') or love.keyboard.wasPressed('l')
+    local right = love.keyboard.wasPressed('right') or love.keyboard.wasPressed("'")
     local f = love.keyboard.wasPressed('f')
     local d = love.keyboard.wasPressed('d')
 
@@ -400,8 +400,8 @@ end
 function Player:browseMode()
 
     -- Read keypresses
-    local up = love.keyboard.wasPressed('up')
-    local down = love.keyboard.wasPressed('down')
+    local up = love.keyboard.wasPressed('up') or love.keyboard.wasPressed('p')
+    local down = love.keyboard.wasPressed('down') or love.keyboard.wasPressed(';')
     local f = love.keyboard.wasPressed('f')
     local d = love.keyboard.wasPressed('d')
     local e = love.keyboard.wasPressed('e')
