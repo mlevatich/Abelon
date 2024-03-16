@@ -197,9 +197,7 @@ def convert(pyscript, chapter_independent):
     def mkJump(args, indent):
         return '    ' * indent + 'insertEvents({})'.format("subscene_{}".format(args['id'].lower()))
     
-    def mkBr(args, event_concat, indent):
-        ind = '    ' * indent
-        conds = args['conditions']
+    def mkTest(conds):
         lua_conds = []
         for c in conds:
             if 'flag' in c:
@@ -209,7 +207,11 @@ def convert(pyscript, chapter_independent):
             else:
                 lua_conds.append("g:getSprite({}):getImpression() {} {}".format(c['sp'].lower(), c['op'], c['val']))
         lua_str = ' and '.join(lua_conds)
-        return ind + 'br(function(g) return ({}) end, {{\n{}\n'.format(lua_str, event_concat) + ind + '})'
+        return 'function(g) return {} end'.format(lua_str if lua_str != '' else 'true')
+    
+    def mkBr(args, event_concat, indent):
+        ind = '    ' * indent
+        return ind + 'br({}, {{\n{}\n'.format(mkTest(args['conditions']), event_concat) + ind + '})'
     
     # Terrible awful horrible function
     def mkChoice(sname, es, i, participants, indent):
@@ -222,9 +224,9 @@ def convert(pyscript, chapter_independent):
             assert t == 'reply'
             choices.append(es[i]['args'])
             choices[-1]['events'] = []
-            choices[-1]['prereq'] = None
+            choices[-1]['prereqs'] = []
             if i - 1 >= 0 and es[i - 1]['type'] == 'br':
-                choices[-1]['prereq'] = str(es[i - 1]['args']['conditions'])
+                choices[-1]['prereqs'] = es[i - 1]['args']['conditions']
             if i + 1 < len(es):
                 if es[i + 1]['type'] == 'seq':
                     choices[-1]['events'] = es[i + 1]['args']['events']
@@ -255,7 +257,8 @@ def convert(pyscript, chapter_independent):
         choice_strs = []
         for c in choices:
             cs  = ind1 + '{\n'
-            cs += ind2 + '["response"] = "{}",{}\n'.format(c['dialogue'], " -- " + c['prereq'] if c['prereq'] != None else "")
+            cs += ind2 + '["guard"] = {},\n'.format(mkTest(c['prereqs']))
+            cs += ind2 + '["response"] = "{}",\n'.format(c['dialogue'])
             events_str, results, new_frags = mkEventsWrapper(sname, c['events'], participants, indent + 2)
             cs += events_str + ",\n"
             frags += new_frags
