@@ -13,7 +13,7 @@ before_wolves = {
         "More likely is he didn't want to linger around camp with you here. \z
          I'm sure you're aware he's not exactly fond of you."
     ),
-    choice({
+    choiceNoGuard({
         {
             ['response'] = "An understatement",
             ['events'] = {
@@ -22,7 +22,7 @@ before_wolves = {
                      may be a knight under my command, but I didn't teach him \z
                      to disrespect you."
                 ),
-                choice({
+                choiceNoGuard({
                     {
                         ['response'] = "Naturally",
                         ['events'] = {
@@ -78,7 +78,7 @@ before_wolves = {
                      join us. But having to take orders from Captain Abelon \z
                      has ruined it for him, I suppose."
                 ),
-                choice({
+                choiceNoGuard({
                     {
                         ['response'] = "You sound resentful",
                         ['events'] = {
@@ -123,7 +123,7 @@ before_wolves = {
                      His Majesty made the right decision, but what it put Lester's \z
                      family through... no one should have to endure that."
                 ),
-                choice({
+                choiceNoGuard({
                     {
                         ['response'] = "Yet he became a knight",
                         ['events'] = {
@@ -164,7 +164,7 @@ before_wolves = {
                      seemed apologetic about the whole affair in all the years \z
                      since it happened."
                 ),
-                choice({
+                choiceNoGuard({
                     {
                         ['response'] = "I'm not, but I understand his anger",
                         ['events'] = {
@@ -225,7 +225,7 @@ s12['battle'] = {
             "Can you sense it? They're hanging back for now, watching us. \z
              But they'll attack soon enough."
         ),
-        choice({
+        choiceNoGuard({
             {
                 ['response'] = "Yes",
                 ['events'] = {},
@@ -251,7 +251,7 @@ s12['battle'] = {
             "Ach, this is exactly what I was afraid would happen. Can't Lester \z
              ever just sit still? Blasted fool."
         ),
-        choice({
+        choiceNoGuard({
             {
                 ['response'] = "Where are they?",
                 ['events'] = before_wolves,
@@ -455,7 +455,7 @@ s12['ally-turn-3'] = {
                 ),
                 wait(0.5),
                 say(3, 2, true, "Bow and... Oh Goddess, you want me to fight? I..."),
-                choice({
+                choiceNoGuard({
                     {
                         ['response'] = "Your assistance would be welcome",
                         ['events'] = {},
@@ -599,7 +599,7 @@ s12['demonic-spell'] = {
             "By Ignus, what the hell did you just do, Abelon? I've \z
              never seen such unbelievable magic!"
         ),
-        choice({
+        choiceNoGuard({
             {
                 ['response'] = "You haven't?",
                 ['events'] = {
@@ -702,7 +702,7 @@ choices_carried_elaine = {
             say(2, 1, true,
                 "What, you disagree?"
             ),
-            choice({
+            choiceNoGuard({
                 {
                     ['response'] = "I suppose not",
                     ['events'] = {
@@ -785,8 +785,8 @@ s12['victory'] = {
         ),
         focus(1, 100),
         brState('carried-elaine', 
-            { choice(choices_carried_elaine) },
-            { choice(choices_not_carried_elaine) }
+            { choiceNoGuard(choices_carried_elaine) },
+            { choiceNoGuard(choices_not_carried_elaine) }
         ),
         lookAt(2, 3),
         focus(3, 100),
@@ -861,7 +861,7 @@ map_reading = {
     say(2, 0, true,
         'In the bottom corner of the two pages, a compass is drawn, and next to it, a title: "The Red Mountain Valley".'
     ),
-    choice({
+    choiceNoGuard({
         {
             ['response'] = "Turn the page",
             ['events'] = {
@@ -884,7 +884,7 @@ map_reading = {
         }
     })
 }
-to_read = choice({
+to_read = choiceNoGuard({
     {
         ['response'] = "Start reading",
         ['events'] = map_reading,
@@ -997,7 +997,7 @@ s12['wolf-den-demonic-spell'] = {
             "By Ignus, what the hell did you just do, Abelon? I've \z
              never seen such unbelievable magic!"
         ),
-        choice({
+        choiceNoGuard({
             {
                 ['response'] = "You haven't?",
                 ['events'] = {
@@ -1119,7 +1119,7 @@ s12['igneashard'] = {
         say(2, 0, true,
             "You happen upon a shard of ignea embedded in the ground."
         ),
-        choice({
+        choiceNoGuard({
             {
                 ['response'] = "Take it",
                 ['events'] = {

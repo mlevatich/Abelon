@@ -122,12 +122,29 @@ function teleport(p1, tile_x, tile_y)
     end
 end
 
-function choice(op)
+function choiceNoGuard(op)
     return function(scene)
         slect = function(s) return mapf(function(c) return c[s] end, op) end
         scene.text_state['choices'] = slect('response')
         scene.text_state['choice_result'] = slect('result')
         scene.text_state['choice_events'] = slect('events')
+        scene.text_state['selection'] = 1
+        scene.await_input = true
+    end
+end
+
+function choice(ops)
+    return function(scene)
+        slect = function(ls, field) return mapf(function(c) return c[field] end, ls) end
+        filtered_ops = {}
+        for _, op in pairs(ops) do
+            if op['guard'](scene.game) then
+                table.insert(filtered_ops, op)
+            end
+        end
+        scene.text_state['choices'] = slect(filtered_ops, 'response')
+        scene.text_state['choice_result'] = slect(filtered_ops, 'result')
+        scene.text_state['choice_events'] = slect(filtered_ops, 'events')
         scene.text_state['selection'] = 1
         scene.await_input = true
     end

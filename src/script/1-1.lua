@@ -27,7 +27,7 @@ s11['entry'] = {
 
 
 
-local scroll_choice = choice({
+local scroll_choice = choiceNoGuard({
     {
         ['response'] = "Pick it up",
         ['events'] = {
@@ -168,7 +168,7 @@ s11['victory'] = {
 
 
 
-local medallion_choice = choice({
+local medallion_choice = choiceNoGuard({
     {
         ['response'] = "Pick it up",
         ['events'] = {
@@ -263,8 +263,8 @@ local elaine_choices_no_camp = addChoice(elaine_choices_no_carry, {
     ['result'] = {}
 })
 local elaine_choices = brState('saw-camp',
-    { choice(elaine_choices_saw_camp) },
-    { choice(elaine_choices_no_camp) }
+    { choiceNoGuard(elaine_choices_saw_camp) },
+    { choiceNoGuard(elaine_choices_no_camp) }
 )
 s11['elaine'] = {
     ['ids'] = {'abelon', 'elaine'},
@@ -312,7 +312,7 @@ s11['igneashard'] = {
         say(2, 0, true,
             "You happen upon a shard of ignea embedded in the ground."
         ),
-        choice({
+        choiceNoGuard({
             {
                 ['response'] = "Take it",
                 ['events'] = {
