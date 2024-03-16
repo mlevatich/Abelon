@@ -167,7 +167,7 @@ def convert(pyscript, chapter_independent):
             if r['type'] == 'pick-up':
                 do_strs.append("g.player:acquire(g:getMap():dropSprite('{}'))".format(r['sp'].lower()))
             if r['type'] == 'discard':
-                do_strs.append("g.player:discard({})".format(r['sp'].lower()))
+                do_strs.append("g.player:discard('{}')".format(r['sp'].lower()))
             if r['type'] == 'callback':
                 f2 = "true" if chapter_independent else "false"
                 result_strs.append(ind1 + "['callback'] = {{ '{}', {} }}".format(r['id'], f2))

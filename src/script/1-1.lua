@@ -2,19 +2,27 @@ require 'src.script.Util'
 
 s11 = {}
 
-
-
 s11['entry'] = {
     ['ids'] = {'abelon'},
     ['events'] = {
         blackout(),
         wait(1),
         chaptercard(),
-        say(1, 0, false, "..."),
-        say(1, 0, false, "............"),
-        say(1, 0, false, "...Perhaps I made a mistake somewhere."),
-        say(1, 0, false, ".................."),
-        say(1, 0, false, "..!"),
+        say(1, 0, false, 
+            "..."
+        ),
+        say(1, 0, false, 
+            "............"
+        ),
+        say(1, 0, false, 
+            "...Perhaps I made a mistake somewhere."
+        ),
+        say(1, 0, false, 
+            ".................."
+        ),
+        say(1, 0, false, 
+            "..!"
+        ),
         fade(0.2),
         wait(6)
     },
@@ -25,71 +33,217 @@ s11['entry'] = {
     }
 }
 
+subscene_take_scroll = {
+    say(2, 1, false, 
+        "You carefully roll up the scroll and place it in your pack."
+    )
+}
 
+s11['scroll-callback'] = {
+    ['ids'] = {'abelon', 'scroll'},
+    ['events'] = {
+        lookAt(1, 2),
+        say(2, 1, true, 
+            "The scroll rests unmoving on the ground."
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Pick it up",
+                ['events'] = {
+                    insertEvents(subscene_take_scroll)
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        g.player:acquire(g:getMap():dropSprite('scroll'))
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Leave it",
+                ['events'] = {
 
-local scroll_choice = choiceNoGuard({
-    {
-        ['response'] = "Pick it up",
-        ['events'] = {
-            say(2, 1, false,
-                "You carefully roll up the scroll and place it in your pack."
-            )
-        },
-        ['result'] = {
-            ['do'] = function(g)
-                local sp = g:getMap():dropSprite('scroll')
-                g.player:acquire(sp)
-            end
-        }
+                },
+                ['result'] = {
+
+                }
+            }
+        })
     },
-    {
-        ['response'] = "Leave it",
-        ['events'] = {},
-        ['result'] = {}
+    ['result'] = {
+
     }
-})
+}
+
 s11['scroll'] = {
     ['ids'] = {'abelon', 'scroll'},
     ['events'] = {
         lookAt(1, 2),
         introduce('scroll'),
-        say(2, 1, true,
+        say(2, 1, false, 
             "An unfurled scroll lies among the twigs and leaves of the forest \z
-             floor. It is full of strange drawings and scrawled paragraphs \z
-             resembling instructions."
+             floor. It is full of strange drawings and scrawled paragraphs resembling \z
+             instructions."
         ),
-        scroll_choice
+        say(2, 1, true, 
+            "The writing is faded and barely legible, and the parchment feels as \z
+             though it would crumble to dust at the slightest gust of wind."
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Pick it up",
+                ['events'] = {
+                    insertEvents(subscene_take_scroll)
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        g.player:acquire(g:getMap():dropSprite('scroll'))
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Leave it",
+                ['events'] = {
+
+                },
+                ['result'] = {
+                    ['callback'] = { 'scroll-callback', false }
+                }
+            }
+        })
     },
     ['result'] = {
-        ['callback'] = { 'scroll-callback' }
+
     }
 }
-s11['scroll-callback'] = {
-    ['ids'] = {'abelon', 'scroll'},
+
+subscene_take_medallion = {
+    say(2, 1, false, 
+        "You brush the dirt off of the medallion and place it in your pack."
+    )
+}
+
+s11['medallion-callback'] = {
+    ['ids'] = {'abelon', 'medallion'},
     ['events'] = {
         lookAt(1, 2),
-        say(2, 1, true,
-            "The scroll rests unmoving on the ground, but for wisps of wind \z
-             gently rustling it."
+        say(2, 1, true, 
+            "The medallion glimmers on the forest floor, reflecting faint \z
+             moonlight."
         ),
-        scroll_choice
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Pick it up",
+                ['events'] = {
+                    insertEvents(subscene_take_medallion)
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        g.player:acquire(g:getMap():dropSprite('medallion'))
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Leave it",
+                ['events'] = {
+
+                },
+                ['result'] = {
+
+                }
+            }
+        })
     },
-    ['result'] = {}
-}
-
-
-
-s11['close-tutorial-1'] = {
-    ['ids'] = {},
-    ['events'] = {},
     ['result'] = {
-        ['do'] = function(g)
-            g:endTutorial()
-        end
+
     }
 }
 
+s11['medallion'] = {
+    ['ids'] = {'abelon', 'medallion'},
+    ['events'] = {
+        lookAt(1, 2),
+        introduce('medallion'),
+        say(2, 1, true, 
+            "On the ground is a silver medallion, strung with a thin rope and \z
+             smeared with dirt. The image of a round shield over a longsword is engraved \z
+             in the metal."
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Pick it up",
+                ['events'] = {
+                    insertEvents(subscene_take_medallion)
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        g.player:acquire(g:getMap():dropSprite('medallion'))
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Leave it",
+                ['events'] = {
 
+                },
+                ['result'] = {
+                    ['callback'] = { 'medallion-callback', false }
+                }
+            }
+        })
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['igneashard'] = {
+    ['ids'] = {'abelon', 'igneashard'},
+    ['events'] = {
+        lookAt(1, 2),
+        introduce('igneashard'),
+        say(2, 1, true, 
+            "You happen upon a shard of ignea embedded in the ground."
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Take it",
+                ['events'] = {
+                    say(2, 1, false, 
+                        "You wrest the shard from the earth and brush away the dirt before \z
+                         putting it in your pack."
+                    )
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        g.player:acquire(g:getMap():dropSprite('igneashard'))
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Leave it",
+                ['events'] = {
+
+                },
+                ['result'] = {
+
+                }
+            }
+        })
+    },
+    ['result'] = {
+
+    }
+}
 
 s11['battle'] = {
     ['ids'] = {'abelon', 'wolf1'},
@@ -111,6 +265,330 @@ s11['battle'] = {
     ['result'] = {
         ['do'] = function(g)
             g:launchBattle()
+        end
+    }
+}
+
+s11['abelon-defeat'] = {
+    ['ids'] = {'abelon'},
+    ['events'] = {
+        -- Event: Empty scene
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['turnlimit-defeat'] = {
+    ['ids'] = {'abelon'},
+    ['events'] = {
+        -- Event: Empty scene
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['victory'] = {
+    ['ids'] = {'abelon'},
+    ['events'] = {
+        -- After the battle is won, the player can freely move around again,
+        -- Event: Empty scene
+    },
+    ['result'] = {
+
+    }
+}
+
+subscene_elaine_interact = {
+    choice({
+        {
+            ["guard"] = function(g) return true end,
+            ["response"] = "Leave her",
+            ['events'] = {
+
+            },
+            ['result'] = {
+
+            }
+        },
+        {
+            ["guard"] = function(g) return true end,
+            ["response"] = "Shake her",
+            ['events'] = {
+                say(2, 0, false, 
+                    "You shake the girl gently, but she does not stir."
+                )
+            },
+            ['result'] = {
+
+            }
+        },
+        {
+            ["guard"] = function(g) return not g.state['saw-camp'] end,
+            ["response"] = "Carry her",
+            ['events'] = {
+                say(2, 0, false, 
+                    "With her equipment and bag, the girl is heavy and unwieldy to carry. \z
+                     You are not sure where you would take her to."
+                )
+            },
+            ['result'] = {
+
+            }
+        },
+        {
+            ["guard"] = function(g) return g.state['saw-camp'] end,
+            ["response"] = "Carry her to camp",
+            ['events'] = {
+                say(2, 0, false, 
+                    "With effort, you hoist the limp girl and her belongings onto your \z
+                     back."
+                ),
+                -- Event: Screen fades to black, Elaine and Abelon teleport to camp
+            },
+            ['result'] = {
+                ['state'] = 'carried-elaine',
+                ['impressions'] = {0, 3}
+            }
+        }
+    })
+}
+
+s11['elaine-callback'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = {
+        lookAt(1, 2),
+        br(function(g) return not g.state['carried-elaine'] end, {
+            say(2, 0, true,
+                "The young girl is still motionless."
+            ),
+            insertEvents(subscene_elaine_interact)
+        }),
+        br(function(g) return g.state['carried-elaine'] end, {
+            say(2, 0, false, 
+                "The girl lies on her side, taking shallow breaths. She is \z
+                 unconscious, but alive."
+            )
+        })
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = {
+        lookAt(1, 2),
+        say(2, 0, true, 
+            "It's a young girl with fair skin and fiery hair, facedown on the \z
+             ground. She wears the garb of a hunter, with a bow and quiver slung on her \z
+             back. She has only minor injuries, but isn't moving."
+        ),
+        insertEvents(subscene_elaine_interact)
+    },
+    ['result'] = {
+        ['callback'] = { 'elaine-callback', false }
+    }
+}
+
+s11['campfire'] = {
+    ['ids'] = {'abelon', 'campfire'},
+    ['events'] = {
+        lookAt(1, 2),
+        introduce('campfire'),
+        say(2, 1, false, 
+            "A campfire. The sticks are blackened, but hot coals still radiate \z
+             light. It will die out before morning."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['campclutter'] = {
+    ['ids'] = {'abelon', 'campclutter'},
+    ['events'] = {
+        introduce('campclutter'),
+        say(2, 1, false, 
+            "Someone cooked here."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['book'] = {
+    ['ids'] = {'abelon', 'book'},
+    ['events'] = {
+        lookAt(1, 2),
+        introduce('book'),
+        say(2, 1, false, 
+            "A large book with sturdy but old pages lies open amidst the clutter \z
+             of the campsite. It is too difficult to read in the faint moonlight."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        lookAt(1, 2),
+        say(2, 0, false, 
+            "A well-built man sleeps in the camp bed. His hand extends out of the \z
+             bed and rests on a long spear, but a serene expression is just visible on \z
+             his face, half-obscured by a tumble of thick black hair."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = {
+        lookAt(1, 2),
+        say(2, 0, false, 
+            "A pale man with blonde hair sleeps with a furrowed brow. He shifts in \z
+             his camp bed, occasionally muttering something unintelligible."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = {
+        lookAt(1, 2),
+        say(2, 0, false, 
+            "A dark-skinned woman, the oldest of the three by some margin. Her \z
+             breathing is steady and rhythmic, and her face betrays nothing but the peace of \z
+             deep sleep."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+subscene_sleep = {
+    -- Event: Screen fades to black,
+    say(1, 0, false, 
+        "What is...?"
+    ),
+    say(1, 0, false, 
+        "...Need... I can't..."
+    ),
+    -- Event: "1-2" appears in the corner of the screen,
+    -- Transition: 1-2
+}
+
+s11['campbed-callback'] = {
+    ['ids'] = {'abelon', 'campbed'},
+    ['events'] = {
+        lookAt(1 ,2),
+        say(2, 1, true, 
+            "The camp bed is still open. It doesn't appear anyone else will be \z
+             using it."
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Continue looking around",
+                ['events'] = {
+
+                },
+                ['result'] = {
+
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Go to sleep",
+                ['events'] = {
+                    insertEvents(subscene_sleep)
+                },
+                ['result'] = {
+
+                }
+            }
+        })
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['campbed'] = {
+    ['ids'] = {'abelon', 'campbed'},
+    ['events'] = {
+        lookAt(1 ,2),
+        introduce('campbed'),
+        say(2, 1, true,
+            "An open camp bed. The exterior is made from leather, and the insides \z
+             are filled with a soft material. It looks rather well-worn."
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Continue looking around",
+                ['events'] = {
+
+                },
+                ['result'] = {
+                    ['callback'] = { 'campbed-callback', false }
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Go to sleep",
+                ['events'] = {
+                    insertEvents(subscene_sleep)
+                },
+                ['result'] = {
+
+                }
+            },
+            {
+                ["guard"] = function(g) return not g.state['carried-elaine'] end,
+                ["response"] = "Kill them",
+                ['events'] = {
+                    -- Event: A sound effect plays and the music stops. Abelon moves to the side of the camp. As he begins drawing his sword, the screen cuts to black,
+                    say(1, 0, false, 
+                        "I see... Then I was overly concerned."
+                    ),
+                    say(1, 0, false, 
+                        "That is a relief."
+                    ),
+                    -- Event: "1-2" appears in the corner of the screen,
+                    -- Transition: 1-5-a
+                },
+                ['result'] = {
+
+                }
+            }
+        })
+    },
+    ['result'] = {
+
+    }
+}
+
+s11['close-tutorial-1'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:endTutorial()
         end
     }
 }
@@ -149,191 +627,4 @@ s11['close-tutorial3'] = {
             g:endTutorial()
         end
     }
-}
-s11['abelon-defeat'] = {
-    ['ids'] = {},
-    ['events'] = {},
-    ['result'] = {}
-}
-s11['turnlimit-defeat'] = {
-    ['ids'] = {},
-    ['events'] = {},
-    ['result'] = {}
-}
-s11['victory'] = {
-    ['ids'] = {},
-    ['events'] = {},
-    ['result'] = {}
-}
-
-
-
-local medallion_choice = choiceNoGuard({
-    {
-        ['response'] = "Pick it up",
-        ['events'] = {
-            say(2, 1, false,
-                "You brush the dirt off of the medallion and place it \z
-                 in your pack."
-            )
-        },
-        ['result'] = {
-            ['do'] = function(g)
-                local sp = g:getMap():dropSprite('medallion')
-                g.player:acquire(sp)
-            end
-        }
-    },
-    {
-        ['response'] = "Leave it",
-        ['events'] = {},
-        ['result'] = {}
-    }
-})
-s11['medallion'] = {
-    ['ids'] = {'abelon', 'medallion'},
-    ['events'] = {
-        lookAt(1, 2),
-        introduce('medallion'),
-        say(2, 1, true,
-            "On the ground is a silver medallion, strung with a thin rope and \z
-             smeared with dirt. The image of a round shield over a longsword is \z
-             engraved in the metal."
-        ),
-        medallion_choice
-    },
-    ['result'] = {
-        ['callback'] = { 'medallion-callback' }
-    }
-}
-s11['medallion-callback'] = {
-    ['ids'] = {'abelon', 'medallion'},
-    ['events'] = {
-        lookAt(1, 2),
-        say(2, 1, true,
-            "The medallion glimmers on the forest floor, reflecting faint moonlight."
-        ),
-        medallion_choice
-    },
-    ['result'] = {}
-}
-
-
-
-local elaine_choices_no_carry = {
-    {
-        ['response'] = "Shake her",
-        ['events'] = {
-            say(2, 0, false,
-                "You shake the girl gently, but she does not stir."
-            )
-        },
-        ['result'] = {}
-    },
-    {
-        ['response'] = "Leave her",
-        ['events'] = {},
-        ['result'] = {}
-    }
-}
-local elaine_choices_saw_camp = addChoice(elaine_choices_no_carry, {
-    ['response'] = "Carry her to camp",
-    ['events'] = {
-        say(2, 0, true,
-            "With effort, you hoist the limp girl and her belongings onto \z
-             your back."
-        )
-    },
-    ['result'] = {
-        ['state'] = "carried-elaine",
-        ['do'] = function(g)
-            -- TODO: Teleport Abelon and Elaine to camp
-        end
-    }
-})
-local elaine_choices_no_camp = addChoice(elaine_choices_no_carry, {
-    ['response'] = "Carry her",
-    ['events'] = {
-        say(2, 0, false,
-            "With her equipment and bag, the girl is heavy and \z
-             unwieldy to carry. You are not sure where you would \z
-             take her to."
-        )
-    },
-    ['result'] = {}
-})
-local elaine_choices = brState('saw-camp',
-    { choiceNoGuard(elaine_choices_saw_camp) },
-    { choiceNoGuard(elaine_choices_no_camp) }
-)
-s11['elaine'] = {
-    ['ids'] = {'abelon', 'elaine'},
-    ['events'] = {
-        say(2, 0, true,
-            "It's a young girl with fair skin and fiery hair, facedown on \z
-             the ground. She wears the garb of a hunter, with a bow and \z
-             quiver slung on her back. She has only minor injuries, but \z
-             isn't moving."
-        ),
-        elaine_choices
-    },
-    ['result'] = {
-        ['callback'] = { 'elaine-callback' }
-    }
-}
-s11['elaine-callback'] = {
-    ['ids'] = {'abelon', 'elaine'},
-    ['events'] = {
-        brState('carried-elaine',
-            {
-                say(2, 0, false,
-                    "The girl lies on her side, taking shallow breaths. \z
-                     She is unconscious, but alive."
-                )
-            },
-            {
-                say(2, 0, true,
-                    "The young girl is still motionless."
-                ),
-                elaine_choices
-            }
-        )
-    },
-    ['result'] = {}
-}
-
-
-
-s11['igneashard'] = {
-    ['ids'] = {'abelon', 'igneashard'},
-    ['events'] = {
-        lookAt(1, 2),
-        introduce('igneashard'),
-        say(2, 0, true,
-            "You happen upon a shard of ignea embedded in the ground."
-        ),
-        choiceNoGuard({
-            {
-                ['response'] = "Take it",
-                ['events'] = {
-                    say(2, 0, false,
-                        "You wrest the shard from the earth and brush away \z
-                         the dirt before putting it in your pack."
-                    )
-                },
-                ['result'] = {
-                    ['do'] = function(g)
-                        local sp = g:getMap():dropSprite('igneashard')
-                        g.player:acquire(sp)
-                    end
-                }
-            },
-            {
-                ['response'] = "Leave it",
-                ['events'] = {},
-                ['result'] = {}
-            }
-        })
-    },
-    ['result'] = {}
 }
