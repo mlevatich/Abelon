@@ -3,7 +3,7 @@ import pprint
 
 # poor man's enums
 event_types = [ "seq", "comment", "say", "callback", "set-flag", "pick-up", "discard", "reply", "br", "label", "goto" ]
-emotions    = [ "hidden", "content", "serious", "worried" ]
+emotions    = [ "hidden", "content", "worried", "serious" ]
 signals     = [ "Event", "Set", "Gain", "Callback", "Discard", "Transition" ]
 
 def parse(contents, cname):
@@ -187,7 +187,7 @@ def convert(pyscript, chapter_independent):
     def mkSay(args, participants, needs_response, indent):
         ind = '    ' * indent
         ind1 = '    ' * (indent + 1)
-        b = 'false, -- TODO: check if requires response (is there a choice() before the next say()?)'
+        b = 'false, -- TODO: set requires_response'
         if needs_response == True:  b = 'true,'
         if needs_response == False: b = 'false,'
         sp = participants.index(args['speaker']) + 1
@@ -218,9 +218,9 @@ def convert(pyscript, chapter_independent):
             if 'flag' in c:
                 lua_conds.append("{}g.state['{}']".format("" if c['b'] else "not ", c['flag']))
             elif c['aware']:
-                lua_conds.append("g:getSprite({}):getAwareness() {} {}".format(c['sp'].lower(), c['op'], c['val']))
+                lua_conds.append("g:getSprite('{}'):getAwareness() {} {}".format(c['sp'].lower(), c['op'], c['val']))
             else:
-                lua_conds.append("g:getSprite({}):getImpression() {} {}".format(c['sp'].lower(), c['op'], c['val']))
+                lua_conds.append("g:getSprite('{}'):getImpression() {} {}".format(c['sp'].lower(), c['op'], c['val']))
         lua_str = ' and '.join(lua_conds)
         return 'function(g) return {} end'.format(lua_str if lua_str != '' else 'true')
     
@@ -308,7 +308,7 @@ def convert(pyscript, chapter_independent):
             if t == 'label':    return responseLookahead(es[i + 1]['args']['events'], 0)
             if t == 'callback': i += 1
             i += 1
-        return False
+        return None # inconclusive, next event may or may not be a choice
 
     def mkEvents(sname, es, participants, label_results, indent):
         event_strs = []
