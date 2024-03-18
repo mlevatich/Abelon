@@ -78,12 +78,12 @@ sitems['scroll-present-kath'] = {
              for it to unfurl without so much as a fart after His Majesty took it from \z
              the vault!"
         ),
-        say(2, 2, false, 
+        say(2, 3, false, 
             "Why have you taken it out? Did you forget the instructions? The \z
              ritual site will be in a holy monastery along the road through the Red \z
              Mountain Valley."
         ),
-        say(2, 3, false, 
+        say(2, 2, false, 
             "Never mind that no one has even heard of this monastery. And it'll be \z
              little more than monster-infested ruins by now, if the rumors are true about \z
              the scroll's age. I've about had it with rituals and their strange \z
@@ -116,7 +116,7 @@ sitems['medallion-present-kath-callback'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         face(1, 2),
-        say(2, 3, false, 
+        say(2, 2, false, 
             "A medallion that isn't either of ours... We're the only ones who have \z
              come out here recently, right?"
         )
@@ -130,7 +130,7 @@ sitems['medallion-present-kath'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         face(1, 2),
-        say(2, 2, false, 
+        say(2, 3, false, 
             "A strung medallion? Now where have I seen that engraving before... \z
              Oh!"
         ),
@@ -144,7 +144,7 @@ sitems['medallion-present-kath'] = {
             "It looks the same as it did then, so I suppose he never got around \z
              to..."
         ),
-        say(2, 3, true, 
+        say(2, 2, true, 
             "...Ach. It was already finished, wasn't it?"
         ),
         choice({
@@ -173,7 +173,7 @@ sitems['medallion-present-kath'] = {
                 }
             }
         }),
-        say(2, 3, false, 
+        say(2, 2, false, 
             "More importantly, what would it be doing all the way out here? I know \z
              it's not yours, and I certainly didn't bring it..."
         )
@@ -379,7 +379,7 @@ sitems['igneashard-present-elaine'] = {
                 ["guard"] = function(g) return true end,
                 ["response"] = "No",
                 ['events'] = {
-                    say(2, 3, false, 
+                    say(2, 2, false, 
                         "Oh... well, that's only right, isn't it. I'm the least experienced \z
                          person here, and there's only so much magic to go around..."
                     )

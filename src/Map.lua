@@ -195,10 +195,6 @@ function Map:tileCenter(x, y)
     return x_center, y_center
 end
 
-function Map:tileToPixels(x, y)
-    return (x - 1) * TILE_WIDTH, (y - 1) * TILE_HEIGHT
-end
-
 -- Get the tile type at a given pixel coordinate
 function Map:tileAt(x, y)
 

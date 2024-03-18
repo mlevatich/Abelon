@@ -1,10 +1,10 @@
 ~~east-forest Dying-Forest
 
 ~abelon 28.5 50.5 L P
-~torch 31 49 R
-~torch 31 52 R
-~torch 26 49 L
-~torch 26 52 L
+~torch1 31 49 R
+~torch2 31 52 R
+~torch3 26 49 L
+~torch4 26 52 L
 ~bloodrite 26 49 R
 ~scroll 20 50.5 R
 ~igneashard 7 43 R
@@ -17,10 +17,23 @@
 
 ~~west-forest Dying-Forest
 
-~kath 53 8 L down
+~campfire 54 7 R
+~kath 50 8 L down
+~campbed-used1 50.15 8.15 L
+~lester 57.45 8.85 R down
+~campbed-used2 57 9 R
+~shanti 52.85 9.85 L down
+~campbed-used3 53 10 L
+~campbed 50.7 6 L
+~campclutter 56 8 R
 ~book 56 6 R
 
 ~~north-forest Dying-Forest
 
+~alphawolf1 1 1 L
+~alphawolf2 1 1 L
+~wolf2 1 1 L
+~wolf3 1 1 L
+~wolf4 1 1 L
+
 ->Inventory journal
-//->Seen 1-1-entry

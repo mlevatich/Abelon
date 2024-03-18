@@ -44,6 +44,10 @@ function getSpriteQuads(indices, tex, width, height, sheet_position)
     return frames
 end
 
+function tileToPixels(x, y)
+    return (x - 1) * TILE_WIDTH, (y - 1) * TILE_HEIGHT
+end
+
 function drawFade(alpha)
     love.graphics.push('all')
     love.graphics.setColor(0, 0, 0, alpha)

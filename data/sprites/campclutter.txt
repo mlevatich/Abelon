@@ -1,9 +1,9 @@
 // Sprite attributes
 
-Name: Campfire
-Ground: no
-Interactive: yes
-Hitbox: 0,5,65,35
+Name: Camp clutter
+Ground: yes
+Interactive: no
+Hitbox:
 Impression: 0
 Awareness: 0
 Discard: no
@@ -13,4 +13,4 @@ Attributes:
 DiffiucultySubtraction:
 Skilltrees:
 Skills:
-Description: A campfire. EOS
+Description: Clutter. EOS

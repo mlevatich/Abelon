@@ -240,9 +240,7 @@ s12['battle'] = {
             "Abelon?"
         ),
         fade(0.2),
-        wait(1),
-        -- TODO: getUp(1),
-        wait(3),
+        wait(4),
         focus(2, 100),
         say(2, 3, true, 
             "Can you sense it? They're hanging back for now, watching us. But \z
@@ -1095,7 +1093,8 @@ subscene_elaine_decide = {
                 insertEvents(subscene_welcome_elaine)
             },
             ['result'] = {
-                ['impressions'] = {-1, 0, 1}
+                ['impressions'] = {-1, 0, 1},
+                ['state'] = 'elaine-stays'
             }
         }
     })
@@ -2270,7 +2269,7 @@ s12['victory'] = {
                         insertEvents(subscene_welcome_elaine)
                     },
                     ['result'] = {
-
+                        ['state'] = 'elaine-stays'
                     }
                 }
             })
@@ -2321,7 +2320,7 @@ s12['victory'] = {
                                     )
                                 },
                                 ['result'] = {
-
+                                    ['state'] = 'elaine-stays'
                                 }
                             },
                             {
@@ -2335,7 +2334,7 @@ s12['victory'] = {
                                     )
                                 },
                                 ['result'] = {
-
+                                    
                                 }
                             },
                             {
@@ -2348,7 +2347,6 @@ s12['victory'] = {
                                     )
                                 },
                                 ['result'] = {
-
                                 }
                             },
                             {
@@ -2378,7 +2376,8 @@ s12['victory'] = {
                         )
                     },
                     ['result'] = {
-                        ['impressions'] = {0, 0, -1}
+                        ['impressions'] = {0, 0, -1},
+                        ['state'] = 'elaine-stays'
                     }
                 },
                 {
@@ -2388,7 +2387,8 @@ s12['victory'] = {
 
                     },
                     ['result'] = {
-                        ['impressions'] = {-1, 0, 0}
+                        ['impressions'] = {-1, 0, 0},
+                        ['state'] = 'elaine-stays'
                     }
                 },
                 {
@@ -2398,7 +2398,8 @@ s12['victory'] = {
 
                     },
                     ['result'] = {
-                        ['impressions'] = {-1, 1, 1}
+                        ['impressions'] = {-1, 1, 1},
+                        ['state'] = 'elaine-stays'
                     }
                 }
             }),
@@ -2621,18 +2622,6 @@ s12['campbed'] = {
     ['events'] = {
         say(2, 1, false,
             "Your camp bed. Kath will bring it along for you."
-        )
-    },
-    ['result'] = {
-
-    }
-}
-
-s12['campclutter'] = {
-    ['ids'] = {'abelon', 'campclutter'},
-    ['events'] = {
-        say(2, 1, false,
-            "Someone cooked here."
         )
     },
     ['result'] = {

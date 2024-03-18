@@ -38,6 +38,10 @@ scene_triggers = {
             function(x) return x < 47 end,
             function(y) return y < 15 end
         ),
+        ['1-1-see-camp'] = mkAreaTrigger('1-1-see-camp', 'west-forest',
+            function(x) return x < 70 end,
+            function(y) return true end
+        ),
         ['end-tutorial1'] = mkAreaTrigger('1-1-close-tutorial-1', 'south-forest',
             function(x) return true end,
             function(y) return true end

@@ -280,7 +280,7 @@ function Player:interact()
         -- If sprite is close, interactive, and not the player, it's valid
         if sp:isInteractive() and
            sp:getId() ~= self:getId() and
-           self:AABB(sp, 20) then
+           self:AABB(sp, 15) then
             target = sp
             break
         end

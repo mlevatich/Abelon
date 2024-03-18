@@ -134,7 +134,7 @@ function Battle:readEntities(data, idx)
         }
         local x_tile = self.origin_x + v[1]
         local y_tile = self.origin_y + v[2]
-        local x, y = self.game:getMap():tileToPixels(x_tile, y_tile)
+        local x, y = tileToPixels(x_tile, y_tile)
         sp:resetPosition(x, y)
 
         -- If an enemy, prepare their first skill
@@ -2189,7 +2189,7 @@ function Battle:renderCursors()
         if c then
             local x_tile = self.origin_x + c[1]
             local y_tile = self.origin_y + c[2]
-            local x, y = self.game:getMap():tileToPixels(x_tile, y_tile)
+            local x, y = tileToPixels(x_tile, y_tile)
             local shift = ite(c[3], 2, 3)
             local fx = x + TILE_WIDTH - shift
             local fy = y + TILE_HEIGHT - shift
@@ -2516,7 +2516,7 @@ function Battle:renderSpriteOverlays()
                 end
                 
                 -- Convert tile coords to x and y on screen
-                local px, py = self.game.current_map:tileToPixels(
+                local px, py = tileToPixels(
                     self.origin_x + t_x, self.origin_y + t_y
                 )
                 x = px - self.game.camera_x
@@ -2535,7 +2535,7 @@ function Battle:renderExpGain()
     for i=1, #self.render_exp do
         local re = self.render_exp[i]
         local t_x, t_y, e, timer = re[1], re[2], re[3], re[4]
-        local x,y = self.game.current_map:tileToPixels(
+        local x,y = tileToPixels(
             self.origin_x + t_x, self.origin_y + t_y
         )
         x = x - self.game.camera_x + 20

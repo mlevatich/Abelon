@@ -1,9 +1,9 @@
 ~~east-forest Dying-Forest
 
-~torch 31 49 R down
-~torch 31 52 R down
-~torch 26 49 L down
-~torch 26 52 L down
+~torch1 31 49 R down
+~torch2 31 52 R down
+~torch3 26 49 L down
+~torch4 26 52 L down
 ~bloodrite 26 49 R
 
 ~~south-forest Dying-Forest
@@ -11,11 +11,13 @@
 ~~west-forest Dying-Forest
 
 ~abelon 52 6 L P
-abelon 13 17 L P
 ~elaine 54 5 L
 ~kath 50 8 L
 ~book 56 6 R
+~campfire 54 7 R
 ~igneashard 28 12.8 R
+~campbed 50.7 6 L
+~campclutter 56 8 R
 
 ~~north-forest Dying-Forest
 
@@ -26,12 +28,15 @@ abelon 13 17 L P
 ~wolf3 1 1 L
 ~wolf4 1 1 L
 
-->Day
-->State saw-camp,carried-elaine
+->State saw-camp
+->State carried-elaine
 ->Inventory medallion
-//->Seen 1-2-battle
-//->Party kath
-//->Party elaine
+->Inventory scroll
+->Seen 1-2-battle
+->Day
+->Party kath
+->Party elaine
+->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2

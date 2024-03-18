@@ -463,22 +463,25 @@ function Game:updateScene(dt)
     end
 end
 
--- Switch from one map to another when the player touches a transition tile
-function Game:performTransition()
+function Game:warpSprite(sp, x, y, new_map)
+    local old_map = nil
+    for k,m in pairs(self.maps) do
+        if m:getSprite(sp:getId()) then
+            old_map = k
+            break
+        end
+    end
+    sp:resetPosition(x, y)
+    if old_map then
+        self.maps[old_map]:dropSprite(sp:getId())
+    end
+    self.maps[new_map]:addSprite(sp)
+end
 
-    -- New map
-    local tr = self.in_transition
-    local old_map = self.current_map:getName()
-    local new_map = tr['name']
-
-    -- Reset player's position
-    self.player:resetPosition(tr['x'], tr['y'])
-
-    -- Move player from old map to new map
-    self.maps[old_map]:dropSprite(self.player:getId())
-    self.maps[new_map]:addSprite(self.player.sp)
+function Game:changeMapTo(new_map)
 
     -- If music is different for new map, stop old music and start new music
+    local old_map = self.current_map:getName()
     local old_music = self.map_to_music[old_map]
     local new_music = self.map_to_music[new_map]
     local track_change = old_music ~= new_music
@@ -487,6 +490,14 @@ function Game:performTransition()
     if track_change then self:stopMusic() end
     self.current_map = self.maps[new_map]
     if track_change then self:startMapMusic() end
+end
+
+-- Switch from one map to another when the player touches a transition tile
+function Game:performTransition()
+    local tr = self.in_transition
+    local new_map = tr['name']
+    self:warpSprite(self.player.sp, tr['x'], tr['y'], new_map)
+    self:changeMapTo(new_map)
 end
 
 -- Fade in or out (depending on sign of fade rate)

@@ -272,7 +272,7 @@ s11['battle'] = {
 s11['abelon-defeat'] = {
     ['ids'] = {'abelon'},
     ['events'] = {
-        -- Event: Empty scene
+        
     },
     ['result'] = {
 
@@ -282,7 +282,7 @@ s11['abelon-defeat'] = {
 s11['turnlimit-defeat'] = {
     ['ids'] = {'abelon'},
     ['events'] = {
-        -- Event: Empty scene
+        
     },
     ['result'] = {
 
@@ -292,8 +292,7 @@ s11['turnlimit-defeat'] = {
 s11['victory'] = {
     ['ids'] = {'abelon'},
     ['events'] = {
-        -- After the battle is won, the player can freely move around again,
-        -- Event: Empty scene
+        
     },
     ['result'] = {
 
@@ -341,11 +340,19 @@ subscene_elaine_interact = {
             ["guard"] = function(g) return g.state['saw-camp'] end,
             ["response"] = "Carry her to camp",
             ['events'] = {
+                fade(-0.8),
+                wait(1.5),
+                teleport(2, 54, 5, 'west-forest'),
+                teleport(1, 53, 5, 'west-forest'),
+                lookAt(1, 2),
+                focus(1, 3000),
                 say(2, 0, false, 
                     "With effort, you hoist the limp girl and her belongings onto your \z
                      back."
                 ),
-                -- Event: Screen fades to black, Elaine and Abelon teleport to camp
+                wait(1),
+                fade(0.4),
+                wait(2)
             },
             ['result'] = {
                 ['state'] = 'carried-elaine',
@@ -393,6 +400,20 @@ s11['elaine'] = {
     }
 }
 
+s11['see-camp'] = {
+    ['ids'] = {'abelon', 'campfire'},
+    ['events'] = {
+        lookDir(1, LEFT),
+        focus(2, 100),
+        waitForEvent('camera'),
+        wait(2),
+        focus(1, 100)
+    },
+    ['result'] = {
+        ['state'] = 'saw-camp'
+    }
+}
+
 s11['campfire'] = {
     ['ids'] = {'abelon', 'campfire'},
     ['events'] = {
@@ -401,19 +422,6 @@ s11['campfire'] = {
         say(2, 1, false, 
             "A campfire. The sticks are blackened, but hot coals still radiate \z
              light. It will die out before morning."
-        )
-    },
-    ['result'] = {
-
-    }
-}
-
-s11['campclutter'] = {
-    ['ids'] = {'abelon', 'campclutter'},
-    ['events'] = {
-        introduce('campclutter'),
-        say(2, 1, false, 
-            "Someone cooked here."
         )
     },
     ['result'] = {
@@ -481,19 +489,26 @@ s11['shanti'] = {
 }
 
 subscene_sleep = {
-    -- Event: Screen fades to black,
+    fade(-0.4),
+    wait(3),
+    teleport(3, 1, 1, 'north-forest'),
+    teleport(4, 1, 1, 'north-forest'),
+    teleport(5, 1, 1, 'north-forest'),
+    teleport(6, 1, 1, 'north-forest'),
+    teleport(7, 1, 1, 'north-forest'),
+    teleport(1, 52, 6),
+    lookDir(1, LEFT),
     say(1, 0, false, 
         "What is...?"
     ),
     say(1, 0, false, 
         "...Need... I can't..."
     ),
-    -- Event: "1-2" appears in the corner of the screen,
-    -- Transition: 1-2
+    wait(2)
 }
 
 s11['campbed-callback'] = {
-    ['ids'] = {'abelon', 'campbed'},
+    ['ids'] = {'abelon', 'campbed', 'lester', 'shanti', 'campbed-used1', 'campbed-used2', 'campbed-used3'},
     ['events'] = {
         lookAt(1 ,2),
         say(2, 1, true, 
@@ -518,18 +533,22 @@ s11['campbed-callback'] = {
                     insertEvents(subscene_sleep)
                 },
                 ['result'] = {
-
+                    ['state'] = 'finish-1-1'
                 }
             }
         })
     },
     ['result'] = {
-
+        ['do'] = function(g)
+            if g.state['finish-1-1'] then
+                g:nextChapter()
+            end
+        end
     }
 }
 
 s11['campbed'] = {
-    ['ids'] = {'abelon', 'campbed'},
+    ['ids'] = {'abelon', 'campbed', 'lester', 'shanti', 'campbed-used1', 'campbed-used2', 'campbed-used3'},
     ['events'] = {
         lookAt(1 ,2),
         introduce('campbed'),
@@ -555,31 +574,46 @@ s11['campbed'] = {
                     insertEvents(subscene_sleep)
                 },
                 ['result'] = {
-
+                    ['state'] = 'finish-1-1'
                 }
             },
             {
                 ["guard"] = function(g) return not g.state['carried-elaine'] end,
                 ["response"] = "Kill them",
                 ['events'] = {
-                    -- Event: A sound effect plays and the music stops. Abelon moves to the side of the camp. As he begins drawing his sword, the screen cuts to black,
+                    mute(),
+                    walk(false, 1, 51.3, 6.3, 'walk'),
+                    waitForEvent('walk'),
+                    walk(false, 1, 54, 8, 'walk'),
+                    waitForEvent('walk'),
+                    lookDir(1, RIGHT),
+                    wait(1),
+                    -- TODO: combatReady(1),
+                    wait(1),
+                    blackout(),
+                    wait(1.5),
                     say(1, 0, false, 
                         "I see... Then I was overly concerned."
                     ),
                     say(1, 0, false, 
                         "That is a relief."
                     ),
-                    -- Event: "1-2" appears in the corner of the screen,
-                    -- Transition: 1-5-a
+                    wait(2)
                 },
                 ['result'] = {
-
+                    ['state'] = 'finish-1-1-bad'
                 }
             }
         })
     },
     ['result'] = {
-
+        ['do'] = function(g)
+            if g.state['finish-1-1'] then
+                g:nextChapter()
+            elseif g.state['finish-1-1-bad'] then
+                os.exit()
+            end
+        end
     }
 }
 

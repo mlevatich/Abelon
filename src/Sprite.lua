@@ -37,7 +37,7 @@ function Sprite:initialize(id, game)
         file_id = self.id:sub(1, #self.id - 1)
     end
     local data_file = 'Abelon/data/sprites/' .. file_id .. '.txt'
-    local data = { -- Spoofed data when file doesn't exist
+    local data = { -- Defaults for unspecified fields
         "", "", "Name: ", "Ground: no", "Interactive: no", "Hitbox:", "Impression: 0",
         "Awareness: 0", "Discard: no", "Present:", "Level: 0", "Attributes:",
         "DiffiucultySubtraction:", "Skilltrees:", "Skills:", "Description: None. EOS"
@@ -928,8 +928,7 @@ function Sprite:walkToBehaviorGeneric(doneAction, tile_x, tile_y, run, anim)
     local speed = ite(run, WANDER_SPEED * 2, WANDER_SPEED)
 
     -- Where are we going?
-    local map = self.game:getMap()
-    local x_dst, y_dst = map:tileToPixels(tile_x, tile_y)
+    local x_dst, y_dst = tileToPixels(tile_x, tile_y)
 
     -- Path ordering info
     local order = {
@@ -1439,7 +1438,8 @@ sprite_data = {
         ['animations'] = {
             ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 } },
             ['downed'] = { 6.5, { 0 } }
-        }
+        },
+        ['n'] = 4
     },
     {
         ['id'] = 'medallion',
@@ -1509,6 +1509,22 @@ sprite_data = {
     {
         ['id'] = 'campfire',
         ['w'] = 65,
+        ['h'] = 40
+    },
+    {
+        ['id'] = 'campbed-used',
+        ['w'] = 40,
+        ['h'] = 30,
+        ['n'] = 3
+    },
+    {
+        ['id'] = 'campbed',
+        ['w'] = 40,
+        ['h'] = 30
+    },
+    {
+        ['id'] = 'campclutter',
+        ['w'] = 40,
         ['h'] = 40
     },
     {

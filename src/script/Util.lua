@@ -13,6 +13,12 @@ function insertEvents(events)
     end
 end
 
+function mute()
+    return function(scene)
+        scene.game:stopMusic()
+    end
+end
+
 function br(test, events)
     return function(scene)
         if test(scene.game) then
@@ -110,14 +116,16 @@ function walkTo(pathing, p1, p2, side, label)
     end
 end
 
-function teleport(p1, tile_x, tile_y)
+function teleport(p1, tile_x, tile_y, mapname)
     return function(scene)
+        if mapname == nil then
+            mapname = scene.game.current_map:getName()
+        end
         local sp1 = scene.participants[p1]
-        local m = scene.game:getMap()
-        local x, y = m:tileToPixels(tile_x, tile_y)
-        sp1:resetPosition(x, y)
-        if not m:getSprite(sp1:getId()) then
-            m:addSprite(sp1)
+        local x, y = tileToPixels(tile_x, tile_y)
+        scene.game:warpSprite(sp1, x, y, mapname)
+        if sp1 == scene.game.player.sp then
+            scene.game:changeMapTo(mapname)
         end
     end
 end
