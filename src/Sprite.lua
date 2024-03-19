@@ -839,6 +839,19 @@ function Sprite:behaviorSequence(mkBehaviors, doneAction)
     self:changeBehavior('seq')
 end
 
+function Sprite:animateBehaviorGeneric(doneAction, anim_name)
+    local fired = false
+    return function(sp, dt)
+        self:stop()
+        if not fired then
+            self:fireAnimation(anim_name, function()
+                doneAction()
+            end)
+            fired = true
+        end
+    end
+end
+
 function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y, affected_tiles)
     local anim_type = ite(sk.type == WEAPON, 'weapon',
                           ite(sk.type == SPELL, 'spell', 'assist'))

@@ -77,6 +77,13 @@ function focus(p1, speed)
     end
 end
 
+function getUp(p1)
+    return function(scene)
+        local sp = scene.participants[p1]
+        sp:behaviorSequence({ function(d) return sp:animateBehaviorGeneric(d, 'getup') end }, function() end)
+    end
+end
+
 function _walk(scene, pathing, sp, tx, ty, label)
     scene.active_events[label] = true
     local move_seq = {}

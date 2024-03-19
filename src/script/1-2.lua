@@ -631,7 +631,7 @@ s12['ally-turn-3'] = {
         br(function(g) return g.state['carried-elaine'] end, {
             focus(2, 170),
             waitForEvent('camera'),
-            -- getUp(2),
+            getUp(2),
             say(2, 3, false, 
                 "Mmh..."
             ),
@@ -766,14 +766,21 @@ s12['ally-turn-3'] = {
                  Breathe deep..."
             )
         }),
-        -- TODO: choreograph
         br(function(g) return not g.state['carried-elaine'] end, {
-            teleport(2, 62, 12),
-            -- Event: Screen pans southeast to reveal Elaine walking slowly,
+            getUp(2),
+            teleport(2, 71, 10),
+            lookDir(2, LEFT),
+            lookDir(1, RIGHT),
+            lookDir(3, RIGHT),
+            focus(2, 340),
+            walk(false, 2, 63, 10, 'walk'),
+            waitForEvent('walk'),
             say(2, 2, false, 
                 "I'm sure it was... this way... ...What? Are they... fighting? They \z
                  must be the ones..."
             ),
+            pan(-260, -40, 340),
+            waitForEvent('camera'),
             say(3, 3, true, 
                 "What the- Abelon! There's a person! A young girl, do you see her? By \z
                  the Goddess, what is she doing out here?"
@@ -783,6 +790,7 @@ s12['ally-turn-3'] = {
                     ["guard"] = function(g) return true end,
                     ["response"] = "I came across her last night",
                     ['events'] = {
+                        face(3, 1),
                         say(3, 2, true, 
                             "You what? Abelon, we're two days out from town! Did you not think it \z
                              was worth stopping to help her, or at least waking up the camp to inform \z
@@ -827,6 +835,7 @@ s12['ally-turn-3'] = {
                     ["guard"] = function(g) return true end,
                     ["response"] = "Kath. Eyes on the enemy",
                     ['events'] = {
+                        face(3, 1),
                         say(3, 2, false,
                             "Yes, of course, I'm just... the last thing I expected to see was \z
                              another person this deep in the forest..."
@@ -837,6 +846,7 @@ s12['ally-turn-3'] = {
                     }
                 }
             }),
+            wait(1),
             say(3, 3, false,
                 "Ach, we'll deal with her after the wolves are dead. Hopefully she \z
                  doesn't draw any attention to herself."
@@ -2608,6 +2618,7 @@ s12['book'] = {
 s12['campfire'] = {
     ['ids'] = {'abelon', 'campfire'},
     ['events'] = {
+        introduce('campfire'),
         say(2, 1, false,
             "The campfire has completely gone out."
         )
@@ -2620,6 +2631,7 @@ s12['campfire'] = {
 s12['campbed'] = {
     ['ids'] = {'abelon', 'campbed'},
     ['events'] = {
+        introduce('campbed'),
         say(2, 1, false,
             "Your camp bed. Kath will bring it along for you."
         )
@@ -3014,7 +3026,8 @@ s12['wolf-den-victory'] = {
 s12['north-transition'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'notice'},
     ['events'] = {
-        lookAt(2, 1),
+        face(2, 1),
+        pan(0, 100, 200),
         say(2, 1, false, 
             "Go on ahead, Abelon. I'll be right behind you. I'm just packing up a \z
              few supplies."

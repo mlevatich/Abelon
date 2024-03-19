@@ -63,6 +63,10 @@ scene_triggers = {
         ['wolf-den-battle'] = mkAreaTrigger('1-2-wolf-den-battle', 'west-forest',
             function(x) return x < 18 end,
             function(y) return true end
+        ),
+        ['north-transition'] = mkAreaTrigger('1-2-north-transition', 'west-forest',
+            function (x) return true end,
+            function (y) return y < 2 end
         )
     }
 }
