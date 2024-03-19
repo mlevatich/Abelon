@@ -2888,9 +2888,13 @@ s12['wolf-den-battle'] = {
         focus(1, 200),
         walk(false, 1, 16, 17, 'walk'),
         teleport(2, 28, 15),
-        teleport(3, 31, 15),
+        br(function(g) return g.state['elaine-stays'] end, {
+            teleport(3, 31, 15)
+        }),
         walk(false, 2, 16, 15, 'walk1'),
-        walk(false, 3, 18, 15, 'walk2'),
+        br(function(g) return g.state['elaine-stays'] end, {
+            walk(false, 3, 18, 15, 'walk2')
+        }),
         waitForEvent('walk'),
         say(2, 1, false, 
             "Abelon, what have you found over here? I didn't realize there was \z
@@ -2898,7 +2902,9 @@ s12['wolf-den-battle'] = {
         ),
         waitForText(),
         waitForEvent('walk1'),
-        waitForEvent('walk2'),
+        br(function(g) return g.state['elaine-stays'] end, {
+            waitForEvent('walk2')
+        }),
         wait(0.5),
         lookDir(4, RIGHT),
         lookDir(5, RIGHT),
@@ -2918,16 +2924,20 @@ s12['wolf-den-battle'] = {
         walk(false, 8, 11, 20, 'walk'),
         waitForEvent('walk'),
         wait(1),
-        say(3, 2, false,
-            "...Eep..."
-        ),
+        br(function(g) return g.state['elaine-stays'] end, {
+            say(3, 2, false,
+                "...Eep..."
+            )
+        }),
         walk(false, 2, 15, 16, 'walk'),
         say(2, 3, false, 
             "Ah. This must be the den of the wolf pack that's been after us. Doing \z
              away with them now will allow us to focus on finding the monastery."
         ),
         waitForEvent('walk'),
-        walk(false, 3, 16, 15, 'walk'),
+        br(function(g) return g.state['elaine-stays'] end, {
+            walk(false, 3, 16, 15, 'walk')
+        }),
         wait(0.5),
         br(function(g) return g.state['elaine-stays'] end, {
             say(2, 3, false, 
