@@ -26,7 +26,9 @@ Kath (content): All that talk about 'heralding doom when the seal is broken', on
 
 Kath (serious): Why have you taken it out? Did you forget the instructions? The ritual site will be in a holy monastery along the road through the Red Mountain Valley.
 
-Kath (worried): Never mind that no one has even heard of this monastery. And it'll be little more than monster-infested ruins by now, if the rumors are true about the scroll's age. I've about had it with rituals and their strange prescriptions... But ach, orders are orders, so here we are.
+Kath (worried): Never mind that no one has even heard of this monastery. And it'll be little more than monster-infested ruins by now, if the rumors are true about the scroll's age. 
+
+Kath (serious): I've about had it with rituals and their strange prescriptions... But ach, orders are orders, so here we are.
 
 -> Callback:
 
@@ -46,11 +48,13 @@ Medallion: Who would wear this? You put it away.
 ```
 Kath (serious): A strung medallion? Now where have I seen that engraving before... Oh!
 
-Kath (content): It looks a lot like a piece one of my younger knights was fiddling with! I think he was borrowing time at the blacksmith's forge to work on it. I told him to show it to me when he was finished with it, and he gave me this crestfallen look, like I'd crushed his dreams.
+Kath (content): It looks a lot like a piece one of my younger knights was fiddling with! I think he was borrowing time at the blacksmith's forge to work on it.
+
+Kath (content): For a little encouragement, I told him to show it to me when he was finished with it, but he gave me this crestfallen look, and I never heard about it again from him.
 
 Kath (content): It looks the same as it did then, so I suppose he never got around to...
 
-Kath (worried): ...Ach. It was already finished, wasn't it?
+Kath (worried): ...Ach. He was already done with it, wasn't he?
 
 A: Nice going
 

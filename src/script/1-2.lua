@@ -907,11 +907,13 @@ subscene_dont_know = {
          made me party to enough of your secrets and half-truths in the past, and \z
          they've always been for good reason."
     ),
+    say(2, 2, false, 
+        "But as much as I'm not fond of witholding information from our knights \z
+         or our people, it stings even worse to be the one kept in the dark."
+    ),
     say(2, 2, false,
-        "But as much as I'm not fond of witholding information from our \z
-         knights or our people, it stings even worse to be the one kept in the dark... \z
-         Goddess grant that one day you and King Sinclair trust me to the extent you \z
-         trust each other."
+        "...Goddess grant that one day you and King Sinclair trust me to the \z
+         extent you trust each other."
     )
 }
 
@@ -942,25 +944,25 @@ subscene_bye_elaine = {
     ),
     -- Event: Elaine and Kath move over to the campsite,
     say(2, 3, false, 
-        "We're here, where Shanti's drawn a little campfire. We've gone off \z
-         the main Lefally road looking for a monastery, but if you walk southeast \z
-         of here, you'll find a number of fallen trees. From there, you should \z
-         see the path we cut through the brush."
+        "We're here, where Shanti's drawn a little campfire. We've gone off the \z
+         main Lefally road, but if you walk southeast, you'll find a number of \z
+         fallen trees. From there, you should see the path we cut through the brush."
     ),
     say(2, 3, false, 
         "If you follow that path southwest, you'll reach the Lefally road by \z
-         afternoon. It's a straight shot south on that road to the north gate of Ebonach. \z
-         Shout down the guards, they'll let you in. After all, it sounds like you \z
+         afternoon. It's a straight shot south on that road to the north gate of Ebonach."
+    ),
+    say(2, 1, false, 
+        "Shout down the guards, they'll let you in. After all, it sounds like you \z
          have a rather close friend among them."
     ),
     say(3, 2, false, 
         "..."
     ),
     say(2, 1, false, 
-        "...Just a little joke! Anyway, keep your eyes open for wolves. \z
-         They'll stalk you before going in for the attack. But if you notice them \z
-         watching you and get yourself up a tall tree, they won't be able to reach. \z
-         They should give up on you after a while."
+        "...Just a little joke! Anyway, keep your eyes open for wolves. They'll \z
+         stalk you before going in for the attack. But if you notice them watching you \z
+         and get yourself up a tall tree, they won't be able to reach."
     ),
     say(3, 3, false, 
         "...Ok. What about other monsters?"
@@ -1046,9 +1048,11 @@ subscene_welcome_elaine = {
     ),
     say(3, 2, false, 
         "Ah... So, what are those goals? Why are you both in the Red Mountain \z
-         Valley? I didn't think the Knights of Ebonach ever went north anymore. And \z
-         you're the Knight Captains... Don't you usually have a lot of knights with \z
-         you to order around?"
+         Valley? I didn't think the Knights of Ebonach ever went north anymore."
+    ),
+    say(3, 3, false, 
+        "And you're the Knight Captains... Don't you usually have a lot of \z
+         knights with you to order around?"
     ),
     say(2, 2, false, 
         "Did you not see the news of His Majesty's announcement? It was \z
@@ -1316,22 +1320,26 @@ s12['victory'] = {
                  some of your wounds. Thankfully none of them appear serious."
             )
         }),
-        say(2, 3, true, 
+        say(2, 3, false, 
             "...Right. 'For simple cuts and bruises, slowly guide a fist of \z
-             thumb-sized stones over the length of the wound, while channeling power gently \z
-             into the wrist and reading the listed incantation... Replace with new \z
-             stones when half depleted'... Hm, I wonder if I could recite all of the \z
-             healing scripts from memory."
+             thumb-sized stones over the length of the wound, while channeling power gently into \z
+             the wrist and reading the listed incantation..."
+        ),
+        say(2, 3, true, 
+            "...Replace with new stones when half depleted'. Hm, I wonder if I could \z
+             recite all of the healing scripts from memory."
         ),
         choice({
             {
                 ["guard"] = function(g) return true end,
                 ["response"] = "Impressive recollection",
                 ['events'] = {
-                    say(2, 1, true, 
-                        "On the topic of my memory, old man, I haven't forgotten my first \z
-                         battle at the Southwall under your command, when you told the other knights, \z
-                         'Kath ought to make an easy meal for the monsters - he won't notice his \z
+                    say(2, 1, false, 
+                        "On the topic of my memory, old man, I haven't forgotten my first battle \z
+                         at the Southwall under your command, when you told the other knights,"
+                    ),
+                    say(2, 3, true, 
+                        "'Kath ought to make an easy meal for the monsters - he won't notice his \z
                          head's being chewed off until he realizes he can't see his manuscript'."
                     ),
                     choice({
@@ -1414,11 +1422,13 @@ s12['victory'] = {
                  That wolf would have surely killed me... Fighting with you was the least I \z
                  could do. Even though I didn't help much..."
             ),
-            say(2, 2, true,
-                "Hold on, what wolf? What exactly happened last night, old man? After \z
-                 I woke you up for the second watch I slept straight through until \z
-                 morning. Imagine my surprise, waking up to an unconscious, injured girl in \z
-                 camp with us!"
+            say(2, 2, false, 
+                "Hold on, what wolf? What exactly happened last night, old man? After I \z
+                 woke you up for the second watch I slept straight through until morning."
+            ),
+            say(2, 1, true,
+                "Imagine my surprise, waking up to an unconscious, injured girl in camp \z
+                 with us!"
             )
         }),
         br(function(g) return not g.state['carried-elaine'] end, {
@@ -1464,10 +1474,12 @@ s12['victory'] = {
                                         ["response"] = "It granted knowledge of new combat spells",
                                         ['events'] = {
                                             br(function(g) return g.state['kath-saw-spell'] end, {
-                                                say(2, 3, true,
+                                                say(2, 3, false, 
                                                     "Ah. Then that explains the destructive fire you unleashed upon those \z
-                                                     poor wolves earlier. You burnt them to a crisp. Useful magic, no doubt. \z
-                                                     But why didn't you tell us you were preparing such a ritual? We might \z
+                                                     poor wolves earlier. You burnt them to a crisp. Useful magic, no doubt."
+                                                ),
+                                                say(2, 2, true,
+                                                    "But why didn't you tell us you were preparing such a ritual? We might \z
                                                      have helped."
                                                 )
                                             }),
@@ -1488,12 +1500,12 @@ s12['victory'] = {
                                                         ),
                                                         say(2, 2, false, 
                                                             "Then again, Shanti was just telling us yesterday about the month in \z
-                                                             which she waited every day for a bird to land on her head, just to fulfill \z
-                                                             a ritual's instructions... It's baffling magic, I don't mind saying. \z
-                                                             I'll stick to my simple incantations."
+                                                             which she waited every day for a bird to land on her head, just to fulfill a \z
+                                                             ritual's instructions..."
                                                         ),
-                                                        say(2, 3, false,
-                                                            "Hopefully the ritual our party is meant to perform at this supposed \z
+                                                        say(2, 1, false,
+                                                            "It's baffling magic, I don't mind saying. I'll stick to my simple \z
+                                                             incantations. Hopefully the ritual our party is meant to perform at this supposed \z
                                                              monastery isn't so complicated."
                                                         )
                                                     },
@@ -1621,13 +1633,13 @@ s12['victory'] = {
         }),
         say(3, 2, false, 
             "It had just gotten dark... I was hungry and tired, I was looking for \z
-             somewhere to rest. Then I saw... these red eyes, staring at me from the \z
-             trees... I was so scared, I started running away, and I think it was chasing \z
-             after me."
+             somewhere to rest. Then I saw... these red eyes, staring at me from the trees... \z
+             I was so scared..."
         ),
         say(3, 2, false, 
-            "I was looking behind me, searching for it, and then... I don't \z
-             remember anything else. I woke up and I was here."
+            "I started running away, and I think it was chasing after me. I was \z
+             looking behind me, searching for it, and then... I don't remember anything \z
+             else. I woke up and I was here."
         ),
         say(2, 3, false, 
             "Perhaps you ran into a tree, or tripped, and the blow knocked you \z
@@ -1651,11 +1663,14 @@ s12['victory'] = {
                 ["response"] = "The wolf was blocking my path, so I killed it",
                 ['events'] = {
                     br(function(g) return g.state['carried-elaine'] end, {
-                        say(2, 1, true, 
+                        say(2, 1, false, 
                             "At least you had the good sense to bring her back to camp. Do you \z
-                             remember some months ago, when we were stretched thin out beyond Ebonach's \z
-                             west gate? You fought bitterly against my carrying home a dying knight. \z
-                             Has your heart softened since then?"
+                             remember some months ago, when we were stretched thin out beyond Ebonach's west \z
+                             gate?"
+                        ),
+                        say(2, 1, true, 
+                            "You fought bitterly against my carrying home a dying knight. Has your \z
+                             heart softened since then?"
                         ),
                         choice({
                             {
@@ -1700,11 +1715,13 @@ s12['victory'] = {
                 ["guard"] = function(g) return g.state['sensed-elaine'] and not g.state['carried-elaine'] end,
                 ["response"] = "I killed the wolf before it could attack you",
                 ['events'] = {
+                    say(2, 2, false, 
+                        "And yet you didn't bother to bring her back to our camp, even though she \z
+                         was still unconscious and defenseless."
+                    ),
                     say(2, 2, false,
-                        "And yet you didn't bother to bring her back to our camp, even though \z
-                         she was still unconscious and defenseless. Were you ever planning to \z
-                         raise this with our party? Were you expecting her to simply find her way \z
-                         here unassisted?"
+                        "Were you ever planning to raise this with our party? Were you expecting \z
+                         her to simply find her way here unassisted?"
                     ),
                     insertEvents(subscene_question_time2)
                 },
@@ -1720,12 +1737,14 @@ s12['victory'] = {
                     say(3, 3, false, 
                         "Thank you. Again. Thank you..."
                     ),
+                    say(2, 1, false, 
+                        "Why, your hard heart is beginning to soften after all, old man! It was \z
+                         only some months ago, when we were stretched thin out beyond Ebonach's west \z
+                         gate, that you fought bitterly against my carrying home a dying knight."
+                    ),
                     say(2, 1, true, 
-                        "Why, your hard heart is beginning to soften after all, old man! It \z
-                         was only some months ago, when we were stretched thin out beyond \z
-                         Ebonach's west gate, that you fought bitterly against my carrying home a dying \z
-                         knight. Could it be that my heroism and effortless charisma are rubbing off \z
-                         on you?"
+                        "Could it be that my heroism and effortless charisma are rubbing off on \z
+                         you?"
                     ),
                     choice({
                         {
@@ -1777,19 +1796,25 @@ s12['victory'] = {
             "Then I take it you already know who we are."
         ),
         br(function(g) return g.state['carried-elaine'] end, {
-            say(3, 3, false,
+            say(3, 3, false, 
                 "...I thought I didn't, when I was just waking up. But you called him \z
                  Abelon. And I realized that I recognized you, both of you, I just... didn't \z
-                 believe it. That I had been rescued by the two Knight Captains. I've only \z
-                 ever seen either of you from a distance..."
+                 believe it."
+            ),
+            say(3, 3, false,
+                "That I had been rescued by the two Knight Captains. I've only ever seen \z
+                 either of you from a distance..."
             )
         }),
         br(function(g) return not g.state['carried-elaine'] end, {
+            say(3, 3, false, 
+                "...I thought I didn't, when I first saw you. But I've never seen anyone \z
+                 fight so fiercely, and I realized that I recognized you, both of you, I \z
+                 just... didn't believe it."
+            ),
             say(3, 3, false,
-                "...I thought I didn't, when I first saw you. But I've never seen \z
-                 anyone fight so fiercely, or quickly, and I realized that I recognized you, \z
-                 both of you, I just... didn't believe it. That I had been found by the two \z
-                 Knight Captains. I've only ever seen either of you from a distance..."
+                "That I had been found by the two Knight Captains. I've only ever seen \z
+                 either of you from a distance..."
             )
         }),
         say(3, 2, false, 
@@ -1821,32 +1846,40 @@ s12['victory'] = {
                 ["response"] = "What? I saved you from that wolf, didn't I?",
                 ['events'] = {
                     say(3, 2, false, 
-                        "Yes, and I'll answer your questions, and uh... then you'll know that \z
-                         I was out in the forest without permission and, and, it's against the \z
-                         law and I got in your way and grandad said if you get in Sir Abelon's way \z
-                         he'll probably, he'll probably kill you, and I, I... *sob*"
+                        "Yes, and I'll answer your questions, and uh... Then you'll know that I \z
+                         was out in the forest without permission and it's against the law and I got \z
+                         in your way and, and,"
+                    ),
+                    say(3, 2, false, 
+                        "...grandad said if you get in Sir Abelon's way he'll probably... he'll \z
+                         probably kill you, and I, I... *sob*"
                     ),
                     say(2, 2, false, 
                         "Sigh... You see, Abelon? This is what you've done to our reputation. \z
                          This poor girl is convinced you'll kill her in cold blood right after \z
                          saving her life."
                     ),
+                    say(2, 3, false, 
+                        "Every time His Majesty orders an execution in the name of 'safeguarding \z
+                         the Kingdom', I have to go out into the streets smiling and waving and \z
+                         giving candies to children,"
+                    ),
                     say(2, 3, true, 
-                        "Every time His Majesty orders an execution in the name of \z
-                         'safeguarding the Kingdom', I have to go out into the streets smiling and waving \z
-                         and giving candies to children just to convince our own public that the \z
-                         Knights of Ebonach do more than go around chopping peoples' heads off!"
+                        "just to convince our own public that the Knights of Ebonach do more than \z
+                         go around chopping peoples' heads off!"
                     ),
                     choice({
                         {
                             ["guard"] = function(g) return true end,
                             ["response"] = "Nobody is forcing you",
                             ['events'] = {
+                                say(2, 3, false, 
+                                    "I'm forcing myself. I love this Kingdom, Abelon, and I know you do too, \z
+                                     in your own twisted way. I became a knight to protect it."
+                                ),
                                 say(2, 3, false,
-                                    "I'm forcing myself. I love this Kingdom, Abelon, and I know you do \z
-                                     too, in your own twisted way. I became a knight to protect it. But I want \z
-                                     more for it than survival. I want its people to be happy. You and King \z
-                                     Sinclair don't seem to feel the same way, so it falls to me."
+                                    "But I want more for it than survival. I want its people to be happy. You \z
+                                     and King Sinclair don't seem to feel the same way, so it falls to me."
                                 )
                             },
                             ['result'] = {
@@ -1892,10 +1925,12 @@ s12['victory'] = {
             }
         }),
         say(3, 2, false, 
-            "My house is near the north gate of Ebonach. I... Sometimes I go into \z
-             the valley with my bow and arrows. My grandad made them for me. Meat is \z
-             so expensive at the market, but there are rabbits just outside the \z
-             walls, and my grandad... I mean, I know how to hunt and trap them."
+            "My house is near the north gate of Ebonach. I... Sometimes I go into the \z
+             valley with my bow and arrows. My grandad made them for me."
+        ),
+        say(3, 2, false, 
+            "Meat is so expensive at the market, but there are rabbits just outside \z
+             the walls, and my grandad... I mean, I know how to hunt and trap them."
         ),
         say(2, 3, false, 
             "..."
@@ -1916,31 +1951,39 @@ s12['victory'] = {
             "I'll have to have more than a few words with them..."
         ),
         say(3, 3, false, 
-            "I went out, and I was checking my traps, and I saw a deer. I hardly \z
-             ever see them anymore, they're so rare... I thought it would be so amazing \z
-             if I could kill it, but I missed my first shot, and it ran away. When I \z
-             went after it, I got lost."
+            "I went out, and I was checking my traps, and I saw a deer. I hardly ever \z
+             see them anymore, they're so rare..."
+        ),
+        say(3, 3, false, 
+            "I thought it would be so amazing if I could kill it, but I missed my \z
+             first shot, and it ran away. When I went after it, I got lost."
         ),
         say(2, 3, false, 
             "Simply getting lost isn't enough to end up an entire two days' \z
              journey out from Ebonach."
         ),
         say(3, 3, false, 
-            "Well, I couldn't retrace my steps, but I did find a path. And I saw \z
-             that people had been walking on it recently. My gran... Uh, I know how to \z
-             track animals. I assumed the direction they were headed was back towards \z
-             the city, since the valley is so dangerous..."
+            "Well, I couldn't retrace my steps, but I did find a path. And I saw that \z
+             people had been walking on it recently. My gran... Uh, I know how to track \z
+             animals."
+        ),
+        say(3, 3, false, 
+            "I assumed the direction they were headed was back towards the city, \z
+             since the valley is so dangerous..."
         ),
         say(2, 2, false, 
             "Ah. But in fact, those were our footsteps, headed directly into the \z
              heart of the forest. I take it you didn't have a compass to orient \z
              yourself. And the trees obscure the sun at most hours... Bad luck."
         ),
-        say(3, 2, true, 
+        say(3, 2, false, 
             "Eventually I realized I was getting further from town, but I was so \z
-             hungry, and scared... it had already been a day, I... I had to sleep in a \z
-             tree trunk in the dark... I thought if I could just catch up to the people \z
-             walking on the path they could help me."
+             hungry, and scared... it had already been a day, I... I had to sleep in a tree \z
+             trunk in the dark..."
+        ),
+        say(3, 2, true, 
+            "I thought if I could just catch up to the people walking on the path \z
+             they could help me."
         ),
         choice({
             {
@@ -2001,9 +2044,11 @@ s12['victory'] = {
         }),
         say(2, 3, false, 
             "Elaine, to make it here, for two days you've steered clear of \z
-             monsters, tracked both humans and animals, and kept yourself fed. What's more, \z
-             you're proficient with a bow. And you aren't even a trained knight. How old \z
-             are you?"
+             monsters, tracked both humans and animals, and kept yourself fed."
+        ),
+        say(2, 3, false, 
+            "What's more, you're proficient with a bow. And you aren't even a \z
+             trained knight. How old are you?"
         ),
         say(3, 3, false, 
             "Seventeen."
@@ -2105,15 +2150,20 @@ s12['victory'] = {
             ),
             say(2, 2, false, 
                 "Truly? Elaine, do you understand how lucky you were just to reach us \z
-                 alive? Packs of wolves hunt all over the forest. And much worse. There's a \z
-                 reason it's barred to citizens. You'll be alone for a full two days, or \z
-                 longer if you run into trouble-"
+                 alive? Packs of wolves hunt all over the forest. And much worse."
+            ),
+            say(2, 2, false, 
+                "There's a reason it's barred to citizens. You'll be alone for a full two \z
+                 days, or longer if you run into trouble-"
+            ),
+            say(3, 2, false, 
+                "Stop! ...I know it's dangerous. And I'm scared, but... Well, I can tell \z
+                 when I'm not wanted."
             ),
             say(3, 3, false, 
-                "Stop! ...I know it's dangerous. And I'm scared, but... Well, I can \z
-                 tell when I'm not wanted. I don't really understand what you're doing in \z
-                 the valley, but if Captain Kath and Captain Abelon are both so far from \z
-                 the city, it must be important."
+                "I don't really understand what you're doing in the valley, but if \z
+                 Captain Kath and Captain Abelon are both so far from the city, it must be \z
+                 important."
             ),
             say(3, 2, false, 
                 "You already went to the trouble of saving my life. I don't want to \z
@@ -2133,9 +2183,11 @@ s12['victory'] = {
         br(function(g) return g:getSprite('elaine'):getImpression() > -1 and g:getSprite('elaine'):getImpression() < 6 end, {
             say(3, 2, false, 
                 "...I'm just not sure. Fighting more monsters and getting further from \z
-                 home, or going back alone... Both sound terrifying. I'm already in debt to \z
-                 both of you, so I don't think it's my place to decide. I'll do whatever \z
-                 you believe is best."
+                 home, or going back alone... Both sound terrifying."
+            ),
+            say(3, 3, false, 
+                "I'm already in debt to both of you, so I don't think it's my place to \z
+                 decide. I'll do whatever you believe is best."
             ),
             say(2, 3, true, 
                 "Personally, I think she'd be safe with us. And she can fight, with \z
@@ -2161,10 +2213,12 @@ s12['victory'] = {
                              made it this far on just a full stomach."
                         ),
                         say(3, 3, false, 
-                            "Berries, mostly. A lot of them grow around here. I didn't eat very \z
-                             much, to be honest... If I wasn't trying so hard to catch up with you, I \z
-                             would have shot a rabbit and made a fire to cook it. I've done that a few \z
-                             times before."
+                            "Berries, mostly. A lot of them grow around here. I didn't eat very much, \z
+                             to be honest..."
+                        ),
+                        say(3, 3, false, 
+                            "If I wasn't trying so hard to catch up with you, I would have shot a \z
+                             rabbit and made a fire to cook it. I've done that a few times before."
                         ),
                         say(2, 1, true, 
                             "Sounds like you're plenty capable of earning your weight in rations, \z
@@ -2190,8 +2244,10 @@ s12['victory'] = {
                         say(2, 1, false, 
                             "It's true we're ill-informed of the dangers that lie deeper in the \z
                              valley. But we're only a party of the three strongest knights in Ebonach, and \z
-                             perhaps its most skilled mage. Do you really doubt our ability to keep one \z
-                             girl alive?"
+                             perhaps its most skilled mage."
+                        ),
+                        say(2, 1, false, 
+                            "Do you really doubt our ability to keep one girl alive?"
                         ),
                         say(3, 3, true,
                             "...Wow."
@@ -2210,8 +2266,11 @@ s12['victory'] = {
                             say(2, 1, false, 
                                 "You saw her fight just now. She has a knack for it, and the survival \z
                                  skills to match. Even if she's untrained, I don't think she'll hamper our \z
-                                 progress. How about it, Elaine? At our next run-in with monsters, could you \z
-                                 pull that off again?"
+                                 progress."
+                            ),
+                            say(2, 3, false, 
+                                "How about it, Elaine? At our next run-in with monsters, could you pull \z
+                                 that off again?"
                             ),
                             say(3, 1, true,
                                 "With you protecting me, Sir Kath, I could. I was scared at first, \z
@@ -2259,11 +2318,13 @@ s12['victory'] = {
                                     }
                                 }
                             }),
-                            say(3, 3, true,
+                            say(3, 3, false, 
                                 "...I know what I must look like to you, Sir Kath, Sir Abelon. I've \z
-                                 been scared, and confused, and desperate. But I can handle myself. Except \z
-                                 for your knights, I've been in the valley more than anyone. I'll fight, \z
-                                 if you need me to."
+                                 been scared, and confused, and desperate."
+                            ),
+                            say(3, 3, true,
+                                "But I can handle myself. Except for your knights, I've been in the \z
+                                 valley more than anyone. I'll fight, if you need me to."
                             )
                         }),
                         insertEvents(subscene_elaine_decide)
@@ -2288,8 +2349,10 @@ s12['victory'] = {
             say(3, 3, false, 
                 "I want to join you. The thought of going back to the city alone is... \z
                  It's too much. I feel safe here with you, Sir Kath and Sir Abelon. You've \z
-                 looked out for me, and been considerate towards me. You're different from \z
-                 how I thought Knights of Ebonach would be."
+                 looked out for me, and been considerate towards me."
+            ),
+            say(3, 3, false, 
+                "...You're different from how I thought Knights of Ebonach would be."
             ),
             br(function(g) return g.state['carried-elaine'] end, {
                 say(3, 1, false,
@@ -2366,8 +2429,10 @@ s12['victory'] = {
                                     say(2, 1, false, 
                                         "It's true we're ill-informed of the dangers that lie deeper in the \z
                                          valley. But we're only a party of the three strongest knights in Ebonach, and \z
-                                         perhaps its most skilled mage. Do you really doubt our ability to keep one \z
-                                         girl alive?"
+                                         perhaps its most skilled mage."
+                                    ),
+                                    say(2, 1, false, 
+                                        "Do you really doubt our ability to keep one girl alive?"
                                     ),
                                     say(3, 3, false,
                                         "Wow..."
@@ -2378,11 +2443,14 @@ s12['victory'] = {
                                 }
                             }
                         }),
+                        say(2, 3, false, 
+                            "I understand your hesitation, Abelon, but I think Elaine has made enough \z
+                             of a case for herself."
+                        ),
                         say(2, 3, false,
-                            "I understand your hesitation, Abelon, but I think Elaine has made \z
-                             enough of a case for herself. I'm loathe to pull rank, but I'm a Knight \z
-                             Captain, same as you, and only His Majesty can overrule me. You might be \z
-                             leader of the expedition, but I'm making this call."
+                            "I'm loathe to pull rank, but I'm a Knight Captain, same as you, and only \z
+                             His Majesty can overrule me. You might be leader of the expedition, but I'm \z
+                             making this call."
                         )
                     },
                     ['result'] = {
@@ -2722,11 +2790,13 @@ s12['kath'] = {
             })
         }),
         br(function(g) return not g.state['elaine-stays'] end, {
-            say(2, 2, true, 
+            say(2, 2, false, 
                 "It's true that we cleared out the threats along the path as we \z
-                 traveled north, but I can't help but worry for her... She came all this way \z
-                 alone, in a dangerous and untamed forest, and we've sent her right back into \z
-                 it."
+                 traveled north, but I can't help but worry for her..."
+            ),
+            say(2, 2, true, 
+                "She came all this way alone, in a dangerous and untamed forest, and \z
+                 we've sent her right back into it."
             ),
             choice({
                 {
@@ -2798,11 +2868,13 @@ s12['elaine'] = {
                          sides. But since the ground is a bit damp here, I can see some of their \z
                          tracks, and where they've been moving through the brush."
                     ),
-                    say(2, 3, true, 
+                    say(2, 3, false, 
                         "I might be wrong, but I think they all came from that opening in the \z
-                         trees west of us. In the academy, we're taught that monsters travel in \z
-                         packs... Are we being attacked because we're near the home of a wolf pack over \z
-                         there?"
+                         trees west of us."
+                    ),
+                    say(2, 3, true, 
+                        "In the academy, we're taught that monsters travel in packs... Are we \z
+                         being attacked because we're near the home of a wolf pack over there?"
                     ),
                     choice({
                         {

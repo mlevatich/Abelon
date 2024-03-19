@@ -86,8 +86,11 @@ sitems['scroll-present-kath'] = {
         say(2, 2, false, 
             "Never mind that no one has even heard of this monastery. And it'll be \z
              little more than monster-infested ruins by now, if the rumors are true about \z
-             the scroll's age. I've about had it with rituals and their strange \z
-             prescriptions... But ach, orders are orders, so here we are."
+             the scroll's age."
+        ),
+        say(2, 3, false,
+            "I've about had it with rituals and their strange prescriptions... But \z
+             ach, orders are orders, so here we are."
         )
     },
     ['result'] = {
@@ -135,15 +138,19 @@ sitems['medallion-present-kath'] = {
              Oh!"
         ),
         say(2, 1, false, 
-            "It looks a lot like a piece one of my younger knights was fiddling \z
-             with! I think he was borrowing time at the blacksmith's forge to work on \z
-             it. I told him to show it to me when he was finished with it, and he gave \z
-             me this crestfallen look, like I'd crushed his dreams."
+            "It looks a lot like a piece one of my younger knights was fiddling with! \z
+             I think he was borrowing time at the blacksmith's forge to work on it."
+        ),
+        say(2, 1, false, 
+            "For a little encouragement, I told him to show it to me when he was \z
+             finished with it, but he gave me this crestfallen look, and I never heard about \z
+             it again from him."
         ),
         say(2, 1, false, 
             "It looks the same as it did then, so I suppose he never got around \z
              to..."
         ),
+        wait(1.5),
         say(2, 2, true, 
             "...Ach. It was already finished, wasn't it?"
         ),

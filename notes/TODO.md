@@ -11,7 +11,6 @@ Bullets that reference a github issue should close the issue when committed.
 ## Scene work
 
 - Choreograph dealing with Elaine
-- Shorten long text blocks
 - Insert debug statements that print when impressions change, to make sure its all correct
 - Add stone markers
 

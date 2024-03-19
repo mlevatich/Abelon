@@ -199,13 +199,14 @@ def convert(pyscript, chapter_independent):
         split_text = []
         for i in range(len(words)):
             chars += len(words[i]) + 1
-            if chars > 70:
+            if chars > 71:
                 split_text.append(words[starting_word:i])
                 chars = 0
                 starting_word = i
-        split_text.append(words[starting_word:])
-        if len(split_text) >= 5:
-            print("WARN: text may be too long for dialogue box:\n" + text)
+        if len(words[starting_word:]) > 0:
+            split_text.append(words[starting_word:])
+        if len(split_text) > 3:
+            print("WARN: text will not fit in dialogue box:\n" + text)
         text_lines = ind1 + '"' + " \\z\n{} ".format(ind1).join([" ".join(words) for words in split_text]) + '"'
         return '{}say({}, {}, {} \n{}\n{})'.format(ind, sp, emo, b, text_lines, ind)
 
