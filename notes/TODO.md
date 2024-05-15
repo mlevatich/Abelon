@@ -11,18 +11,18 @@ Bullets that reference a github issue should close the issue when committed.
 ## Scene work
 
 - Choreograph dealing with Elaine
-- Insert debug statements that print when impressions change, to make sure its all correct
 - Add stone markers
+- Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path.
 
 ## Engine work
 
-- Support animation on combat entry (bridges idle -> combat), and on combat exit (this can just be the combat entry animation played in reverse).
-- Campfire flicker
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same re-usable script (re-purpose the items script for all chapter-independent scenes).
+- Campfire flicker
+- Support animation on combat entry (bridges idle -> combat), and on combat exit (this can just be the combat entry animation played in reverse).
+- Music fade is quieter than it should be
+- Explore baked-in shadows under human/creature sprites to give the appearance of depth.
 - Support animation sound effects: looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. A particular frame of an animation should have an optional associated SFX and volume.
 - Profiling, fix battle slowness
-- Explore baked-in shadows under human/creature sprites to give the appearance of depth.
-- Music fade is quieter than it should be
 
 ## SFX and music
 
@@ -30,10 +30,10 @@ Bullets that reference a github issue should close the issue when committed.
 - #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up.
 - Animation sound effects for: walking, torch crackle, use weapon skill, use spell, use assist, all skills (can re-use liberally).
 
-- #63: Title screen music, use the voice memo on my phone: Time Slows. Tentative track name: The Lonely Knight. Experiment with slow crescendos! And quiet bass. Don't let game music interrupt title music.
 - #64: Defeat theme: Despair - Short theme that plays during the battle loss scene.
 - #67: Better forest theme - more tense investigation, less funeral march
 - #65: Enemy approaches theme - for rising action before a fight! Consider Face of Shadow
+- Final boss theme! For fun.
 
 ## Art and animation
 

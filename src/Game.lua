@@ -45,8 +45,8 @@ function Game:initialize(id, difficulty)
 
     -- Settings
     self.turn_autoend = true
-    self.music_volume = OFF
-    self.sfx_volume   = OFF
+    self.music_volume = HIGH
+    self.sfx_volume   = HIGH
     self.text_volume  = OFF
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
@@ -616,7 +616,7 @@ function Game:checkSceneTriggers()
 end
 
 -- Update everything in the game
-function Game:update(dt)
+function Game:update(dt, no_music)
 
     -- Update the active map and sprites on it
     local new_transition = self.current_map:update(dt, self.player)
@@ -638,7 +638,7 @@ function Game:update(dt)
     self:checkSceneTriggers()
 
     -- Update music
-    if self.current_music then
+    if self.current_music and not no_music then
         music_tracks[self.current_music]:update(dt, self.music_volume)
     end
 

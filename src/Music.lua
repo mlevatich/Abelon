@@ -85,7 +85,7 @@ end
 
 -- INITIALIZE AUDIO DATA
 music_tracks = {}
-local track_ids = { 'Dying-Forest', 'A-Single-Shard-Of-Ignea' }
+local track_ids = { 'Dying-Forest', 'A-Single-Shard-Of-Ignea', 'The-Lonely-Knight' }
 for i = 1, #track_ids do
     music_tracks[track_ids[i]] = Music:new(track_ids[i])
 end

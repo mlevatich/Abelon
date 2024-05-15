@@ -10,6 +10,7 @@ push   = require 'lib.push'
 binser = require 'lib.binser'
 require 'src.Util'
 require 'src.Constants'
+require 'src.Music'
 require 'src.Game'
 require 'src.Skill'
 require 'src.Menu'
@@ -189,6 +190,7 @@ end
 -- transition from title to game
 function Title:launchGame(from_save)
     self.t_launch = t
+    music_tracks['The-Lonely-Knight']:stop()
     love.keyboard.keysPressed = {}
     if from_save then
         game = from_save
@@ -196,7 +198,7 @@ function Title:launchGame(from_save)
         game = self:freshGame('1-1')
         game:saveChapter()
     end
-    game:update(FRAME_DUR)
+    game:update(FRAME_DUR, true)
 end
 
 function Title:update()
@@ -252,6 +254,8 @@ function Title:update()
             self.cursor = (self.cursor + n - 1) % n
         end
     end
+
+    music_tracks['The-Lonely-Knight']:update(0, HIGH * math.min(1, 1 - ((2 - t) / 2)))
 end
 
 function Title:render()
