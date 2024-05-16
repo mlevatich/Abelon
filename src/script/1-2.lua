@@ -511,7 +511,7 @@ subscene_abelon_defeat = {
     focus(2, 170),
     wait(0.5),
     lookAt(2, 1),
-    say(1, 2, false,
+    say(2, 2, false,
         "Abelon, no! NO!"
     )
 }
@@ -3030,7 +3030,7 @@ s12['wolf-den-battle'] = {
 }
 
 s12['wolf-den-demonic-spell'] = {
-    ['ids'] = {'abelon'},
+    ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         insertEvents(subscene_demonic)
     },
@@ -3040,7 +3040,7 @@ s12['wolf-den-demonic-spell'] = {
 }
 
 s12['wolf-den-kath-defeat'] = {
-    ['ids'] = {'abelon'},
+    ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         insertEvents(subscene_kath_defeat)
     },
@@ -3050,7 +3050,7 @@ s12['wolf-den-kath-defeat'] = {
 }
 
 s12['wolf-den-abelon-defeat'] = {
-    ['ids'] = {'abelon'},
+    ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         insertEvents(subscene_abelon_defeat)
     },
@@ -3078,7 +3078,7 @@ s12['wolf-den-elaine-defeat'] = {
 }
 
 s12['wolf-den-turnlimit-defeat'] = {
-    ['ids'] = {'abelon'},
+    ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         insertEvents(subscene_turnlimit_defeat)
     },
