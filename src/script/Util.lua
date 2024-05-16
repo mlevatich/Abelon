@@ -13,6 +13,13 @@ function insertEvents(events)
     end
 end
 
+function changeMusic(track)
+    return function(scene)
+        scene.game:stopMusic()
+        scene.game.current_music = track
+    end
+end
+
 function mute()
     return function(scene)
         scene.game:stopMusic()

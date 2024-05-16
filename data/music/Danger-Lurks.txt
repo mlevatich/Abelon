@@ -1,0 +1,5 @@
+// Song looping info (units are in seconds)
+
+End_Intro: 2
+Begin_Fade: 65.89
+Fade_Duration: 2

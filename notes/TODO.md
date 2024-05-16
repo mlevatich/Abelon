@@ -16,7 +16,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Engine work / bugfixing
 
-- Why is kath not idling when starting 1-2 from 1-1?
+- Fix overflowing dialogue boxes. Map book and Elaine saying "or whatever"
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same re-usable script (re-purpose the items script for all chapter-independent scenes).
 - Campfire flicker
 - Support animation on combat entry (bridges idle -> combat), and on combat exit (this can just be the combat entry animation played in reverse).
@@ -31,7 +31,6 @@ Bullets that reference a github issue should close the issue when committed.
 - Animation sound effects for: walking, torch crackle, use weapon skill, use spell, use assist, all skills (can re-use liberally).
 
 - #67: Better forest theme - more tense investigation, less funeral march
-- #65: Enemy approaches theme - for rising action before a fight! Consider Face of Shadow
 - Final boss theme! For fun.
 
 ## Art and animation
