@@ -50,9 +50,8 @@ function Music:update(dt, volume)
         end
 
         -- Set volume of src and buf according to fade_factor
-        -- (volumes add up to full volume)
-        self.src:setVolume((1 - factor) * volume)
-        self.buf:setVolume(factor * volume)
+        self.src:setVolume((1 - factor * factor)             * volume)
+        self.buf:setVolume((1 - (factor - 1) * (factor - 1)) * volume)
 
     elseif factor >= 1 then
 
