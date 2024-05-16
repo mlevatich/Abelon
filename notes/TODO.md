@@ -14,8 +14,9 @@ Bullets that reference a github issue should close the issue when committed.
 - Add stone markers
 - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path.
 
-## Engine work
+## Engine work / bugfixing
 
+- Why is kath not idling when starting 1-2 from 1-1?
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same re-usable script (re-purpose the items script for all chapter-independent scenes).
 - Campfire flicker
 - Support animation on combat entry (bridges idle -> combat), and on combat exit (this can just be the combat entry animation played in reverse).
@@ -30,7 +31,6 @@ Bullets that reference a github issue should close the issue when committed.
 - #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up.
 - Animation sound effects for: walking, torch crackle, use weapon skill, use spell, use assist, all skills (can re-use liberally).
 
-- #64: Defeat theme: Despair - Short theme that plays during the battle loss scene.
 - #67: Better forest theme - more tense investigation, less funeral march
 - #65: Enemy approaches theme - for rising action before a fight! Consider Face of Shadow
 - Final boss theme! For fun.

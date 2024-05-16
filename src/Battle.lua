@@ -538,7 +538,8 @@ function Battle:checkWinLose()
     for i = 1, #self.lose do
         local defeat_scene = self.lose[i][2](self)
         if defeat_scene then
-            -- TODO: Change to defeat music
+            self.game:stopMusic()
+            sfx['defeat']:play()
             local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
             self:suspend(scene_id, function()
                 self.stack = {}

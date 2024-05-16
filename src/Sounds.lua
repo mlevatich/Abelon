@@ -21,5 +21,5 @@ end
 
 -- INITIALIZE AUDIO DATA
 sfx = {}
-local sfx_ids = { 'select', 'cancel', 'hover', 'close', 'open', 'victory' }
+local sfx_ids = { 'select', 'cancel', 'hover', 'close', 'open', 'victory', 'defeat' }
 for i = 1, #sfx_ids do sfx[sfx_ids[i]] = Sound:new(sfx_ids[i]) end
