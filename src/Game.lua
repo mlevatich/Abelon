@@ -45,10 +45,11 @@ function Game:initialize(id, difficulty)
     self.current_music = nil
 
     -- Settings
-    self.turn_autoend = true
-    self.music_volume = MED
-    self.sfx_volume   = HIGH
-    self.text_volume  = OFF
+    self.turn_autoend  = true
+    self.music_vol_mod = 1
+    self.music_volume  = MED
+    self.sfx_volume    = HIGH
+    self.text_volume   = OFF
     self:setSfxVolume(self.sfx_volume)
     -- self:setTextVolume(self.text_volume)
 
@@ -108,7 +109,6 @@ end
 
 function Game:saveChapter()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. CHAPTER_SAVE, self)
-    print("Wrote chapter to save file: " .. self.chapter_id)
     self:autosave()
 end
 
@@ -646,7 +646,10 @@ function Game:update(dt, no_music)
 
     -- Update music
     if self.current_music and not no_music then
-        music_tracks[self.current_music]:update(dt, self.music_volume)
+        music_tracks[self.current_music]:update(dt, self.music_volume * self.music_vol_mod)
+        if self.music_vol_mod < 1 then
+            self.music_vol_mod = math.max(0, self.music_vol_mod - dt)
+        end
     end
 
     -- Update current transition or initiate new one

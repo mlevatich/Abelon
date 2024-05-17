@@ -8,7 +8,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Scene work
+## Scene / map work
 
 - Choreograph dealing with Elaine
 - Add stone markers
@@ -17,23 +17,22 @@ Bullets that reference a github issue should close the issue when committed.
 ## Engine work / bugfixing
 
 - Fix overflowing dialogue boxes. Map book and Elaine saying "or whatever"
-- Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same re-usable script (re-purpose the items script for all chapter-independent scenes).
 - Campfire flicker
 - Support animation on combat entry (bridges idle -> combat), and on combat exit (this can just be the combat entry animation played in reverse).
-- Explore baked-in shadows under human/creature sprites to give the appearance of depth.
 - Support animation sound effects: looping sound effects associated with an animation and based on proximity to the sprite, like a crackling torch, or a person's footsteps. A particular frame of an animation should have an optional associated SFX and volume.
+- Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same re-usable script (re-purpose the items script for all chapter-independent scenes).
+- Explore baked-in shadows under human/creature sprites to give the appearance of depth.
 - Profiling, fix battle slowness
 
-## SFX and music
+## SFX
 
 - #4: SFX for: menu select (not too different from current), text sound effects, start game (from title screen).
 - #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up.
 - Animation sound effects for: walking, torch crackle, use weapon skill, use spell, use assist, all skills (can re-use liberally).
 
-- Final boss theme! For fun.
-
 ## Art and animation
 
+- Stone marker sprite
 - kath-down, better camp clutter/beds, stone markers
 - Elaine-idle, Elaine-walk, Elaine-getup
 - Better wolf, alpha wolf sprites

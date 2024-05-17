@@ -34,7 +34,6 @@ function Music:update(dt, volume)
 
     -- Start music track if it hasn't started already
     if not self.src:isPlaying() then
-        self.src:seek(0.0)
         self.src:play()
     end
 
@@ -70,6 +69,10 @@ function Music:update(dt, volume)
         self.src:setVolume(volume)
         self.buf:setVolume(0)
     end
+end
+
+function Music:jumpTo(offset)
+    self.src:seek(offset)
 end
 
 -- Stop the music

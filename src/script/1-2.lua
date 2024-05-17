@@ -225,7 +225,7 @@ s12['battle'] = {
     ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'wolf4'},
     ['events'] = {
         blackout(),
-        changeMusic('Threat-Revealed'),
+        changeMusic('Threat-Revealed', 0),
         daytime(),
         wait(1),
         chaptercard(),
@@ -1820,7 +1820,7 @@ s12['victory'] = {
         }),
         say(3, 2, false, 
             "Captain Kath, Sir... I hope that my, um, plain speech hasn't offended \z
-             you in any way. And thank you, Sir Kath, for using your magic to heal me. \z
+             you in any way. And thank you, Sir Kath, for healing me. \z
              Please forgive me for being a distraction from your, uh, quest. Or whatever."
         ),
         say(2, 1, false, 
@@ -2571,7 +2571,7 @@ subscene_read_book = {
     ),
     say(2, 1, true, 
         "In the bottom corner of the two pages, a compass is drawn, and next \z
-         to it, a title"
+         to it, a title: 'The Red Mountain Valley'."
     ),
     choice({
         {
@@ -2581,7 +2581,7 @@ subscene_read_book = {
                 say(2, 1, false, 
                     "You turn over the thick parchment. This page is titled 'The Lefally \z
                      Road', and depicts a closer view of the forested valley. A road runs from \z
-                     the top of the page to the bottom, embellished with guiding landmarks."
+                     the top of the page to the bottom, embellished with landmarks."
                 ),
                 say(2, 1, false, 
                     "A paper insert is included. It appears to be a rough copy of this \z
@@ -2958,6 +2958,7 @@ s12['elaine'] = {
 s12['wolf-den-battle'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'wolf1', 'wolf2', 'wolf3', 'alphawolf1', 'alphawolf2'},
     ['events'] = {
+        fadeoutMusic(),
         focus(1, 200),
         walk(false, 1, 16, 17, 'walk'),
         teleport(2, 28, 15),
@@ -2979,6 +2980,7 @@ s12['wolf-den-battle'] = {
             waitForEvent('walk2')
         }),
         wait(0.5),
+        changeMusic('Threat-Revealed', 28),
         lookDir(4, RIGHT),
         lookDir(5, RIGHT),
         lookDir(6, RIGHT),
@@ -3124,7 +3126,7 @@ s12['north-transition'] = {
         say(2, 3, false, 
             "Keep an eye out for more of those worn-down stone markers in the \z
              ground. Shanti guessed that they would point towards whatever's left of this \z
-             monastery we're after. It shouldn't take long for us to catch up with them."
+             monastery. It shouldn't take long for us to catch up with them."
         ),
         say(2, 2, false, 
             "Let's pray they haven't encountered any trouble of their own..."

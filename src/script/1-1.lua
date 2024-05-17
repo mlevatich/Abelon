@@ -504,6 +504,7 @@ subscene_sleep = {
     say(1, 0, false, 
         "...Need... I can't..."
     ),
+    fadeoutMusic(),
     wait(2)
 }
 
