@@ -24,9 +24,10 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## SFX
 
-- #4: SFX for: menu select (not too different from current), text sound effects, start game (from title screen).
-- #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up.
-- Animation sound effects for: walking, torch crackle, use weapon skill, use spell, use assist, all skills (can re-use liberally).
+- #4: SFX for: start game (from title screen), level up, ally phase start, enemy phase start.
+- Animation sound effects for: torch crackle, combat entry, use weapon skill, use spell, use assist, all skills (can re-use liberally).
+- Proximity-based sfx.
+- Better text, menu hover, walk, menu select sound effects.
 
 ## Art and animation
 

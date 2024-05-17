@@ -51,7 +51,7 @@ function Game:initialize(id, difficulty)
     self.sfx_volume    = HIGH
     self.text_volume   = OFF
     self:setSfxVolume(self.sfx_volume)
-    -- self:setTextVolume(self.text_volume)
+    self:setTextVolume(self.text_volume)
 
     -- Rendering information
     self.alpha = 1
@@ -133,7 +133,7 @@ function Game:loadSave(path, quick, fresh)
     local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. path)
     local c = res[1]
     c:setSfxVolume(c.sfx_volume)
-    -- c:setTextVolume(c.text_volume)
+    c:setTextVolume(c.text_volume)
     c.scene_inputs = {}
     c.battle_inputs = {}
     if quick then
@@ -152,7 +152,7 @@ function Game:loadSave(path, quick, fresh)
         c.sfx_volume   = self.sfx_volume
         c.text_volume  = self.text_volume
         c:setSfxVolume(self.sfx_volume)
-        -- c:setTextVolume(self.text_volume)
+        c:setTextVolume(self.text_volume)
     end
 
     return c
@@ -378,12 +378,12 @@ end
 
 function Game:setSfxVolume(vol)
     self.sfx_volume = vol
-    for k, v in pairs(sfx) do if k ~= 'text' then v:setVolume(vol) end end
+    for k, v in pairs(sfx) do if k:sub(1,4) ~= 'text' then v:setVolume(vol) end end
 end
 
 function Game:setTextVolume(vol)
     self.text_volume = vol
-    sfx['text']:setVolume(vol)
+    for k, v in pairs(sfx) do if k:sub(1,4) == 'text' then v:setVolume(vol * 0.6) end end
 end
 
 function Game:flash(msg, rate)
@@ -428,10 +428,10 @@ function Game:interactWith(target)
 end
 
 -- Store player inputs to a scene, to be processed on update
-function Game:sceneInput(space, u, d)
+function Game:sceneInput(f, u, d)
 
-    -- Spacebar means advance dialogue
-    if space then
+    -- Spacebar means advance dialogue or make a choice
+    if f then
         self.scene_inputs['advance'] = true
     end
 
@@ -673,7 +673,8 @@ function Game:renderTutorial()
     if self.battle then
         local st = self.battle:getStage()
         if st == STAGE_WATCH or st == STAGE_TARGET or st == STAGE_LEVELUP
-        or #self.battle.levelup_queue ~= 0 then
+        or #self.battle.levelup_queue ~= 0
+        or (self.battle:getMenu() and self.battle:getMenu().confirm_msg) then
             hide_tutorial = true
         end
     end

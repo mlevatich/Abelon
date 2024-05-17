@@ -3,6 +3,7 @@ require 'src.Constants'
 
 require 'src.Menu'
 require 'src.Music'
+require 'src.Sounds'
 require 'src.Skill'
 require 'src.Triggers'
 
@@ -655,7 +656,7 @@ function Battle:openVictoryMenu()
         end
     )}
     local v = { "     V I C T O R Y     " }
-    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN), {})
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN, nil, true), {})
 end
 
 function Battle:openDefeatMenu()
@@ -663,7 +664,7 @@ function Battle:openDefeatMenu()
         function(c) c:reloadBattle() end
     )}
     local d = { "     D E F E A T     " }
-    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED), {
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED, nil, true), {
         { AFTER, TEMP, function(b) b:renderLens({ 0.5, 0, 0 }) end }
     })
 end
@@ -677,7 +678,7 @@ function Battle:openEndTurnMenu()
         end
     )}
     local e = { "   E N E M Y   P H A S E   " .. self.turn .. "   " }
-    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED), {})
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED, nil, true), {})
 end
 
 function Battle:openBeginTurnMenu()
@@ -699,7 +700,7 @@ function Battle:openBeginTurnMenu()
     if t == 0 then msg = "   F I N A L   T U R N   " end
     local e = { msg }
     local clr = ite(t == 0, AUTO_COLOR['Focus'], HIGHLIGHT)
-    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, clr), {})
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, clr, nil, true), {})
 end
 
 function Battle:openAttackMenu()
@@ -751,6 +752,7 @@ function Battle:openAllyMenu(sp)
         ['w'] = HBOX_WIDTH
     })
     local sks = sp:mkSkillsMenu(true, false)
+    sfx['open']:play()
     self:openMenu(Menu:new(nil, { attrs, sks }, BOX_MARGIN, BOX_MARGIN, false), {})
 end
 
@@ -763,6 +765,7 @@ function Battle:openEnemyMenu(sp)
     local attrs, _ = self:getTmpAttributes(sp)
     local skills = sp:mkSkillsMenu(false, true, attrs, nil, nil, 380)
     local opts = { skills, readying }
+    sfx['open']:play()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
         { BEFORE, TEMP, function(b) b:renderMovementHover() end }
     })
@@ -792,6 +795,7 @@ function Battle:openOptionsMenu()
         "Create a temporary save and close the game?"
     )
     local m = { wincon, settings, restart, quit, end_turn }
+    sfx['open']:play()
     self:openMenu(Menu:new(nil, m, BOX_MARGIN, BOX_MARGIN, false), {})
 end
 
@@ -802,7 +806,7 @@ function Battle:openLevelupMenu(sp, n)
         end
     )}
     local l = { "     L E V E L   U P     " }
-    local menu = Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN)
+    local menu = Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN, nil, true)
     self.stack[#self.stack]['menu'] = menu
 end
 
@@ -1016,6 +1020,7 @@ function Battle:selectAlly(sp)
             end }
         }
     })
+    sfx['select']:play()
     self:checkTriggers(SELECT)
 end
 
@@ -1601,7 +1606,6 @@ function Battle:update(keys, dt)
     if m then
 
         -- Menu navigation
-        local m = self:getMenu()
         local done = false
         if d then
             done = m:back()
@@ -1611,7 +1615,10 @@ function Battle:update(keys, dt)
             m:hover(ite(up, UP, DOWN))
         end
 
-        if done then self:closeMenu() end
+        if done then
+            self:closeMenu()
+            sfx['cancel']:play()
+        end
     end
 
     if s == STAGE_FREE then
@@ -1683,6 +1690,7 @@ function Battle:update(keys, dt)
                 local grid = self:dryrunGrid(false)
                 local space = grid[y][x].occupied
                 if f and not (space and space ~= self:getSprite()) then
+                    sfx['select']:play()
                     if not self:getCursor(3) then
                         self:openAttackMenu()
                     elseif self.n_allies > 1 then
@@ -1774,9 +1782,11 @@ function Battle:update(keys, dt)
                     local t = self.grid[c_cur[2]][c_cur[1]].occupied
                     local can_obsv = t and self:isAlly(t) and t.id ~= 'elaine'
                     if not (sk.id == 'observe' and not can_obsv) then
+                        sfx['select']:play()
                         self:selectTarget()
                     end
                 else
+                    sfx['select']:play()
                     self:endAction(true)
                 end
             end

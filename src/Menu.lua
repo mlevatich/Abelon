@@ -32,7 +32,7 @@ end
 Menu = class('Menu')
 
 -- Initialize a new menu
-function Menu:initialize(parent, menu_items, x, y, forced, conf, clr, max_override)
+function Menu:initialize(parent, menu_items, x, y, forced, conf, clr, max_override, mute)
 
     -- What is the parent menu of this menu (nil if a top-level menu)
     self.parent = parent
@@ -59,6 +59,9 @@ function Menu:initialize(parent, menu_items, x, y, forced, conf, clr, max_overri
 
     -- Is the menu forced to stay open until an option is selected
     self.forced = forced
+
+    -- Do sound effects play in this menu
+    self.mute = mute
 
     -- The different options on this menu
     self.hovering = 1
@@ -166,7 +169,7 @@ function Menu:forward(c)
     else
         local action = self.menu_items[self.hovering + self.base - 1].action
         if action then
-            sfx['select']:play()
+            if not self.mute then sfx['select']:play() end
             return action(c, self.parent)
         end
     end

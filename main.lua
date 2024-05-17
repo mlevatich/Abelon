@@ -11,6 +11,7 @@ binser = require 'lib.binser'
 require 'src.Util'
 require 'src.Constants'
 require 'src.Music'
+require 'src.Sounds'
 require 'src.Game'
 require 'src.Skill'
 require 'src.Menu'
@@ -223,6 +224,7 @@ function Title:update()
                     return self:launchGame(self.save)
                 else
                     self.state = M_DIFF
+                    sfx['select']:play()
                 end
             elseif self.state == M_DIFF then
                 self.difficulty = self.cursor + 1
@@ -230,10 +232,12 @@ function Title:update()
                     return self:launchGame()
                 else
                     self.state = M_CONF
+                    sfx['select']:play()
                 end
             else
                 if self.cursor == 0 then
                     self.state = M_DIFF
+                    sfx['cancel']:play()
                 else
                     return self:launchGame()
                 end
@@ -243,15 +247,19 @@ function Title:update()
         -- 'go back'
         elseif d then
             self.cursor = 0
+            local old = self.state
             self.state = ite(self.state == M_CONF, M_DIFF, M_GAME)
+            if self.state ~= old then sfx['cancel']:play() end
 
         -- Cursor up
         elseif down and not up then
             self.cursor = (self.cursor + 1) % n
+            sfx['hover']:play()
 
         -- Cursor down
         elseif up and not down then
             self.cursor = (self.cursor + n - 1) % n
+            sfx['hover']:play()
         end
     end
 

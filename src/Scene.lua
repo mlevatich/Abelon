@@ -4,6 +4,8 @@ require 'src.Constants'
 require 'src.script.Util'
 require 'src.Script'
 
+require 'src.Sounds'
+
 Scene = class('Scene')
 
 PAUSE_CHARS = {'. ', '! ', '? ', '.', '!', '?'}
@@ -148,6 +150,9 @@ function Scene:advance()
             -- Clear text state
             self.text_state = nil
             self.await_input = false
+
+            -- Boop
+            sfx['select']:play()
         end
     end
 end
@@ -158,12 +163,14 @@ function Scene:hover(dir)
 
         -- self.selection determines where the selection arrow is rendered
         local n = #self.text_state['choices']
+        local old = self.text_state['selection']
         if dir == UP then
-            self.text_state['selection'] = math.max(1,
-                self.text_state['selection'] - 1)
+            self.text_state['selection'] = math.max(1, old - 1)
         elseif dir == DOWN then
-            self.text_state['selection'] = math.min(n,
-                self.text_state['selection'] + 1)
+            self.text_state['selection'] = math.min(n, old + 1)
+        end
+        if old ~= self.text_state['selection'] then
+            sfx['hover']:play()
         end
     end
 end
@@ -188,10 +195,26 @@ function Scene:getTwoChars()
 
 end
 
-function Scene:updateWithWeight(weight)
+local text_pick = 1
+local text_mute = 0
+
+function Scene:updateWithWeight(weight, c)
     local text = self.text_state
     if text['cweight'] == weight then
         text['cnum'] = math.min(text['length'], text['cnum'] + 1)
+        if text['length'] ~= text['cnum'] and c:sub(1,1) ~= ' ' then
+            if math.random() < 0.2 then text_pick = math.random(1,2) end
+            if text_mute == 0 then
+                local text_sfx = 'text-default'
+                if text['speaker'] ~= nil and text['portrait'] > 0 then
+                    local key = 'text-' .. text['speaker']:getId() .. '-' .. tostring(text_pick)
+                    if sfx[key] ~= nil then text_sfx = key end
+                end
+                sfx[text_sfx]:play()
+            end
+            text_mute = text_mute + 1
+            if text_mute >= 3 then text_mute = 0 end
+        end
         text['cweight'] = 0
     else
         text['cweight'] = text['cweight'] + 1
@@ -212,11 +235,11 @@ function Scene:update(dt)
 
             local c = self:getTwoChars()
             if find(PAUSE_CHARS, c) then
-                self:updateWithWeight(PAUSE_WEIGHT)
+                self:updateWithWeight(PAUSE_WEIGHT, c)
             elseif find(BREATHE_CHARS, c) then
-                self:updateWithWeight(BREATHE_WEIGHT)
+                self:updateWithWeight(BREATHE_WEIGHT, c)
             else
-                self:updateWithWeight(0)
+                self:updateWithWeight(0, c)
             end
         end
 
