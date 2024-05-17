@@ -285,8 +285,21 @@ function Title:render()
         drawFade(alpha)
     else
 
-        -- Render title background
-        -- TODO
+        -- Render sprites
+        local abelon_anim = sprite_graphics['abelon']['animations']['walking']
+        local kath_anim = sprite_graphics['kath']['animations']['walking']
+        love.graphics.draw(
+            spritesheet,
+            abelon_anim.frames[math.floor(t / (1/6.5)) % 4 + 1],
+            ZOOM_WIDTH / 2 + 100, ZOOM_HEIGHT / 2 + 60,
+            0, RIGHT, 1, 15.5, 15.5
+        )
+        love.graphics.draw(
+            spritesheet,
+            kath_anim.frames[(math.floor(t / (1/6.5)) + 2) % 4 + 1],
+            ZOOM_WIDTH / 2 - 100, ZOOM_HEIGHT / 2 + 60,
+            0, LEFT, 1, 15.5, 15.5
+        )
 
         -- Render game title
         local s = "ABELON"
