@@ -1379,7 +1379,7 @@ end
 -- INITIALIZE GRAPHICAL DATA
 living = {
     ['idle'] = { 2.5, { 0, 1, 2, 3 } },
-    ['walking'] = { 6.5, { 7, 4, 5, 6 } },
+    ['walking'] = { 6.5, { 7, 4, 5, 6 }, 'walk' },
     ['weapon'] = { 6.5, { 3, 4, 3, 4, 3, 4, 3, 4 } },
     ['spell'] = { 6.5, { 3, 4, 3, 4, 3, 4, 3, 4 } },
     ['assist'] = { 6.5, { 3, 4, 3, 4, 3, 4, 3, 4 } },
@@ -1546,7 +1546,7 @@ sprite_data = {
         ['h'] = 32,
         ['animations'] = {
             ['idle'] = { 6.5, { 4 } },
-            ['play'] = { 18, { 0, 1, 2, 3 } }
+            ['play'] = { 18, { 0, 1, 2, 3 }, 'sever' }
         }
     },
     {
@@ -1555,7 +1555,7 @@ sprite_data = {
         ['h'] = 38,
         ['animations'] = {
             ['idle'] = { 6.5, { 13 } },
-            ['play'] = { 13, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 } }
+            ['play'] = { 13, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }, 'conflagration' }
         },
         ['n'] = 20
     },
@@ -1607,8 +1607,11 @@ for i = 1, #sprite_data do
         g['animations'] = {}
         for name, frames in pairs(data['animations']) do
             local spd, idxs = frames[1], frames[2]
+            local anim_sfx = nil
+            if #frames > 2 then anim_sfx = sfx[frames[3]] end
             g['animations'][name] = Animation:new(id .. '_' .. name,
                 getSpriteQuads(idxs, spritesheet, data['w'], data['h'], sheet_y),
+                anim_sfx,
                 spd
             )
         end

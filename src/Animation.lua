@@ -4,7 +4,7 @@ require 'src.Constants'
 Animation = class('Animation')
 
 -- Initialize a new set of frames
-function Animation:initialize(id, frames, speed)
+function Animation:initialize(id, frames, anim_sfx, speed)
 
     self.id = id
 
@@ -15,6 +15,10 @@ function Animation:initialize(id, frames, speed)
     -- Images corresponding to each frame, index into frames
     self.frames = frames
     self.current_frame = 1
+
+    -- Optional audio effect
+    self.anim_sfx = anim_sfx
+    self.playedSfx = false
 
     self.doneAction = nil
     self.firedDoneAction = false
@@ -31,6 +35,7 @@ function Animation:restart()
     self.current_frame = 1
     self.doneAction = nil
     self.firedDoneAction = false
+    self.playedSfx = false
 end
 
 -- Sync this animation with a different animation
@@ -48,6 +53,12 @@ function Animation:update(dt)
     -- Update time passed
     self.timer = self.timer + dt
 
+    -- Play sfx if it exists and hasn't been played
+    if self.anim_sfx and not self.playedSfx then
+        self.anim_sfx:play()
+        self.playedSfx = true
+    end
+
     -- Iteratively subtract interval from timer
     while self.timer > self.interval do
         self.timer = self.timer - self.interval
@@ -58,6 +69,7 @@ function Animation:update(dt)
                 self:fireDoneAction()
                 return
             end
+            self.playedSfx = false
         end
     end
 end
