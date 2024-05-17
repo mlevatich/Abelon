@@ -29,6 +29,7 @@ function Game:initialize(id, difficulty)
 
     -- Store id
     self.chapter_id = id
+    self.chapter_transition_flag = false -- Has the chapter id changed?
 
     -- Camera that follows coordinates of player sprite around
     self.camera_x = 0
@@ -45,7 +46,7 @@ function Game:initialize(id, difficulty)
 
     -- Settings
     self.turn_autoend = true
-    self.music_volume = HIGH
+    self.music_volume = MED
     self.sfx_volume   = HIGH
     self.text_volume  = OFF
     self:setSfxVolume(self.sfx_volume)
@@ -107,6 +108,7 @@ end
 
 function Game:saveChapter()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. CHAPTER_SAVE, self)
+    print("Wrote chapter to save file: " .. self.chapter_id)
     self:autosave()
 end
 
@@ -329,6 +331,7 @@ function Game:nextChapter()
     else
         self.chapter_id = self.chapter_id:sub(1,2) .. tostring(ch + 1)
     end
+    self.chapter_transition_flag = true
 end
 
 function Game:spawnSprite(sp_id, x, y, dir)
@@ -459,6 +462,10 @@ function Game:updateScene(dt)
         self.current_scene = nil
         if not self.battle then
             self:autosave()
+        end
+        if self.chapter_transition_flag then
+            self.chapter_transition_flag = false
+            self:saveChapter()
         end
     end
 end
