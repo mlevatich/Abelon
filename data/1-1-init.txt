@@ -1,4 +1,4 @@
-~~east-forest Dying-Forest
+~~east-forest Canopied-Steps
 
 ~abelon 28.5 50.5 L P
 ~torch1 31 49 R
@@ -9,13 +9,13 @@
 ~scroll 20 50.5 R
 ~igneashard 7 43 R
 
-~~south-forest Dying-Forest
+~~south-forest Canopied-Steps
 
 ~elaine 36 9 R down
 ~wolf1 38 10 L
 ~medallion 45 28.5 R
 
-~~west-forest Dying-Forest
+~~west-forest Canopied-Steps
 
 ~campfire 54 7 R
 ~kath 50 8 L down
@@ -28,7 +28,7 @@
 ~campclutter 56 8 R
 ~book 56 6 R
 
-~~north-forest Dying-Forest
+~~north-forest Canopied-Steps
 
 ~alphawolf1 1 1 L
 ~alphawolf2 1 1 L

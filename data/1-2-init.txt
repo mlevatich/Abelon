@@ -1,4 +1,4 @@
-~~east-forest Dying-Forest
+~~east-forest Canopied-Steps
 
 ~torch1 31 49 R down
 ~torch2 31 52 R down
@@ -6,12 +6,14 @@
 ~torch4 26 52 L down
 ~bloodrite 26 49 R
 
-~~south-forest Dying-Forest
+~~south-forest Canopied-Steps
 
-~~west-forest Dying-Forest
+~elaine 1 1 L
+
+~~west-forest Canopied-Steps
 
 ~abelon 52 6 L P
-~elaine 54 5 L
+//~elaine 54 5 L
 ~kath 50 8 L
 ~book 56 6 R
 ~campfire 54 7 R
@@ -19,7 +21,7 @@
 ~campbed 50.7 6 L
 ~campclutter 56 8 R
 
-~~north-forest Dying-Forest
+~~north-forest Canopied-Steps
 
 ~alphawolf1 1 1 L
 ~alphawolf2 1 1 L
@@ -29,14 +31,14 @@
 ~wolf4 1 1 L
 
 ->State saw-camp
-->State carried-elaine
+//->State carried-elaine
 ->Inventory medallion
 ->Inventory scroll
-->Seen 1-2-battle
-->Day
-->Party kath
-->Party elaine
-->State elaine-stays
+//->Seen 1-2-battle
+//->Day
+//->Party kath
+//->Party elaine
+//->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2

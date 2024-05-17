@@ -30,7 +30,6 @@ Bullets that reference a github issue should close the issue when committed.
 - #56: SFX for: battle cursor move, Mute ally turn start/enemy turn start/victory/defeat menus. battle select ally/enemy, target for move/attack/assist, confirm end action, battle enemy turn start, battle ally turn start, level up.
 - Animation sound effects for: walking, torch crackle, use weapon skill, use spell, use assist, all skills (can re-use liberally).
 
-- #67: Better forest theme - more tense investigation, less funeral march
 - Final boss theme! For fun.
 
 ## Art and animation

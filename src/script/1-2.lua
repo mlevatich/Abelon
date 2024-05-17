@@ -225,7 +225,7 @@ s12['battle'] = {
     ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'wolf4'},
     ['events'] = {
         blackout(),
-        changeMusic('Danger-Lurks'),
+        changeMusic('Threat-Revealed'),
         daytime(),
         wait(1),
         chaptercard(),
