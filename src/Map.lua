@@ -63,6 +63,7 @@ function Map:initialize(name, c)
     self.lit = tonumber(lines[idx+2])
     self.ambient = mapf(tonumber, split(lines[idx+3]))
     self.lights = {}
+    self.base_intensity = {}
     idx = idx + 4
     while lines[idx] ~= '' do
 
@@ -74,6 +75,7 @@ function Map:initialize(name, c)
             ['y'] = yc,
             ['intensity'] = data[3]
         })
+        table.insert(self.base_intensity, data[3])
         idx = idx + 1
     end
 
@@ -287,6 +289,16 @@ end
 -- Light each tile based on their proximity to the map's light sources
 function Map:applyLightSources()
 
+    -- Track a smooth but varying intensity for each light to allow them to flicker
+    for i=1, #self.lights do
+        local base = self.base_intensity[i]
+        local l = self.lights[i]
+        local hi = base * 1.15
+        local lo = base * 0.85
+        local variance = base / 30
+        l['intensity'] = math.max(lo, math.min(hi, l['intensity'] + math.random() * variance - variance / 2))
+    end
+
     -- Iterate over all tiles
     for x=1, self.width do
         for y=1, self.height do
@@ -312,10 +324,6 @@ function Map:applyLightSources()
                 alpha = alpha * (1 - contribution)
             end
 
-            -- Draw rectangle of light at the total intensity over tile
-            if alpha ~= self.lit then
-                alpha = alpha + math.random() * 0.05 - 0.05
-            end
             love.graphics.setColor(total['r'], total['g'], total['b'], alpha)
             love.graphics.rectangle(
                 "fill",

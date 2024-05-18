@@ -12,11 +12,10 @@ Bullets that reference a github issue should close the issue when committed.
 
 - Choreograph dealing with Elaine
 - Add stone markers
-- Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path.
+- Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path (something is broken at the moment).
 
 ## Engine work / bugfixing
 
-- Campfire flicker
 - Support animation on combat entry (bridges idle -> combat), and on combat exit (this can just be the combat entry animation played in reverse).
 - Change ignea shards to all spawn in 1-1, and be distinct sprites that point to the same re-usable script (re-purpose the items script for all chapter-independent scenes).
 - Explore baked-in shadows under human/creature sprites to give the appearance of depth.
@@ -45,7 +44,5 @@ Bullets that reference a github issue should close the issue when committed.
 - Kath-use-weapon, Kath-use-spell, Kath-use-assist, Kath-use-util, Kath-hurt, Kath-death
 - Elaine-use-weapon, Elaine-use-spell, Elaine-use-assist, Elaine-use-util, Elaine-hurt, Elaine-death
 - Wolf-use-weapon, Wolf-hurt, Wolf-death.
-
-- Pretty title screen: Background art, fancy title, moving sprites, sfx, etc
 
 - #47: Better portraits
