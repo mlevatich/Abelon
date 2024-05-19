@@ -258,6 +258,9 @@ function Player:discard(id)
 end
 
 function Player:joinParty(sp)
+    for i=1, #self.party do
+        if self.party[i]:getId() == sp:getId() then return end
+    end
     table.insert(self.party, sp)
 end
 

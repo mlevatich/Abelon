@@ -204,47 +204,6 @@ s11['medallion'] = {
     }
 }
 
-s11['igneashard'] = {
-    ['ids'] = {'abelon', 'igneashard'},
-    ['events'] = {
-        lookAt(1, 2),
-        introduce('igneashard'),
-        say(2, 1, true, 
-            "You happen upon a shard of ignea embedded in the ground."
-        ),
-        choice({
-            {
-                ["guard"] = function(g) return true end,
-                ["response"] = "Take it",
-                ['events'] = {
-                    say(2, 1, false, 
-                        "You wrest the shard from the earth and brush away the dirt before \z
-                         putting it in your pack."
-                    )
-                },
-                ['result'] = {
-                    ['do'] = function(g)
-                        g.player:acquire(g:getMap():dropSprite('igneashard'))
-                    end
-                }
-            },
-            {
-                ["guard"] = function(g) return true end,
-                ["response"] = "Leave it",
-                ['events'] = {
-
-                },
-                ['result'] = {
-
-                }
-            }
-        })
-    },
-    ['result'] = {
-
-    }
-}
-
 s11['battle'] = {
     ['ids'] = {'abelon', 'wolf1'},
     ['events'] = {

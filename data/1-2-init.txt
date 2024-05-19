@@ -5,6 +5,7 @@
 ~torch3 26 49 L down
 ~torch4 26 52 L down
 ~bloodrite 26 49 R
+~igneashard1 7 43 R
 
 ~~south-forest Canopied-Steps
 
@@ -17,9 +18,9 @@
 ~kath 50 8 L
 ~book 56 6 R
 ~campfire 54 7 R
-~igneashard 28 12.8 R
 ~campbed 50.7 6 L
 ~campclutter 56 8 R
+~igneashard2 28 12.8 R
 
 ~~north-forest Canopied-Steps
 

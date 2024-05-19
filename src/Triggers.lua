@@ -81,19 +81,16 @@ function mkUseTrigger(id, check)
     end
 end
 
+function mkSimpleUseTrigger(id)
+    return mkUseTrigger(id, function(g) return true end)
+end
+
 item_triggers = {
-    ['medallion'] = mkUseTrigger('medallion',
-        function(g) return true end
-    ),
-    ['journal'] = mkUseTrigger('journal',
-        function(g) return true end
-    ),
-    ['scroll'] = mkUseTrigger('scroll',
-        function(g) return true end
-    ),
-    ['igneashard'] = mkUseTrigger('igneashard',
-        function(g) return true end
-    )
+    ['medallion'] = mkSimpleUseTrigger('medallion'),
+    ['journal'] = mkSimpleUseTrigger('journal'),
+    ['scroll'] = mkSimpleUseTrigger('scroll'),
+    ['igneashard1'] = mkSimpleUseTrigger('igneashard1'),
+    ['igneashard2'] = mkSimpleUseTrigger('igneashard2')
 }
 
 function mkTurnTrigger(t, phase)

@@ -262,9 +262,9 @@ sitems['medallion-present-elaine'] = {
     }
 }
 
-sitems['igneashard-use'] = {
-    ['ids'] = {'abelon', 'igneashard'},
-    ['events'] = {
+function mkIgneaShardUse(n)
+    local s = 'igneashard' .. tostring(n)
+    return {
         say(2, 1, true, 
             "Activate the ignea shard and regain 3 Ignea? You can also present it \z
              to an ally to restore their ignea."
@@ -281,7 +281,7 @@ sitems['igneashard-use'] = {
                 },
                 ['result'] = {
                     ['do'] = function(g)
-                        g.player:discard('igneashard')
+                        g.player:discard(s)
                         local p = g.player.sp
                         p.ignea = math.min(p.ignea + 3, p.attributes['focus'])
                     end
@@ -298,15 +298,12 @@ sitems['igneashard-use'] = {
                 }
             }
         })
-    },
-    ['result'] = {
-
     }
-}
+end
 
-sitems['igneashard-present-kath'] = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
+function mkIgneaShardPresentKath(n)
+    local s = 'igneashard' .. tostring(n)
+    return {
         face(1, 2),
         say(2, 1, true, 
             "I see you happened on some natural Ignea! That's good news for all of \z
@@ -324,7 +321,7 @@ sitems['igneashard-present-kath'] = {
                 },
                 ['result'] = {
                     ['do'] = function(g)
-                        g.player:discard('igneashard')
+                        g.player:discard(s)
                         local k = g:getSprite('kath')
                         k.ignea = math.min(k.ignea + 3, k.attributes['focus'])
                     end
@@ -344,17 +341,14 @@ sitems['igneashard-present-kath'] = {
                 }
             }
         })
-    },
-    ['result'] = {
-
     }
-}
+end
 
-sitems['igneashard-present-elaine'] = {
-    ['ids'] = {'abelon', 'elaine'},
-    ['events'] = {
+function mkIgneaShardPresentElaine(n)
+    local s = 'igneashard' .. tostring(n)
+    return {
         face(1, 2),
-        say(2, 1, false, 
+        say(2, 1, false,
             "That's... Ignea, isn't it, Sir Abelon? This is the first time I've \z
              ever needed to use it in a real fight. It's a beautiful stone..."
         ),
@@ -376,7 +370,7 @@ sitems['igneashard-present-elaine'] = {
                 ['result'] = {
                     ['impressions'] = {0, 1},
                     ['do'] = function(g)
-                        g.player:discard('igneashard')
+                        g.player:discard(s)
                         local e = g:getSprite('elaine')
                         e.ignea = math.min(e.ignea + 3, e.attributes['focus'])
                     end
@@ -396,8 +390,41 @@ sitems['igneashard-present-elaine'] = {
                 }
             }
         })
-    },
-    ['result'] = {
-
     }
+end
+
+sitems['igneashard1-use'] = {
+    ['ids'] = {'abelon', 'igneashard1'},
+    ['events'] = mkIgneaShardUse(1),
+    ['result'] = {}
+}
+
+sitems['igneashard2-use'] = {
+    ['ids'] = {'abelon', 'igneashard2'},
+    ['events'] = mkIgneaShardUse(2),
+    ['result'] = {}
+}
+
+sitems['igneashard1-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(1),
+    ['result'] = {}
+}
+
+sitems['igneashard2-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(2),
+    ['result'] = {}
+}
+
+sitems['igneashard1-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(1),
+    ['result'] = {}
+}
+
+sitems['igneashard2-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(2),
+    ['result'] = {}
 }
