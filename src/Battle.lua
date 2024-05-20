@@ -574,8 +574,6 @@ function Battle:cleanupBattle()
         local max_ign = sp.attributes['focus']
         if self:isAlly(sp) then
             sp.ignea = math.min(sp.ignea + math.floor(max_ign * ign_mul), max_ign)
-            -- TODO: sheathe weapon instead of just changing to idle
-            sp:changeBehavior('idle')
         else
             sp.ignea = max_ign
             local factor = MASTER - self.game.difficulty

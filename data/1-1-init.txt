@@ -11,7 +11,7 @@
 
 ~~south-forest Canopied-Steps
 
-~elaine 36 9 R down
+~elaine 36 9 L down
 ~wolf1 38 10 L
 ~medallion 45 28.5 R
 

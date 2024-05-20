@@ -8,39 +8,129 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-- #4: SFX for: start game (from title screen), level up, ally phase start, enemy phase start.
+## Engine work
 
-- Choreograph dealing with Elaine
-    - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path (something is broken at the moment).
+- Proximity-based sfx. Test with torch crackle
 
-- Support animation on combat entry (bridges idle -> combat), and on combat exit (this can just be the combat entry animation played in reverse).
+- Implement the combatReady and combatExit functions to fire the combat entry/exit animations respectively and switch to combat/idle as a done action. Test with abelon-combat-entry-exit.
 
-- Stone marker by north forest exit.
+- Explore quieting music during scenes or jingles (e.g. ally phase start, level up, dialogue)
 
-- kath-down, better camp clutter/beds
+- Explore baked-in shadows under human/creature sprites to give the appearance of depth. Use a stock 'shadow' sprite that sits between the sprite and the ground.
 
-- Animation sound effects for: torch crackle, combat entry, use weapon skill, use spell, use assist, all skills (can re-use liberally).
+- Profiling and refactoring Battle.lua to fix battle lag
 
-- Proximity-based sfx.
+## Scene work
 
-- Elaine-idle, Elaine-walk, Elaine-getup
+- Choreograph dealing with Elaine and all subscenes
+    - Something is broken at the moment - Elaine seems to always join
+    - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path. Make sure impressions change at the moment the option is selected.
 
-- Better text, menu hover, walk, menu select sound effects.
+## Audio
 
-- Profiling, fix battle slowness
+- Interface sound effects:
+    - Start game (from title screen)
+    - Level up
+    - Ally phase start
+    - Enemy phase start
 
-- Better wolf, alpha wolf sprites
+- Rework sound effects:
+    - Menu hover
+    - Menu select
+    - Footsteps
+    - Dialogue
 
-- Explore baked-in shadows under human/creature sprites to give the appearance of depth.
+- Animation sound effects:
+    - Torch crackle
+    - Combat entry
+    - Combat exit
+    - All skill usage animations (re-use liberally)
+    - All skill animations (re-use liberally)
 
-- #51: Abelon-combat-entry-exit, Abelon-combat-idle, Abelon-combat-run (try same feet as walk but bump animation speed?), Kath-combat-entry-exit, Kath-combat-idle, Kath-combat-run, Elaine-combat-entry-exit, Elaine-combat-idle, Elaine-combat-run. Wolf-idle (this doubles as Wolf-combat-idle), Wolf-walk (this doubles as Wolf-combat-run), alpha-wolf-idle, alpha-wolf-walk.
+## Art
 
-- #52: Skill animations for (31): Clutches, Contempt, Trust, Inspire, Confidence, Flank, Punish, Judgement, Shove, Javelin, Hold the Line, Thrust, Sweep, Stun, Forbearance, Enrage, Caution, Healing Mist, Invigorate, Haste, Observe, Precise Shot, Terrain Survey, Hunting Shot, Lay Traps, Ignea Arrowheads, Wind Blast, Cover Fire, Farsight, Volley
+- Better portraits
 
-- #53:
-    - Abelon-use-weapon, Abelon-use-spell, Abelon-use-assist, Abelon-use-util, Abelon-hurt (single frame, re-use for displacement), Abelon-death
-    - Kath-use-weapon, Kath-use-spell, Kath-use-assist, Kath-use-util, Kath-hurt, Kath-death
-    - Elaine-use-weapon, Elaine-use-spell, Elaine-use-assist, Elaine-use-util, Elaine-hurt, Elaine-death
-    - Wolf-use-weapon, Wolf-hurt, Wolf-death.
+- Sprites:
+    - Stone marker by north forest exit.
+    - kath-down
+    - Better camp clutter/beds
+    - Better wolf
+    - Better alpha wolf
 
-- #47: Better portraits
+## Animation
+
+- Skill animations:
+    - Clutches
+    - Contempt
+    - Trust
+    - Inspire
+    - Confidence
+    - Flank
+    - Punish
+    - Judgement
+    - Shove
+    - Javelin
+    - Hold the Line
+    - Thrust
+    - Sweep
+    - Stun
+    - Forbearance
+    - Enrage
+    - Caution
+    - Healing Mist
+    - Invigorate
+    - Haste
+    - Observe
+    - Precise Shot
+    - Terrain Survey
+    - Hunting Shot
+    - Lay Traps
+    - Ignea Arrowheads
+    - Wind Blast
+    - Cover Fire
+    - Farsight
+    - Volley
+
+- Character animations:
+    - Elaine-idle
+    - Elaine-walk
+    - Elaine-getup
+
+- Combat animations:
+    - Abelon-combat-entry-exit
+    - Abelon-combat-idle
+    - Abelon-combat-run (try same feet as walk but bump animation speed?)
+    - Kath-combat-entry-exit
+    - Kath-combat-idle
+    - Kath-combat-run
+    - Elaine-combat-entry-exit
+    - Elaine-combat-idle
+    - Elaine-combat-run
+    - Wolf-idle (this doubles as Wolf-combat-idle)
+    - Wolf-walk (this doubles as Wolf-combat-run)
+    - Alpha-wolf-idle
+    - Alpha-wolf-walk
+
+- Skill usage animations:
+    - Abelon-use-weapon
+    - Abelon-use-spell
+    - Abelon-use-assist
+    - Abelon-use-util
+    - Abelon-hurt (single frame, re-use for displacement)
+    - Abelon-death
+    - Kath-use-weapon
+    - Kath-use-spell
+    - Kath-use-assist
+    - Kath-use-util
+    - Kath-hurt (single frame)
+    - Kath-death
+    - Elaine-use-weapon
+    - Elaine-use-spell
+    - Elaine-use-assist
+    - Elaine-use-util
+    - Elaine-hurt (single frame)
+    - Elaine-death
+    - Wolf-use-weapon
+    - Wolf-hurt (single frame)
+    - Wolf-death

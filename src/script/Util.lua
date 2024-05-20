@@ -96,7 +96,21 @@ end
 function getUp(p1)
     return function(scene)
         local sp = scene.participants[p1]
-        sp:behaviorSequence({ function(d) return sp:animateBehaviorGeneric(d, 'getup') end }, function() end)
+        sp:behaviorSequence({ function(d) return sp:animateBehaviorGeneric(d, 'getup') end }, function() sp:changeBehavior('idle') end)
+    end
+end
+
+function combatReady(p1)
+    return function(scene)
+        local sp = scene.participants[p1]
+        sp:behaviorSequence({ function(d) return sp:animateBehaviorGeneric(d, 'combat-entry') end }, function() sp:changeAnimation('combat') end)
+    end
+end
+
+function combatExit(p1)
+    return function(scene)
+        local sp = scene.participants[p1]
+        sp:behaviorSequence({ function(d) return sp:animateBehaviorGeneric(d, 'combat-exit') end }, function() sp:changeAnimation('idle') end)
     end
 end
 

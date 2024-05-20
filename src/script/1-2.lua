@@ -229,7 +229,7 @@ s12['battle'] = {
         daytime(),
         wait(1),
         chaptercard(),
-        -- TODO: combatReady(2),
+        combatReady(2),
         say(2, 0, false, 
             "Abelon, wake up. Quickly."
         ),
@@ -276,8 +276,8 @@ s12['battle'] = {
         waitForEvent('camera'),
         walk(false, 1, 52, 9, 'walk'),
         waitForEvent('walk'),
-        -- TODO: combatReady(1),
-        say(2, 2, true, 
+        combatReady(1),
+        say(2, 2, true,
             "Ach, this is exactly what I was afraid would happen. Can't Lester \z
              ever just sit still? Blasted fool."
         ),
@@ -339,7 +339,6 @@ s12['battle'] = {
         waitForEvent('walk'),
         wait(0.5),
         lookDir(2, LEFT),
-        lookDir(1, LEFT),
         teleport(3, 41, 8),
         lookAt(3,1),
         focus(3, 200),
@@ -761,7 +760,7 @@ s12['ally-turn-3'] = {
             ),
             focus(2, 200),
             waitForEvent('camera'),
-            -- combatReady(2),
+            combatReady(2),
             say(2, 3, false,
                 "R-right. Ok... Pretend it's a rabbit... Like shooting a rabbit... \z
                  Breathe deep..."
@@ -1028,7 +1027,7 @@ subscene_bye_elaine = {
 
 subscene_elaine_goes_home = {
     say(2, 2, false, 
-        "...I see. I can't say I see your point of view, but if Elaine herself \z
+        "...I see. I can't say I share your point of view, but if Elaine herself \z
          isn't sure, I'll defer to your judgement. Beyond the city walls, following \z
          your orders has saved me more than once, whether or not I agree with them."
     ),
@@ -1118,6 +1117,12 @@ subscene_elaine_decide = {
 s12['victory'] = {
     ['ids'] = {'abelon', 'kath', 'elaine'},
     ['events'] = {
+        combatExit(1),
+        combatExit(2),
+        br(function(g) return g.state['carried-elaine'] end, {
+            combatExit(3)
+        }),
+        wait(1),
         focus(2, 170),
         waitForEvent('camera'),
         lookDir(2, RIGHT),
@@ -2961,6 +2966,7 @@ s12['wolf-den-battle'] = {
         teleport(8, 11, 23),
         walk(false, 8, 11, 20, 'walk'),
         waitForEvent('walk'),
+        combatReady(1),
         wait(1),
         br(function(g) return g.state['elaine-stays'] end, {
             say(3, 2, false,
@@ -2973,6 +2979,7 @@ s12['wolf-den-battle'] = {
              away with them now will allow us to focus on finding the monastery."
         ),
         waitForEvent('walk'),
+        combatReady(2),
         br(function(g) return g.state['elaine-stays'] end, {
             walk(false, 3, 16, 15, 'walk')
         }),
@@ -2985,7 +2992,9 @@ s12['wolf-den-battle'] = {
             waitForEvent('walk'),
             say(3, 3, false,
                 "Ready as I'll ever be..."
-            )
+            ),
+            combatReady(3),
+            wait(1)
         })
     },
     ['result'] = {
@@ -3054,9 +3063,14 @@ s12['wolf-den-turnlimit-defeat'] = {
 }
 
 s12['wolf-den-victory'] = {
-    ['ids'] = {'abelon'},
+    ['ids'] = {'abelon', 'kath', 'elaine'},
     ['events'] = {
-
+        combatExit(1),
+        combatExit(2),
+        br(function(g) return g.state['elaine-stays'] end, {
+            combatExit(3)
+        }),
+        wait(1)
     },
     ['result'] = {
         ['do'] = function(g)

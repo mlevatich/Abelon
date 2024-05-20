@@ -219,6 +219,7 @@ s11['battle'] = {
         wait(1),
         walk(false, 2, 39, 11, 'walk'),
         waitForEvent('walk'),
+        combatReady(1),
         wait(1)
     },
     ['result'] = {
@@ -251,7 +252,8 @@ s11['turnlimit-defeat'] = {
 s11['victory'] = {
     ['ids'] = {'abelon'},
     ['events'] = {
-        
+        combatExit(1),
+        wait(1)
     },
     ['result'] = {
 

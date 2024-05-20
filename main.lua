@@ -66,7 +66,7 @@ function love.load(args)
     -- Begin with title screen
     local skip_to = args[1]
     if skip_to then
-        game = Game:new(skip_to, MASTER)
+        game = Game:new(skip_to, NORMAL)
         game:saveChapter()
     else
         title = Title:new()

@@ -9,12 +9,12 @@
 
 ~~south-forest Canopied-Steps
 
-~elaine 1 1 L
+//~elaine 1 1 R
 
 ~~west-forest Canopied-Steps
 
 ~abelon 52 6 L P
-//~elaine 54 5 L
+~elaine 54 5 L down
 ~kath 50 8 L
 ~book 56 6 R
 ~campfire 54 7 R
@@ -32,14 +32,14 @@
 ~wolf4 1 1 L
 
 ->State saw-camp
-//->State carried-elaine
+->State carried-elaine
 ->Inventory medallion
 ->Inventory scroll
-//->Seen 1-2-battle
-//->Day
-//->Party kath
-//->Party elaine
-//->State elaine-stays
+->Seen 1-2-battle
+->Day
+->Party kath
+->Party elaine
+->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2
