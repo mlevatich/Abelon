@@ -3078,7 +3078,7 @@ s12['wolf-den-victory'] = {
             local a = g.sprites['abelon']
             local e = g.sprites['elaine']
             local seen = find(g.player.old_tutorials, "Experience and skill learning")
-            if k.level > 8 or a.level > 8 or e.level > 3 then
+            if (k.level > 8 or a.level > 8 or e.level > 3) and not seen then
                 g:startTutorial("Experience and skill learning")
             end
         end

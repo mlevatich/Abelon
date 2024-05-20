@@ -540,7 +540,8 @@ function Battle:checkWinLose()
         local defeat_scene = self.lose[i][2](self)
         if defeat_scene then
             self.game:stopMusic()
-            sfx['defeat']:play()
+            self.game.current_music = 'Defeat'
+            self.game:modMusicVolume(1, 10000)
             local scene_id = self.id .. '-' .. defeat_scene .. '-defeat'
             self:suspend(scene_id, function()
                 self.stack = {}
@@ -653,6 +654,8 @@ function Battle:openVictoryMenu()
             end
         end
     )}
+
+    self.game:stallInputs(1)
     local v = { "     V I C T O R Y     " }
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(v), true, v, GREEN, nil, true), {})
 end
@@ -661,6 +664,8 @@ function Battle:openDefeatMenu()
     local m = { MenuItem:new('Restart battle', {}, 'Start the battle over', nil,
         function(c) c:reloadBattle() end
     )}
+
+    self.game:stallInputs(1)
     local d = { "     D E F E A T     " }
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(d), true, d, RED, nil, true), {
         { AFTER, TEMP, function(b) b:renderLens({ 0.5, 0, 0 }) end }
@@ -671,10 +676,15 @@ function Battle:openEndTurnMenu()
     self.stack = {}
     local m = { MenuItem:new('End turn', {}, 'Begin enemy phase', nil,
         function(c)
+            self.game:modMusicVolume(1, 2)
             self:closeMenu()
             self:endTurn()
         end
     )}
+
+    self.game:modMusicVolume(0.3, 2)
+    self.game:stallInputs(1.5)
+    sfx['enemy-phase']:play()
     local e = { "   E N E M Y   P H A S E   " .. self.turn .. "   " }
     self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED, nil, true), {})
 end
@@ -683,6 +693,7 @@ function Battle:openBeginTurnMenu()
     self.stack = {}
     local m = { MenuItem:new('Begin turn', {}, 'Begin ally phase', nil,
         function(c)
+            self.game:modMusicVolume(1, 2)
             self:closeMenu()
             self:turnRefresh()
             self.stack = { self:stackBase() }
@@ -693,6 +704,10 @@ function Battle:openBeginTurnMenu()
             self:checkTriggers(ALLY)
         end
     )}
+
+    self.game:modMusicVolume(0.3, 2)
+    self.game:stallInputs(1.5)
+    sfx['ally-phase']:play()
     local t = self.turnlimit - self.turn
     local msg = "   A L L Y   P H A S E   " .. self.turn .. "   "
     if t == 0 then msg = "   F I N A L   T U R N   " end
@@ -803,6 +818,10 @@ function Battle:openLevelupMenu(sp, n)
             self.stack[#self.stack]['menu'] = LevelupMenu(sp, n)
         end
     )}
+
+    self.game:stallInputs(1)
+    self.game:modMusicVolume(0.3, 2)
+    sfx['levelup']:play()
     local l = { "     L E V E L   U P     " }
     local menu = Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(l), true, l, GREEN, nil, true)
     self.stack[#self.stack]['menu'] = menu
@@ -1870,6 +1889,7 @@ function Battle:update(keys, dt)
                     self.levelup_queue[k] = nil
                 end
             else
+                self.game:modMusicVolume(1, 2)
                 self:pop()
             end
         end

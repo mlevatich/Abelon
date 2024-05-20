@@ -739,6 +739,25 @@ skills = {
         nil, nil, nil,
         { ['self'] = true }
     ),
+    ['killall'] = Skill:new('killall', 'KILLALL',
+        "Debug tool.",
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, str_to_icon['force'], -- GRID
+        { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
+        { { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T },
+          { T, T, T, T, T, T, T, T, T, T, T, T, T } }, SELF_CAST_AIM, 0,
+        ENEMY, Scaling:new(0, 'force', 10.0)
+    ),
     ['guard_blindspot'] = Skill:new('guard_blindspot', 'Guard Blindspot',
         "Protect an adjacent ally from wounds to the back. Adds \z
          (Affinity * 0.5) to the assisted ally's Reaction.",

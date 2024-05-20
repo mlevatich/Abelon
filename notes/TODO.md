@@ -10,9 +10,9 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Engine work
 
-- Proximity-based sfx. Test with torch crackle
-
 - Explore quieting music during scenes or jingles (e.g. ally phase start, level up, dialogue)
+
+- Proximity-based sfx. Test with torch crackle
 
 - Profiling and refactoring Battle.lua to fix battle lag
 

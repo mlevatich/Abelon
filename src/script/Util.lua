@@ -18,14 +18,14 @@ function changeMusic(track, offset)
     return function(scene)
         scene.game:stopMusic()
         scene.game.current_music = track
-        scene.game.music_vol_mod = 1
+        scene.game:modMusicVolume(1, 10000)
         music_tracks[track]:jumpTo(offset)
     end
 end
 
 function fadeoutMusic()
     return function(scene)
-        scene.game.music_vol_mod = 0.99
+        scene.game:modMusicVolume(0, 1)
     end
 end
 
@@ -273,10 +273,4 @@ function addChoice(choices, c)
     new_choices = deepcopy(choices)
     new_choices[#new_choices + 1] = c
     return new_choices
-end
-
-function closeTutorial()
-    return function(scene)
-        scene.game:endTutorial()
-    end
 end

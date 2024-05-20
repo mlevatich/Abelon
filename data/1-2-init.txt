@@ -36,11 +36,13 @@
 ->State carried-elaine
 ->Inventory medallion
 ->Inventory scroll
-->Seen 1-2-battle
-->Day
-->Party kath
-->Party elaine
-->State elaine-stays
+->abelon
++Exp 120
+//->Seen 1-2-battle
+//->Day
+//->Party kath
+//->Party elaine
+//->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2

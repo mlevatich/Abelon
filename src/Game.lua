@@ -46,12 +46,16 @@ function Game:initialize(id, difficulty)
 
     -- Settings
     self.turn_autoend  = true
-    self.music_vol_mod = 1
     self.music_volume  = MED
     self.sfx_volume    = HIGH
     self.text_volume   = OFF
     self:setSfxVolume(self.sfx_volume)
     self:setTextVolume(self.text_volume)
+
+    -- Music control
+    self.music_vol_mod        = 1
+    self.music_vol_mod_target = 1
+    self.music_vol_mod_rate   = 0
 
     -- Rendering information
     self.alpha = 1
@@ -87,6 +91,7 @@ function Game:initialize(id, difficulty)
     -- If the player is in a battle, it goes here
     self.battle = nil
     self.battle_inputs = {}
+    self.input_stall = 0
 
     -- Read into the above fields from world file
     self.signal = nil
@@ -376,6 +381,11 @@ function Game:setMusicVolume(vol)
     self.music_volume = vol
 end
 
+function Game:modMusicVolume(target, rate)
+    self.music_vol_mod_target = target
+    self.music_vol_mod_rate = rate
+end
+
 function Game:setSfxVolume(vol)
     self.sfx_volume = vol
     for k, v in pairs(sfx) do if k:sub(1,4) ~= 'text' then v:setVolume(vol) end end
@@ -390,6 +400,10 @@ function Game:flash(msg, rate)
     self.flash_alpha = 0.001
     self.flash_rate = rate
     self.flash_msg = msg
+end
+
+function Game:stallInputs(t)
+    self.input_stall = t
 end
 
 function Game:launchBattle(id)
@@ -625,6 +639,12 @@ end
 -- Update everything in the game
 function Game:update(dt, no_music)
 
+    -- If input is stalled, munch all keyboard inputs on this frame
+    if self.input_stall > 0 then
+        self.input_stall = math.max(0, self.input_stall - dt)
+        love.keyboard.keysPressed = {}
+    end
+
     -- Update the active map and sprites on it
     local new_transition = self.current_map:update(dt, self.player)
 
@@ -647,8 +667,12 @@ function Game:update(dt, no_music)
     -- Update music
     if self.current_music and not no_music then
         music_tracks[self.current_music]:update(dt, self.music_volume * self.music_vol_mod)
-        if self.music_vol_mod < 1 then
-            self.music_vol_mod = math.max(0, self.music_vol_mod - dt)
+
+        local tgt = self.music_vol_mod_target
+        if self.music_vol_mod < tgt then
+            self.music_vol_mod = math.min(tgt, self.music_vol_mod + dt * self.music_vol_mod_rate)
+        elseif self.music_vol_mod > tgt then
+            self.music_vol_mod = math.max(tgt, self.music_vol_mod - dt * self.music_vol_mod_rate)
         end
     end
 
