@@ -379,7 +379,7 @@ s11['campbed'] = {
                     waitForEvent('walk'),
                     lookDir(1, RIGHT),
                     wait(1),
-                    -- TODO: combatReady(1),
+                    combatReady(1),
                     wait(1),
                     blackout(),
                     wait(1.5),

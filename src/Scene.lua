@@ -202,7 +202,7 @@ function Scene:voiceText(text)
     if math.random() < 0.2 then text['voicing'] = math.random(1,2) end
     if text['muted'] == 0 then
         local text_sfx = 'text-default'
-        if text['speaker'] ~= nil then
+        if text['speaker'] ~= nil and text['speaker'].animation_name ~= 'downed' then
             local key = 'text-' .. text['speaker']:getId() .. '-' .. tostring(text['voicing'])
             if sfx[key] ~= nil then text_sfx = key end
         end
