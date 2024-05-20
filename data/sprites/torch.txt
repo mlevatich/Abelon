@@ -2,6 +2,7 @@
 
 Name: Torch
 Ground: no
+Shadow: no
 Interactive: no
 Collides: 7,18,10,11
 Impression: 0

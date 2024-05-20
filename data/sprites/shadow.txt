@@ -1,6 +1,6 @@
 // Sprite attributes
 
-Name: Grass
+Name: Shadow
 Ground: yes
 Shadow: no
 Interactive: no
@@ -14,4 +14,4 @@ Attributes:
 DiffiucultySubtraction:
 Skilltrees:
 Skills:
-Description: A plant. EOS
+Description: A shadow. EOS

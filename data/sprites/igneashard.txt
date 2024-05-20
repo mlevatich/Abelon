@@ -2,6 +2,7 @@
 
 Name: Ignea shard
 Ground: no
+Shadow: no
 Interactive: yes
 Hitbox:
 Impression: 0

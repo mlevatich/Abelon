@@ -36,5 +36,6 @@
 ~wolf2 1 1 L
 ~wolf3 1 1 L
 ~wolf4 1 1 L
+~shadow 1 1 L
 
 ->Inventory journal

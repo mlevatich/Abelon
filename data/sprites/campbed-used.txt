@@ -2,6 +2,7 @@
 
 Name: Camp bed
 Ground: no
+Shadow: no
 Interactive: no
 Hitbox: 5,19,28,8
 Impression: 0

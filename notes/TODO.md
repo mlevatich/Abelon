@@ -12,11 +12,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 - Proximity-based sfx. Test with torch crackle
 
-- Implement the combatReady and combatExit functions to fire the combat entry/exit animations respectively and switch to combat/idle as a done action. Test with abelon-combat-entry-exit.
-
 - Explore quieting music during scenes or jingles (e.g. ally phase start, level up, dialogue)
-
-- Explore baked-in shadows under human/creature sprites to give the appearance of depth. Use a stock 'shadow' sprite that sits between the sprite and the ground.
 
 - Profiling and refactoring Battle.lua to fix battle lag
 

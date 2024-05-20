@@ -2,6 +2,7 @@
 
 Name: Alpha wolf
 Ground: no
+Shadow: yes
 Interactive: no
 Hitbox: 0,20,31,11
 Impression: 0

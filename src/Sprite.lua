@@ -38,7 +38,7 @@ function Sprite:initialize(id, game)
     end
     local data_file = 'Abelon/data/sprites/' .. file_id .. '.txt'
     local data = { -- Defaults for unspecified fields
-        "", "", "Name: ", "Ground: no", "Interactive: no", "Hitbox:", "Impression: 0",
+        "", "", "Name: ", "Ground: no", "Shadow: no", "Interactive: no", "Hitbox:", "Impression: 0",
         "Awareness: 0", "Discard: no", "Present:", "Level: 0", "Attributes:",
         "DiffiucultySubtraction:", "Skilltrees:", "Skills:", "Description: None. EOS"
     }
@@ -83,26 +83,27 @@ function Sprite:initialize(id, game)
     }
 
     -- Can the player interact with this sprite to start a scene?
-    self.interactive = readField(data[5], tobool)
+    self.interactive = readField(data[6], tobool)
 
     -- Can other sprites walk through/over this sprite?
     self.ground = readField(data[4], tobool)
-    self.hitbox = readArray(data[6], tonumber)
+    self.shadowed = readField(data[5], tobool)
+    self.hitbox = readArray(data[7], tonumber)
 
     -- Sprite's opinions
-    self.impression = readField(data[7], tonumber)
-    self.awareness = readField(data[8], tonumber)
+    self.impression = readField(data[8], tonumber)
+    self.awareness = readField(data[9], tonumber)
 
     -- Info that allows this sprite to be treated as an item
-    self.can_discard = readField(data[9], tobool)
-    self.present_to = readArray(data[10])
-    self.description = readMultiline(data, 16)
+    self.can_discard = readField(data[10], tobool)
+    self.present_to = readArray(data[11])
+    self.description = readMultiline(data, 17)
 
     -- Info that allows this sprite to be treated as a party member
-    self.attributes = readDict(data[12], VAL, nil, tonumber)
-    self.attr_difficulty_mods = readDict(data[13], VAL, nil, tonumber)
-    self.skill_trees = readDict(data[14], ARR, {'name', 'skills'}, getSk)
-    self.skills = readArray(data[15], getSk)
+    self.attributes = readDict(data[13], VAL, nil, tonumber)
+    self.attr_difficulty_mods = readDict(data[14], VAL, nil, tonumber)
+    self.skill_trees = readDict(data[15], ARR, {'name', 'skills'}, getSk)
+    self.skills = readArray(data[16], getSk)
     self.skill_points = 0
 
     self.health = 0
@@ -110,7 +111,7 @@ function Sprite:initialize(id, game)
         self.health = self.attributes['endurance'] * 2
     end
     self.ignea = self.attributes['focus']
-    self.level = readField(data[11], tonumber)
+    self.level = readField(data[12], tonumber)
     self.exp = 0
 
     -- Pointer to game
@@ -1350,6 +1351,24 @@ function Sprite:render()
     local clr = { 1, 1, 1, 1 }
     if mono then clr = { 0.3, 0.3, 0.3, 1 } end
     clr[4] = alpha
+
+    -- Render sprite's shadow if it has one
+    if self.shadowed and self.animation_name ~= 'downed' and alpha == 1 then
+        love.graphics.push('all')
+        local sp_shadow = self.game:getSprite('shadow')
+        love.graphics.draw(
+            spritesheet,
+            sp_shadow:getCurrentQuad(),
+            self.x + 15.5,
+            self.y + 31,
+            0,
+            self.dir,
+            1,
+            sp_shadow.w / 2,
+            sp_shadow.h / 2
+        )
+        love.graphics.pop()
+    end
     
     -- Draw sprite's current animation frame, at its current position,
     -- in its current direction
@@ -1570,6 +1589,11 @@ sprite_data = {
             ['play'] = { 6.5, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 } }
         },
         ['n'] = 1
+    },
+    {
+        ['id'] = 'shadow',
+        ['w'] = 31,
+        ['h'] = 5
     },
     {
         ['id'] = 'journal',

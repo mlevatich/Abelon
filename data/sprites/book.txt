@@ -2,6 +2,7 @@
 
 Name: Book
 Ground: no
+Shadow: no
 Interactive: yes
 Hitbox: 1,4,23,16
 Impression: 0

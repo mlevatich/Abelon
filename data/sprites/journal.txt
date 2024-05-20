@@ -2,6 +2,7 @@
 
 Name: Journal
 Ground: yes
+Shadow: no
 Interactive: yes
 Hitbox:
 Impression: 0

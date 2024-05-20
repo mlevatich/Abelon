@@ -2,6 +2,7 @@
 
 Name: Rock
 Ground: yes
+Shadow: no
 Interactive: no
 Hitbox:
 Impression: 0

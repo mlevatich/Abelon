@@ -2,6 +2,7 @@
 
 Name: Abelon
 Ground: no
+Shadow: yes
 Interactive: yes
 Hitbox: 7,21,20,11
 Impression: 50

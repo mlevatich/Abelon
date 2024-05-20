@@ -2,6 +2,7 @@
 
 Name: Log
 Ground: no
+Shadow: no
 Interactive: no
 Hitbox: 4,6,74,20
 Impression: 0
