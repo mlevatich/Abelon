@@ -60,6 +60,8 @@ end
 -- End the scene
 function Scene:close()
 
+    self.game:modMusicVolume(1, 2)
+
     -- Fire action that returns us to the battle
     -- or give control back to the player if there is no battle
     if self.returnToBattle then
@@ -206,7 +208,7 @@ function Scene:updateWithWeight(weight, c)
             if math.random() < 0.2 then text_pick = math.random(1,2) end
             if text_mute == 0 then
                 local text_sfx = 'text-default'
-                if text['speaker'] ~= nil and text['portrait'] > 0 then
+                if text['speaker'] ~= nil then
                     local key = 'text-' .. text['speaker']:getId() .. '-' .. tostring(text_pick)
                     if sfx[key] ~= nil then text_sfx = key end
                 end

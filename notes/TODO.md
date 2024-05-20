@@ -10,8 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Engine work
 
-- Explore quieting music during scenes or jingles (e.g. ally phase start, level up, dialogue)
-
 - Proximity-based sfx. Test with torch crackle
 
 - Profiling and refactoring Battle.lua to fix battle lag
@@ -126,7 +124,7 @@ Bullets that reference a github issue should close the issue when committed.
     - Elaine-use-assist
     - Elaine-use-util
     - Elaine-hurt (single frame)
-    - Elaine-death
+    - Elaine-death (inverse of getup)
     - Wolf-use-weapon
     - Wolf-hurt (single frame)
     - Wolf-death

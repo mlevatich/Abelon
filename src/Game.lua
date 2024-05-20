@@ -48,7 +48,7 @@ function Game:initialize(id, difficulty)
     self.turn_autoend  = true
     self.music_volume  = MED
     self.sfx_volume    = HIGH
-    self.text_volume   = OFF
+    self.text_volume   = MED
     self:setSfxVolume(self.sfx_volume)
     self:setTextVolume(self.text_volume)
 
@@ -432,6 +432,7 @@ function Game:launchScene(s_id, returnToBattle)
         self.player:changeBehavior('idle')
     end
 
+    self:modMusicVolume(0.5, 2)
     while self.callbacks[s_id] do s_id = self.callbacks[s_id] end
     self.current_scene = Scene:new(s_id, self.player, self, returnToBattle)
 end

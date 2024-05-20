@@ -749,7 +749,7 @@ s12['ally-turn-3'] = {
                 "Look at that, Abelon! She's only just woken up, but she has a \z
                  knight's courage. Lucky us. What's your name, miss?"
             ),
-            introduce('Elaine'),
+            introduce('elaine'),
             say(2, 3, false, "...Elaine."),
             wait(0.5),
             say(2, 3, false, "Wait, 'Abelon'? You just called him Abelon-"),
@@ -1314,6 +1314,7 @@ s12['victory'] = {
                 "Oh... thank you. Thank you! I knew if I followed the tracks I would \z
                  find someone, and I did it! I'll be able to go home... I'm Elaine."
             ),
+            introduce('elaine'),
             say(3, 1, false, 
                 "It's such a relief to see someone, after all this time... Wait. The \z
                  both of you, don't I know...?"
@@ -1828,6 +1829,7 @@ s12['victory'] = {
              you in any way. And thank you, Sir Kath, for healing me. \z
              Please forgive me for being a distraction from your, uh, quest. Or whatever."
         ),
+        introduce('kath'),
         say(2, 1, false, 
             "Ha! I must admit, I don't mind the deferential treatment. If only \z
              Lester and Shanti were so enthusiastic... But Elaine, there's no need to \z
