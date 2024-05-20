@@ -3083,6 +3083,7 @@ s12['wolf-den-victory'] = {
             if (k.level > 8 or a.level > 8 or e.level > 3) and not seen then
                 g:startTutorial("Experience and skill learning")
             end
+            g.callbacks['1-2-elaine'] = '1-2-elaine-callback'
         end
     }
 }

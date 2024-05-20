@@ -110,7 +110,7 @@ end
 function combatExit(p1)
     return function(scene)
         local sp = scene.participants[p1]
-        sp:behaviorSequence({ function(d) return sp:animateBehaviorGeneric(d, 'combat-exit') end }, function() sp:changeAnimation('idle') end)
+        sp:behaviorSequence({ function(d) return sp:animateBehaviorGeneric(d, 'combat-exit') end }, function() sp:changeBehavior('idle') end)
     end
 end
 
