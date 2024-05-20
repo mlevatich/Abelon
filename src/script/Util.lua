@@ -205,6 +205,8 @@ function say(p1, portrait, requires_response, line)
             ['length'] = new_length,
             ['cnum'] = 0,
             ['cweight'] = 0,
+            ['muted'] = 0,
+            ['voicing'] = 1,
             ['timer'] = 0
         }
         scene.await_input = not requires_response

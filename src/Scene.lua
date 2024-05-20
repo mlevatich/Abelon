@@ -197,25 +197,26 @@ function Scene:getTwoChars()
 
 end
 
-local text_pick = 1
-local text_mute = 0
+-- Updating and playing sfx for speaker when dialogue is running
+function Scene:voiceText(text)
+    if math.random() < 0.2 then text['voicing'] = math.random(1,2) end
+    if text['muted'] == 0 then
+        local text_sfx = 'text-default'
+        if text['speaker'] ~= nil then
+            local key = 'text-' .. text['speaker']:getId() .. '-' .. tostring(text['voicing'])
+            if sfx[key] ~= nil then text_sfx = key end
+        end
+        sfx[text_sfx]:play()
+    end
+    text['muted'] = (text['muted'] + 1) % 3
+end
 
 function Scene:updateWithWeight(weight, c)
     local text = self.text_state
     if text['cweight'] == weight then
         text['cnum'] = math.min(text['length'], text['cnum'] + 1)
         if text['length'] ~= text['cnum'] and c:sub(1,1) ~= ' ' then
-            if math.random() < 0.2 then text_pick = math.random(1,2) end
-            if text_mute == 0 then
-                local text_sfx = 'text-default'
-                if text['speaker'] ~= nil then
-                    local key = 'text-' .. text['speaker']:getId() .. '-' .. tostring(text_pick)
-                    if sfx[key] ~= nil then text_sfx = key end
-                end
-                sfx[text_sfx]:play()
-            end
-            text_mute = text_mute + 1
-            if text_mute >= 3 then text_mute = 0 end
+            self:voiceText(text)
         end
         text['cweight'] = 0
     else
