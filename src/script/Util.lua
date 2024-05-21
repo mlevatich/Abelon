@@ -93,6 +93,13 @@ function focus(p1, speed)
     end
 end
 
+function putOut(p1)
+    return function(scene)
+        local sp = scene.participants[p1]
+        sp:changeBehavior('down')
+    end
+end
+
 function getUp(p1)
     return function(scene)
         local sp = scene.participants[p1]

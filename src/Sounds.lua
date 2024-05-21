@@ -49,7 +49,7 @@ local sfx_data = {
     },
     {
         ['id'] = 'crackle',
-        ['users'] = {{'torch', 4}}
+        ['users'] = {{'torch', 4}, {'campfire'}}
     },
     {
         ['id'] = 'levelup'

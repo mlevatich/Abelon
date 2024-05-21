@@ -17,9 +17,6 @@ Bullets that reference a github issue should close the issue when committed.
 - New/revamped sfx:
     - Start game (from title screen)
     - Torch crackle (animation sfx)
-    - Footsteps (animation sfx)
-    - Menu hover
-    - Menu select
 
 - Sprites:
     - Stone marker by north forest exit.
@@ -33,10 +30,11 @@ Bullets that reference a github issue should close the issue when committed.
 ## Audio
 
 - New animation sfx:
-    - Combat entry per unit
-    - Combat exit per unit
-    - All skill usage animations
-    - All skill animations
+    - Combat entry for each unit
+    - Combat exit for each unit
+    - Skill usage animations for each unit
+
+- All skill animations
 
 ## Art / Animation
 

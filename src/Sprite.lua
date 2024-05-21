@@ -1545,7 +1545,11 @@ sprite_data = {
     {
         ['id'] = 'campfire',
         ['w'] = 65,
-        ['h'] = 40
+        ['h'] = 40,
+        ['animations'] = {
+            ['idle'] = { 6.5, { 0, 0, 0, 0, 0, 0, 0, 0 }, 'crackle' },
+            ['downed'] = { 6.5, { 1 } }
+        },
     },
     {
         ['id'] = 'campbed-used',
