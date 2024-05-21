@@ -230,7 +230,7 @@ s12['battle'] = {
         putOut(9),
         putOut(10),
         putOut(11),
-        changeMusic('Threat-Revealed', 0),
+        changeMusic('Threat-Revealed'),
         daytime(),
         wait(1),
         chaptercard(),

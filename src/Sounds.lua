@@ -61,6 +61,9 @@ local sfx_data = {
         ['id'] = 'enemy-phase'
     },
     {
+        ['id'] = 'new-game'
+    },
+    {
         ['id'] = 'conflagration'
     },
     {

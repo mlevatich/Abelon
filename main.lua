@@ -192,6 +192,7 @@ end
 function Title:launchGame(from_save)
     self.t_launch = t
     music_tracks['The-Lonely-Knight']:stop()
+    sfx['new-game']:play()
     love.keyboard.keysPressed = {}
     if from_save then
         game = from_save

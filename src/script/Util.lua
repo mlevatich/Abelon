@@ -15,6 +15,7 @@ function insertEvents(events)
 end
 
 function changeMusic(track, offset)
+    if not offset then offset = 0 end
     return function(scene)
         scene.game:stopMusic()
         scene.game.current_music = track

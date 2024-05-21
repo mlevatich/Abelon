@@ -15,8 +15,7 @@ Bullets that reference a github issue should close the issue when committed.
     - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path. Make sure impressions change at the moment the option is selected.
 
 - New/revamped sfx:
-    - Start game (from title screen)
-    - Torch crackle (animation sfx)
+    - crackle (animation sfx) used by torch and campfire
 
 - Sprites:
     - Stone marker by north forest exit.
