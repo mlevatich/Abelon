@@ -10,11 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Imminent
 
-- Proximity-based sfx
-    - When playing a sound effect, have optional src and player arguments. Play adjusts the volume of the sound effect according to the distance between from the source to the player.
-    - Animation class needs access to the source sprite and game object to manage this.
-    - Test torch crackle and footsteps before wolf den fight.
-
 - Choreograph dealing with Elaine and all subscenes
     - Something is broken at the moment - Elaine seems to always join
     - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path. Make sure impressions change at the moment the option is selected.

@@ -877,7 +877,7 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y, affected_tile
             if sk.anim_type == SKILL_ANIM_RELATIVE then
 
                 -- Spawn animation with arbitrary high position so it renders above everything
-                local skill_anim_sp = self.game:spawnSprite(sk.id, 10000, 10000, self.dir)
+                local skill_anim_sp = self.game:spawnSprite(sk.anim, 10000, 10000, self.dir)
 
                 -- Change its position to be centered on caster
                 skill_anim_sp:resetPosition(
@@ -891,7 +891,8 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y, affected_tile
                 if (sk_dir == UP and self.dir == LEFT)  or (sk_dir == DOWN and self.dir == RIGHT) then turns = 1 end
                 skill_anim_sp.rot = math.pi * turns / 2
 
-                -- Play skill animation, delete its sprite when done
+                -- Play skill animation (and sfx), delete its sprite when done
+                if sfx[sk.sfx] then sfx[sk.sfx]:play() end
                 skill_anim_sp:behaviorSequence({ function(d)
                     skill_anim_sp:fireAnimation('play', function()
                         self.game:deleteSprite(skill_anim_sp:getId())
@@ -903,7 +904,7 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y, affected_tile
                 for i = 1, #affected_tiles do
                     
                     -- Spawn animation with arbitrary high position so it renders above everything
-                    local skill_anim_sp = self.game:spawnSprite(sk.id .. tostring(i), 10000, 10000, RIGHT)
+                    local skill_anim_sp = self.game:spawnSprite(sk.anim .. tostring(i), 10000, 10000, RIGHT)
 
                     -- Change its position to be centered on tile
                     local t = affected_tiles[i]
@@ -920,6 +921,7 @@ function Sprite:skillBehaviorGeneric(doneAction, sk, sk_dir, x, y, affected_tile
                         return pass
                     end }, pass)
                 end
+                if sfx[sk.sfx] then sfx[sk.sfx]:play() end -- Only play sfx once
             end
             fired = true
         end
@@ -1292,7 +1294,7 @@ end
 
 -- Update rendered frame of animation
 function Sprite:updateAnimation(dt)
-    self:getCurrentAnimation():update(dt, self, self.game.player.sp)
+    self:getCurrentAnimation():update(dt, self, self.game)
 end
 
 -- Update sprite's position from dt
@@ -1567,7 +1569,7 @@ sprite_data = {
         ['h'] = 32,
         ['animations'] = {
             ['idle'] = { 6.5, { 4 } },
-            ['play'] = { 18, { 0, 1, 2, 3 }, 'sever' }
+            ['play'] = { 18, { 0, 1, 2, 3 } }
         }
     },
     {
@@ -1576,9 +1578,9 @@ sprite_data = {
         ['h'] = 38,
         ['animations'] = {
             ['idle'] = { 6.5, { 13 } },
-            ['play'] = { 13, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }, 'conflagration' }
+            ['play'] = { 13, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 } }
         },
-        ['n'] = 20
+        ['n'] = 25
     },
     {
         ['id'] = 'guard_blindspot',
@@ -1634,7 +1636,6 @@ for i = 1, #sprite_data do
             local spd, idxs = frames[1], frames[2]
             local anim_sfx = nil
             if #frames > 2 then 
-                print("Give anim_sfx " .. id_w_num .. '-' .. frames[3] .. " to " .. id_w_num)
                 anim_sfx = sfx[id_w_num .. '-' .. frames[3]] 
             end
             g['animations'][name] = Animation:new(id .. '_' .. name,
