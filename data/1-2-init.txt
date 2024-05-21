@@ -5,11 +5,13 @@
 ~torch3 26 49 L down
 ~torch4 26 52 L down
 ~bloodrite 26 49 R
+~scroll 20 50.5 R
 ~igneashard1 7 43 R
 
 ~~south-forest Canopied-Steps
 
 //~elaine 1 1 R
+~medallion 45 28.5 R
 
 ~~west-forest Canopied-Steps
 
@@ -34,15 +36,14 @@
 
 ->State saw-camp
 ->State carried-elaine
-->Inventory medallion
-->Inventory scroll
-->abelon
-+Exp 120
-//->Seen 1-2-battle
-//->Day
-//->Party kath
-//->Party elaine
-//->State elaine-stays
+->Inventory journal
+//->Inventory medallion
+//->Inventory scroll
+->Seen 1-2-battle
+->Day
+->Party kath
+->Party elaine
+->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2

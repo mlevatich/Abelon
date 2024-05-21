@@ -45,7 +45,7 @@ function Animation:syncWith(previous)
 end
 
 -- Increment time and move to the appropriate frame
-function Animation:update(dt)
+function Animation:update(dt, src_sp, player_sp)
 
     -- Freeze if doneAction was fired
     if self.firedDoneAction then return end
@@ -55,7 +55,15 @@ function Animation:update(dt)
 
     -- Play sfx if it exists and hasn't been played
     if self.anim_sfx and not self.playedSfx then
-        self.anim_sfx:play()
+        local mod = nil
+        local hearing = 300
+        if src_sp and player_sp then
+            local xd = player_sp.x - src_sp.x
+            local yd = player_sp.y - src_sp.y
+            local dist_sq = xd * xd + yd * yd
+            mod = math.max(0, (hearing * hearing - dist_sq) / (hearing * hearing))
+        end
+        self.anim_sfx:play(mod)
         self.playedSfx = true
     end
 

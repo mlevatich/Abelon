@@ -8,42 +8,23 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Engine work
+## Imminent
 
-- Proximity-based sfx. Test with torch crackle
-
-- Profiling and refactoring Battle.lua to fix battle lag
-
-## Scene work
+- Proximity-based sfx
+    - When playing a sound effect, have optional src and player arguments. Play adjusts the volume of the sound effect according to the distance between from the source to the player.
+    - Animation class needs access to the source sprite and game object to manage this.
+    - Test torch crackle and footsteps before wolf den fight.
 
 - Choreograph dealing with Elaine and all subscenes
     - Something is broken at the moment - Elaine seems to always join
     - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path. Make sure impressions change at the moment the option is selected.
 
-## Audio
-
-- Interface sound effects:
+- New/revamped sfx:
     - Start game (from title screen)
-    - Level up
-    - Ally phase start
-    - Enemy phase start
-
-- Rework sound effects:
+    - Torch crackle (animation sfx)
+    - Footsteps (animation sfx)
     - Menu hover
     - Menu select
-    - Footsteps
-    - Dialogue
-
-- Animation sound effects:
-    - Torch crackle
-    - Combat entry
-    - Combat exit
-    - All skill usage animations (re-use liberally)
-    - All skill animations (re-use liberally)
-
-## Art
-
-- Better portraits
 
 - Sprites:
     - Stone marker by north forest exit.
@@ -52,7 +33,19 @@ Bullets that reference a github issue should close the issue when committed.
     - Better wolf
     - Better alpha wolf
 
-## Animation
+- Profiling and refactoring Battle.lua to fix battle lag
+
+## Audio
+
+- New animation sfx:
+    - Combat entry per unit
+    - Combat exit per unit
+    - All skill usage animations
+    - All skill animations
+
+## Art / Animation
+
+- Better portraits
 
 - Skill animations:
     - Clutches
@@ -86,12 +79,12 @@ Bullets that reference a github issue should close the issue when committed.
     - Farsight
     - Volley
 
-- Character animations:
+- Basic character animations:
     - Elaine-idle
     - Elaine-walk
     - Elaine-getup
 
-- Combat animations:
+- Basic combat animations:
     - Abelon-combat-entry-exit
     - Abelon-combat-idle
     - Abelon-combat-run (try same feet as walk but bump animation speed?)

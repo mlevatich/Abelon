@@ -1292,7 +1292,7 @@ end
 
 -- Update rendered frame of animation
 function Sprite:updateAnimation(dt)
-    self:getCurrentAnimation():update(dt)
+    self:getCurrentAnimation():update(dt, self, self.game.player.sp)
 end
 
 -- Update sprite's position from dt
@@ -1469,7 +1469,7 @@ sprite_data = {
         ['w'] = 22,
         ['h'] = 31,
         ['animations'] = {
-            ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 } },
+            ['idle'] = { 6.5, { 1, 2, 3, 4, 5, 6, 7, 8 }, 'crackle' },
             ['downed'] = { 6.5, { 0 } }
         },
         ['n'] = 4
@@ -1612,15 +1612,14 @@ for i = 1, #sprite_data do
     if data['n'] then
         for x = 1, data['n'] do
             sprite_graphics[id .. x] = {}
-            table.insert(gs, sprite_graphics[id .. x])
+            gs[id .. x] = sprite_graphics[id .. x]
         end
     else
         sprite_graphics[id] = {}
-        table.insert(gs, sprite_graphics[id])
+        gs[id] = sprite_graphics[id]
     end
 
-    for j = 1, #gs do
-        local g = gs[j]
+    for id_w_num, g in pairs(gs) do
         local portrait_file = 'graphics/portraits/' .. id .. '.png'
         if love.filesystem.getInfo(portrait_file) then
             g['ptexture'] = love.graphics.newImage(portrait_file)
@@ -1634,7 +1633,10 @@ for i = 1, #sprite_data do
         for name, frames in pairs(data['animations']) do
             local spd, idxs = frames[1], frames[2]
             local anim_sfx = nil
-            if #frames > 2 then anim_sfx = sfx[frames[3]] end
+            if #frames > 2 then 
+                print("Give anim_sfx " .. id_w_num .. '-' .. frames[3] .. " to " .. id_w_num)
+                anim_sfx = sfx[id_w_num .. '-' .. frames[3]] 
+            end
             g['animations'][name] = Animation:new(id .. '_' .. name,
                 getSpriteQuads(idxs, spritesheet, data['w'], data['h'], sheet_y),
                 anim_sfx,
