@@ -3,7 +3,7 @@ require 'src.script.Util'
 s11 = {}
 
 s11['entry'] = {
-    ['ids'] = {'abelon'},
+    ['ids'] = {'abelon', 'torch1', 'torch2', 'torch3', 'torch4'},
     ['events'] = {
         blackout(),
         wait(1),
@@ -23,6 +23,10 @@ s11['entry'] = {
         say(1, 0, false, 
             "..!"
         ),
+        light(2),
+        light(3),
+        light(4),
+        light(5),
         fade(0.2),
         wait(6)
     },
@@ -295,11 +299,12 @@ subscene_sleep = {
         "...Need... I can't..."
     ),
     fadeoutMusic(),
+    putOut(8),
     wait(2)
 }
 
 s11['campbed-callback'] = {
-    ['ids'] = {'abelon', 'campbed', 'lester', 'shanti', 'campbed-used1', 'campbed-used2', 'campbed-used3'},
+    ['ids'] = {'abelon', 'campbed', 'lester', 'shanti', 'campbed-used1', 'campbed-used2', 'campbed-used3', 'campfire'},
     ['events'] = {
         lookAt(1 ,2),
         say(2, 1, true, 
@@ -339,7 +344,7 @@ s11['campbed-callback'] = {
 }
 
 s11['campbed'] = {
-    ['ids'] = {'abelon', 'campbed', 'lester', 'shanti', 'campbed-used1', 'campbed-used2', 'campbed-used3'},
+    ['ids'] = {'abelon', 'campbed', 'lester', 'shanti', 'campbed-used1', 'campbed-used2', 'campbed-used3', 'campfire'},
     ['events'] = {
         lookAt(1 ,2),
         introduce('campbed'),

@@ -3,9 +3,10 @@ require 'src.Constants'
 
 Sound = class('Sound')
 
-function Sound:initialize(id)
+function Sound:initialize(id, base_vol)
     self.id = id
-    self.base_vol = 1
+    self.base_vol = base_vol
+    self.set_vol = 1
     local audio_file = 'audio/sounds/' .. self.id .. '.wav'
     self.src = love.audio.newSource(audio_file, 'static')
     self.src:setLooping(false)
@@ -13,13 +14,13 @@ end
 
 function Sound:play(mod)
     if not mod then mod = 1 end
-    self.src:setVolume(mod * self.base_vol)
+    self.src:setVolume(mod * self.base_vol * self.set_vol)
     self.src:seek(0.0)
     self.src:play()
 end
 
 function Sound:setVolume(vol)
-    self.base_vol = vol
+    self.set_vol = vol
 end
 
 -- INITIALIZE AUDIO DATA
@@ -49,7 +50,12 @@ local sfx_data = {
     },
     {
         ['id'] = 'crackle',
-        ['users'] = {{'torch', 4}, {'campfire'}}
+        ['users'] = {{'torch', 4}},
+        ['base'] = 0.25
+    },
+    {
+        ['id'] = 'loud-crackle',
+        ['users'] = {{'campfire'}}
     },
     {
         ['id'] = 'levelup'
@@ -87,18 +93,20 @@ local sfx_data = {
 }
 for i = 1, #sfx_data do
     local d = sfx_data[i]
+    local base_vol = 1
+    if d['base'] then base_vol = d['base'] end
     if d['users'] then
         for j = 1, #d['users'] do
             local user = d['users'][j]
             if user[2] then
                 for k = 1, user[2] do
-                    sfx[user[1] .. tostring(k) .. '-' .. d['id']] = Sound:new(d['id'])
+                    sfx[user[1] .. tostring(k) .. '-' .. d['id']] = Sound:new(d['id'], base_vol)
                 end
             else
-                sfx[user[1] .. '-' .. d['id']] = Sound:new(d['id'])
+                sfx[user[1] .. '-' .. d['id']] = Sound:new(d['id'], base_vol)
             end
         end
     else
-        sfx[d['id']] = Sound:new(d['id'])
+        sfx[d['id']] = Sound:new(d['id'], base_vol)
     end
 end

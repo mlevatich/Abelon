@@ -3,6 +3,8 @@ require 'src.Constants'
 
 local Music = class('Music')
 
+local DAMP = 0.5
+
 -- Constructor for an audio source
 function Music:initialize(name)
 
@@ -19,13 +21,13 @@ function Music:initialize(name)
     -- Load audio source
     local audio_file = 'audio/music/' .. self.name .. '.wav'
     self.src = love.audio.newSource(audio_file, 'stream')
-    self.src:setVolume(1)
+    self.src:setVolume(DAMP)
     self.src:setLooping(false)
 
     -- We maintain a duplicate in a buffer to fade in as the src fades out,
     -- to accomplish smooth looping
     self.buf = love.audio.newSource(audio_file, 'stream')
-    self.buf:setVolume(1)
+    self.buf:setVolume(DAMP)
     self.buf:setLooping(false)
 end
 
@@ -49,13 +51,13 @@ function Music:update(dt, volume)
         end
 
         -- Set volume of src and buf according to fade_factor
-        self.src:setVolume((1 - factor * factor)             * volume)
-        self.buf:setVolume((1 - (factor - 1) * (factor - 1)) * volume)
+        self.src:setVolume((1 - factor * factor)             * volume * DAMP)
+        self.buf:setVolume((1 - (factor - 1) * (factor - 1)) * volume * DAMP)
 
     elseif factor >= 1 then
 
         -- Buf is the only thing playing now, at full volume
-        self.buf:setVolume(volume)
+        self.buf:setVolume(volume * DAMP)
         self.src:setVolume(0)
         self.src:stop()
 
@@ -66,7 +68,7 @@ function Music:update(dt, volume)
     else
 
         -- Normally, src volume is full, buf volume is 0
-        self.src:setVolume(volume)
+        self.src:setVolume(volume * DAMP)
         self.buf:setVolume(0)
     end
 end

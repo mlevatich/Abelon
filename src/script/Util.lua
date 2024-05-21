@@ -101,6 +101,13 @@ function putOut(p1)
     end
 end
 
+function light(p1)
+    return function(scene)
+        local sp = scene.participants[p1]
+        sp:changeBehavior('idle')
+    end
+end
+
 function getUp(p1)
     return function(scene)
         local sp = scene.participants[p1]
