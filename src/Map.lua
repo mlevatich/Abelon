@@ -135,8 +135,8 @@ function Map:spawnSprite(fields, c)
     local sp = Sprite:new(fields[1], c)
 
     -- Set position
-    local x = (tonumber(fields[2]) - 1) * TILE_WIDTH
-    local y = (tonumber(fields[3]) - 1) * TILE_HEIGHT
+    local x = math.floor(0.5 + (tonumber(fields[2]) - 1) * TILE_WIDTH)
+    local y = math.floor(0.5 + (tonumber(fields[3]) - 1) * TILE_HEIGHT)
     sp:resetPosition(x, y)
 
     -- Set direction
