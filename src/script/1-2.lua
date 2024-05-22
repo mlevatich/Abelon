@@ -222,7 +222,7 @@ subscene_before_wolves = {
 }
 
 s12['battle'] = {
-    ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'wolf4', 'campfire', 'torch1', 'torch2', 'torch3', 'torch4'},
+    ['ids'] = {'abelon', 'kath', 'wolf1', 'wolf2', 'wolf3', 'wolf4', 'campfire', 'torch1', 'torch2', 'torch3', 'torch4', 'campclutter2'},
     ['events'] = {
         blackout(),
         putOut(7),
@@ -230,6 +230,7 @@ s12['battle'] = {
         putOut(9),
         putOut(10),
         putOut(11),
+        teleport(12, 1, 1, 'north-forest'),
         changeMusic('Threat-Revealed'),
         daytime(),
         wait(1),

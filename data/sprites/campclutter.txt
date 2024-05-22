@@ -1,10 +1,10 @@
 // Sprite attributes
 
 Name: Camp clutter
-Ground: yes
+Ground: no
 Shadow: no
 Interactive: no
-Hitbox:
+Hitbox: 4,19,35,13
 Impression: 0
 Awareness: 0
 Discard: no

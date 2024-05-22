@@ -1,9 +1,9 @@
 ~~east-forest Canopied-Steps
 
-~torch1 31 49 R
-~torch2 31 52 R
-~torch3 26 49 L
-~torch4 26 52 L
+~torch1 31 49 R down
+~torch2 31 52 R down
+~torch3 26 49 L down
+~torch4 26 52 L down
 ~bloodrite 26 49 R
 ~scroll 20 50.5 R
 ~igneashard1 7 43 R
@@ -22,19 +22,20 @@
 ~elaine 54 5 L down
 ~kath 50 8 L
 ~book 56 6 R
-~campfire 54 7 R
+~campfire 54 7 R down
 ~campbed 50.7 6 L
-~campclutter 56 8 R
+~campclutter1 56 8 R
 ~igneashard2 28 12.8 R
 ~marker 33 15 R
 ~marker 50.8 1.5 R
 ~marker 47.2 1.5 L
 ~marker 50.8 3 R
 ~marker 47.2 3 L
-~marker 61 9 L
+~marker 61 13 L
 
 ~~north-forest Canopied-Steps
 
+~campclutter2 1 1 L
 ~alphawolf1 1 1 L
 ~alphawolf2 1 1 L
 ~wolf1 1 1 L
@@ -48,11 +49,11 @@
 ->Inventory journal
 //->Inventory medallion
 //->Inventory scroll
-->Seen 1-2-battle
-->Day
-->Party kath
-->Party elaine
-->State elaine-stays
+//->Seen 1-2-battle
+//->Day
+//->Party kath
+//->Party elaine
+//->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2

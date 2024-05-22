@@ -1565,7 +1565,8 @@ sprite_data = {
     {
         ['id'] = 'campclutter',
         ['w'] = 40,
-        ['h'] = 40
+        ['h'] = 40,
+        ['n'] = 2
     },
     {
         ['id'] = 'sever',
