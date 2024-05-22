@@ -4,7 +4,7 @@ Name: Camp bed
 Ground: no
 Shadow: no
 Interactive: no
-Hitbox: 5,19,28,8
+Hitbox: 5,17,28,12
 Impression: 0
 Awareness: 0
 Discard: no

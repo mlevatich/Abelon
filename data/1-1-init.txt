@@ -18,11 +18,11 @@
 ~~west-forest Canopied-Steps
 
 ~campfire 54 7 R
-~kath 50 8 L down
+~kath 50 8.1 L down
 ~campbed-used1 50.15 8.15 L
-~lester 57.45 8.85 R down
+~lester 57.45 8.9 R down
 ~campbed-used2 57 9 R
-~shanti 52.85 9.85 L down
+~shanti 52.85 9.9 L down
 ~campbed-used3 53 10 L
 ~campbed 50.7 6 L
 ~campclutter 56 8 R

@@ -46,9 +46,9 @@ function Game:initialize(id, difficulty)
 
     -- Settings
     self.turn_autoend  = true
-    self.music_volume  = HIGH
-    self.sfx_volume    = HIGH
-    self.text_volume   = MED
+    self.music_volume  = OFF -- Default: HIGH
+    self.sfx_volume    = OFF -- Default: HIGH
+    self.text_volume   = OFF -- Default: MED
     self:setSfxVolume(self.sfx_volume)
     self:setTextVolume(self.text_volume)
 

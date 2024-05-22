@@ -51,7 +51,7 @@ local sfx_data = {
     {
         ['id'] = 'crackle',
         ['users'] = {{'torch', 4}},
-        ['base'] = 0.25
+        ['base'] = 0.5
     },
     {
         ['id'] = 'loud-crackle',

@@ -14,12 +14,10 @@ Bullets that reference a github issue should close the issue when committed.
     - Something is broken at the moment - Elaine seems to always join
     - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path. Make sure impressions change at the moment the option is selected.
 - Sprites:
-    - Stone marker by north forest exit.
-    - kath-down
+    - Stone marker by north forest exit
     - Better camp clutter/beds
     - Better wolf
     - Better alpha wolf
-- Profiling and refactoring Battle.lua to fix battle lag
 
 ## Audio
 
@@ -108,3 +106,15 @@ Bullets that reference a github issue should close the issue when committed.
     - Wolf-use-weapon
     - Wolf-hurt (single frame)
     - Wolf-death
+
+## Pre-release
+
+- Debug mode: command line flag that flips a global variable. Enables:
+    - Killall spell
+    - Speedup and slowdown keys
+    - Alternate control scheme
+    - Hitbox drawing
+    - Turns volume settings off
+    - Chapter selection
+    - Print statements for statistics
+- Profiling and refactoring Battle.lua to fix battle lag
