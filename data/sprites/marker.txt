@@ -1,0 +1,17 @@
+// Sprite attributes
+
+Name: Marker
+Ground: no
+Shadow: no
+Interactive: no
+Hitbox: 5,23,17,12
+Impression: 0
+Awareness: 0
+Discard: no
+Present:
+Level: 0
+Attributes:
+DiffiucultySubtraction:
+Skilltrees:
+Skills:
+Description: A rock. EOS
