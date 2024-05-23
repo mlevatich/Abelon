@@ -318,13 +318,14 @@ function Game:getMap()
     return self.current_map
 end
 
-function Game:playerNearSprite(sp_id)
+function Game:playerNearSprite(sp_id, buf, down_ok)
     local x, y = self.player.sp:getPosition()
     local sp = self.current_map:getSprite(sp_id)
-    if sp and (sp.current_behavior == 'idle' or sp.current_behavior == 'wander') then
+    if sp and (sp.current_behavior == 'idle' or sp.current_behavior == 'wander' or (down_ok and sp.current_behavior == 'down')) then
         local kx, ky = sp:getPosition()
-        return abs(x - kx) <= PRESENT_DISTANCE * TILE_WIDTH
-           and abs(y - ky) <= PRESENT_DISTANCE * TILE_HEIGHT
+        local d = (x - kx) * (x - kx) + (y - ky) * (y - ky)
+        local pd = buf * buf
+        return d <= pd, d
     end
     return false
 end

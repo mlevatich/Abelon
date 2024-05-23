@@ -5,8 +5,6 @@ Ground: no
 Shadow: no
 Interactive: no
 Hitbox: 4,19,35,13
-Impression: 0
-Awareness: 0
 Discard: no
 Present:
 Level: 0

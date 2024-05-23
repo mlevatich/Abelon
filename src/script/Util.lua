@@ -229,7 +229,7 @@ function say(p1, portrait, requires_response, line)
 end
 
 function _lookAt(sp1, sp2)
-    sp1.dir = ite(sp1.x >= sp2.x, LEFT, RIGHT)
+    sp1.dir = ite(sp1.x + sp1.w >= sp2.x + sp2.w, LEFT, RIGHT)
 end
 
 function face(p1, p2)

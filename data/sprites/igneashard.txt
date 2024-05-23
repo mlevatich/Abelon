@@ -5,8 +5,6 @@ Ground: no
 Shadow: no
 Interactive: yes
 Hitbox:
-Impression: 0
-Awareness: 0
 Discard: yes
 Present: kath,elaine
 Level: 0

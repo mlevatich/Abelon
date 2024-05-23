@@ -38,8 +38,8 @@ function Sprite:initialize(id, game)
     end
     local data_file = 'Abelon/data/sprites/' .. file_id .. '.txt'
     local data = { -- Defaults for unspecified fields
-        "", "", "Name: ", "Ground: no", "Shadow: no", "Interactive: no", "Hitbox:", "Impression: 0",
-        "Awareness: 0", "Discard: no", "Present:", "Level: 0", "Attributes:",
+        "", "", "Name: ", "Ground: no", "Shadow: no", "Interactive: no", "Hitbox:",
+        "Discard: no", "Present:", "Level: 0", "Attributes:",
         "DiffiucultySubtraction:", "Skilltrees:", "Skills:", "Description: None. EOS"
     }
     if fileExists(data_file) then
@@ -91,19 +91,19 @@ function Sprite:initialize(id, game)
     self.hitbox = readArray(data[7], tonumber)
 
     -- Sprite's opinions
-    self.impression = readField(data[8], tonumber)
-    self.awareness = readField(data[9], tonumber)
+    self.impression = 0
+    self.awareness = 0
 
     -- Info that allows this sprite to be treated as an item
-    self.can_discard = readField(data[10], tobool)
-    self.present_to = readArray(data[11])
-    self.description = readMultiline(data, 17)
+    self.can_discard = readField(data[8], tobool)
+    self.present_to = readArray(data[9])
+    self.description = readMultiline(data, 15)
 
     -- Info that allows this sprite to be treated as a party member
-    self.attributes = readDict(data[13], VAL, nil, tonumber)
-    self.attr_difficulty_mods = readDict(data[14], VAL, nil, tonumber)
-    self.skill_trees = readDict(data[15], ARR, {'name', 'skills'}, getSk)
-    self.skills = readArray(data[16], getSk)
+    self.attributes = readDict(data[11], VAL, nil, tonumber)
+    self.attr_difficulty_mods = readDict(data[12], VAL, nil, tonumber)
+    self.skill_trees = readDict(data[13], ARR, {'name', 'skills'}, getSk)
+    self.skills = readArray(data[14], getSk)
     self.skill_points = 0
 
     self.health = 0
@@ -111,7 +111,7 @@ function Sprite:initialize(id, game)
         self.health = self.attributes['endurance'] * 2
     end
     self.ignea = self.attributes['focus']
-    self.level = readField(data[12], tonumber)
+    self.level = readField(data[10], tonumber)
     self.exp = 0
 
     -- Pointer to game
@@ -262,16 +262,23 @@ function Sprite:mkPresent()
         ['result'] = {}
     }
 
-    -- Function checks if player is near a sprite in the present list, and if
-    -- so, presents to them. Otherwise launch failure scene.
-    return function(c)
+    -- Function checks if player is near sprites in the present list, and if
+    -- so, presents to closest one. Otherwise launch failure scene.
+    return function(g)
+        local best_id = nil
+        local closest_d = 1000000
         for _, sp_id in pairs(self.present_to) do
-            if c:playerNearSprite(sp_id) then
-                c:launchScene(self.id .. '-present-' .. sp_id)
-                return
+            local near, d = g:playerNearSprite(sp_id, PRESENT_DISTANCE * TILE_WIDTH, false)
+            if near and d < closest_d then
+                best_id = sp_id
+                closest_d = d
             end
         end
-        c:launchScene(self.id .. '-present-fail')
+        if best_id then
+            g:launchScene(self.id .. '-present-' .. best_id)
+        else
+            g:launchScene(self.id .. '-present-fail')
+        end
     end
 end
 
@@ -620,14 +627,20 @@ function Sprite:move(x, y)
     self.y = y
 end
 
--- Change a sprite's impression of Abelon (cannot drop below zero)
+-- Change a sprite's impression of Abelon
 function Sprite:changeImpression(value)
-    self.impression = math.max(self.impression + value, 0)
+    self.impression = self.impression + value
+    if debug and value ~= 0 then
+        print(self.name .. " impression: " .. tostring(value) .. " (now " .. self.impression .. ")")
+    end
 end
 
 -- Change a sprite's awareness of the player
 function Sprite:changeAwareness(value)
     self.awareness = self.awareness + value
+    if debug and value ~= 0 then
+        print(self.name .. " awareness: " .. tostring(value) .. " (now " .. self.awareness .. ")")
+    end
 end
 
 function Sprite:djikstra(graph, src, dst, depth)

@@ -2666,6 +2666,7 @@ s12['book'] = {
 s12['campfire'] = {
     ['ids'] = {'abelon', 'campfire'},
     ['events'] = {
+        lookAt(1, 2),
         introduce('campfire'),
         say(2, 1, false,
             "The campfire has completely gone out."
@@ -2679,6 +2680,7 @@ s12['campfire'] = {
 s12['campbed'] = {
     ['ids'] = {'abelon', 'campbed'},
     ['events'] = {
+        lookAt(1, 2),
         introduce('campbed'),
         say(2, 1, false,
             "Your camp bed. Kath will bring it along for you."
