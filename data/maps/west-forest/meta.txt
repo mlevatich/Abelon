@@ -19,7 +19,7 @@ LIGHTING DATA
 54.5 7 130
 
 FIXED SPRITES
-~log 53 6 L
+~log 53.2 6 L
 ~log 18 22 L
 ~log 17 11 R
 ~log 65 13 R

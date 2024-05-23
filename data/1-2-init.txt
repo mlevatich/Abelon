@@ -21,7 +21,7 @@
 ~abelon 52 6 L P
 ~elaine 54 5 L down
 ~kath 50 8 L
-~book 56 6 R
+~book 56.5 6 R
 ~campfire 54 7 R down
 ~campbed 50.7 6 L
 ~campclutter1 56 8 R
