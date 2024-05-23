@@ -967,7 +967,7 @@ subscene_bye_elaine = {
     ),
     say(2, 1, false, 
         "...Just a little joke! Anyway, keep your eyes open for wolves. They'll \z
-         stalk you before going in for the attack. But if you notice them watching you \z
+         stalk you before going in for the attack. But if you notice them first \z
          and get yourself up a tall tree, they won't be able to reach."
     ),
     say(3, 3, false, 
@@ -1751,7 +1751,10 @@ s12['victory'] = {
                         "Thank you. Again. Thank you..."
                     ),
                     say(2, 1, false, 
-                        "Why, your hard heart is beginning to soften after all, old man! It was \z
+                        "Why, your hard heart is beginning to soften after all, old man!"
+                    ),
+                    say(2, 1, false,
+                        "It was \z
                          only some months ago, when we were stretched thin out beyond Ebonach's west \z
                          gate, that you fought bitterly against my carrying home a dying knight."
                     ),
