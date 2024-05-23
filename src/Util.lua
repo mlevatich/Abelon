@@ -384,7 +384,11 @@ end
 
 -- Print the contents of any variable
 function dump(var)
-    print(toString(var))
+    log(toString(var))
+end
+
+function log(s)
+    if debug then print(s) end
 end
 
 function pass() end

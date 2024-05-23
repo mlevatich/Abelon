@@ -11,8 +11,6 @@ Bullets that reference a github issue should close the issue when committed.
 ## Imminent
 
 - Choreograph dealing with Elaine and all subscenes
-    - Something is broken at the moment - Elaine seems to always join
-    - Insert debug statements that print when impressions change, to make sure its all correct. Try every dialogue path. Make sure impressions change at the moment the option is selected.
 
 ## Audio
 

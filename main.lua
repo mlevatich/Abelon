@@ -1,9 +1,6 @@
 -- Seed RNG
 math.randomseed(os.time())
 
--- Debug mode?
-debug = false
-
 -- Make upscaling look pixelated instead of blurry
 love.graphics.setDefaultFilter('nearest', 'nearest')
 

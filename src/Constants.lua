@@ -1,3 +1,6 @@
+-- debug flag
+debug = false
+
 -- True false
 T = true
 F = false

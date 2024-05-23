@@ -630,16 +630,16 @@ end
 -- Change a sprite's impression of Abelon
 function Sprite:changeImpression(value)
     self.impression = self.impression + value
-    if debug and value ~= 0 then
-        print(self.name .. " impression: " .. tostring(value) .. " (now " .. self.impression .. ")")
+    if value ~= 0 then
+        log(self.id .. " impression: " .. tostring(value) .. " (now " .. self.impression .. ")")
     end
 end
 
 -- Change a sprite's awareness of the player
 function Sprite:changeAwareness(value)
     self.awareness = self.awareness + value
-    if debug and value ~= 0 then
-        print(self.name .. " awareness: " .. tostring(value) .. " (now " .. self.awareness .. ")")
+    if value ~= 0 then
+        log(self.id .. " awareness: " .. tostring(value) .. " (now " .. self.awareness .. ")")
     end
 end
 
