@@ -1,6 +1,9 @@
 -- Seed RNG
 math.randomseed(os.time())
 
+-- Debug mode?
+debug = false
+
 -- Make upscaling look pixelated instead of blurry
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -63,10 +66,20 @@ function love.load(args)
     -- Time of last frame
     lastframe = love.timer.getTime()
 
-    -- Begin with title screen
-    local skip_to = args[1]
-    if skip_to then
-        game = Game:new(skip_to, NORMAL)
+    -- Debug mode
+    debug = (args[1] == '-debug')
+
+    -- In debug mode, delete existing saves
+    if debug then
+        os.remove('abelon/' .. SAVE_DIRECTORY .. 'save.dat')
+        os.remove('abelon/' .. SAVE_DIRECTORY .. 'battle_save.dat')
+        os.remove('abelon/' .. SAVE_DIRECTORY .. 'chapter_save.dat')
+        os.remove('abelon/' .. SAVE_DIRECTORY .. 'quicksave.dat')
+    end
+
+    -- Start from title screen (or load from a chapter file in debug mode)
+    if debug and args[2] then
+        game = Game:new(args[2], NORMAL)
         game:saveChapter()
     else
         title = Title:new()
@@ -106,10 +119,12 @@ function love.update(dt)
     -- Update game and hot-reload a save if requested
     elseif game then
         local timestep = FRAME_DUR
-        if love.keyboard.isDown(',') then
-            timestep = FRAME_DUR / 5
-        elseif love.keyboard.isDown('.') then
-            timestep = FRAME_DUR * 3
+        if debug then -- Fast forward and slow down allowed in debug mode
+            if love.keyboard.isDown(',') then
+                timestep = FRAME_DUR / 5
+            elseif love.keyboard.isDown('.') then
+                timestep = FRAME_DUR * 3
+            end
         end
         local signal = game:update(timestep)
         if signal == RELOAD_BATTLE then

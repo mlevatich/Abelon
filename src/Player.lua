@@ -42,6 +42,12 @@ function Player:initialize(sp)
 
     -- Abelon can open menus
     self.open_menu = nil
+
+    -- In debug, learn KILLALL spell
+    if debug then
+        self.sp.skill_points = self.sp.skill_points + 1
+        self.sp:learn('killall')
+    end
 end
 
 function Player:openMenu(m)
@@ -310,10 +316,10 @@ end
 function Player:freeMode()
 
     -- Get keypresses
-    local l = love.keyboard.isDown('left') or love.keyboard.isDown('l')
-    local r = love.keyboard.isDown('right') or love.keyboard.isDown("'")
-    local u = love.keyboard.isDown('up') or love.keyboard.isDown('p')
-    local d = love.keyboard.isDown('down') or love.keyboard.isDown(';')
+    local l = love.keyboard.isDown('left') or ite(debug, love.keyboard.isDown('l'), false)
+    local r = love.keyboard.isDown('right') or ite(debug, love.keyboard.isDown("'"), false)
+    local u = love.keyboard.isDown('up') or ite(debug, love.keyboard.isDown('p'), false)
+    local d = love.keyboard.isDown('down') or ite(debug, love.keyboard.isDown(';'), false)
     local f = love.keyboard.wasPressed('f')
     local inv = love.keyboard.wasPressed('e')
 

@@ -1394,6 +1394,15 @@ function Sprite:render()
             self.x + self.w / 2 - 3, self.y + 11
         )
     end
+
+    -- In debug, render the sprite's dimensions and hitbox
+    if debug and self:isBlocking() then
+        love.graphics.setColor(0, 1, 1, 0.3)
+        love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
+        love.graphics.setColor(0, 1, 0, 0.3)
+        local hx, hy, hw, hh = self:getHitboxRect()
+        love.graphics.rectangle('line', hx, hy, hw, hh)
+    end
     love.graphics.pop()
 end
 
