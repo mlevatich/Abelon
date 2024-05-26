@@ -820,6 +820,7 @@ end
 function Battle:openLevelupMenu(sp, n)
     local m = { MenuItem:new('Level up', {}, nil, nil,
         function(c)
+            self.game:stallInputs(1)
             self.stack[#self.stack]['menu'] = LevelupMenu(sp, n)
         end
     )}
