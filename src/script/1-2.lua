@@ -952,7 +952,7 @@ subscene_bye_elaine = {
     say(2, 3, false, 
         "We're here, where Shanti's drawn a little campfire. We've gone off the \z
          main Lefally road, but if you walk southeast, you'll find a number of \z
-         fallen trees. From there, you should see the path we cut through the brush."
+         fallen trees. You should see the path we cut through the brush."
     ),
     say(2, 3, false, 
         "If you follow that path southwest, you'll reach the Lefally road by \z
@@ -1033,8 +1033,8 @@ subscene_bye_elaine = {
 
 subscene_elaine_goes_home = {
     say(2, 2, false, 
-        "...I see. I can't say I share your point of view, but if Elaine herself \z
-         isn't sure, I'll defer to your judgement. Beyond the city walls, following \z
+        "...I see. I can't say I share your point of view, but if Elaine \z
+         isn't sure, I'll defer to your judgement. Outside the city, following \z
          your orders has saved me more than once, whether or not I agree with them."
     ),
     say(2, 3, false,

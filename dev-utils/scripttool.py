@@ -197,11 +197,12 @@ def convert(pyscript, chapter_independent):
         chars = 0
         starting_word = 0
         split_text = []
+        char_limit = 73
         for i in range(len(words)):
             chars += len(words[i]) + 1
-            if chars > 71:
+            if chars > char_limit:
                 split_text.append(words[starting_word:i])
-                chars = 0
+                chars = len(words[i]) + 1
                 starting_word = i
         if len(words[starting_word:]) > 0:
             split_text.append(words[starting_word:])
