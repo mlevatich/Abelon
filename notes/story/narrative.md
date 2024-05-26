@@ -17,10 +17,10 @@ The game is divided into two parts. Each part consists of seven chapters. Each c
 - Kath (Paladin):          heroic, kind, jovial
 - Elaine (Archer):         scared, courageous, starry-eyed
 - Lester (Rogue):          clever, resentful, short-tempered
-- Shanti (Scholar):        insightful, bookish, incessant
+- Shanti (Scholar):        unflappable, bookish, incessant
 - Caretaker Mona (Healer): tired, remorseful, curious
 
-- King Sinclair: severe, pragmatic, confident
+- King Sinclair: grave, pragmatic, paranoid
 - Gaheris:       ancient, knowledgeable, reckless
 
 # Part 1
@@ -35,13 +35,11 @@ A medallion can be found on the ground at any point during 1-1. It's use is not 
 
 **Roam:** Interacting with Elaine prompts you only to shake her, which does nothing. The player comes across the campfire with sleeping comrades in front of some stone reliefs. You can examine things around camp, go to bed, or select the dialogue option "kill them", if Elaine has not been carried to camp.
 
-If you return to Elaine after having found the camp, you can optionally carry her to the camp, which results in different dialogue in 1-2, increased Elaine impression, and use of elaine in battle 1-2. It also locks the player out of the bad path, as Elaine cannot be left behind.
+If you return to Elaine after having found the camp, you can optionally carry her to the camp, which results in different dialogue in 1-2, increased Elaine impression, and use of elaine in battle 1-2.
 
 **Talk:** If you go to bed, the game fades to black. Abelon speaks to the player as ???, and the game transitions to 1-2. If you instead choose "kill them", Abelon slowly positions himself next to the camp, and begins drawing his sword, when the game cuts to black. Abelon speaks to the player as ???, and the game transitions to 1-5-a.
 
 ## 1-2: Dense forest
-
-TODO: ROUGH DRAFT
 
 If you choose instead to go to sleep, you are woken up by Kath because wolves are circling. It's dawn. The other two have gone, because Lester woke up early and didn't feel like sitting around camp near Abelon. The subtext is that Lester hates Abelon. Abelon and Kath fend off the wolves. Elaine arrives; the dead wolf alerted her that there were people nearby, and she followed the blood and tracks to the conflict. She thanks the knights for dealing with the wolf chasing her, then collapses.
 
@@ -57,25 +55,30 @@ Getting Elaine up to speed is a good opportunity to fill in the relevant context
 
 TODO: ROUGH DRAFT
 
-- The three go after Shanti and Lester (roam, talk). After going ahead, Elaine and Kath catch up, brief discussion. Where did the two go? Need to find them. Roam, chat, solve environmental puzzle, find goodies, etc. Can encounter the magical barrier of the monastery.
-- find them in a predicament with mysterious stone monsters, Lester incapacitated (battle: elaine kath abelon shanti). Battle is a defense map - defender where lester is! Enemies go for Lester.
-- Resolve the encounter, but Lester is unconscious. Need to heal him. Shanti has realized that the monastery they are looking for is magically guarded somehow (talk).
-- Follow trail of Shanti's discovery, solve the puzzle of the magical ward, find monastery entrance (roam).
-- On finding it, Abelon briefly is able to talk to the player (as ???). Angry, confused, vague. Not clear that it is Abelon speaking. Perhaps in "broad daylight", not as a black screen? (talk).
+- Elaine and Abelon go ahead to look for Shanti and Lester. You can either follow the stone markers or have Elaine track them through the maze-like map of the monastery approach. Elaine and Abelon chat as they go. Katch catches up at one intersection, forced to go one way (towards Shanti).
+    - Roam around and find some optional goodies if you explore, and have some small extra scenes with Elaine.
 
-Regardless of whether Elaine is taken or not, we find Lester and Shanti in their own predicament. They had gone on assuming themselves to be in a safe area, but strange living rock creatures corner them – defenders created by the Caretaker, who has sensed their presence, to keep people away. A battle ensues to reconvene with Shanti and Lester. Lester is incapacitated, and needs healing.
+- Find Shanti cornered by strange stone monsters. Escape map, help her get away from them. The first two should be killed, but more will arrive as reinforcements, forcing the escape. Shanti explains she found a weird magical ward that takes time to analyze and disable. It hides the monastery from view and makes it impossible to enter. Someone or something didn't want the monastery found. Lester was bored, she said he could look for other wards, since there didn't seem to be monsters about. But after he left, the monsters appeared suddenly from the ground, she barely had time to react.
+    - Shanti starts separated from the rest of the party, to not overwhelm the player with trying to coordinate four units.
+    - Shanti believes she's disabled the ward, but wants to take it with her for study. Optional objective to get Shanti back to the ward, for increased favor with Shanti.
+    - The stone monsters are summoned by the Caretaker as a defense mechanism against intruders, along with the magical wards.
 
-Shanti made a small discovery, leading to some roaming while Kath heals Lester, in which the player discovers an entrance to the monastery ruins. Alone after finding it, Abelon is able to talk to the player. He is angry, confused, and vague. It is not at all clear to the player that the voice is coming from Abelon.
+- Make a quick getaway. Worried that stone monsters are chasing Lester too. Elaine helps track down Lester. While she looks for tracks, chat with Shanti and Kath. Find Lester, he is in fact under attack, but he did find one of the wards. He was attacked after locating it. Just like Shanti. Hmm. Save him in a battle; Lester himself is not available as a unit, as he is incapacitated, but many of the stone monsters are injured as well. He's clearly capable. This time some wolves show up as well and go straight for Lester. Defend him!
+    - What's the optional objective? Something for increased favor with Kath or Elaine.
+
+- After the battle, looks like reinforcements are exhausted. Kath heals Lester while party discusses plans. Start limping over to the second ward so Shanti can begin to disable it. Abelon remains behind. Abelon briefly is able to talk to the player (as ???). Angry, confused, vague. Especially regarding Elaine. It's broad daylight. Not clear that it is Abelon speaking.
 
 ## 1-4: Monastery approach
 
 TODO: ROUGH DRAFT
 
-- Lester is awake, discuss Elaine outside the entrance (talk). Lester finds it hilarious that she got lost by going the wrong way, Shanti points out that kids don't learn geography anymore.
-- Open entrance, triggers battle outside. Part 1 midboss, two forest terrors, along with wolves (battle).
-- It's not safe to stay aboveground. Make camp inside monastery ruins. Can start finding Gaheris' journals (roam).
-- The party wonders why they in particular have been chosen for this expedition. The cover, of course, is that they are the trusted elite, but that doesn't necessarily seem true on a close inspection. (talk)
-- At night, Abelon speaks again. Saving Elaine affected him. He is mad about it, wouldn't have done that. But, he concedes... she is useful. Still angry, fighting for control, doesn't feel confident to take it (talk).
+- Party makes its way to the second ward, guided by Lester. Another opportunity to roam off the path and find optional goodies.
+
+- At the ward, the monastery entrance is now visible, shanti works to disable, but we hear terrors! Scary. Fight off two, then escape underground into the monastery just as a third arrives because Shanti disables the ward. Also fighting off more stone monsters and wolves during this time.
+
+- Make camp inside, the party discusses their plans. They ought to lay low inside for awhile, which is perfect, since this is where the ritual needs to be performed anyway. But why were there what felt like defenses around the monastery? Isn't it abandoned? Who even would know about it?
+
+- After the party sleeps, Abelon speaks again. Reflects on events. Saving Elaine affected him. He is mad about it, wouldn't have done that. But, he concedes... she is useful. Still angry, fighting for control, doesn't feel confident to take it (talk).
 
 ## 1-5: Monastery sanctum ruins
 
@@ -91,7 +94,7 @@ TODO: ROUGH DRAFT
 TODO: ROUGH DRAFT
 
 - more truth-learning, this time in the underground library and dorms. (talk)
-- more trouble. Proactive battle. Zombie monks animated by ignea? (battle). Shanti and Kath not in this one for some reason.
+- more trouble. Proactive battle. Zombie monks animated by ignea? (battle).
 - revelations in the library, lots of books to read, something about the giant monster? (talk)
 - Make camp in a dorm. Realize it's the turn of the new year. Kath brought party favors! (roam).
 - At night, Abelon ponders killing the party. Decides against it. Needs to know more. Frustrated. On the verge of gaining control. Addresses the demon directly, ponders it (talk).
@@ -103,12 +106,11 @@ Party celebrates the turn of the new year over a campfire. Abelon can act vaguel
 
 TODO: ROUGH DRAFT
 
-- party makes their way to important-seeming site in the basement. Feel they are on the cusp of learning the truth. And performing the ritual. Realize there may be more at stake than then ritual. (talk)
+- Party makes their way to important-seeming site in the basement. Suspect that this is the ritual site, they seek confirmation from Abelon, but his responses are confusing. (talk)
 - Abelon, in frustration, decides to trust the party instead of killing them and tell them what is happening to him as he can't see a way forward otherwise, asks for help (talk)
+    - When abelon takes helmet off, blank dialogue responses. He says hes tired of being forced into this farce, the summoning already happened, and he needs help. Then disaster strikes
 - Before we can learn much, disaster strikes (battle)
 - Kath saves Abelon, party is split, Kath and Abelon thrown into cave below (talk)
-
-When abelon takes helmet off, blank dialogue responses. He says hes tired of being forced into this farce, the summoning already happened, and he needs help. Then disaster strikes
 
 # Part 2
 

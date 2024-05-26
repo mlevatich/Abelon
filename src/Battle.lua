@@ -118,29 +118,34 @@ function Battle:readEntities(data, idx)
 
         -- Put sprite on grid and into participants
         local sp = self.game:getSprite(k)
-        table.insert(t, sp)
-        self.grid[v[2]][v[1]] = GridSpace:new(sp)
+        local team = ite(idx == 4, ALLY, ENEMY)
 
-        -- Initialize sprite status
-        self.status[sp:getId()] = {
-            ['sp']       = sp,
-            ['team']     = ite(idx == 4, ALLY, ENEMY),
-            ['location'] = { v[1], v[2] },
-            ['effects']  = {},
-            ['alive']    = true,
-            ['acted']    = false,
-            ['attack']   = nil,
-            ['assist']   = nil,
-            ['prepare']  = nil
-        }
-        local x_tile = self.origin_x + v[1]
-        local y_tile = self.origin_y + v[2]
-        local x, y = tileToPixels(x_tile, y_tile)
-        sp:resetPosition(x, y)
+        -- Ignore listed allies not in the player's party
+        if team == ENEMY or find(self.game.player.party, sp) then
+            table.insert(t, sp)
+            self.grid[v[2]][v[1]] = GridSpace:new(sp)
 
-        -- If an enemy, prepare their first skill
-        if self.status[sp:getId()]['team'] == ENEMY then
-            self:prepareSkill(sp)
+            -- Initialize sprite status
+            self.status[sp:getId()] = {
+                ['sp']       = sp,
+                ['team']     = team,
+                ['location'] = { v[1], v[2] },
+                ['effects']  = {},
+                ['alive']    = true,
+                ['acted']    = false,
+                ['attack']   = nil,
+                ['assist']   = nil,
+                ['prepare']  = nil
+            }
+            local x_tile = self.origin_x + v[1]
+            local y_tile = self.origin_y + v[2]
+            local x, y = tileToPixels(x_tile, y_tile)
+            sp:resetPosition(x, y)
+
+            -- If an enemy, prepare their first skill
+            if self.status[sp:getId()]['team'] == ENEMY then
+                self:prepareSkill(sp)
+            end
         end
     end
     return t

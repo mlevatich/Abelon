@@ -258,7 +258,7 @@ s11['lester'] = {
     ['events'] = {
         lookAt(1, 2),
         say(2, 0, false, 
-            "A pale man with blonde hair sleeps with a furrowed brow. He shifts in \z
+            "A pale man with blond hair sleeps with a furrowed brow. He shifts in \z
              his camp bed, occasionally muttering something unintelligible."
         )
     },
