@@ -142,6 +142,12 @@ function Scene:advance()
             -- If not already at the end, jump to the end of the line
             self.text_state['cnum'] = self.text_state['length']
 
+            -- Don't let the player accidentally skip past a choice
+            -- if there is one!
+            if self.text_state['choices'] then
+                self.game:stallInputs(0.5)
+            end
+
         elseif self.await_input then
 
             -- If we're waiting at choice, then make choice based on selection
@@ -231,6 +237,7 @@ function Scene:update(dt)
 
         -- Update time passed
         text['timer'] = text['timer'] + dt
+        local was_not_done = (text['length'] ~= text['cnum'])
 
         -- Iteratively subtract interval from timer and increment char count
         while text['timer'] > TEXT_INTERVAL do
@@ -246,9 +253,13 @@ function Scene:update(dt)
             end
         end
 
-        if text['length'] == text['cnum'] and
-           self.blocked_by and self.blocked_by == 'text' then
-            self.blocked_by = nil
+        if text['length'] == text['cnum'] then
+            if self.blocked_by and self.blocked_by == 'text' then
+                self.blocked_by = nil
+            end
+            if was_not_done and text['choices'] then
+                self.game:stallInputs(0.5)
+            end
         end
     end
 
