@@ -377,7 +377,7 @@ end
 -- Render small indicator that current page is done
 function Scene:renderAdvanceIndicator(y)
     local indicator_x = BOX_MARGIN + BOX_WIDTH - 7
-    local indicator_y = y + BOX_MARGIN + BOX_HEIGHT + (math.floor(self.game.global_timer) % 2) * 2 - 4
+    local indicator_y = y + BOX_MARGIN + BOX_HEIGHT + (math.floor(self.game.global_timer) % 2) * 2 - 6
     love.graphics.setColor(unpack(WHITE))
     printChar("^", indicator_x, indicator_y, math.pi)
 end

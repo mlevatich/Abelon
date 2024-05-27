@@ -481,9 +481,12 @@ function renderHoverBox(h_box, x, y, h)
     end
 end
 
-function Menu:renderSelectionArrow(x, y)
+function Menu:renderSelectionArrow(x, y, g)
     local arrow_y = y + HALF_MARGIN + LINE_HEIGHT * (self.hovering - 1)
-    local arrow_x = x + 10
+    local arrow_x = x + 11
+    if not self.selected then
+        arrow_x = arrow_x - (math.floor(g.global_timer) % 2) * 2
+    end
     if self.custom == 'lvlup' then
         arrow_x = x + VIRTUAL_WIDTH / 2 - 100 - 15
         arrow_y = y + BOX_MARGIN + 3
@@ -512,7 +515,7 @@ function Menu:render(g)
 
     -- Render arrow over item being hovered (if visible)
     if not (self.confirm_msg and #self.menu_items == 1) then
-        self:renderSelectionArrow(x, y)
+        self:renderSelectionArrow(x, y, g)
     end
 
     -- Render child menu if there is one or hover info if this is the leaf menu
