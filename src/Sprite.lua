@@ -174,8 +174,11 @@ function Sprite:isBlocking()
 end
 
 function Sprite:getHitboxRect()
-    local x, y = self.x + self.hitbox[1], self.y + self.hitbox[2]
-    return x, y, self.hitbox[3], self.hitbox[4]
+    local x = self.x + self.hitbox[1]
+    if self.dir == LEFT then
+        x = self.x + self.w - (self.hitbox[1] + self.hitbox[3])
+    end
+    return x, self.y + self.hitbox[2], self.hitbox[3], self.hitbox[4]
 end
 
 function Sprite:getPtexture()
