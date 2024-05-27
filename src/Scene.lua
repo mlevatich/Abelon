@@ -280,10 +280,7 @@ end
 function Scene:renderTextBox(y)
 
     -- Render black text box
-    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-    love.graphics.rectangle('fill',
-        BOX_MARGIN, y + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT
-    )
+    drawBox(BOX_MARGIN, y + BOX_MARGIN, BOX_WIDTH, BOX_HEIGHT, {0, 0, 0, RECT_ALPHA})
 end
 
 -- Render the speaker's name and portrait
@@ -361,8 +358,7 @@ function Scene:renderChoice(choices, base_y, flip)
     end
 
     -- Draw choice box
-    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-    love.graphics.rectangle('fill', rect_x, rect_y, w, h)
+    drawBox(rect_x, rect_y, w, h, {0, 0, 0, RECT_ALPHA})
 
     -- Draw each option in choice box, character by character
     love.graphics.setColor(unpack(WHITE))

@@ -769,7 +769,7 @@ function Battle:openAllyMenu(sp)
         ['elements'] = sp:buildAttributeBox(tmp_attrs),
         ['w'] = HBOX_WIDTH
     })
-    local sks = sp:mkSkillsMenu(true, false)
+    local sks = sp:mkSkillsMenu(true, false, tmp_attrs)
     sfx['open']:play()
     self:openMenu(Menu:new(nil, { attrs, sks }, BOX_MARGIN, BOX_MARGIN, false), {})
 end
@@ -2262,8 +2262,7 @@ function Battle:renderSkillInUse()
     local h = LINE_HEIGHT + BOX_MARGIN
     local x = VIRTUAL_WIDTH - w - BOX_MARGIN
     local y = BOX_MARGIN
-    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-    love.graphics.rectangle('fill', x, y, w, h)
+    drawBox(x, y, w, h, {0, 0, 0, RECT_ALPHA})
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(
         icon_texture,
@@ -2861,8 +2860,7 @@ function Battle:renderHoverBox(box, x, y, w, h, clr)
 
     -- Render box rectangle
     table.insert(clr, RECT_ALPHA)
-    love.graphics.setColor(unpack(clr))
-    love.graphics.rectangle('fill', x, y, w, h)
+    drawBox(x, y, w, h, clr)
 
     -- Render box elements
     for i = 1, #box do

@@ -236,8 +236,7 @@ function Menu:renderConfirmMessage()
     if #self.menu_items == 1 then cbox_h = cbox_h - LINE_HEIGHT * 2 end
     local cbox_x = VIRTUAL_WIDTH/2 - cbox_w/2
     local cbox_y = VIRTUAL_HEIGHT/2 - cbox_h/2 - HALF_MARGIN
-    love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-    love.graphics.rectangle('fill', cbox_x, cbox_y, cbox_w, cbox_h)
+    drawBox(cbox_x, cbox_y, cbox_w, cbox_h, {0, 0, 0, RECT_ALPHA})
     for i=1, #msg do
         local base_x = VIRTUAL_WIDTH/2
                      - (#msg[i] * CHAR_WIDTH)/2
@@ -454,9 +453,8 @@ function renderHoverBox(h_box, x, y, h)
 
     -- Draw hover box
     local alpha = ite(light, RECT_ALPHA / 2, RECT_ALPHA)
-    love.graphics.setColor(0, 0, 0, alpha)
-    love.graphics.rectangle('fill', x, y, w, h)
-
+    drawBox(x, y, w, h, {0, 0, 0, alpha})
+    
     -- Draw elements in box relative to top left
     for i = 1, #h_box do
         local e = h_box[i]
@@ -506,8 +504,7 @@ function Menu:render(g)
     if self.confirm_msg then
         self:renderConfirmMessage()
     else
-        love.graphics.setColor(0, 0, 0, RECT_ALPHA)
-        love.graphics.rectangle('fill', x, y, self.width, self.height)
+        drawBox(x, y, self.width, self.height, {0, 0, 0, RECT_ALPHA})
     end
 
     -- Render options

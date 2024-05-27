@@ -173,7 +173,7 @@ ATTRIBUTE_DESC = {
 TUTORIALS = {
     ['Navigating the world'] = {
         "Move around the world using the arrow keys. Press F to interact with nearby objects or people, and advance dialogue. Press D to cancel.",
-        "Press E to open your inventory, where you can use the items in your pack, inspect your party, change settings, and read tutorials."
+        "Press E to open your inventory, where you can use items, inspect your party, change settings, and read tutorials."
     },
     ['Battle: The basics'] = {
         "Use the arrow keys to navigate the grid and menus. Press F to select, and D to go back.",
@@ -195,7 +195,7 @@ TUTORIALS = {
     ['Battle: Attributes'] = {
         "Units have six Attributes. Endurance determines maximum health, and Focus determines maximum Ignea.",
         "Force empowers attacks, and Affinity empowers assists.",
-        "Each point of Reaction reduces Weapon damage by one. Every four points of Agility confers one tile of movement."
+        "A point of Reaction reduces Weapon damage by one. Four points of Agility confers one tile of movement."
     },
     ['Battle: Reminder'] = {
         "All battle tutorials are available for review under 'Tutorials' in the settings menu.",

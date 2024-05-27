@@ -55,6 +55,15 @@ function drawFade(alpha)
     love.graphics.pop()
 end
 
+function drawBox(x, y, w, h, clr)
+    love.graphics.push('all')
+    love.graphics.setColor(unpack{clr})
+    love.graphics.rectangle('fill', x, y, w, h)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.rectangle('line', x, y, w, h)
+    love.graphics.pop()
+end
+
 function printChar(s, x, y, rot)
     love.graphics.print(s, x, y, rot)
 end

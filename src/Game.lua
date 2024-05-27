@@ -724,7 +724,7 @@ function Game:renderTutorial()
     if self.current_tutorial and not hide_tutorial then
         local w = VIRTUAL_WIDTH / 3 - BOX_MARGIN
         local hbox = self.player:mkTutorialBox(self.current_tutorial, w, 28)
-        renderHoverBox(hbox, VIRTUAL_WIDTH - w - BOX_MARGIN, 140, 285)
+        renderHoverBox(hbox, VIRTUAL_WIDTH - w - BOX_MARGIN, 150, 270)
     end
 end
 
