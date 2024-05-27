@@ -84,6 +84,7 @@ function Game:initialize(id, difficulty)
     self.scene_inputs = {}
     self.callbacks = {}
     self.seen = {}
+    self.global_timer = 0
 
     -- If a tutorial is in progress, store the name
     self.current_tutorial = nil
@@ -689,6 +690,7 @@ function Game:update(dt, no_music)
     self:updateCamera(dt)
 
     -- Return reload/end signal
+    self.global_timer = self.global_timer + dt * 2
     return self.signal
 end
 

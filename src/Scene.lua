@@ -374,13 +374,13 @@ function Scene:renderChoice(choices, base_y, flip)
     -- Render selection arrow on the selected option
     local arrow_y = rect_y + TEXT_MARGIN_Y + 2 + LINE_HEIGHT
                   * (self.text_state['selection'] - 1)
-    printChar(">", rect_x + 15, arrow_y)
+    printChar(">", rect_x + 15 - (math.floor(self.game.global_timer) % 2) * 2, arrow_y)
 end
 
 -- Render small indicator that current page is done
 function Scene:renderAdvanceIndicator(y)
     local indicator_x = BOX_MARGIN + BOX_WIDTH - 7
-    local indicator_y = y + BOX_MARGIN + BOX_HEIGHT - 7
+    local indicator_y = y + BOX_MARGIN + BOX_HEIGHT + (math.floor(self.game.global_timer) % 2) * 2 - 4
     love.graphics.setColor(unpack(WHITE))
     printChar("^", indicator_x, indicator_y, math.pi)
 end
@@ -418,8 +418,9 @@ function Scene:render()
         if self.text_state['cnum'] == self.text_state['length'] then
             if self.text_state['choices'] then
                 self:renderChoice(self.text_state['choices'], y, self.flip)
+            else
+                self:renderAdvanceIndicator(y)
             end
-            self:renderAdvanceIndicator(y)
         end
     end
 end
