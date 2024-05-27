@@ -92,7 +92,10 @@ function Game:initialize(id, difficulty)
     -- If the player is in a battle, it goes here
     self.battle = nil
     self.battle_inputs = {}
+
+    -- Stall particular key inputs
     self.input_stall = 0
+    self.input_stall_keys = nil
 
     -- Read into the above fields from world file
     self.signal = nil
@@ -404,8 +407,9 @@ function Game:flash(msg, rate)
     self.flash_msg = msg
 end
 
-function Game:stallInputs(t)
+function Game:stallInputs(t, keys)
     self.input_stall = t
+    self.input_stall_keys = keys
 end
 
 function Game:launchBattle(id)
@@ -642,10 +646,19 @@ end
 -- Update everything in the game
 function Game:update(dt, no_music)
 
-    -- If input is stalled, munch all keyboard inputs on this frame
+    -- If input is stalled, munch keyboard inputs on this frame
     if self.input_stall > 0 then
         self.input_stall = math.max(0, self.input_stall - dt)
-        love.keyboard.keysPressed = {}
+        if self.input_stall_keys then
+            for _,key in pairs(self.input_stall_keys) do
+                love.keyboard.keysPressed[key] = nil
+            end
+        else
+            love.keyboard.keysPressed = {}
+        end
+        if self.input_stall == 0 then
+            self.input_stall_keys = nil
+        end
     end
 
     -- Update the active map and sprites on it

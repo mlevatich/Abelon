@@ -145,7 +145,7 @@ function Scene:advance()
             -- Don't let the player accidentally skip past a choice
             -- if there is one!
             if self.text_state['choices'] then
-                self.game:stallInputs(0.5)
+                self.game:stallInputs(0.5, {'f'})
             end
 
         elseif self.await_input then
@@ -167,17 +167,18 @@ end
 
 -- Called when player presses up or down while talking to hover a selection
 function Scene:hover(dir)
-    if self.text_state and self.text_state['selection'] then
+    local text = self.text_state
+    if text and text['selection'] and (text['cnum'] == text['length']) then
 
         -- self.selection determines where the selection arrow is rendered
-        local n = #self.text_state['choices']
-        local old = self.text_state['selection']
+        local n = #text['choices']
+        local old = text['selection']
         if dir == UP then
-            self.text_state['selection'] = math.max(1, old - 1)
+            text['selection'] = math.max(1, old - 1)
         elseif dir == DOWN then
-            self.text_state['selection'] = math.min(n, old + 1)
+            text['selection'] = math.min(n, old + 1)
         end
-        if old ~= self.text_state['selection'] then
+        if old ~= text['selection'] then
             sfx['hover']:play()
         end
     end
@@ -258,7 +259,7 @@ function Scene:update(dt)
                 self.blocked_by = nil
             end
             if was_not_done and text['choices'] then
-                self.game:stallInputs(0.5)
+                self.game:stallInputs(0.5, {'f'})
             end
         end
     end
