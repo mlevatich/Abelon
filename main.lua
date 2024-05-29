@@ -370,14 +370,14 @@ function Title:render()
         if t > T_BYLINE + 1 then
             if self.state == M_GAME then
                 if self.save then
-                    renderString('>', xCenter('Continue') - 20, vh + 50 + self.cursor * 40)
+                    renderString('>', xCenter('Continue') - 20 - (math.floor(t*2) % 2) * 2, vh + 50 + self.cursor * 40)
                 else
-                    renderString('>', xCenter('Continue') - 20, vh + 70)
+                    renderString('>', xCenter('Continue') - 20 - (math.floor(t*2) % 2) * 2, vh + 70)
                 end
             elseif self.state == M_DIFF then
-                renderString('>', xCenter('Normal') - 20, vh + 30 + self.cursor * 40)
+                renderString('>', xCenter('Normal') - 20 - (math.floor(t*2) % 2) * 2, vh + 30 + self.cursor * 40)
             else
-                renderString('>', xCenter('Yes') - 20, vh + 50 + self.cursor * 40)
+                renderString('>', xCenter('Yes') - 20 - (math.floor(t*2) % 2) * 2, vh + 50 + self.cursor * 40)
             end
         end
         love.graphics.pop()
