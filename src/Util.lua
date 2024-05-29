@@ -68,52 +68,94 @@ function printChar(s, x, y, rot)
     love.graphics.print(s, x, y, rot)
 end
 
-function renderString(s, x, y, pen, auto_color, inherit_clr)
-    if not pen then pen = WHITE end
-    if not inherit_clr then
-        love.graphics.setColor(unpack(pen))
-    end
-    local char_color = {}
-    if auto_color then
-        for i = 1, #s do char_color[i] = pen end
-        for k, clr in pairs(AUTO_COLOR) do
-            local st, ed = s:find(k)
-            while st and ed do
-                for i = st, ed do char_color[i] = clr end
-                st, ed = s:find(k, ed)
-            end
-        end
-    end
-    for i = 1, #s do
-        local c = s:sub(i, i)
-        if auto_color and c ~= ' ' and c ~= '*' and
-        not (tonumber(c) or tonumber(s:sub(i,i+1) or tonumber(s:sub(i,i+2))))
-        then
-            love.graphics.setColor(unpack(char_color[i]))
-            printChar(c, x + CHAR_WIDTH * (i - 1), y)
-        elseif auto_color and tonumber(c) then
-            r, g, b, a = love.graphics.getColor()
-            if r == g and g == b then
-                love.graphics.push('all')
-                love.graphics.setColor(unpack(HIGHLIGHT))
-                printChar(c, x + CHAR_WIDTH * (i - 1), y)
-                love.graphics.pop()
+function capitalize(s)
+    return (s:gsub("^%l", string.upper))
+end
+
+function autoColor(strs)
+    local strs_c = {}
+    for i = 1, #strs do
+        local s = strs[i][1]
+        if #strs[i] > 1 then
+            if #strs[i] == 4 then
+                local st = strs[i][3]
+                local ed = strs[i][4]
+                if s:sub(#s,#s) ~= ')' and ed ~= 0 then ed = ed + 1 end
+                table.insert(strs_c, {s:sub(1,st)})
+                table.insert(strs_c, {s:sub(st+1,#s-ed), strs[i][2]})
+                table.insert(strs_c, {s:sub(#s-ed+1,#s)})
             else
-                printChar(c, x + CHAR_WIDTH * (i - 1), y)
+                table.insert(strs_c, strs[i])
             end
+
         else
-            printChar(c, x + CHAR_WIDTH * (i - 1), y)
+            char_color = {}
+            for j = 1, #s do
+                char_color[j] = nil
+                local c = s:sub(j, j)
+                if tonumber(c) or (c == '.' and j ~= #s and tonumber(s:sub(j+1, j+1))) then
+                    char_color[j] = HIGHLIGHT
+                end
+            end
+            for k, clr in pairs(AUTO_COLOR) do
+                local st, ed = s:find(k)
+                while st and ed do
+                    for j = st, ed do char_color[j] = clr end
+                    st, ed = s:find(k, ed)
+                end
+            end
+            local cur_word = ''
+            local cur_clr = char_color[1]
+            for j = 1, #s do
+                local c = s:sub(j, j)
+                if char_color[j] == cur_clr then
+                    cur_word = cur_word .. c
+                else
+                    table.insert(strs_c, {cur_word, cur_clr})
+                    cur_word = c
+                    cur_clr = char_color[j]
+                end
+            end
+            table.insert(strs_c, {cur_word, cur_clr})
         end
+    end
+    return strs_c
+end
+
+function renderStringC(strs, x, y, default_clr)
+    if not default_clr then default_clr = WHITE end
+    local j = 1
+    for i = 1, #strs do
+        local s   = strs[i][1]
+        local clr = strs[i][2]
+        if not clr then clr = default_clr end
+        love.graphics.push('all')
+        love.graphics.setColor(unpack(clr))
+        for k = 1, #s do
+            local c = s:sub(k,k)
+            printChar(c, x + CHAR_WIDTH * (j - 1), y)
+            j = j + 1
+        end
+        love.graphics.pop()
     end
 end
 
-function mkEle(t, data, x, y, extra, auto_color)
+function renderString(s, x, y, clr)
+    if not clr then clr = WHITE end
+    love.graphics.push('all')
+    love.graphics.setColor(unpack(clr))
+    for i = 1, #s do printChar(s:sub(i, i), x + CHAR_WIDTH * (i - 1), y) end
+    love.graphics.pop()
+end
+
+function mkEle(t, data, x, y, extra, auto_color, alt_data)
     local ele = {
         ['type'] = t,
         ['data'] = data,
         ['x'] = x,
         ['y'] = y,
-        ['auto_color'] = auto_color
+        ['auto_color'] = auto_color,
+        ['alt_data'] = alt_data
     }
     ele[ite(t == 'image', 'texture', 'color')] = extra
     return ele
@@ -256,6 +298,17 @@ function splitSep(str, sep)
         table.insert(array, mem)
     end
     return array
+end
+
+function splitSep2(inputstr, sep)
+    sep = sep or '%s'
+    local t = {}
+    for field, s in string.gmatch(inputstr, "([^" .. sep .. "]*)(" .. sep .. "?)") do 
+        table.insert(t, field)
+        if s == "" then 
+            return t 
+        end 
+    end
 end
 
 -- Read a field and save its name

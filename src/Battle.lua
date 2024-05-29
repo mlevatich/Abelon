@@ -775,12 +775,12 @@ function Battle:openAllyMenu(sp)
 end
 
 function Battle:openEnemyMenu(sp)
+    local attrs, _ = self:getTmpAttributes(sp)
     local readying = MenuItem:new('Next Attack', {},
         'Prepared skill and target', {
-        ['elements'] = self:buildReadyingBox(sp),
+        ['elements'] = self:buildReadyingBox(sp, attrs),
         ['w'] = HBOX_WIDTH
     })
-    local attrs, _ = self:getTmpAttributes(sp)
     local skills = sp:mkSkillsMenu(false, true, attrs, nil, nil, 380)
     local opts = { skills, readying }
     sfx['open']:play()
@@ -820,7 +820,7 @@ end
 function Battle:openLevelupMenu(sp, n)
     local m = { MenuItem:new('Level up', {}, nil, nil,
         function(c)
-            self.game:stallInputs(1)
+            self.game:stallInputs(1, {'f'})
             self.stack[#self.stack]['menu'] = LevelupMenu(sp, n)
         end
     )}
@@ -848,12 +848,12 @@ function Battle:endAction(used_assist)
     self:openMenu(Menu:new(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN, false), views)
 end
 
-function Battle:buildReadyingBox(sp)
+function Battle:buildReadyingBox(sp, attrs)
 
     -- Start with basic skill box
     local stat = self.status[sp:getId()]
     local prep = stat['prepare']
-    local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false)
+    local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false, attrs)
 
     -- Update priority for this sprite (would happen later anyway)
     if hasSpecial(stat['effects'], {}, 'enrage') then
@@ -2867,7 +2867,7 @@ function Battle:renderHoverBox(box, x, y, w, h, clr)
         local e = box[i]
         if e['type'] == 'text' then
             local clr = ite(e['color'], e['color'], WHITE)
-            renderString(e['data'], x + e['x'], y + e['y'], clr, e['auto_color'])
+            renderString(e['data'], x + e['x'], y + e['y'], clr)
         else
             love.graphics.setColor(unpack(WHITE))
             love.graphics.draw(

@@ -398,15 +398,18 @@ end
 
 function Sprite:mkSkillsMenu(with_skilltrees, with_prio, attrs, hp, ign, hbox_w)
 
+    -- If temp attributes were provided, use those
+    local att = ite(attrs, attrs, self.attributes)
+
     -- Helpers
     local learnedOf = function(t)
         return filter(function(s) return s.type == t end, self.skills)
     end
     local skToMenu = function(s)
-        return s:toMenuItem(icon_texture, icons, with_skilltrees, with_prio)
+        return s:toMenuItem(icon_texture, icons, with_skilltrees, with_prio, att)
     end
     local hbox = {
-        ['elements'] = self:buildAttributeBox(attrs, hp, ign),
+        ['elements'] = self:buildAttributeBox(att, hp, ign),
         ['w'] = ite(hbox_w, hbox_w, HBOX_WIDTH)
     }
 
@@ -437,7 +440,7 @@ function Sprite:mkLearnMenu()
     end
     local mkLearn = function(s)
         return self:mkLearnable(s.id,
-            s:toMenuItem(icon_texture, icons, true, false)
+            s:toMenuItem(icon_texture, icons, true, false, self.attributes)
         )
     end
     local hbox = {
@@ -507,12 +510,12 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
             sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
         mkEle('text', {ign_str},
             sp_x - #ign_str * CHAR_WIDTH / 2 + self.w / 2, line(6)),
-        mkEle('text', {'Endurance'}, attrib_ind,      line(2), aC('endurance')),
-        mkEle('text', {'Focus'},     attrib_ind,      line(4), aC('focus')),
-        mkEle('text', {'Force'},     attrib_ind,      line(6), aC('force')),
-        mkEle('text', {'Affinity'}, attrib_ind + 125, line(2), aC('affinity')),
-        mkEle('text', {'Reaction'}, attrib_ind + 125, line(4), aC('reaction')),
-        mkEle('text', {'Agility'},  attrib_ind + 125, line(6), aC('agility')),
+        mkEle('text', {'Endurance'}, attrib_ind,      line(2), AUTO_COLOR['Endurance']),
+        mkEle('text', {'Focus'},     attrib_ind,      line(4), AUTO_COLOR['Focus']),
+        mkEle('text', {'Force'},     attrib_ind,      line(6), AUTO_COLOR['Force']),
+        mkEle('text', {'Affinity'}, attrib_ind + 125, line(2), AUTO_COLOR['Affinity']),
+        mkEle('text', {'Reaction'}, attrib_ind + 125, line(4), AUTO_COLOR['Reaction']),
+        mkEle('text', {'Agility'},  attrib_ind + 125, line(6), AUTO_COLOR['Agility']),
         mkEle('image', icons[str_to_icon['endurance']],
             attrib_ind - 25,  line(2), icon_texture),
         mkEle('image', icons[str_to_icon['focus']],

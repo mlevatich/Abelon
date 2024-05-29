@@ -164,6 +164,7 @@ function Player:mkTutorialBox(n, w, chars)
             s = string.format(s, sd, sp)
         end
         local lines, _ = splitByCharLimit(s, chars)
+        for i = 1, #lines do lines[i] = autoColor({{lines[i]}}) end
         eles[#eles + 1] = mkEle('text', lines, HALF_MARGIN, 
             HALF_MARGIN + row * LINE_HEIGHT, { 0.8, 0.8, 0.8, 1 }, true)
         row = row + #lines + 1
@@ -462,7 +463,6 @@ function Player:getGame() return self.sp:getGame() end
 function Player:isInteractive() return self.sp:isInteractive() end
 function Player:isBlocking() return self.sp:isBlocking() end
 function Player:getHitboxRect() return self.sp:getHitboxRect() end
-function Player:toMenuItem() return self.sp:toMenuItem() end
 function Player:resetPosition(a, b) return self.sp:resetPosition(a, b) end
 function Player:move(a, b) return self.sp:move(a, b) end
 function Player:stop() return self.sp:stop() end

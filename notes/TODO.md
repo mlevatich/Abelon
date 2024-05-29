@@ -10,6 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Imminent
 
+- Make selection arrows on title screen wiggle
 - Choreograph dealing with Elaine and all subscenes
 
 ## Audio

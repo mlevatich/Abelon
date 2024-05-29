@@ -258,9 +258,8 @@ function Menu:renderHoverDescription()
             local desc_y = y + BOX_MARGIN + LINE_HEIGHT * 7 + PORTRAIT_SIZE
             local sdesc, _ = splitByCharLimit(desc, 32)
             for i = 1, #sdesc do
-                renderString(sdesc[i],
-                    desc_x, desc_y + LINE_HEIGHT * (i - 1), nil, true
-                )
+                local ac = autoColor({{sdesc[i]}})
+                renderStringC(ac, desc_x, desc_y + LINE_HEIGHT * (i - 1))
             end
         else
             local desc_x = VIRTUAL_WIDTH - BOX_MARGIN - #desc * CHAR_WIDTH
@@ -307,14 +306,14 @@ function Menu:renderMenuItems(x, y, g)
                 love.graphics.draw(icon_texture, icon, b + x,
                     b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, 0, 1, 1, 0, 0
                 )
-                renderString(a['name'], b + x + 27,
-                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE, nil, true
+                renderStringC(autoColor({{a['name']}}), b + x + 27,
+                    b + y + LINE_HEIGHT * 5 + PORTRAIT_SIZE
                 )
                 incr = 2
                 pen = HIGHLIGHT
             end
             renderString(tostring(val), x_base + 57, y_cur + LINE_HEIGHT, pen)
-            renderString(a['name'], x_base + 27, y_cur, pen)
+            renderStringC(autoColor({{a['name']}}), x_base + 27, y_cur, pen)
             renderString('+' .. incr .. '  >>  ',
                 x_base + dist - 100,
                 y_cur + LINE_HEIGHT, pen
@@ -462,9 +461,16 @@ function renderHoverBox(h_box, x, y, h)
             local clr = ite(e['color'], e['color'], WHITE)
             love.graphics.setColor(unpack(clr))
             local msg = e['data']
+            if e['alt_data'] and love.keyboard.isDown('r') then
+                msg = e['alt_data']
+            end
             for j = 1, #msg do
                 local cy = y + e['y'] + LINE_HEIGHT * (j - 1)
-                renderString(msg[j], x + e['x'], cy, clr, e['auto_color'], j ~= 1)
+                if e['auto_color'] then
+                    renderStringC(msg[j], x + e['x'], cy, clr)
+                else
+                    renderString(msg[j], x + e['x'], cy, clr)
+                end
             end
         elseif e['type'] == 'image' then
             love.graphics.setColor(unpack(WHITE))
