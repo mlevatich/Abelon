@@ -494,7 +494,7 @@ function Menu:renderSelectionArrow(x, y, g)
         arrow_x = arrow_x - (math.floor(g.global_timer) % 2) * 2
     end
     if self.custom == 'lvlup' then
-        arrow_x = x + VIRTUAL_WIDTH / 2 - 100 - 15
+        arrow_x = x + VIRTUAL_WIDTH / 2 - 100 - 15 - (math.floor(g.global_timer) % 2) * 2
         arrow_y = y + BOX_MARGIN + 3
                 + (self.hovering - 1) * self.spacing
     end

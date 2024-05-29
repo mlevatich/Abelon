@@ -499,6 +499,10 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
         local old = self.attributes
         return ite(att[s] > old[s], GREEN, ite(att[s] < old[s], RED, WHITE))
     end
+    local acLight = function(s)
+        local c = AUTO_COLOR[capitalize(s)]
+        return c
+    end
 
     -- Build all elements
     local elements = {
@@ -510,12 +514,12 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
             sp_x - #hp_str * CHAR_WIDTH / 2 + self.w / 2, line(5)),
         mkEle('text', {ign_str},
             sp_x - #ign_str * CHAR_WIDTH / 2 + self.w / 2, line(6)),
-        mkEle('text', {'Endurance'}, attrib_ind,      line(2), AUTO_COLOR['Endurance']),
-        mkEle('text', {'Focus'},     attrib_ind,      line(4), AUTO_COLOR['Focus']),
-        mkEle('text', {'Force'},     attrib_ind,      line(6), AUTO_COLOR['Force']),
-        mkEle('text', {'Affinity'}, attrib_ind + 125, line(2), AUTO_COLOR['Affinity']),
-        mkEle('text', {'Reaction'}, attrib_ind + 125, line(4), AUTO_COLOR['Reaction']),
-        mkEle('text', {'Agility'},  attrib_ind + 125, line(6), AUTO_COLOR['Agility']),
+        mkEle('text', {'Endurance'}, attrib_ind,      line(2), acLight('endurance')),
+        mkEle('text', {'Focus'},     attrib_ind,      line(4), acLight('focus')),
+        mkEle('text', {'Force'},     attrib_ind,      line(6), acLight('force')),
+        mkEle('text', {'Affinity'}, attrib_ind + 125, line(2), acLight('affinity')),
+        mkEle('text', {'Reaction'}, attrib_ind + 125, line(4), acLight('reaction')),
+        mkEle('text', {'Agility'},  attrib_ind + 125, line(6), acLight('agility')),
         mkEle('image', icons[str_to_icon['endurance']],
             attrib_ind - 25,  line(2), icon_texture),
         mkEle('image', icons[str_to_icon['focus']],
