@@ -208,6 +208,8 @@ function Title:launchGame(from_save)
     love.keyboard.keysPressed = {}
     if from_save then
         game = from_save
+        game:setSfxVolume(game.sfx_volume)
+        game:setTextVolume(game.text_volume)
     else
         game = self:freshGame('1-1')
         game:saveChapter()
@@ -252,7 +254,7 @@ function Title:update()
             else
                 if self.cursor == 0 then
                     self.state = M_DIFF
-                    self.cursor = 1
+                    self.cursor = self.difficulty
                     sfx['cancel']:play()
                 else
                     return self:launchGame()
@@ -260,11 +262,11 @@ function Title:update()
             end
 
         -- 'go back'
-        elseif d then
+        elseif d and self.state ~= M_GAME then
             self.cursor = 0
             local old = self.state
             self.state = ite(self.state == M_CONF, M_DIFF, M_GAME)
-            if self.state == M_DIFF then self.cursor = 1 end
+            if self.state == M_DIFF then self.cursor = self.difficulty end
             if self.state ~= old then sfx['cancel']:play() end
 
         -- Cursor up

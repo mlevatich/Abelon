@@ -141,8 +141,6 @@ function Game:loadSave(path, quick, fresh)
     -- Load file
     local res, _ = binser.readFile('abelon/' .. SAVE_DIRECTORY .. path)
     local c = res[1]
-    c:setSfxVolume(c.sfx_volume)
-    c:setTextVolume(c.text_volume)
     c.scene_inputs = {}
     c.battle_inputs = {}
     if quick then
