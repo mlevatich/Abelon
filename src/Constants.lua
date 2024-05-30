@@ -76,18 +76,18 @@ BOX_HEIGHT = TEXT_MARGIN_Y * (LINES_PER_PAGE + 3)
 
 -- Text colors
 DISABLE           = { 1,     1,   1, 0.5 }
-HIGHLIGHT         = { 0.7,   1,   1,   1 }
-RED               = { 1,   0.7, 0.7,   1 }
-GREEN             = { 0.7,   1, 0.7,   1 }
+HIGHLIGHT         = { 0.5,   1,   1,   1 }
+RED               = { 1,   0.6, 0.6,   1 }
+GREEN             = { 0.6,   1, 0.6,   1 }
 WHITE             = {0.95,0.95,0.95, 1.0 }
 AUTO_COLOR        = {
     ['Weapon']    = {    1,    1,  0.5,   1 }, -- Yellow
     ['Spell']     = { 0.85, 0.55,    1,   1 }, -- Purple
     ['Assist']    = {  0.7,    1,  0.7,   1 }, -- Light green
     ['Endurance'] = { 0.65, 0.65,    1,   1 }, -- Blue
-    ['Focus']     = {   1,   0.6,  0.6,   1 }, -- Red
+    ['Focus']     = {   1,   0.6,  0.7,   1 }, -- Red
     ['Force']     = {   1,   0.8,  0.6,   1 }, -- Orange
-    ['Affinity']  = {  0.8,    1,  0.6,   1 }, -- Yellow green
+    ['Affinity']  = { 0.85,    1,  0.6,   1 }, -- Yellow green
     ['Reaction']  = {  0.6, 0.85,  0.7,   1 }, -- Dark green
     ['Agility']   = {  0.6, 0.85,    1,   1 }, -- Light blue
 }
