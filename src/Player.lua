@@ -394,8 +394,8 @@ end
 function Player:sceneMode()
 
     -- Get keypresses
-    local u = love.keyboard.wasPressed('up') or love.keyboard.wasPressed('p')
-    local d = love.keyboard.wasPressed('down') or love.keyboard.wasPressed(';')
+    local u = love.keyboard.wasPressed('up') or ite(debug, love.keyboard.wasPressed('p'), false)
+    local d = love.keyboard.wasPressed('down') or ite(debug, love.keyboard.wasPressed(';'), false)
     local f = love.keyboard.wasPressed('f')
 
     -- Advance scene based on keypresses
@@ -405,10 +405,10 @@ end
 function Player:battleMode()
 
     -- Read keypresses
-    local up = love.keyboard.wasPressed('up') or love.keyboard.wasPressed('p')
-    local down = love.keyboard.wasPressed('down') or love.keyboard.wasPressed(';')
-    local left = love.keyboard.wasPressed('left') or love.keyboard.wasPressed('l')
-    local right = love.keyboard.wasPressed('right') or love.keyboard.wasPressed("'")
+    local up = love.keyboard.wasPressed('up') or ite(debug, love.keyboard.wasPressed('p'), false)
+    local down = love.keyboard.wasPressed('down') or ite(debug, love.keyboard.wasPressed(';'), false)
+    local left = love.keyboard.wasPressed('left') or ite(debug, love.keyboard.wasPressed('l'), false)
+    local right = love.keyboard.wasPressed('right') or ite(debug, love.keyboard.wasPressed("'"), false)
     local f = love.keyboard.wasPressed('f')
     local d = love.keyboard.wasPressed('d')
 
@@ -419,8 +419,8 @@ end
 function Player:browseMode()
 
     -- Read keypresses
-    local up = love.keyboard.wasPressed('up') or love.keyboard.wasPressed('p')
-    local down = love.keyboard.wasPressed('down') or love.keyboard.wasPressed(';')
+    local up = love.keyboard.wasPressed('up') or ite(debug, love.keyboard.wasPressed('p'), false)
+    local down = love.keyboard.wasPressed('down') or ite(debug, love.keyboard.wasPressed(';'), false)
     local f = love.keyboard.wasPressed('f')
     local d = love.keyboard.wasPressed('d')
     local e = love.keyboard.wasPressed('e')

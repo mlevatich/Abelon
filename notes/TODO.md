@@ -10,7 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Imminent
 
-- Check debug keys not allowed in battle
 - Fix sfx and music on title screen saving settings from previous game
 - Fix torch crackling on new game (start it in off and have 1-1 entry light them)
 - Choreograph dealing with Elaine and all subscenes
