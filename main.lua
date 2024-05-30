@@ -180,7 +180,7 @@ function Title:initialize()
     -- Menu state
     self.state = M_GAME
     self.cursor = 0
-    self.difficulty = MASTER
+    self.difficulty = NORMAL
     self.t_launch = 0
 
     -- Detect existing saved game
@@ -221,7 +221,7 @@ function Title:update()
     if t > T_BYLINE + 1 then
 
         -- How many cursor options?
-        local n = ite(self.state == M_GAME and not self.save, 1, ite(self.state == M_DIFF, 3, 2))
+        local n = ite(self.state == M_GAME and not self.save, 1, ite(self.state == M_DIFF, 4, 2))
 
         -- Get keyboard inputs
         local f    = love.keyboard.wasPressed('f')
@@ -237,31 +237,34 @@ function Title:update()
                     return self:launchGame(self.save)
                 else
                     self.state = M_DIFF
+                    self.cursor = 1
                     sfx['select']:play()
                 end
             elseif self.state == M_DIFF then
-                self.difficulty = self.cursor + 1
+                self.difficulty = self.cursor
                 if not self.save then
                     return self:launchGame()
                 else
                     self.state = M_CONF
+                    self.cursor = 0
                     sfx['select']:play()
                 end
             else
                 if self.cursor == 0 then
                     self.state = M_DIFF
+                    self.cursor = 1
                     sfx['cancel']:play()
                 else
                     return self:launchGame()
                 end
             end
-            self.cursor = 0
 
         -- 'go back'
         elseif d then
             self.cursor = 0
             local old = self.state
             self.state = ite(self.state == M_CONF, M_DIFF, M_GAME)
+            if self.state == M_DIFF then self.cursor = 1 end
             if self.state ~= old then sfx['cancel']:play() end
 
         -- Cursor up
@@ -353,11 +356,17 @@ function Title:render()
             end
         elseif self.state == M_DIFF then
             local s1 = 'Select a difficulty level'
-            local s2, s3, s4 = 'Normal', 'Adept ', 'Master'
+            local s2, s3, s4, s5 = 'Novice', 'Normal', 'Adept ', 'Master'
             renderString(s1, xCenter(s1), vh - 30)
             renderString(s2, xCenter(s2), vh + 30)
-            renderString(s3, xCenter(s3), vh + 70)
-            renderString(s4, xCenter(s4), vh + 110)
+            renderString(s3, xCenter(s3), vh + 60)
+            renderString(s4, xCenter(s4), vh + 90)
+            renderString(s5, xCenter(s4), vh + 120)
+            local desc = {
+                'For those seeking a story', 'For one and all',
+                'For tactical minds', 'For the worthy'
+            }
+            renderString(desc[self.cursor + 1], xCenter(desc[self.cursor + 1]), vh + 170)
         else
             local s1 = 'Are you sure? This will OVERWRITE your existing saved game!'
             local s2, s3 = 'No ', 'Yes'
@@ -375,7 +384,7 @@ function Title:render()
                     renderString('>', xCenter('Continue') - 20 - (math.floor(t*2) % 2) * 2, vh + 70)
                 end
             elseif self.state == M_DIFF then
-                renderString('>', xCenter('Normal') - 20 - (math.floor(t*2) % 2) * 2, vh + 30 + self.cursor * 40)
+                renderString('>', xCenter('Normal') - 20 - (math.floor(t*2) % 2) * 2, vh + 30 + self.cursor * 30)
             else
                 renderString('>', xCenter('Yes') - 20 - (math.floor(t*2) % 2) * 2, vh + 50 + self.cursor * 40)
             end

@@ -126,6 +126,12 @@ function Player:mkDifficultyMenu()
         end
     end
     return MenuItem:new('Difficulty', {
+        MenuItem:new('Novice', {}, "Switch to this difficulty", nil,
+            setD(NOVICE),
+            "Lower the difficulty to Novice? Difficulty can \z
+             be lowered but not raised.",
+            isD(NOVICE)
+        ),
         MenuItem:new('Normal', {}, "Switch to this difficulty", nil,
             setD(NORMAL),
             "Lower the difficulty to Normal? Difficulty can \z
@@ -154,11 +160,14 @@ function Player:mkTutorialBox(n, w, chars)
         local s = TUTORIALS[n][j]
         if n == 'Battle: Ignea' and j == 2 then
             local sd, sp = "Master", "no Ignea"
-            if self.sp.game.difficulty == ADEPT then
+            if self:getGame().difficulty == ADEPT then
                 sd = "Adept"
                 sp = "25% of each ally's maximum Ignea"
-            elseif self.sp.game.difficulty == NORMAL then
+            elseif self:getGame().difficulty == NORMAL then
                 sd = "Normal"
+                sp = "50% of each ally's maximum Ignea"
+            elseif self:getGame().difficulty == NOVICE then
+                sd = "Novice"
                 sp = "50% of each ally's maximum Ignea"
             end
             s = string.format(s, sd, sp)

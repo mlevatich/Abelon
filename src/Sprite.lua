@@ -40,7 +40,8 @@ function Sprite:initialize(id, game)
     local data = { -- Defaults for unspecified fields
         "", "", "Name: ", "Ground: no", "Shadow: no", "Interactive: no", "Hitbox:",
         "Discard: no", "Present:", "Level: 0", "Attributes:",
-        "DiffiucultySubtraction:", "Skilltrees:", "Skills:", "Description: None. EOS"
+        "AttributesAdept:", "AttributesNormal:", "AttributesNovice:", 
+        "Skilltrees:", "Skills:", "Description: None. EOS"
     }
     if fileExists(data_file) then
         data = readLines(data_file)
@@ -97,13 +98,19 @@ function Sprite:initialize(id, game)
     -- Info that allows this sprite to be treated as an item
     self.can_discard = readField(data[8], tobool)
     self.present_to = readArray(data[9])
-    self.description = readMultiline(data, 15)
+    self.description = readMultiline(data, 17)
 
-    -- Info that allows this sprite to be treated as a party member
-    self.attributes = readDict(data[11], VAL, nil, tonumber)
-    self.attr_difficulty_mods = readDict(data[12], VAL, nil, tonumber)
-    self.skill_trees = readDict(data[13], ARR, {'name', 'skills'}, getSk)
-    self.skills = readArray(data[14], getSk)
+    -- Sprites attributes at various difficulty levels (only relevant for enemies)
+    self.attrs_on = {
+        [MASTER] = readDict(data[11], VAL, nil, tonumber),
+        [ADEPT]  = readDict(data[12], VAL, nil, tonumber),
+        [NORMAL] = readDict(data[13], VAL, nil, tonumber),
+        [NOVICE] = readDict(data[14], VAL, nil, tonumber)
+    }
+    self.attributes = self.attrs_on[MASTER]
+
+    self.skill_trees = readDict(data[15], ARR, {'name', 'skills'}, getSk)
+    self.skills = readArray(data[16], getSk)
     self.skill_points = 0
 
     self.health = 0

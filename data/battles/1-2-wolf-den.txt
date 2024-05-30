@@ -6,7 +6,7 @@ Enemies: wolf1:4,3 wolf2:6,14 alphawolf1:1,7 wolf3:1,8 alphawolf2:1,12
 Order: wolf1,wolf2,wolf3,alphawolf1,alphawolf2
 Wincon: rout
 Losscon: death
-Turnlimits: 6,6,5
+Turnlimits: 7,6,6,5
 Music: A-Single-Shard-Of-Ignea
 
 // Battle grid

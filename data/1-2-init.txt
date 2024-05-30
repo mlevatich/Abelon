@@ -49,15 +49,15 @@
 ->Inventory journal
 ->Inventory medallion
 ->Inventory scroll
-->Seen 1-2-battle
-->Day
-->Party kath
-->Party elaine
-->State elaine-stays
+//->Seen 1-2-battle
+//->Day
+//->Party kath
+//->Party elaine
+//->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2
-//->abelon
-//+Exp 90
+->abelon
++Exp 120
 //->kath
 //+Exp 90

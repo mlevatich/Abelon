@@ -9,7 +9,9 @@ Discard: no
 Present:
 Level: 0
 Attributes:
-DiffiucultySubtraction:
+AttributesAdept:
+AttributesNormal:
+AttributesNovice:
 Skilltrees:
 Skills:
 Description: A strange book. EOS

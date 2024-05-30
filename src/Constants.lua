@@ -99,6 +99,7 @@ UP    = 3
 DOWN  = 4
 
 -- Difficulty
+NOVICE = 0
 NORMAL = 1
 ADEPT  = 2
 MASTER = 3

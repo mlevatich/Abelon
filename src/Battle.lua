@@ -77,7 +77,7 @@ function Battle:initialize(player, game, id)
     self.lose = readArray(data[8], function(s) return losscons[s] end)
     self.turnlimits = readArray(data[9], tonumber)
     if next(self.turnlimits) then table.insert(self.lose, {}) end
-    self:adjustDifficultyFrom(MASTER)
+    self:adjustDifficulty()
 
     -- Battle cam starting location
     self.battle_cam_x = self.game.camera_x
@@ -180,26 +180,22 @@ function Battle:joinBattle(sp, team, t_x, t_y)
     sp:changeBehavior('battle')
 end
 
-function Battle:adjustDifficultyFrom(old)
+function Battle:adjustDifficulty()
 
     -- Adjust enemy stats
     local new = self.game.difficulty
-    local factor = old - new
     for i = 1, #self.participants do
         local sp = self.participants[i]
         if not self:isAlly(sp) then
-            local attrs = sp.attributes
-            for a,mod in pairs(sp.attr_difficulty_mods) do
-                attrs[a] = math.max(0, attrs[a] - (mod * factor))
-            end 
-            sp.health = math.min(sp.health, attrs['endurance'] * 2)
-            sp.ignea = math.min(sp.ignea, attrs['focus'])
+            sp.attributes = sp.attrs_on[new]
+            sp.health = math.min(sp.health, sp.attributes['endurance'] * 2)
+            sp.ignea = math.min(sp.ignea, sp.attributes['focus'])
         end
     end
 
     -- Adjust turn limit, if there is one
     if next(self.turnlimits) then
-        self.turnlimit = self.turnlimits[new]
+        self.turnlimit = self.turnlimits[new + 1]
         self.lose[#self.lose] = { self.turnlimit .. ' turns pass',
             function(b) return ite(b.turn > b.turnlimit, 'turnlimit', false) end
         }
@@ -214,7 +210,7 @@ function Battle:adjustDifficultyFrom(old)
             m:forward()
             m:hover(UP)
             m:forward()
-            for i = 1, new - 1 do m:hover(DOWN) end
+            for i = 1, new do m:hover(DOWN) end
         end
     end
 end
@@ -573,20 +569,16 @@ end
 function Battle:cleanupBattle()
 
     -- Restore ignea, health, and stats to all participants
-    -- Ignea is restored by 0% on master, 25% on adept, 50% on normal
-    local ign_mul = 0.75 - (self.game.difficulty * 0.25)
+    -- Ignea is restored by 0% on master, 25% on adept, 50% on normal/novice
+    local ign_mul = 0.75 - (math.max(NORMAL, self.game.difficulty) * 0.25)
     for i = 1, #self.participants do
         local sp = self.participants[i]
-        local max_ign = sp.attributes['focus']
         if self:isAlly(sp) then
+            local max_ign = sp.attributes['focus']
             sp.ignea = math.min(sp.ignea + math.floor(max_ign * ign_mul), max_ign)
         else
-            sp.ignea = max_ign
-            local factor = MASTER - self.game.difficulty
-            local attrs = sp.attributes
-            for a,mod in pairs(sp.attr_difficulty_mods) do
-                attrs[a] = math.max(0, attrs[a] + (mod * factor))
-            end
+            sp.attributes = sp.attrs_on[MASTER]
+            sp.ignea = sp.attributes['focus']
             sp:changeBehavior('idle')
         end
         sp.health = sp.attributes['endurance'] * 2

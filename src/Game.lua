@@ -359,7 +359,7 @@ end
 function Game:setDifficulty(d)
     local old = self.difficulty
     self.difficulty = d
-    if self.battle then self.battle:adjustDifficultyFrom(old) end
+    if self.battle then self.battle:adjustDifficulty() end
 end
 
 function Game:startTutorial(n)
