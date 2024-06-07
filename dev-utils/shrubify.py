@@ -5,7 +5,7 @@ import sys
 from random import random
 
 if len(sys.argv) != 2:
-    print("Usage: python3 abelon/utilities/shrubify.py map-directory")
+    print("Usage: python3 abelon/dev-utils/shrubify.py map-directory")
     exit(1)
 
 prefix = 'abelon/data/maps/' + sys.argv[1]

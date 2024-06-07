@@ -11,6 +11,7 @@ Bullets that reference a github issue should close the issue when committed.
 ## Imminent
 
 - Choreograph dealing with Elaine and all subscenes
+- Extend 1-2 ending scene to transition into 1-3, prevents going back
 
 ## Audio
 
