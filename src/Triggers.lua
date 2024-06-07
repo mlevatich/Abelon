@@ -56,7 +56,7 @@ scene_triggers = {
             function(x) return true end,
             function(y) return true end
         ),
-        ['end-tutorial-lvl'] = mkAreaTrigger('1-2-close-tutorial-lvl', 'north-forest',
+        ['end-tutorial-lvl'] = mkAreaTrigger('1-2-close-tutorial-lvl', 'monastery-approach',
             function(x) return true end,
             function(y) return true end
         ),

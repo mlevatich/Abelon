@@ -12,6 +12,11 @@ TRANSITION DATA
 73 15 south-forest 3 12
 73 16 south-forest 3 13
 73 17 south-forest 3 14
+47 1 monastery-approach 25 77.5
+48 1 monastery-approach 26 77.5
+49 1 monastery-approach 27 77.5
+50 1 monastery-approach 28 77.5
+51 1 monastery-approach 29 77.5
 
 LIGHTING DATA
 0.7

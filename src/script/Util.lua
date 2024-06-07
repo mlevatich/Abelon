@@ -255,7 +255,7 @@ function daytime()
     return function(scene)
         for k,v in pairs(scene.game.maps) do
             if k == 'east-forest' or k == 'west-forest' 
-            or k == 'south-forest' or k == 'north-forest' then
+            or k == 'south-forest' or k == 'monastery-approach' or k == 'monastery-entrance' then
                 v.lit = 0.0
             end
         end

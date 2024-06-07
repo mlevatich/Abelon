@@ -392,7 +392,7 @@ end
 
 -- INITIALIZE GRAPHICAL DATA
 map_graphics = {}
-local map_ids = { 'west-forest', 'north-forest', 'south-forest', 'east-forest' }
+local map_ids = { 'west-forest', 'south-forest', 'east-forest', 'monastery-approach', 'monastery-entrance', 'waiting-room' }
 for i = 1, #map_ids do
     local n = map_ids[i]
     map_graphics[n] = {}

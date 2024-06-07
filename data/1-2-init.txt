@@ -33,7 +33,11 @@
 ~marker 47.2 3 L
 ~marker 61 13 L
 
-~~north-forest Canopied-Steps
+~~monastery-approach Canopied-Steps
+
+~~monastery-entrance Canopied-Steps
+
+~~waiting-room Canopied-Steps
 
 ~campclutter2 1 1 L
 ~alphawolf1 1 1 L
@@ -49,11 +53,11 @@
 ->Inventory journal
 ->Inventory medallion
 ->Inventory scroll
-//->Seen 1-2-battle
-//->Day
-//->Party kath
-//->Party elaine
-//->State elaine-stays
+->Seen 1-2-battle
+->Day
+->Party kath
+->Party elaine
+->State elaine-stays
 //->elaine
 //+Level 2
 //+BonusAttrs force:1 focus:2

@@ -39,7 +39,11 @@
 ~marker 47.2 3 L
 ~marker 61 13 L
 
-~~north-forest Canopied-Steps
+~~monastery-approach Canopied-Steps
+
+~~monastery-entrance Canopied-Steps
+
+~~waiting-room Canopied-Steps
 
 ~alphawolf1 1 1 L
 ~alphawolf2 1 1 L

@@ -10,12 +10,6 @@ TRANSITION DATA
 1 71 south-forest 52 22
 1 72 south-forest 52 23
 1 73 south-forest 52 23
-1 31 north-forest 85 40
-1 32 north-forest 85 41
-1 33 north-forest 85 42
-1 34 north-forest 85 43
-1 35 north-forest 85 44
-1 36 north-forest 85 45
 
 LIGHTING DATA
 0.7

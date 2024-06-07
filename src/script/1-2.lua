@@ -230,7 +230,7 @@ s12['battle'] = {
         putOut(9),
         putOut(10),
         putOut(11),
-        teleport(12, 1, 1, 'north-forest'),
+        teleport(12, 1, 1, 'waiting-room'),
         teleport(2, 50, 8, 'west-forest'),
         changeMusic('Threat-Revealed'),
         daytime(),

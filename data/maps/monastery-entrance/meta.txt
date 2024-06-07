@@ -1,0 +1,24 @@
+WIDTH / HEIGHT
+100 55
+
+COLLIDING TILES
+3456BC
+
+TRANSITION DATA
+16 55 monastery-approach 40 2
+17 55 monastery-approach 41 2
+18 55 monastery-approach 42 2
+19 55 monastery-approach 42 2
+34 55 monastery-approach 59 2
+35 55 monastery-approach 60 2
+36 55 monastery-approach 61 2
+37 55 monastery-approach 61 2
+75 55 monastery-approach 99 2
+76 55 monastery-approach 100 2
+77 55 monastery-approach 100 2
+
+LIGHTING DATA
+0.7
+10 10 20
+
+FIXED SPRITES
