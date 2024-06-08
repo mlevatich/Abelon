@@ -215,9 +215,43 @@ sall['igneashard1'] = {
     ['events'] = mkIgneaShardDialogue(1),
     ['result'] = {}
 }
-
 sall['igneashard2'] = {
     ['ids'] = {'abelon', 'igneashard2'},
     ['events'] = mkIgneaShardDialogue(2),
+    ['result'] = {}
+}
+sall['igneashard3'] = {
+    ['ids'] = {'abelon', 'igneashard3'},
+    ['events'] = mkIgneaShardDialogue(3),
+    ['result'] = {}
+}
+sall['igneashard4'] = {
+    ['ids'] = {'abelon', 'igneashard4'},
+    ['events'] = mkIgneaShardDialogue(4),
+    ['result'] = {}
+}
+sall['igneashard5'] = {
+    ['ids'] = {'abelon', 'igneashard5'},
+    ['events'] = mkIgneaShardDialogue(5),
+    ['result'] = {}
+}
+sall['igneashard6'] = {
+    ['ids'] = {'abelon', 'igneashard6'},
+    ['events'] = mkIgneaShardDialogue(6),
+    ['result'] = {}
+}
+sall['igneashard7'] = {
+    ['ids'] = {'abelon', 'igneashard7'},
+    ['events'] = mkIgneaShardDialogue(7),
+    ['result'] = {}
+}
+sall['igneashard8'] = {
+    ['ids'] = {'abelon', 'igneashard8'},
+    ['events'] = mkIgneaShardDialogue(8),
+    ['result'] = {}
+}
+sall['igneashard9'] = {
+    ['ids'] = {'abelon', 'igneashard9'},
+    ['events'] = mkIgneaShardDialogue(9),
     ['result'] = {}
 }

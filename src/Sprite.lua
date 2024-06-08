@@ -1579,7 +1579,7 @@ sprite_data = {
         ['id'] = 'igneashard',
         ['w'] = 12,
         ['h'] = 15,
-        ['n'] = 2
+        ['n'] = 9
     },
     {
         ['id'] = 'campfire',

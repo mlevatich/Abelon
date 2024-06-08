@@ -398,10 +398,44 @@ sitems['igneashard1-use'] = {
     ['events'] = mkIgneaShardUse(1),
     ['result'] = {}
 }
-
 sitems['igneashard2-use'] = {
     ['ids'] = {'abelon', 'igneashard2'},
     ['events'] = mkIgneaShardUse(2),
+    ['result'] = {}
+}
+sitems['igneashard3-use'] = {
+    ['ids'] = {'abelon', 'igneashard3'},
+    ['events'] = mkIgneaShardUse(3),
+    ['result'] = {}
+}
+sitems['igneashard4-use'] = {
+    ['ids'] = {'abelon', 'igneashard4'},
+    ['events'] = mkIgneaShardUse(4),
+    ['result'] = {}
+}
+sitems['igneashard5-use'] = {
+    ['ids'] = {'abelon', 'igneashard5'},
+    ['events'] = mkIgneaShardUse(5),
+    ['result'] = {}
+}
+sitems['igneashard6-use'] = {
+    ['ids'] = {'abelon', 'igneashard6'},
+    ['events'] = mkIgneaShardUse(6),
+    ['result'] = {}
+}
+sitems['igneashard7-use'] = {
+    ['ids'] = {'abelon', 'igneashard7'},
+    ['events'] = mkIgneaShardUse(7),
+    ['result'] = {}
+}
+sitems['igneashard8-use'] = {
+    ['ids'] = {'abelon', 'igneashard8'},
+    ['events'] = mkIgneaShardUse(8),
+    ['result'] = {}
+}
+sitems['igneashard9-use'] = {
+    ['ids'] = {'abelon', 'igneashard9'},
+    ['events'] = mkIgneaShardUse(9),
     ['result'] = {}
 }
 
@@ -410,10 +444,44 @@ sitems['igneashard1-present-kath'] = {
     ['events'] = mkIgneaShardPresentKath(1),
     ['result'] = {}
 }
-
 sitems['igneashard2-present-kath'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = mkIgneaShardPresentKath(2),
+    ['result'] = {}
+}
+sitems['igneashard3-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(3),
+    ['result'] = {}
+}
+sitems['igneashard4-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(4),
+    ['result'] = {}
+}
+sitems['igneashard5-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(5),
+    ['result'] = {}
+}
+sitems['igneashard6-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(6),
+    ['result'] = {}
+}
+sitems['igneashard7-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(7),
+    ['result'] = {}
+}
+sitems['igneashard8-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(8),
+    ['result'] = {}
+}
+sitems['igneashard9-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(9),
     ['result'] = {}
 }
 
@@ -422,9 +490,43 @@ sitems['igneashard1-present-elaine'] = {
     ['events'] = mkIgneaShardPresentElaine(1),
     ['result'] = {}
 }
-
 sitems['igneashard2-present-elaine'] = {
     ['ids'] = {'abelon', 'elaine'},
     ['events'] = mkIgneaShardPresentElaine(2),
+    ['result'] = {}
+}
+sitems['igneashard3-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(3),
+    ['result'] = {}
+}
+sitems['igneashard4-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(4),
+    ['result'] = {}
+}
+sitems['igneashard5-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(5),
+    ['result'] = {}
+}
+sitems['igneashard6-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(6),
+    ['result'] = {}
+}
+sitems['igneashard7-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(7),
+    ['result'] = {}
+}
+sitems['igneashard8-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(8),
+    ['result'] = {}
+}
+sitems['igneashard9-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(9),
     ['result'] = {}
 }

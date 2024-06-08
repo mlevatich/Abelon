@@ -99,7 +99,14 @@ item_triggers = {
     ['journal'] = mkSimpleUseTrigger('journal'),
     ['scroll'] = mkSimpleUseTrigger('scroll'),
     ['igneashard1'] = mkSimpleUseTrigger('igneashard1'),
-    ['igneashard2'] = mkSimpleUseTrigger('igneashard2')
+    ['igneashard2'] = mkSimpleUseTrigger('igneashard2'),
+    ['igneashard3'] = mkSimpleUseTrigger('igneashard3'),
+    ['igneashard4'] = mkSimpleUseTrigger('igneashard4'),
+    ['igneashard5'] = mkSimpleUseTrigger('igneashard5'),
+    ['igneashard6'] = mkSimpleUseTrigger('igneashard6'),
+    ['igneashard7'] = mkSimpleUseTrigger('igneashard7'),
+    ['igneashard8'] = mkSimpleUseTrigger('igneashard8'),
+    ['igneashard9'] = mkSimpleUseTrigger('igneashard9')
 }
 
 function mkTurnTrigger(t, phase)

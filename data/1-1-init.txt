@@ -41,6 +41,14 @@
 
 ~~monastery-approach Canopied-Steps
 
+~igneashard3 9 71 R
+~igneashard4 52 76 L
+~igneashard5 67 3 R
+~igneashard6 75 44 L
+~igneashard7 109 20 R
+~igneashard8 107 29 L
+~igneashard9 104 53 R
+
 ~~monastery-entrance Canopied-Steps
 
 ~~waiting-room Canopied-Steps

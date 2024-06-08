@@ -12,7 +12,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 - Move wolf den battle north, put something where wolf den used to be
     - TODOs for pre- and post-battle scenes
-- Place ignea shards in monastery approach
+
 - Living rock sprite
 - Living rock skills
 - Shanti skills
@@ -31,6 +31,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Final scene transition and return to title screen
 
 - Monastery approach log piles and ground features
+- Goodies and items to pick up in 1-3
 - All scenes
 
 ## Audio
