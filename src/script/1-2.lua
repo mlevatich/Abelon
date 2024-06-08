@@ -3103,34 +3103,63 @@ s12['wolf-den-victory'] = {
 s12['north-transition'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'notice'},
     ['events'] = {
-        face(2, 1),
-        pan(0, 100, 200),
-        say(2, 1, false, 
-            "Go on ahead, Abelon. I'll be right behind you. I'm just packing up a \z
-             few supplies."
+        say(1, 0, true,
+            "Proceed north?"
         ),
-        br(function(g) return g.state['elaine-stays'] end, {
-            lookAt(3, 1),
-            say(3, 3, false,
-                "I'll go with you, Sir Abelon!"
-            )
-        }),
-        say(2, 3, false, 
-            "Keep an eye out for more of those worn-down stone markers in the \z
-             ground. Shanti guessed that they would point towards whatever's left of this \z
-             monastery. It shouldn't take long for us to catch up with them."
-        ),
-        say(2, 2, false, 
-            "Let's pray they haven't encountered any trouble of their own..."
-        ),
-        wait(1),
-        say(4, 1, false,
-            "Chapter 1-3 is still under construction. Feel free to explore the \z
-             area or complete the optional challenge battle if you have not already. \z
-             Thank you for playing this demo!"
-        )
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Yes",
+                ['events'] = {
+                    face(2, 1),
+                    pan(0, 100, 200),
+                    say(2, 1, false, 
+                        "Go on ahead, Abelon. I'll be right behind you. I'm just packing up a \z
+                        few supplies."
+                    ),
+                    br(function(g) return g.state['elaine-stays'] end, {
+                        lookAt(3, 1),
+                        say(3, 3, false,
+                            "I'll go with you, Sir Abelon!"
+                        )
+                    }),
+                    say(2, 3, false, 
+                        "Keep an eye out for more of those worn-down stone markers in the \z
+                        ground. Shanti guessed that they would point towards whatever's left of this \z
+                        monastery. It shouldn't take long for us to catch up with them."
+                    ),
+                    say(2, 2, false, 
+                        "Let's pray they haven't encountered any trouble of their own..."
+                    ),
+                    fade(-0.4),
+                    wait(3),
+                    fadeoutMusic(),
+                    wait(1),
+                    say(1, 0, false,
+                        "By Ignus, you endanger us all! Release me!"
+                    ),
+                    wait(1),
+                    say(1, 0, false,
+                        "Release me!!!"
+                    ),
+                    wait(2)
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        g:nextChapter()
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "No",
+                ['events'] = {
+                    walk(false, 1, 49, 2, 'walk'),
+                    waitForEvent('walk')
+                },
+                ['result'] = {}
+            }
+        })
     },
-    ['result'] = {
-
-    }
+    ['result'] = {}
 }

@@ -1,11 +1,13 @@
 require 'src.script.1-1'
 require 'src.script.1-2'
+require 'src.script.1-3'
 require 'src.script.Items'
 require 'src.script.All'
 
 local sources = {
     ['1-1'] = s11,
     ['1-2'] = s12,
+    ['1-3'] = s13,
     ['all'] = sall,
     ['items'] = sitems
 }

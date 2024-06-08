@@ -54,7 +54,8 @@ function Map:initialize(name, c)
         table.insert(self.transitions, {
             ['name'] = data[3],
             ['x'] = pixel_x,
-            ['y'] = pixel_y
+            ['y'] = pixel_y,
+            ['enabled'] = true
         })
         idx = idx + 1
     end
@@ -98,6 +99,14 @@ function Map:initialize(name, c)
         for x = 1, self.width do
             local tile_id = tonumber(l:sub(x, x), 30)
             self.tiles[y][x] = tile_id
+        end
+    end
+end
+
+function Map:blockExit(other)
+    for _,t in pairs(self.transitions) do
+        if t['name'] == other then
+            t['enabled'] = false
         end
     end
 end
@@ -234,7 +243,7 @@ function Map:checkTransitionTiles(player)
         local tt = self.transition_tiles[i]
         local t = self.transitions[i]
         local on, xd, yd = player:onTile(tt['x'], tt['y'])
-        if on then
+        if on and t['enabled'] then
             return {
                 ['name'] = t['name'],
                 ['x'] = t['x'] + xd,

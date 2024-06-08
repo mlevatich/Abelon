@@ -3,18 +3,21 @@ require 'src.Constants'
 
 require 'src.Script'
 
-function mkAreaTrigger(scene_id, map_id, xTrigger, yTrigger)
-    return function(g)
-        local x, y = g.player:getPosition()
-        local id = g.current_map:getName()
-        if id == map_id then
-            local tile = g.current_map:tileAt(x, y)
-            if xTrigger(tile['x']) and yTrigger(tile['y']) then
-                return scene_id
+function mkAreaTrigger(scene_id, map_id, xTrigger, yTrigger, persist)
+    return {
+        function(g)
+            local x, y = g.player:getPosition()
+            local id = g.current_map:getName()
+            if id == map_id then
+                local tile = g.current_map:tileAtExact(x, y)
+                if xTrigger(tile['x']) and yTrigger(tile['y']) then
+                    return scene_id
+                end
             end
-        end
-        return nil
-    end
+            return nil
+        end,
+        persist
+    }
 end
 
 function mkSimpleTrigger(check, action)
@@ -65,8 +68,14 @@ scene_triggers = {
             function(y) return true end
         ),
         ['north-transition'] = mkAreaTrigger('1-2-north-transition', 'west-forest',
-            function (x) return true end,
-            function (y) return y < 2 end
+            function (x) return x < 51 end,
+            function (y) return y < 1.4 end, true
+        )
+    },
+    ['1-3'] = {
+        ['1-3-entry'] = mkAreaTrigger('1-3-entry', 'west-forest',
+            function(x) return true end,
+            function(y) return true end
         )
     }
 }

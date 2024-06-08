@@ -1347,8 +1347,8 @@ function Sprite:updatePosition(dt, x_dst, y_dst)
     end
 
     local w, h = self.game:getMap():getPixelDimensions()
-    self.x = math.max(math.min(self.x, w - self.w - 1), 1)
-    self.y = math.max(math.min(self.y, h - self.h - 1), 1)
+    self.x = math.max(math.min(self.x, w - self.w - 3), 3)
+    self.y = math.max(math.min(self.y, h - self.h - 3), 3)
 end
 
 -- Per-frame updates to a sprite's state

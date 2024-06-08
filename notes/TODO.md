@@ -8,10 +8,30 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Imminent
+## Scene work
 
-- Choreograph dealing with Elaine and all subscenes
-- Extend 1-2 ending scene to transition into 1-3, prevents going back
+- Move wolf den battle north, put something where wolf den used to be
+    - TODOs for pre- and post-battle scenes
+- Place ignea shards in monastery approach
+- Living rock sprite
+- Living rock skills
+- Shanti skills
+- Shanti battle
+    - TODOs for pre- and post-battle scenes
+
+- 1-4 transition scene, evening
+- Lester skills
+- Lester battle
+    - TODOs for pre- and post-battle scenes
+
+- Forest terror sprite
+- Forest terror skills
+- Final battle
+    - TODOs for pre-battle scene
+- Final scene transition and return to title screen
+
+- Monastery approach log piles and ground features
+- All scenes
 
 ## Audio
 
@@ -23,6 +43,12 @@ Bullets that reference a github issue should close the issue when committed.
 - All skill animation sfx
 
 ## Art / Animation
+
+- Tree pile
+- Huge boulder
+- Wolf den
+- Scuffed ground
+- 4 unique ground features for monastery approach
 
 - Better portraits
 

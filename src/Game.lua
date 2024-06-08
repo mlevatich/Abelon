@@ -630,9 +630,12 @@ end
 function Game:checkSceneTriggers()
     for k, v in pairs(scene_triggers[self.chapter_id]) do
         if not self.seen[k] then
-            local check = v(self)
+            local check = v[1](self)
             if check then
-                self.seen[k] = true
+                local persist = v[2]
+                if not persist then
+                    self.seen[k] = true
+                end
                 if check ~= DELETE then
                     self:launchScene(check)
                 end
@@ -674,9 +677,9 @@ function Game:update(dt, no_music)
     -- Update the currently active scene
     if self.current_scene then
         self:updateScene(dt)
+    else
+        self:checkSceneTriggers()
     end
-
-    self:checkSceneTriggers()
 
     -- Update music
     if self.current_music and not no_music then
