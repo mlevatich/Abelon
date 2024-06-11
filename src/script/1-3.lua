@@ -283,3 +283,35 @@ s13['victory'] = {
         end
     }
 }
+
+s13['kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        face(1, 2),
+        say(2, 3, false,
+            "The further north we travel, the more maze-like this forest becomes... I'm \z
+             not the superstitious type, but I can't shake the feeling that the Red Mountain \z
+             Valley is trying to hide its secrets from us."
+        )
+    },
+    ['result'] = {}
+}
+
+s13['elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = {
+        lookAt(1, 2),
+        say(2, 2, false,
+            "No more monsters, no more monsters, no more monsters..."
+        ),
+        wait(1),
+        lookAt(2, 1),
+        say(2, 2, false,
+            "Ah! Oh, Sir Abelon. Sorry, I was... lost in thought."
+        ),
+        say(2, 2, false,
+            "...You didn't hear any of that, did you?"
+        )
+    },
+    ['result'] = {}
+}
