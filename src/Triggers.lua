@@ -63,10 +63,6 @@ scene_triggers = {
             function(x) return true end,
             function(y) return true end
         ),
-        ['wolf-den-battle'] = mkAreaTrigger('1-2-wolf-den-battle', 'west-forest',
-            function(x) return x < 18 end,
-            function(y) return true end
-        ),
         ['north-transition'] = mkAreaTrigger('1-2-north-transition', 'west-forest',
             function (x) return x < 51 end,
             function (y) return y < 1.4 end, true
@@ -76,6 +72,10 @@ scene_triggers = {
         ['1-3-entry'] = mkAreaTrigger('1-3-entry', 'west-forest',
             function(x) return true end,
             function(y) return true end
+        ),
+        ['1-3-battle'] = mkAreaTrigger('1-3-battle', 'monastery-approach',
+            function(x) return x > 12 and x < 28 end,
+            function(y) return y < 47 end
         )
     }
 }
@@ -198,7 +198,7 @@ battle_triggers = {
             end
         }
     },
-    ['1-2-wolf-den'] = {
+    ['1-3'] = {
         [SELECT] = {},
         [ALLY] = {},
         [ENEMY] = {},

@@ -28,6 +28,8 @@ FIXED SPRITES
 ~log 18 22 L
 ~log 17 11 R
 ~log 65 13 R
+~log 24 15.1 R
+~log 25 16 L
 ~grass 50 1 R
 ~grass2nd 47 3 L
 ~grass2nd 50 3 R

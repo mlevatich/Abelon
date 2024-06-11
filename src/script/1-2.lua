@@ -2852,12 +2852,12 @@ s12['elaine'] = {
                          tracks, and where they've been moving through the brush."
                     ),
                     say(2, 3, false, 
-                        "I might be wrong, but I think they all came from that opening in the \z
-                         trees west of us."
+                        "I might be wrong, but I think they all came from the path leading \z
+                         north of this camp."
                     ),
                     say(2, 3, true, 
                         "In the academy, we're taught that monsters travel in packs... Are we \z
-                         being attacked because we're near the home of a wolf pack over there?"
+                         being attacked because we're near the home of a wolf pack?"
                     ),
                     choice({
                         {
@@ -2934,169 +2934,6 @@ s12['elaine'] = {
     },
     ['result'] = {
 
-    }
-}
-
-s12['wolf-den-battle'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'wolf1', 'wolf2', 'wolf3', 'alphawolf1', 'alphawolf2'},
-    ['events'] = {
-        fadeoutMusic(),
-        focus(1, 200),
-        walk(false, 1, 16, 17, 'walk'),
-        teleport(2, 28, 15),
-        br(function(g) return g.state['elaine-stays'] end, {
-            teleport(3, 31, 15)
-        }),
-        walk(false, 2, 16, 15, 'walk1'),
-        br(function(g) return g.state['elaine-stays'] end, {
-            walk(false, 3, 18, 15, 'walk2')
-        }),
-        waitForEvent('walk'),
-        say(2, 1, false, 
-            "Abelon, what have you found over here? I didn't realize there was \z
-             anything of interest further west from our camp."
-        ),
-        waitForText(),
-        waitForEvent('walk1'),
-        br(function(g) return g.state['elaine-stays'] end, {
-            waitForEvent('walk2')
-        }),
-        wait(0.5),
-        changeMusic('Threat-Revealed', 28),
-        lookDir(4, RIGHT),
-        lookDir(5, RIGHT),
-        lookDir(6, RIGHT),
-        lookDir(7, RIGHT),
-        lookDir(8, RIGHT),
-        teleport(6, 11, 16),
-        wait(0.5),
-        teleport(7, 11, 15),
-        wait(0.5),
-        teleport(4, 14, 11),
-        teleport(5, 16, 26),
-        walk(false, 5, 16, 22, 'walk'),
-        waitForEvent('walk'),
-        wait(0.5),
-        teleport(8, 11, 23),
-        walk(false, 8, 11, 20, 'walk'),
-        waitForEvent('walk'),
-        combatReady(1),
-        wait(1),
-        br(function(g) return g.state['elaine-stays'] end, {
-            say(3, 2, false,
-                "...Eep..."
-            )
-        }),
-        walk(false, 2, 15, 16, 'walk'),
-        say(2, 3, false, 
-            "Ah. This must be the den of the wolf pack that's been after us. Doing \z
-             away with them now will allow us to focus on finding the monastery."
-        ),
-        waitForEvent('walk'),
-        combatReady(2),
-        br(function(g) return g.state['elaine-stays'] end, {
-            walk(false, 3, 16, 15, 'walk')
-        }),
-        wait(0.5),
-        br(function(g) return g.state['elaine-stays'] end, {
-            say(2, 3, false, 
-                "Elaine, I expect it will be one battle after another for as long as \z
-                 you're with us. Are you ready?"
-            ),
-            waitForEvent('walk'),
-            say(3, 3, false,
-                "Ready as I'll ever be..."
-            ),
-            combatReady(3),
-            wait(1)
-        })
-    },
-    ['result'] = {
-        ['do'] = function(g)
-            g:launchBattle('wolf-den')
-        end
-    }
-}
-
-s12['wolf-den-demonic-spell'] = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        insertEvents(subscene_demonic)
-    },
-    ['result'] = {
-        ['state'] = 'kath-saw-spell'
-    }
-}
-
-s12['wolf-den-kath-defeat'] = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        insertEvents(subscene_kath_defeat)
-    },
-    ['result'] = {
-
-    }
-}
-
-s12['wolf-den-abelon-defeat'] = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        insertEvents(subscene_abelon_defeat)
-    },
-    ['result'] = {
-
-    }
-}
-
-s12['wolf-den-elaine-defeat'] = {
-    ['ids'] = {'abelon', 'elaine', 'kath'},
-    ['events'] = {
-        focus(3, 170),
-        wait(0.5),
-        lookAt(3, 2),
-        say(2, 2, false,
-            "Ahhh!"
-        ),
-        say(3, 2, false,
-            "Elaine, no! Curses!"
-        )
-    },
-    ['result'] = {
-
-    }
-}
-
-s12['wolf-den-turnlimit-defeat'] = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        insertEvents(subscene_turnlimit_defeat)
-    },
-    ['result'] = {
-
-    }
-}
-
-s12['wolf-den-victory'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine'},
-    ['events'] = {
-        combatExit(1),
-        combatExit(2),
-        br(function(g) return g.state['elaine-stays'] end, {
-            combatExit(3)
-        }),
-        wait(1)
-    },
-    ['result'] = {
-        ['do'] = function(g)
-            local k = g.sprites['kath']
-            local a = g.sprites['abelon']
-            local e = g.sprites['elaine']
-            local seen = find(g.player.old_tutorials, "Experience and skill learning")
-            if (k.level > 8 or a.level > 8 or e.level > 3) and not seen then
-                g:startTutorial("Experience and skill learning")
-            end
-            g.callbacks['1-2-elaine'] = '1-2-elaine-callback'
-        end
     }
 }
 
