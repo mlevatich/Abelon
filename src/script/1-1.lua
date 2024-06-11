@@ -285,7 +285,9 @@ s11['shanti'] = {
 local subscene_sleep = {
     fade(-0.4),
     wait(3),
-    teleport(3, 1, 1, 'waiting-room'),
+    teleport(3, 52, 27, 'monastery-entrance'),
+    lookDir(3, RIGHT),
+    getUp(3),
     teleport(4, 1, 1, 'waiting-room'),
     teleport(5, 1, 1, 'waiting-room'),
     teleport(6, 1, 1, 'waiting-room'),

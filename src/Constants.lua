@@ -125,6 +125,8 @@ str_to_icon = {
     ['Huntress'] = 17,
     ['Apprentice'] = 18,
     ['Sniper'] = 19,
+    ['Lanternfaire'] = 18,
+    ['Sorceress'] = 18,
     ['empty'] = 21
 }
 

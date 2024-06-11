@@ -51,6 +51,9 @@
 
 ~~monastery-entrance Canopied-Steps
 
+~golem1 53 29 L
+~golem2 54 32 R
+
 ~~waiting-room Canopied-Steps
 
 ~alphawolf1 1 1 L

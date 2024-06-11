@@ -456,15 +456,17 @@ function Sprite:mkLearnMenu()
         ['w'] = HBOX_WIDTH
     }
     local skt = self.skill_trees
-    local learn = MenuItem:new('Learn (' .. self.skill_points .. ')', {
-        MenuItem:new(skt[1]['name'], mapf(mkLearn, skt[1]['skills']),
-                 'View the ' .. skt[1]['name'] .. " tree", hbox),
-        MenuItem:new(skt[2]['name'], mapf(mkLearn, skt[2]['skills']),
-                 'View the ' .. skt[2]['name'] .. " tree", hbox),
-        MenuItem:new(skt[3]['name'], mapf(mkLearn, skt[3]['skills']),
-                 'View the ' .. skt[3]['name'] .. " tree", hbox)
-    }, 'Learn new skills', hbox, nil, nil, checkUnspent)
-
+    local tree_items = {}
+    for i=1, #skt do
+        table.insert(tree_items, 
+            MenuItem:new(skt[i]['name'], mapf(mkLearn, skt[i]['skills']), 'View the ' .. skt[i]['name'] .. " tree", hbox)
+        )
+    end
+    local learn = MenuItem:new(
+        'Learn (' .. self.skill_points .. ')', 
+        tree_items, 'Learn new skills',
+        hbox, nil, nil, checkUnspent
+    )
     return learn
 end
 
@@ -524,8 +526,7 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
     local indent = 40
     local indent2 = 30
     local sp_x = HALF_MARGIN + indent
-    local attrib_ind = attrib_x + indent
-    local skills_ind = skills_x + indent
+    local attrib_ind = attrib_x + indent - 5
     local line = function(i)
         return HALF_MARGIN + LINE_HEIGHT * (i - 1)
     end
@@ -592,11 +593,11 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
         mkEle('text', {tostring(att['force'])},
             attrib_ind + indent2,       line(7), aC('force')),
         mkEle('text', {tostring(att['affinity'])},
-            attrib_ind + indent2 + 100, line(3), aC('affinity')),
+            attrib_ind + indent2 + 125, line(3), aC('affinity')),
         mkEle('text', {tostring(att['reaction'])},
-            attrib_ind + indent2 + 100, line(5), aC('reaction')),
+            attrib_ind + indent2 + 125, line(5), aC('reaction')),
         mkEle('text', {tostring(att['agility'])},
-            attrib_ind + indent2 + 100, line(7), aC('agility'))
+            attrib_ind + indent2 + 125, line(7), aC('agility'))
     }
 
     -- Additional elements if sprite has skill trees
@@ -606,20 +607,15 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
                 sp_x - #lvl_str * CHAR_WIDTH / 2 + self.w / 2, line(4)),
             mkEle('text', {exp_str},
                 sp_x - #exp_str * CHAR_WIDTH / 2 + self.w / 2, line(7)),
-            mkEle('text', {'Skills Learned'}, skills_x, line(1)),
-            mkEle('text', {self.skill_trees[1]['name']}, skills_ind, line(2)),
-            mkEle('text', {self.skill_trees[2]['name']}, skills_ind, line(4)),
-            mkEle('text', {self.skill_trees[3]['name']}, skills_ind, line(6)),
-            mkEle('image', icon(1), skills_ind - 25, line(2), icon_texture),
-            mkEle('image', icon(2), skills_ind - 25, line(4), icon_texture),
-            mkEle('image', icon(3), skills_ind - 25, line(6), icon_texture),
-            mkEle('text', {tostring(learnedIn(1))},
-                skills_ind + indent2, line(3)),
-            mkEle('text', {tostring(learnedIn(2))},
-                skills_ind + indent2, line(5)),
-            mkEle('text', {tostring(learnedIn(3))},
-                skills_ind + indent2, line(7))
+            mkEle('text', {'Skills Learned'}, skills_x, line(1))
         })
+        local base_line = 3 - #self.skill_trees
+        local skills_ind = skills_x + indent - 5
+        for i=1, #self.skill_trees do
+            table.insert(elements, mkEle('text', {self.skill_trees[i]['name']}, skills_ind, line(base_line + i * 2)))
+            table.insert(elements, mkEle('image', icon(i), skills_ind - 25, line(base_line + i * 2), icon_texture))
+            table.insert(elements, mkEle('text', {tostring(learnedIn(i))}, skills_ind + indent2, line(base_line + 1 + i * 2)))
+        end
     end
 
     return elements
@@ -1545,11 +1541,9 @@ sprite_data = {
         ['n'] = 4
     },
     {
-        ['id'] = 'living_rock',
+        ['id'] = 'empty',
         ['w'] = 31,
-        ['h'] = 31,
-        ['animations'] = living,
-        ['n'] = 3
+        ['h'] = 31
     },
     {
         ['id'] = 'torch',
@@ -1691,6 +1685,13 @@ sprite_data = {
         ['id'] = 'marker',
         ['w'] = 25,
         ['h'] = 36
+    },
+    {
+        ['id'] = 'golem',
+        ['w'] = 51,
+        ['h'] = 57,
+        ['animations'] = living,
+        ['n'] = 2
     },
     {
         ['id'] = 'journal',

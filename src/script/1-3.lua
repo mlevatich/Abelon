@@ -279,7 +279,6 @@ s13['victory'] = {
             if (k.level > 8 or a.level > 8 or e.level > 3) and not seen then
                 g:startTutorial("Experience and skill learning")
             end
-            g.callbacks['1-2-elaine'] = '1-2-elaine-callback'
         end
     }
 }
@@ -311,6 +310,162 @@ s13['elaine'] = {
         ),
         say(2, 2, false,
             "...You didn't hear any of that, did you?"
+        )
+    },
+    ['result'] = {}
+}
+
+s13['golem-battle'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem1', 'golem2'},
+    ['events'] = {
+        changeMusic('Threat-Revealed'),
+        focus(1, 200),
+        walk(false, 1, 60, 31, 'walk'),
+        pan(-150, -60, 100),
+        wait(2),
+        teleport(2, 71, 32),
+        br(function(g) return g.state['elaine-stays'] end, {
+            teleport(3, 72, 30)
+        }),
+        walk(false, 2, 60, 32, 'walk1'),
+        br(function(g) return g.state['elaine-stays'] end, {
+            walk(false, 3, 60, 30, 'walk2')
+        }),
+        wait(2),
+        say(2, 1, false, 
+            "Shanti!"
+        ),
+        say(4, 1, false, 
+            "Captain Kath. Captain Abelon."
+        ),
+        say(2, 1, false, 
+            "What's going on here? What are those things?"
+        ),
+        say(4, 1, false, 
+            "They suddenly attacked me. Help me fend them off, and I can explain."
+        ),
+        combatReady(1),
+        combatReady(2),
+        combatReady(3),
+        combatReady(4)
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            local shanti = g.sprites['shanti']
+            g.player:joinParty(shanti)
+            g:launchBattle('golem-battle')
+        end
+    }
+}
+
+s13['golem-battle-ally-turn-1'] = {
+    ['ids'] = {'shanti'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 1, false,
+            "They caught me off guard by rising up from underground. In my haste, I dropped my pack. \z
+             It has all of my ignea. I'll need help retrieving it."
+        )
+    },
+    ['result'] = {}
+}
+
+s13['golem-battle-demonic-spell'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        insertEvents(subscene_demonic)
+    },
+    ['result'] = {
+        ['state'] = 'kath-saw-spell'
+    }
+}
+
+s13['golem-battle-turnlimit-defeat'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        insertEvents(subscene_turnlimit_defeat)
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-kath-defeat'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        insertEvents(subscene_kath_defeat)
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-abelon-defeat'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        insertEvents(subscene_abelon_defeat)
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-elaine-defeat'] = {
+    ['ids'] = {'abelon', 'elaine', 'kath'},
+    ['events'] = {
+        focus(3, 170),
+        wait(0.5),
+        lookAt(3, 2),
+        say(2, 2, false,
+            "Ahhh!"
+        ),
+        say(3, 2, false,
+            "Elaine, no! Curses!"
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-shanti-defeat'] = {
+    ['ids'] = {'abelon', 'kath', 'shanti'},
+    ['events'] = {
+        focus(3, 170),
+        wait(0.5),
+        lookAt(2, 3),
+        say(3, 2, false,
+            "Tch..."
+        ),
+        say(2, 2, false,
+            "Shanti? Hey, Shanti, answer me! Oh no..."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-victory'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti'},
+    ['events'] = {
+        combatExit(1),
+        combatExit(2),
+        br(function(g) return g.state['elaine-stays'] end, {
+            combatExit(3)
+        }),
+        combatExit(4),
+        wait(1)
+    },
+    ['result'] = {}
+}
+
+s13['shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = {
+        face(1, 2),
+        say(2, 2, false,
+            "It's good to see you, Captain Abelon."
         )
     },
     ['result'] = {}

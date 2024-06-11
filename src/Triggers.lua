@@ -76,6 +76,10 @@ scene_triggers = {
         ['1-3-battle'] = mkAreaTrigger('1-3-battle', 'monastery-approach',
             function(x) return x > 12 and x < 28 end,
             function(y) return y < 47 end
+        ),
+        ['1-3-golem-battle'] = mkAreaTrigger('1-3-golem-battle', 'monastery-entrance',
+            function(x) return x > 42 and x < 65 end,
+            function(y) return true end
         )
     }
 }
@@ -201,6 +205,23 @@ battle_triggers = {
     ['1-3'] = {
         [SELECT] = {},
         [ALLY] = {},
+        [ENEMY] = {},
+        [END_ACTION] = {
+            ['demonic-spell'] = function(b)
+                local unseen = not b.game.state['kath-saw-spell']
+                local atk = b.status['abelon']['attack']
+                if unseen and atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
+                    return 'demonic-spell'
+                end
+                return false
+            end
+        }
+    },
+    ['1-3-golem-battle'] = {
+        [SELECT] = {},
+        [ALLY] = {
+            ['ally-turn1'] = mkTurnTrigger(1, ALLY),
+        },
         [ENEMY] = {},
         [END_ACTION] = {
             ['demonic-spell'] = function(b)

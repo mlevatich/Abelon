@@ -1,0 +1,26 @@
+// Battle stats
+
+TileOrigin: 45,24
+Allies: abelon:15,7 kath:15,8 elaine:15,6 shanti:7,3
+Enemies: golem1:8,5 golem2:9,8
+Order: golem1,golem2
+Wincon: rout
+Losscon: death
+Turnlimits: 7,6,6,5
+Music: A-Single-Shard-Of-Ignea
+
+// Battle grid
+
+Dimensions: 15,12
+FFFFFFTTFFFFFFF
+FFFFFTTTTFFFFFF
+FFTTTTTTTTFFFFF
+FTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTT
+FTTTTTTTTTTTTTT
+FFTTTTTTTTTTTTT
+FFFFFTTTTTTTTTT
+FFFFFFTTTTTTTTT
+FFFFFFFFFTTTTTT
+FFFFFFFFFFFFTTT

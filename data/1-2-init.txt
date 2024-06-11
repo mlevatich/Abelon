@@ -41,6 +41,10 @@
 
 ~~monastery-entrance Canopied-Steps
 
+~golem1 53 29 L
+~golem2 54 32 R
+~shanti 52 27 R
+
 ~~waiting-room Canopied-Steps
 
 ~campclutter2 1 1 L
