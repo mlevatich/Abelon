@@ -45,6 +45,7 @@ local title = nil
 -- total time, time of last frame
 local t = 0
 local lastframe = 0
+local was_long_frame = false
 
 -- Initialize window and start game
 function love.load(args)
@@ -102,10 +103,19 @@ end
 function love.update(dt)
 
     -- Cap framerate
-    local slack = FRAME_DUR - (love.timer.getTime() - lastframe)
+    local dt_actual = love.timer.getTime() - lastframe
+    local slack = FRAME_DUR - dt_actual
     if slack > 0 then love.timer.sleep(slack) end
 	lastframe = love.timer.getTime()
     t = t + dt
+
+    -- Log if there were two bad long frames in a row (indicates poor performance)
+    if slack < 0 and t > 1 then
+        if was_long_frame then log("WARN: " .. string.format("%.1f", 1 / dt_actual) .. "fps") end
+        was_long_frame = true
+    else
+        was_long_frame = false
+    end
 
     -- If in transition, check when we're finished with title
     if game and title then

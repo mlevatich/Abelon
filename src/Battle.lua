@@ -366,45 +366,49 @@ end
 
 function Battle:getSpriteRenderFlags(sp)
 
-    -- Sprite has acted and needs to be rendered monochrome
+    -- Use defaults if the sprite isn't in the battle
     local mono, alpha, skull = false, 1, false
-    if self.status[sp:getId()] and self.status[sp:getId()]['acted'] then
-        mono = true
-    end
+    if self.status[sp:getId()] then
 
-    if self:getStage() ~= STAGE_WATCH and self:getStage() ~= STAGE_LEVELUP then
-
-        -- Sprite is moving and original position should be translucent
-        if self:getSprite() == sp then
-            alpha = 0.5
-
-            local ns = ite(self.stack[5], {5,2}, ite(self.stack[2], {2}, {}))
-            for _,n in pairs(ns) do
-                local active_c = self.stack[n]['cursor']
-                local lb = self.stack[n]['leave_behind']
-                if lb then active_c = lb end
-                if  self.stack[1]['cursor'][1] == active_c[1]
-                and self.stack[1]['cursor'][2] == active_c[2] then
-                    alpha = 0
-                end
-            end
+        -- Sprite has acted and needs to be rendered monochrome
+        if self.status[sp:getId()]['acted'] then
+            mono = true
         end
         
-        -- Sprite is being moved by another action and should be translucent
-        local dry = self:dryrunAttack()
-        if dry then
-            for _,d in pairs(dry) do
-                if d['sp'] == sp then 
-                    if d['moved'] and not d['died'] then
-                        alpha = 0.5
-                    elseif d['died'] then
-                        alpha = 0.5
-                        mono = true
-                        skull = true
+        if self:getStage() ~= STAGE_WATCH and self:getStage() ~= STAGE_LEVELUP then
+
+            -- Sprite is moving and original position should be translucent
+            if self:getSprite() == sp then
+                alpha = 0.5
+    
+                local ns = ite(self.stack[5], {5,2}, ite(self.stack[2], {2}, {}))
+                for _,n in pairs(ns) do
+                    local active_c = self.stack[n]['cursor']
+                    local lb = self.stack[n]['leave_behind']
+                    if lb then active_c = lb end
+                    if  self.stack[1]['cursor'][1] == active_c[1]
+                    and self.stack[1]['cursor'][2] == active_c[2] then
+                        alpha = 0
                     end
                 end
             end
-        end
+            
+            -- Sprite is being moved by another action and should be translucent
+            local dry = self:dryrunAttack()
+            if dry then
+                for _,d in pairs(dry) do
+                    if d['sp'] == sp then 
+                        if d['moved'] and not d['died'] then
+                            alpha = 0.5
+                        elseif d['died'] then
+                            alpha = 0.5
+                            mono = true
+                            skull = true
+                        end
+                    end
+                end
+            end
+        end    
     end
     return mono, alpha, skull
 end

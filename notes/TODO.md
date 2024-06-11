@@ -10,13 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene work
 
-- Default 1-3 dialogue for Kath and Elaine
-
-- Party menu improvements
-    - Character's name is highlighted when they have unspent skill points
-    - Bespoke "recover ignea" option in pre-battle that uses ignea shards from player's inventory
-
-- Fix lag caused by crappy rendering of skill ranges in combat
+- Bespoke "recover ignea" option in pre-battle that uses ignea shards from player's inventory
 
 - Why am I sometimes able to walk through trees?
 
