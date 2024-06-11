@@ -326,11 +326,12 @@ function Sprite:toPartyMember()
     local hbox = self:buildAttributeBox()
 
     -- Put it all together!
+    local checkUnspent = function(g) if self.skill_points > 0 then return HIGHLIGHT end end
     local opts = { skills, learn }
     return MenuItem:new(self.name, opts, "See options for " .. self.name, {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
-    })
+    }, nil, nil, checkUnspent)
 end
 
 function Sprite:isLearnable(sk_id)
