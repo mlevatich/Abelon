@@ -5,23 +5,24 @@
 ~torch3 26 49 L down
 ~torch4 26 52 L down
 ~bloodrite 26 49 R
+~scroll 20 50.5 R
+~igneashard1 7 43 R
 ~marker 14 44.5 L
 
 ~~south-forest Canopied-Steps
 
+~medallion 45 28.5 R
 ~marker 6.4 12.6 R
 ~marker 15.4 23.6 L
 
 ~~west-forest Canopied-Steps
 
-~abelon 52 6 L P
-~elaine 54 5 L down
+~elaine 54 5 L
 ~kath 50 8 L
 ~book 56.5 6 R
 ~campfire 54 7 R down
 ~campbed 50.7 6 L
 ~campclutter1 56 8 R
-~igneashard2 28 12.8 R
 ~marker 33 15 R
 ~marker 50.8 1.5 R
 ~marker 47.2 1.5 L
@@ -38,6 +39,7 @@
 ~igneashard7 109 20 R
 ~igneashard8 107 29 L
 ~igneashard9 104 53 R
+~abelon 16 50 R P
 
 ~~monastery-entrance Canopied-Steps
 
@@ -54,20 +56,20 @@
 
 ->State saw-camp
 ->State carried-elaine
+->State elaine-stays
+->Day
+->Party kath
+->Party elaine
 ->Inventory journal
 ->Inventory medallion
 ->Inventory scroll
 ->Inventory igneashard1
-
-->Seen 1-2-battle
-->Day
-->Party kath
-->Party elaine
-->State elaine-stays
-//->elaine
-//+Level 2
-//+BonusAttrs force:1 focus:2
-//->abelon
-//+Exp 120
-//->kath
-//+Exp 90
+->Inventory igneashard2
+->Seen 1-3-entry
+->elaine
++Level 2
++BonusAttrs force:3
+->abelon
++Exp 90
+->kath
++Exp 90
