@@ -317,17 +317,17 @@ function Sprite:mkDiscard()
 end
 
 -- Sprite as a party member in a menu
-function Sprite:toPartyMember()
+function Sprite:toPartyMember(in_battle)
 
     local skills = self:mkSkillsMenu(true, false)
-
     local learn = self:mkLearnMenu()
-
+    local restore = self:mkRestoreIgneaMenu()
     local hbox = self:buildAttributeBox()
 
     -- Put it all together!
     local checkUnspent = function(g) if self.skill_points > 0 then return HIGHLIGHT end end
     local opts = { skills, learn }
+    if in_battle then table.insert(opts, restore) end
     return MenuItem:new(self.name, opts, "See options for " .. self.name, {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
@@ -466,6 +466,51 @@ function Sprite:mkLearnMenu()
     }, 'Learn new skills', hbox, nil, nil, checkUnspent)
 
     return learn
+end
+
+function Sprite:mkRestoreIgneaMenu()
+
+    -- Can we restore ignea?
+    local avail = #filter(function(sp) return sp.name == 'Ignea shard' end, self.game.player.inventory)
+    local needed = (self.ignea < self.attributes['focus'])
+
+    -- Descriptions/color
+    local name = 'Ignea (' .. avail .. ')'
+    local conf_desc = "Consume an ignea shard and recover 3 ignea?"
+    local desc = "Recover " .. self.name .. "'s ignea"
+    if avail == 0 then
+        desc = "You have no ignea shards"
+    elseif not needed then
+        desc = self.name .. " has enough ignea"
+    end
+
+    -- Action
+    if needed and avail > 0 then
+        local do_restore = function(g)
+            local inv = g.player.inventory
+            for i=1, #inv do
+                if inv[i].name == 'Ignea shard' then
+                    table.remove(inv, i)
+                    self.ignea = math.min(self.ignea + 3, self.attributes['focus'])
+                    break
+                end
+            end
+            g.battle:closeMenu()
+            g.battle:openBattleStartMenu()
+            local m = g.battle:getMenu()
+            m:hover(DOWN)
+            m:forward()
+            for i = 1, #g.player.party do
+                if g.player.party[i] == self then break end
+                m:hover(DOWN)
+            end
+            m:forward()
+            m:hover(DOWN)
+            m:hover(DOWN)
+        end
+        return MenuItem:new(name, {}, desc, nil, do_restore, conf_desc, function(g) return WHITE end)
+    end
+    return MenuItem:new(name, {}, desc, nil, nil, nil, function(g) return DISABLE end)
 end
 
 function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)

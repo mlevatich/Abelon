@@ -72,12 +72,12 @@ function Player:openInventory()
 
     -- Open inventory menu
     self:openMenu(
-        { inv_m, self:mkPartyMenu(), self:mkSettingsMenu(), self:mkQuitMenu() }
+        { inv_m, self:mkPartyMenu(false), self:mkSettingsMenu(), self:mkQuitMenu() }
     )
 end
 
-function Player:mkPartyMenu()
-    local party = mapf(function(sp) return sp:toPartyMember() end, self.party)
+function Player:mkPartyMenu(in_battle)
+    local party = mapf(function(sp) return sp:toPartyMember(in_battle) end, self.party)
     return MenuItem:new('Party', party, 'View traveling companions')
 end
 

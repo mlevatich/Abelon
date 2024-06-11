@@ -374,7 +374,7 @@ function Battle:getSpriteRenderFlags(sp)
         if self.status[sp:getId()]['acted'] then
             mono = true
         end
-        
+
         if self:getStage() ~= STAGE_WATCH and self:getStage() ~= STAGE_LEVELUP then
 
             -- Sprite is moving and original position should be translucent
@@ -623,7 +623,7 @@ function Battle:openBattleStartMenu()
         'View victory and defeat conditions', self:buildObjectivesBox()
     )
     local settings = self.player:mkSettingsMenu()
-    local party = self.player:mkPartyMenu()
+    local party = self.player:mkPartyMenu(true)
     local restart = MenuItem:new('Restart chapter', {}, 'Start the chapter over',
         nil, function(c) c:reloadChapter() end,
         "Are you SURE you want to restart the chapter? You will lose ALL \z

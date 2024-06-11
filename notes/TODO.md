@@ -10,10 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene work
 
-- Bespoke "recover ignea" option in pre-battle that uses ignea shards from player's inventory
-
-- Why am I sometimes able to walk through trees?
-
 - Living rock sprite
 - Living rock skills
 - Shanti skills
