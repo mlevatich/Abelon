@@ -93,7 +93,7 @@ s11['victory'] = {
     }
 }
 
-subscene_elaine_interact = {
+local subscene_elaine_interact = {
     choice({
         {
             ["guard"] = function(g) return true end,
@@ -282,7 +282,7 @@ s11['shanti'] = {
     }
 }
 
-subscene_sleep = {
+local subscene_sleep = {
     fade(-0.4),
     wait(3),
     teleport(3, 1, 1, 'waiting-room'),

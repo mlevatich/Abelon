@@ -2,7 +2,7 @@ require 'src.script.Util'
 
 sall = {}
 
-subscene_take_scroll = {
+local subscene_take_scroll = {
     say(2, 1, false, 
         "You carefully roll up the scroll and place it in your pack."
     )
@@ -89,7 +89,7 @@ sall['scroll'] = {
     }
 }
 
-subscene_take_medallion = {
+local subscene_take_medallion = {
     say(2, 1, false, 
         "You brush the dirt off of the medallion and place it in your pack."
     )

@@ -370,7 +370,7 @@ def convert(pyscript, chapter_independent):
                 results += sub_res
                 label_results[args['id'].lower()] = sub_res
                 new_fragments += sub_frags
-                new_fragments.append("subscene_{} = {{\n{}\n}}".format(args['id'].lower(), event_concat))
+                new_fragments.append("local subscene_{} = {{\n{}\n}}".format(args['id'].lower(), event_concat))
                 event_strs.append(mkJump(args, indent + 1))
                 i += 1
             elif ty == 'goto':

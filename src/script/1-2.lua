@@ -2,7 +2,7 @@ require 'src.script.Util'
 
 s12 = {}
 
-subscene_before_wolves = {
+local subscene_before_wolves = {
     lookAt(2, 1),
     say(2, 3, false, 
         "Lester woke up early and announced he was heading towards the ruins \z
@@ -495,7 +495,7 @@ s12['close-tutorial-4'] = {
     }
 }
 
-subscene_kath_defeat = {
+local subscene_kath_defeat = {
     focus(2, 170),
     wait(0.5),
     lookAt(1, 2),
@@ -514,7 +514,7 @@ s12['kath-defeat'] = {
     }
 }
 
-subscene_abelon_defeat = {
+local subscene_abelon_defeat = {
     focus(2, 170),
     wait(0.5),
     lookAt(2, 1),
@@ -551,7 +551,7 @@ s12['elaine-defeat'] = {
     }
 }
 
-subscene_turnlimit_defeat = {
+local subscene_turnlimit_defeat = {
     focus(2, 170),
     wait(0.5),
     lookAt(1, 2),
@@ -575,7 +575,7 @@ s12['turnlimit-defeat'] = {
     }
 }
 
-subscene_demonic = {
+local subscene_demonic = {
     focus(2, 170),
     face(2, 1),
     say(2, 3, true, 
@@ -872,7 +872,7 @@ s12['ally-turn-3'] = {
     }
 }
 
-subscene_dont_know = {
+local subscene_dont_know = {
     say(2, 2, true, 
         "You... don't know? Abelon, you aren't making any sense. What's going \z
          on here? Are you feeling alright?"
@@ -924,27 +924,27 @@ subscene_dont_know = {
     )
 }
 
-subscene_question_time = {
+local subscene_question_time = {
     say(2, 3, false,
         "Well, now that she's safe with us, I believe some questions are in \z
          order."
     )
 }
 
-subscene_tactically = {
+local subscene_tactically = {
     say(2, 3, false,
         "Thinking tactically, as always."
     )
 }
 
-subscene_question_time2 = {
+local subscene_question_time2 = {
     say(2, 3, false,
         "...Sigh. At least she's here now. I expect she's exhausted, but I'm \z
          sure you'd agree, Abelon, that some questions are in order."
     )
 }
 
-subscene_bye_elaine = {
+local subscene_bye_elaine = {
     say(2, 3, false, 
         "Let me get you some of our rations. And a compass. Come have a look \z
          at this map."
@@ -1032,7 +1032,7 @@ subscene_bye_elaine = {
     )
 }
 
-subscene_elaine_goes_home = {
+local subscene_elaine_goes_home = {
     say(2, 2, false, 
         "...I see. I can't say I share your point of view, but if Elaine \z
          isn't sure, I'll defer to your judgement. Outside the city, following \z
@@ -1044,7 +1044,7 @@ subscene_elaine_goes_home = {
     insertEvents(subscene_bye_elaine)
 }
 
-subscene_welcome_elaine = {
+local subscene_welcome_elaine = {
     say(2, 1, false, 
         "It's decided. Elaine, you'll join us until we've achieved our goals \z
          in the valley and can go home."
@@ -1095,7 +1095,7 @@ subscene_welcome_elaine = {
     )
 }
 
-subscene_elaine_decide = {
+local subscene_elaine_decide = {
     choice({
         {
             ["guard"] = function(g) return true end,
@@ -2528,7 +2528,7 @@ s12['close-tutorial-lvl'] = {
     }
 }
 
-subscene_read_book = {
+local subscene_read_book = {
     say(2, 1, false, 
         "The open, two-page spread is taken up entirely by a map hand-drawn in \z
          ink. It depicts a winding valley of trees vertically dividing two large \z
