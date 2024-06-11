@@ -216,6 +216,10 @@ function Game:loadFresh()
                         v.lit = 0.0
                     end
                 end
+            elseif fname == 'Block' then
+                for i=1, #vals do
+                    self.current_map:blockExit(vals[i])
+                end
             else
                 sprite_ff = self.sprites[fname]
             end

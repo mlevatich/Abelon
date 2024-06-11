@@ -52,22 +52,12 @@
 ~wolf4 1 1 L
 ~shadow 1 1 L
 
-->State saw-camp
-->State carried-elaine
-->Inventory journal
-->Inventory medallion
-->Inventory scroll
-->Inventory igneashard1
+->State saw-camp,carried-elaine
+->Inventory journal,medallion,scroll,igneashard1
+->abelon
++Exp 30
 
-->Seen 1-2-battle
-->Day
-->Party kath
-->Party elaine
-->State elaine-stays
-//->elaine
-//+Level 2
-//+BonusAttrs force:1 focus:2
-//->abelon
-//+Exp 120
-//->kath
-//+Exp 90
+//->Day
+//->Seen 1-2-battle
+//->Party kath,elaine
+//->State elaine-stays

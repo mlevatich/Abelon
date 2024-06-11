@@ -54,21 +54,16 @@
 ~wolf4 1 1 L
 ~shadow 1 1 L
 
-->State saw-camp
-->State carried-elaine
-->State elaine-stays
-->Day
-->Party kath
-->Party elaine
-->Inventory journal
-->Inventory medallion
-->Inventory scroll
-->Inventory igneashard1
-->Inventory igneashard2
 ->Seen 1-3-entry
+->State saw-camp,carried-elaine,elaine-stays
+->Party kath,elaine
+->Inventory journal,medallion,scroll,igneashard1,igneashard2
+->Day
+->Block west-forest
 ->elaine
-+Level 2
-+BonusAttrs force:3
++Level 1
++BonusAttrs force:2
++Exp 10
 ->abelon
 +Exp 90
 ->kath
