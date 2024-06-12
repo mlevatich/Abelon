@@ -10,10 +10,11 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- Shanti attributes and skills
-- Golem attributes and skills
-- Enemy AI for multiple and multi-target skills
-- Implement side objective: recover Shanti's ignea
+- If there are caster dryrun effects and the caster is a targeted sprite, merge effects
+- Enemy prefers moves that put it adjacent to target, then moves that use least movement
+- Golem attributes
+- Implement side objective: recover Shanti's belongings
+- Implement reinforcements/turn limit/escape for golem battle
 - Balance golem battle
 
 - 1-4 transition scene, evening

@@ -77,7 +77,7 @@ function love.load(args)
 
     -- Start from title screen (or load from a chapter file in debug mode)
     if debug and args[2] then
-        game = Game:new(args[2], NORMAL)
+        game = Game:new(args[2], MASTER)
         game:saveChapter()
     else
         title = Title:new()
