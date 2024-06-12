@@ -4,7 +4,7 @@ Name: Elaine
 Ground: no
 Shadow: yes
 Interactive: yes
-Hitbox: 7,21,20,11
+Hitbox: 4,21,23,11
 Discard: no
 Present:
 Level: 3
