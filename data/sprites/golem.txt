@@ -8,10 +8,10 @@ Hitbox: 11,30,28,26
 Discard: no
 Present:
 Level: 10
-Attributes: endurance:30 focus:12 force:35 affinity:0 reaction:20 agility:12
-AttributesAdept: endurance:17 focus:0 force:15 affinity:0 reaction:3 agility:12
-AttributesNormal: endurance:16 focus:0 force:13 affinity:0 reaction:1 agility:11
-AttributesNovice: endurance:16 focus:0 force:10 affinity:0 reaction:0 agility:11
+Attributes: endurance:30 focus:4 force:35 affinity:0 reaction:20 agility:10
+AttributesAdept: endurance:27 focus:12 force:30 affinity:0 reaction:15 agility:9
+AttributesNormal: endurance:24 focus:11 force:25 affinity:0 reaction:10 agility:8
+AttributesNovice: endurance:20 focus:10 force:20 affinity:0 reaction:10 agility:7
 Skilltrees:
 Skills: bludgeon,shockwave
 Description: Animate stone.

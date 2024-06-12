@@ -145,8 +145,10 @@ function Battle:readEntities(data, idx)
             sp:resetPosition(x, y)
 
             -- If an enemy, prepare their first skill
-            if self.status[sp:getId()]['team'] == ENEMY then
-                self:prepareSkill(sp)
+            if self.status[sp:getId()]['team'] == ENEMY then 
+                if v[3] then
+                    self:prepareSkill(sp, tonumber(v[3]))
+                end
             end
         end
     end
@@ -733,8 +735,8 @@ function Battle:openAttackMenu()
     local skills_menu = sp:mkSkillsMenu(true, false, attrs)
     local weapon = skills_menu.children[1]
     local spell = skills_menu.children[2]
-    for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i]) end
-    for i = 1, #spell.children do self:mkUsable(sp, spell.children[i]) end
+    for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i], sp.ignea) end
+    for i = 1, #spell.children do self:mkUsable(sp, spell.children[i], sp.ignea) end
     local opts = { weapon, spell, wait }
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
@@ -752,7 +754,7 @@ function Battle:openAssistMenu()
     )
     local skills_menu = sp:mkSkillsMenu(true, false, attrs, hp, ign)
     local assist = skills_menu.children[3]
-    for i = 1, #assist.children do self:mkUsable(sp, assist.children[i]) end
+    for i = 1, #assist.children do self:mkUsable(sp, assist.children[i], ign) end
     local opts = { assist, wait }
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
@@ -968,14 +970,11 @@ function Battle:getCursorSuggestion(sp, sk)
     return options[most_hit_i]
 end
 
-function Battle:mkUsable(sp, sk_menu)
+function Battle:mkUsable(sp, sk_menu, ign_left)
     local sk = skills[sk_menu.id]
     sk_menu.hover_desc = 'Use ' .. sk_menu.name
-    local ignea_spent = sk.cost
-    local sk2 = self:getSkill()
-    if sk2 then ignea_spent = ignea_spent + sk2.cost end
     local obsrv = hasSpecial(self.status[sp:getId()]['effects'], {}, 'observe')
-    if sp.ignea < ignea_spent or (sk.id == 'observe' and obsrv) then
+    if ign_left < sk.cost or (sk.id == 'observe' and obsrv) then
         sk_menu.setPen = function(g) return DISABLE end
     else
         sk_menu.setPen = function(g) return WHITE end
@@ -1245,11 +1244,14 @@ function Battle:dryrunAttributes(standing, other)
         local dry = self:dryrunAttack()
         if dry['caster'] then
             eff = dry['caster']['new_stat']
+            hp = sp.health - dry['caster']['flat']
+            ign = ign - dry['caster']['flat_ignea']
         else
             for i=1, #dry do
                 if dry[i]['sp'] == sp then
                     eff = dry[i]['new_stat']
                     hp = sp.health - dry[i]['flat']
+                    ign = ign - dry[i]['flat_ignea']
                     break
                 end
             end
@@ -1284,15 +1286,26 @@ function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
     local t = self:skillRange(atk, dir, atk_c)
     local ts = {}
     local ts_a = {}
+    local enemies_hit = {}
     for k = 1, #t do
         local space = grid[t[k][1]][t[k][2]]
         local target = space.occupied
         if target then
             table.insert(ts, target)
             table.insert(ts_a, ite(self:isAlly(target), space.assists, {}))
+            if not self:isAlly(target) then
+                table.insert(enemies_hit, target)
+            end
         end
     end
-    return atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
+    if not dryrun then
+        local moved, hurt, dead, exp_gained = atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
+        -- In case target lost ignea and needs to prepare a different skill
+        for k=1, #enemies_hit do self:prepareSkill(enemies_hit[k], nil, true) end
+        return moved, hurt, dead, exp_gained
+    else
+        return atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
+    end
 end
 
 function Battle:kill(sp)
@@ -1930,15 +1943,22 @@ function Battle:updateBattleCam()
 end
 
 -- Prepare this sprite's next skill
-function Battle:prepareSkill(e, used)
+function Battle:prepareSkill(e, i, no_increment, spent)
 
-    -- TODO: skill selection strategy (currently just cycles through all skills)
-    local prev = 0
+    if not spent then spent = 0 end
+
     local stat = self.status[e:getId()]
-    if stat['prepare'] then prev = stat['prepare']['index'] end
-    local i = (prev) % #e.skills + 1
+    if not i then
+        local prev = 0
+        if stat['prepare'] then prev = stat['prepare']['index'] end
+        i = ite(no_increment, prev, prev % #e.skills + 1)
+    end
     local sk = e.skills[i]
-    self.status[e:getId()]['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio }, ['index'] = i }
+    while sk.cost > e.ignea - spent do
+        i = i % #e.skills + 1
+        sk = e.skills[i]
+    end
+    stat['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio }, ['index'] = i }
 end
 
 function Battle:planTarget(e, plan)
@@ -2223,12 +2243,16 @@ function Battle:planNextEnemyAction()
     -- Prepare the first enemy's action, taking into account what the
     -- following enemies are planning and would prefer
     local m_c, a_c, _ = self:planAction(e, plans[1], plans)
-    self:prepareSkill(e, ite(a_c, true, false))
 
     -- Declare next enemy action to be played as an action stack
     local move = { ['cursor'] = m_c, ['sp'] = e }
     local attack = ite(a_c, { ['cursor'] = a_c, ['sk'] = plans[1]['sk'] }, {})
     self.enemy_action = { self:stackBase(), move, {}, attack, move, {}, {} }
+
+    -- Prepare the skill this enemy will use next turn, accounting for any ignea they spent
+    local spent = 0
+    if attack['sk'] then spent = attack['sk'].cost end
+    self:prepareSkill(e, nil, false, spent)
 end
 
 function Battle:renderCursors()
@@ -2795,7 +2819,8 @@ end
 
 function Battle:boxElementsFromDryrun(sp, sk, result)
     local hp = sp.health - result['flat']
-    local ign = ite(sp == self:getSprite(), sp.ignea - sk.cost, sp.ignea)
+    local ign = sp.ignea - result['flat_ignea']
+    if sp == self:getSprite() then ign = ign - sk.cost end
     return self:boxElementsFromInfo(sp, hp, ign, result['new_stat'])
 end
 
@@ -2919,7 +2944,7 @@ function Battle:renderHoverBoxes()
             if sp and v['sp'] == sp then res = v end
         end
         if sp and not res then
-            res = { ['flat'] = 0, ['new_stat'] = self.status[sp:getId()]['effects'] }
+            res = { ['flat'] = 0, ['flat_ignea'] = 0, ['new_stat'] = self.status[sp:getId()]['effects'] }
         end
     end
 

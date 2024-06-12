@@ -167,6 +167,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
             dryrun_res[z] = {
                 ['sp'] = t,
                 ['flat'] = 0,
+                ['flat_ignea'] = 0,
                 ['percent'] = 0,
                 ['new_stat'] = t_stat,
                 ['died'] = false
@@ -360,8 +361,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 end
 
                 -- Additional effects given by the 'and' modifier
-                if not dryrun and modifiers['and'] then
-                    modifiers['and'](sp, sp_tmp_attrs, t, t_tmp_attrs, status)
+                if modifiers['and'] then
+                    modifiers['and'](sp, sp_tmp_attrs, t, t_tmp_attrs, status, dryrun, dryrun_res[z])
                 end
 
                 z = z + 1
@@ -385,14 +386,22 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
         status_xp = math.min(status_xp + exp, EXP_STATUS_MAX)
     end
-    if #sp_effects > 0 or modifiers['lifesteal'] then
-        dryrun_res['caster'] = { ['sp'] = sp, ['flat'] = 0, ['new_stat'] = sp_stat }
+    if #sp_effects > 0 or modifiers['lifesteal'] or modifiers['igneadrain'] then
+        dryrun_res['caster'] = { ['sp'] = sp, ['flat'] = 0, ['flat_ignea'] = 0, ['new_stat'] = sp_stat }
         if modifiers['lifesteal'] then
             local heal = math.floor(total_dealt * modifiers['lifesteal'])
             local healed = math.min(sp.attributes['endurance'] * 2 - sp.health, heal)
             dryrun_res['caster']['flat'] = -healed
             if not dryrun then
                 sp.health = sp.health + healed
+            end
+        end
+        if modifiers['igneadrain'] then
+            local drain = math.floor(total_dealt * modifiers['igneadrain'])
+            local drained = math.min(sp.attributes['focus'] - (sp.ignea - self.cost), drain)
+            dryrun_res['caster']['flat_ignea'] = -drained
+            if not dryrun then
+                sp.ignea = sp.ignea + drained
             end
         end
     end
@@ -1245,20 +1254,22 @@ skills = {
         ALLY, nil,
         { { { 'special', 'observe', BUFF }, math.huge } }, nil, nil,
         { ['and'] =
-            function(a, a_a, b, b_a, st)
-                best_attr = nil
-                hi = 0
-                if b:getId() == 'kath' then
-                    best_attr = 'reaction'
-                else
-                    for k,v in pairs(b.attributes) do
-                        if v > hi then
-                            hi = v
-                            best_attr = k
+            function(a, a_a, b, b_a, st, dry, dry_res)
+                if not dry then
+                    best_attr = nil
+                    hi = 0
+                    if b:getId() == 'kath' then
+                        best_attr = 'reaction'
+                    else
+                        for k,v in pairs(b.attributes) do
+                            if v > hi then
+                                hi = v
+                                best_attr = k
+                            end
                         end
                     end
+                    a.attributes[best_attr] = a.attributes[best_attr] + 1
                 end
-                a.attributes[best_attr] = a.attributes[best_attr] + 1
             end
         }
     ),
@@ -1472,6 +1483,30 @@ skills = {
         nil, nil, nil, nil, nil, nil,
         { { 'force', Scaling:new(15, 'affinity', 0.3) } }, { EXP_TAG_ATTACK }
     ),
+    ['drain'] = Skill:new('drain', 'Drain', nil, nil,
+        "Shanti deals %s Spell damage and drain the enemy's ignea by 4, \z
+         recovering the same amount.",
+        'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Lanternfaire', 0 }, { 'Sorceress', 0 } },
+        { { F, T, T, T, F },
+          { F, T, T, T, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
+        ENEMY, Scaling:new(4),
+        nil, nil, nil,
+        {
+            ['igneadrain'] = 1.0,
+            ['and'] =
+                function(a, a_a, b, b_a, st, dry, dry_res)
+                    if dry then
+                        dry_res['flat_ignea'] = dry_res['flat_ignea'] + 4
+                    else
+                        b.ignea = math.max(0, b.ignea - 4)
+                    end
+                end
+        }
+    ),
 
 
     -- ENEMY
@@ -1488,21 +1523,22 @@ skills = {
          %s Weapon damage.",
         'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- GRID
         {},
-        { { F, T, F },
+        { { F, F, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
-        ALLY, Scaling:new(0, 'force', 1.5)
+        ALLY, Scaling:new(0, 'force', 1.0)
     ),
     ['shockwave'] = Skill:new('shockwave', 'Shockwave', nil, nil,
-        "Emit a powerful ignaeic shockwave. Deals \z
-        %s Spell damage to nearby enemies.",
+        "Emit an ignaeic shockwave. Deals \z
+        %s Spell damage to nearby enemies and lowers their Agility by 4 for 1 turn.",
         'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- GRID
         {},
         { { F, F, T, F, F },
           { F, T, T, T, F },
           { T, T, F, T, T },
           { F, T, T, T, F },
-          { F, F, T, F, F } }, SELF_CAST_AIM, 2,
-        ALLY, Scaling:new(0, 'force', 0.5)
-),
+          { F, F, T, F, F } }, SELF_CAST_AIM, 4,
+        ALLY, Scaling:new(0, 'force', 0.5),
+        nil, { { { 'agility', Scaling:new(-4) }, 2 } }
+    )
 }
