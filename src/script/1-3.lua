@@ -331,7 +331,7 @@ s13['golem-battle'] = {
         br(function(g) return g.state['elaine-stays'] end, {
             walk(false, 3, 60, 30, 'walk2')
         }),
-        wait(2),
+        wait(3),
         say(2, 1, false, 
             "Shanti!"
         ),
@@ -344,10 +344,17 @@ s13['golem-battle'] = {
         say(4, 1, false, 
             "They suddenly attacked me. Help me fend them off, and I can explain."
         ),
+        br(function(g) return not g.state['elaine-stays'] end, {
+            waitForEvent('walk1')
+        }),
+        br(function(g) return g.state['elaine-stays'] end, {
+            waitForEvent('walk2')
+        }),
         combatReady(1),
         combatReady(2),
         combatReady(3),
-        combatReady(4)
+        combatReady(4),
+        wait(1.5)
     },
     ['result'] = {
         ['do'] = function(g)
