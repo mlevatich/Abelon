@@ -1478,7 +1478,7 @@ skills = {
     ['bite'] = Skill:new('bite', 'Bite', nil, nil,
         "Leap at an adjacent enemy and bite into them. Deals \z
          %s Weapon damage to an enemy next to the user.",
-        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, str_to_icon['force'], -- RELATIVE
+        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { T } }, DIRECTIONAL_AIM, 0,
         ALLY, Scaling:new(0, 'force', 1.0)
