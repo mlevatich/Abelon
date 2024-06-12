@@ -139,7 +139,9 @@ function Battle:readEntities(data, idx)
             }
             local x_tile = self.origin_x + v[1]
             local y_tile = self.origin_y + v[2]
-            local x, y = tileToPixels(x_tile, y_tile)
+            local sp_size_x_offset = (-1 * (sp.w - TILE_WIDTH) / 2 - 0.5) / TILE_WIDTH
+            local sp_size_y_offset = (-1 * (sp.h - TILE_HEIGHT) - 1) / TILE_HEIGHT
+            local x, y = tileToPixels(x_tile + sp_size_x_offset, y_tile + sp_size_y_offset)
             sp:resetPosition(x, y)
 
             -- If an enemy, prepare their first skill
@@ -1307,13 +1309,20 @@ function Battle:pathToWalk(sp, path, next_sk)
             d()
         end)
     end
+    local sp_size_x_offset = -1 * (sp.w - TILE_WIDTH) / 2 - 0.5
+    local sp_size_y_offset = -1 * (sp.h - TILE_HEIGHT) - 1
     for i = 1, #path do
         table.insert(move_seq, function(d)
             self.skill_in_use = next_sk
-            return sp:walkToBehaviorGeneric(function()
-                self:moveSprite(sp, path[i][2], path[i][1])
-                d()
-            end, self.origin_x + path[i][2], self.origin_y + path[i][1], true)
+            return sp:walkToBehaviorGeneric(
+                function()
+                    self:moveSprite(sp, path[i][2], path[i][1])
+                    d()
+                end,
+                self.origin_x + path[i][2] + sp_size_x_offset / TILE_WIDTH, 
+                self.origin_y + path[i][1] + sp_size_y_offset / TILE_HEIGHT,
+                true
+            )
         end)
     end
     return move_seq
@@ -1392,9 +1401,11 @@ function Battle:playAction()
                 any_displaced = true
                 local t = moved[i]['sp']
                 if not find(dead, t) then
+                    local sp_size_x_offset = (-1 * (t.w - TILE_WIDTH) / 2 - 0.5) / TILE_WIDTH
+                    local sp_size_y_offset = (-1 * (t.h - TILE_HEIGHT) - 1) / TILE_HEIGHT
                     t:behaviorSequence({ function(d)
-                        local to_x = self.origin_x + moved[i]['x']
-                        local to_y = self.origin_y + moved[i]['y']
+                        local to_x = self.origin_x + moved[i]['x'] + sp_size_x_offset
+                        local to_y = self.origin_y + moved[i]['y'] + sp_size_y_offset
                         return t:walkToBehaviorGeneric(function()
                             t:changeBehavior('battle')
                             if abs(t.x - sp.x) > TILE_WIDTH / 2 then
@@ -2282,11 +2293,13 @@ function Battle:renderSpriteImage(x, y, sp, dir, a)
     else
         love.graphics.setColor(1, 1, 1, a)
     end
+    local sp_size_x_offset = -1 * (sp.w - TILE_WIDTH) / 2 - 0.5
+    local sp_size_y_offset = -1 * (sp.h - TILE_HEIGHT) - 1
     love.graphics.draw(
         spritesheet,
         sp:getCurrentQuad(),
-        TILE_WIDTH * (x + self.origin_x - 1) + sp.w / 2,
-        TILE_HEIGHT * (y + self.origin_y - 1) + sp.h / 2,
+        TILE_WIDTH * (x + self.origin_x - 1) + sp.w / 2 + sp_size_x_offset,
+        TILE_HEIGHT * (y + self.origin_y - 1) + sp.h / 2 + sp_size_y_offset,
         0,
         dir,
         1,
@@ -2441,13 +2454,16 @@ end
 
 function Battle:renderHealthbar(sp, x, y, ratio)
     
+    local sp_size_x_offset = -1 * (sp.w - TILE_WIDTH) / 2 - 0.5
+    local sp_size_y_offset = -1 * (sp.h - TILE_HEIGHT) - 1
     y = y + sp.h + ite(self.pulse, 0, -1) - 1
+    x = x + 3
     love.graphics.setColor(0, 0, 0, 1)
-    love.graphics.rectangle('fill', x + 3, y, sp.w - 6, 3)
+    love.graphics.rectangle('fill', x + sp_size_x_offset, y + sp_size_y_offset, sp.w - 6, 3)
     love.graphics.setColor(0.4, 0, 0.2, 1)
-    love.graphics.rectangle('fill', x + 3, y, (sp.w - 6) * ratio, 3)
+    love.graphics.rectangle('fill', x + sp_size_x_offset, y + sp_size_y_offset, (sp.w - 6) * ratio, 3)
     love.graphics.setColor(0.3, 0.3, 0.3, 1)
-    love.graphics.rectangle('line', x + 3, y, sp.w - 6, 3)
+    love.graphics.rectangle('line', x + sp_size_x_offset, y + sp_size_y_offset, sp.w - 6, 3)
 end
 
 function Battle:renderStatus(x, y, statuses)
@@ -2507,6 +2523,10 @@ function Battle:renderSpriteOverlays()
             local x, y = sp:getPositionOnScreen()
             local ratio = sp.health / (sp.attributes['endurance'] * 2)
             local statuses = self.status[sp:getId()]['effects']
+
+            -- Adjust for sprite size
+            x = x + (sp.w - TILE_WIDTH) / 2 + 0.5
+            y = y + (sp.h - TILE_WIDTH) + 1
 
             -- If we aren't watching an action play out!
             local s = self:getStage()

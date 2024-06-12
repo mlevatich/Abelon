@@ -32,6 +32,7 @@
 
 ~~monastery-approach Canopied-Steps
 
+//~abelon 16 50 R P
 ~igneashard3 9 71 R
 ~igneashard4 52 76 L
 ~igneashard5 67 3 R
@@ -39,14 +40,13 @@
 ~igneashard7 109 20 R
 ~igneashard8 107 29 L
 ~igneashard9 104 53 R
-//~abelon 16 50 R P
-~abelon 109 20 R P
 
 ~~monastery-entrance Canopied-Steps
 
-~golem1 53 29 L
-~golem2 54 32 R
+~golem1 52.6875 28.1875 L
+~golem2 53.6875 31.1875 R
 ~shanti 52 27 R
+~abelon 66 32 R P
 
 ~~waiting-room Canopied-Steps
 
@@ -60,7 +60,8 @@
 ~shadow 1 1 L
 
 ->Seen 1-3-entry
-->State saw-camp,carried-elaine,elaine-stays
+->State saw-camp,carried-elaine
+->State elaine-stays
 ->Party kath,elaine
 ->Inventory journal,medallion,scroll,igneashard1,igneashard2
 ->Day

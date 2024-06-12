@@ -1433,8 +1433,8 @@ function Sprite:render()
         love.graphics.draw(
             spritesheet,
             sp_shadow:getCurrentQuad(),
-            self.x + 15.5,
-            self.y + 31,
+            self.x + self.w / 2,
+            self.y + self.h,
             0,
             self.dir,
             1,
@@ -1463,7 +1463,8 @@ function Sprite:render()
     if skull then
         local y_off = ite(b.pulse, 0, 1)
         love.graphics.draw(icon_texture, status_icons[5],
-            self.x + self.w / 2 - 3, self.y + 11
+            self.x + self.w / 2 - 3, 
+            self.y + 11 + (self.h - TILE_WIDTH) + 1
         )
     end
 
