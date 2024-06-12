@@ -335,13 +335,14 @@ s13['golem-battle'] = {
         say(2, 1, false, 
             "Shanti!"
         ),
+        introduce('shanti'),
         say(4, 1, false, 
             "Captain Kath. Captain Abelon."
         ),
-        say(2, 1, false, 
+        say(2, 3, false, 
             "What's going on here? What are those things?"
         ),
-        say(4, 1, false, 
+        say(4, 3, false, 
             "They suddenly attacked me. Help me fend them off, and I can explain."
         ),
         br(function(g) return not g.state['elaine-stays'] end, {
@@ -369,7 +370,7 @@ s13['golem-battle-ally-turn-1'] = {
     ['ids'] = {'shanti'},
     ['events'] = {
         focus(1, 170),
-        say(1, 1, false,
+        say(1, 2, false,
             "They caught me off guard by rising up from underground. In my haste, I dropped my pack. \z
              It has all of my ignea. I'll need help retrieving it."
         )
@@ -441,7 +442,7 @@ s13['golem-battle-shanti-defeat'] = {
         focus(3, 170),
         wait(0.5),
         lookAt(2, 3),
-        say(3, 2, false,
+        say(3, 3, false,
             "Tch..."
         ),
         say(2, 2, false,
@@ -471,7 +472,7 @@ s13['shanti'] = {
     ['ids'] = {'abelon', 'shanti'},
     ['events'] = {
         face(1, 2),
-        say(2, 2, false,
+        say(2, 1, false,
             "It's good to see you, Captain Abelon."
         )
     },
