@@ -29,7 +29,6 @@ Goal for Mona:
 
 #### Abelon
 
-Ideas:
 - Demon: Spell: The Contract: Invoke The Contract
 - Demon: Spell: Retribution: Enemies that attack Abelon suffer a big debuff. Moderate cost.
 - Demon: Assist: ???:
@@ -76,23 +75,11 @@ Ideas:
 
 #### Shanti
 
-- Lanternfaire: Weapon: Heavy Swing: bring down lantern on enemy. attack an adjacent target, no cost, 1.0 force weapon damage
-- Lanternfaire: Weapon: Knockback: push three enemies back (same range as sweep), deal Force * 0.5 weapon damage. Free.
-- Lanternfaire: Weapon: Prepare Lantern: Free, reduces all Ignea costs by one for four turns.
-- Lanternfaire: Weapon: Throw Lantern: Thrown lantern explodes.
 - Lanternfaire: Weapon: Study: Does nothing, prep for findings.
-- Lanternfaire: Assist: Shine: no cost, provides small unique effect in a large radius, scales with affinity
 - Lanternfaire: Assist: Findings: Big buff to allies if used Study previously. Scales with affinity.
-- Lanternfaire: Assist: Bleed Vitality: long range singe target (like inspire), give an ally 1.0 lifesteal (no scaling).
-- Lanternfaire: Assist: Bleed Ignea: single target assist, give an ally on-hit ignea drain scaling with affinity.
-- Sorceress: Spell: Searing Light: 1.0 force spell damage, 1 ignea cost. L shaped range (think knight in chess)
-- Sorceress: Spell: Detonate: 10 + 1.0 Focus spell damage, costing moderate ignea. Diagonal range.
-- Sorceress: Spell: Berserk: Free aim with small AOE. Raises enemy force by 10, lowers reaction by Focus * 0.5, 2 turns. Low cost.
-- Sorceress: Spell: Gravity: Damage five enemies (similar to guardian angel range) and pull them in a lot.
 - Sorceress: Spell: Illuminate: Some kind of non-attacking skill based on Agility. Something funky.
 - Sorceress: Spell: Radiance: big aoe, big damage, big cost. Force scaling
 - Sorceress: Spell: Hail of Ignea: Target a ring far away from Shanti. Enemies take damage scaling with Focus. Allies caught in it recover 1 ignea.
-- Sorceress: Assist: Hypnotize: moderate cost, heavily improves force for nearby ally, scales minimally with affinity
 - Sorceress: Assist: Renewal: Massive cost. allies who kill an enemy while on the assist and end their turn on it have their turn refreshed.
 
 #### Mona

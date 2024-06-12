@@ -8,7 +8,7 @@ Hitbox: 4,21,23,11
 Discard: no
 Present:
 Level: 3
-Attributes: endurance:6 focus:0 force:8 affinity:8 reaction:0 agility:10
+Attributes: endurance:6 focus:0 force:8 affinity:9 reaction:0 agility:10
 AttributesAdept:
 AttributesNormal:
 AttributesNovice:
