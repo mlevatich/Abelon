@@ -1450,11 +1450,22 @@ skills = {
         nil, nil,
         { UP, 1 }
     ),
+    ['lasso'] = Skill:new('lasso', 'Lasso', nil, nil,
+        "Shanti equips a long chain and flings her lantern, ensnaring an enemy \z
+         and lowering its Agility by %s for 1 turn.",
+        'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Lanternfaire', 3 }, { 'Sorceress', 0 } },
+        { { F, T, F },
+          { F, F, F },
+          { F, F, F } }, DIRECTIONAL_AIM, 0,
+        ENEMY, nil,
+        nil, { { { 'agility', Scaling:new(0, 'reaction', -1.0) }, 1 } }
+    ),
     ['ignite_lantern'] = Skill:new('ignite_lantern', 'Ignite Lantern', nil, nil,
         "Shanti lights her lantern with activated ignea to draw from, reducing all of her \z
          ignea costs by 1 for 5 turns.",
         'Lanternfaire', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 3 }, { 'Sorceress', 3 } },
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 3 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
         nil, { { { 'special', 'ignea_efficiency', BUFF }, 5 } } -- TODO: implement reduced costs
@@ -1535,7 +1546,7 @@ skills = {
     ['bleed_vitality'] = Skill:new('bleed_vitality', 'Bleed Vitality', nil, nil,
         "Shanti empowers the assisted ally's attacks to heal them for %s %% of the damage dealt.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 3 }, { 'Sorceress', 4 } },
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1549,7 +1560,7 @@ skills = {
     ['bleed_ignea'] = Skill:new('bleed_ignea', 'Bleed Ignea', nil, nil,
         "Shanti empowers the assisted ally's attacks to restore ignea equal to %s %% of the damage dealt.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
+        { { 'Lanternfaire', 5 }, { 'Sorceress', 4 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
