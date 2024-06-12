@@ -546,7 +546,7 @@ function Skill:mkSkillBox(itex, icons, with_skilltrees, with_prio, attrs)
             mkEle('text', {'  to learn  '}, req_x, req_y + LINE_HEIGHT * 3)
         })
         for i=1, #self.reqs do
-            local tree_base = (3 - #self.reqs) * BOX_MARGIN
+            local tree_base = (3 - #self.reqs) * BOX_MARGIN + 2
             table.insert(hbox,
                 mkEle('image',
                     icons[str_to_icon[self.reqs[i][1]]], req_x + tree_base + BOX_MARGIN * (i-1) * 2, req_y, itex
