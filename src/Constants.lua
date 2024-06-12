@@ -138,7 +138,9 @@ EFFECT_NAMES = {
     ['hidden']           = "Hidden",
     ['flight']           = "Flight",
     ['flanking']         = "Flanking",
-    ['ignea_efficiency'] = "-1 Ignea Costs"
+    ['ignea_efficiency'] = "-1 Ignea Costs",
+    ['lifesteal']        = "Lifesteal",
+    ['igneadrain']       = "Drain Ignea"
 }
 
 ATTRIBUTE_DESC = {

@@ -132,7 +132,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     -- Temporary attributes and special effects for the caster
     local sp_team = status[sp:getId()]['team']
     local sp_stat = status[sp:getId()]['effects']
-    local sp_tmp_attrs, sp_helpers = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
+    local sp_tmp_attrs, sp_helpers, sp_specials = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
 
     -- Affect targets
     local dryrun_res = {}
@@ -146,18 +146,18 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         local t_team = status[t:getId()]['team']
         local t_stat = status[t:getId()]['effects']
         local t_ass = ts_assists[i]
-        local t_tmp_attrs, t_helpers = mkTmpAttrs(t.attributes, t_stat, t_ass)
+        local t_tmp_attrs, t_helpers, t_specials = mkTmpAttrs(t.attributes, t_stat, t_ass)
 
         -- If attacker is an enemy and target has forbearance, the target
         -- switches to Kath
-        if hasSpecial(t_stat, t_ass, 'forbearance')
+        if hasSpecial(t_stat, t_ass, t_specials, 'forbearance')
         and sp_team == ENEMY then
             local s_kath = status['kath']
             local loc = s_kath['location']
             t = s_kath['sp']
             t_stat = s_kath['effects']
             t_ass = grid[loc[2]][loc[1]].assists
-            t_tmp_attrs, t_helpers = mkTmpAttrs(t.attributes, t_stat, t_ass)
+            t_tmp_attrs, t_helpers, t_specials = mkTmpAttrs(t.attributes, t_stat, t_ass)
         end
 
         -- Only hit targets passing the team filter
@@ -195,7 +195,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     -- they can't die
                     local min = 0
                     if (t == sp and modifiers['self'])
-                    or hasSpecial(t_stat, t_ass, 'guardian_angel') then
+                    or hasSpecial(t_stat, t_ass, t_specials, 'guardian_angel') then
                         min = 1
                     end
 
@@ -275,7 +275,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     t_stat = copy(t_stat)
                 end
                 ts_effects = copy(ts_effects)
-                if hasSpecial(sp_stat, sp_assists, 'flanking') then
+                if hasSpecial(sp_stat, sp_assists, sp_specials, 'flanking') then
                     table.insert(ts_effects,
                         { { 'reaction', Scaling:new(-6) }, 1 }
                     )
@@ -386,18 +386,34 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
         status_xp = math.min(status_xp + exp, EXP_STATUS_MAX)
     end
-    if #sp_effects > 0 or modifiers['lifesteal'] or modifiers['igneadrain'] then
+
+    -- Set lifesteal
+    local lifesteal = 0
+    local has_ls, ls_val = hasSpecial(sp_stat, sp_assists, sp_specials, 'lifesteal')
+    if has_ls and ls_val == nil then ls_val = 100 end
+    if has_ls then lifesteal = lifesteal + ls_val / 100 end
+    if modifiers['lifesteal'] then lifesteal = lifesteal + modifiers['lifesteal'] / 100 end
+
+    -- Set igneadrain
+    local igneadrain = 0
+    local has_id, id_val = hasSpecial(sp_stat, sp_assists, sp_specials, 'igneadrain')
+    if has_id and id_val == nil then id_val = 100 end
+    if has_id then igneadrain = igneadrain + id_val / 100 end
+    if modifiers['igneadrain'] then igneadrain = igneadrain + modifiers['igneadrain'] / 100 end
+
+    -- Effects on caster
+    if #sp_effects > 0 or lifesteal > 0 or igneadrain > 0 then
         dryrun_res['caster'] = { ['sp'] = sp, ['flat'] = 0, ['flat_ignea'] = 0, ['new_stat'] = sp_stat }
-        if modifiers['lifesteal'] then
-            local heal = math.floor(total_dealt * modifiers['lifesteal'])
+        if lifesteal > 0 then
+            local heal = math.floor(total_dealt * lifesteal)
             local healed = math.min(sp.attributes['endurance'] * 2 - sp.health, heal)
             dryrun_res['caster']['flat'] = -healed
             if not dryrun then
                 sp.health = sp.health + healed
             end
         end
-        if modifiers['igneadrain'] then
-            local drain = math.floor(total_dealt * modifiers['igneadrain'])
+        if igneadrain then
+            local drain = math.floor(total_dealt * igneadrain)
             local drained = math.min(sp.attributes['focus'] - (sp.ignea - self.cost), drain)
             dryrun_res['caster']['flat_ignea'] = -drained
             if not dryrun then
@@ -622,6 +638,7 @@ function mkTmpAttrs(bases, effects, assists)
     -- Retrieve buffs and collect buff owners (for xp gain)
     local buffs = {}
     local helpers = {}
+    local specials = {}
     for i = 1, #assists do
         local a = assists[i]
         table.insert(buffs, a)
@@ -642,6 +659,8 @@ function mkTmpAttrs(bases, effects, assists)
         local a = buffs[i].attr
         if tmp_attrs[a] then
             tmp_attrs[a] = tmp_attrs[a] + buffs[i].val
+        else
+            table.insert(specials, buffs[i])
         end
     end
 
@@ -649,7 +668,7 @@ function mkTmpAttrs(bases, effects, assists)
     for k,v in pairs(tmp_attrs) do
         tmp_attrs[k] = math.max(0, tmp_attrs[k])
     end
-    return tmp_attrs, helpers
+    return tmp_attrs, helpers, specials
 end
 
 -- Create a buff, given an attribute set, the buffed stat, and buff scaling
@@ -686,18 +705,23 @@ function addStatus(stat, eff)
 end
 
 -- Determine whether the status effects on a character include a given special
-function hasSpecial(stat, ass, spec)
+function hasSpecial(stat, ass, specs, spec)
     for i = 1, #stat do
         if stat[i].buff.attr == 'special' and stat[i].buff.val == spec then
-            return true
+            return true, nil
         end
     end
     for i = 1, #ass do
         if ass[i].attr == 'special' and ass[i].val == spec then
-            return true
+            return true, nil
         end
     end
-    return false
+    for i = 1, #specs do
+        if specs[i].attr == spec then
+            return true, specs[i].val
+        end
+    end
+    return false, nil
 end
 
 function isDebuffed(sp, stat)
@@ -753,13 +777,13 @@ skills = {
     ['siphon'] = Skill:new('siphon', 'Siphon', nil, nil,
         "Strike an evil, life draining blow. Deals \z
          %s Weapon damage to an enemy and \z
-         heals you for the damage dealt.",
+         heals you for 100 %% of the damage.",
         'Demon', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
         { { T } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 1.0),
         nil, nil, nil,
-        { ['lifesteal'] = 1 }
+        { ['lifesteal'] = 100 }
     ),
     ['gambit'] = Skill:new('gambit', 'Gambit', nil, nil,
         "Attack relentlessly. Deals %s Weapon damage to an adjacent enemy, \z
@@ -1457,6 +1481,32 @@ skills = {
           { F, F, F } }, DIRECTIONAL_AIM, 3,
         ENEMY, Scaling:new(10, 'focus', 1.0)
     ),
+    ['berserk'] = Skill:new('berserk', 'Berserk', nil, nil,
+        "Shanti enchants an enemy into a rage, \z
+         raising its Force by %s and lowering its Reaction by %s for 2 turns.",
+        'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Lanternfaire', 1 }, { 'Sorceress', 3 } },
+        { { T } }, FREE_AIM(4), 2,
+        ENEMY, nil,
+        nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'focus', -0.8) }, 2 } },
+        { DOWN, 3 }
+    ),
+    ['gravity'] = Skill:new('gravity', 'Gravity', nil, nil,
+        "Shanti pulls enemies 3 tiles towards her, \z
+         dealing %s Spell damage and lowering their Reaction by %s.",
+        'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Lanternfaire', 3 }, { 'Sorceress', 5 } },
+        { { F, T, T, T, T, T, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
+        ENEMY, Scaling:new(0, 'force', 1.0),
+        nil, { { { 'reaction', Scaling:new(0, 'force', -0.5) }, 1 } },
+        { DOWN, 3 }
+    ),
     ['shine'] = Skill:new('shine', 'Shine', nil, nil,
         "Shanti shines her empowered lantern brightly, improving most attributes \z
          of nearby assisted allies by %s.",
@@ -1483,30 +1533,21 @@ skills = {
         nil, nil, nil, nil, nil, nil,
         { { 'force', Scaling:new(15, 'affinity', 0.3) } }, { EXP_TAG_ATTACK }
     ),
-    ['drain'] = Skill:new('drain', 'Drain', nil, nil,
-        "Shanti deals %s Spell damage and drain the enemy's ignea by 4, \z
-         recovering the same amount.",
-        'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Lanternfaire', 0 }, { 'Sorceress', 0 } },
-        { { F, T, T, T, F },
-          { F, T, T, T, F },
-          { F, F, F, F, F },
-          { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
-        ENEMY, Scaling:new(4),
-        nil, nil, nil,
-        {
-            ['igneadrain'] = 1.0,
-            ['and'] =
-                function(a, a_a, b, b_a, st, dry, dry_res)
-                    if dry then
-                        dry_res['flat_ignea'] = dry_res['flat_ignea'] + 4
-                    else
-                        b.ignea = math.max(0, b.ignea - 4)
-                    end
-                end
-        }
+    ['bleed_vitality'] = Skill:new('bleed_vitality', 'Bleed Vitality', nil, nil,
+        "Shanti empowers the assisted ally's attacks to heal them for %s %% of the damage dealt.",
+        'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Lanternfaire', 3 }, { 'Sorceress', 4 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+        nil, nil, nil, nil, nil, nil,
+        { { 'lifesteal', Scaling:new(50, 'affinity', 10.0) } }, { EXP_TAG_ATTACK }
     ),
+
 
 
     -- ENEMY
@@ -1519,9 +1560,9 @@ skills = {
         ALLY, Scaling:new(0, 'force', 1.0)
     ),
     ['bludgeon'] = Skill:new('bludgeon', 'Bludgeon', nil, nil,
-        "Bring down a mighty stone appendage, crushing enemies in a line. Deals \z
+        "Bring down a mighty stone appendage, crushing an adjacent enemy. Deals \z
          %s Weapon damage.",
-        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- GRID
+        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, F },
           { F, T, F },
@@ -1531,7 +1572,7 @@ skills = {
     ['shockwave'] = Skill:new('shockwave', 'Shockwave', nil, nil,
         "Emit an ignaeic shockwave. Deals \z
         %s Spell damage to nearby enemies and lowers their Agility by 4 for 1 turn.",
-        'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- GRID
+        'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, T, F, F },
           { F, T, T, T, F },
@@ -1541,4 +1582,29 @@ skills = {
         ALLY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'agility', Scaling:new(-4) }, 2 } }
     )
+
+    -- ['drain'] = Skill:new('drain', 'Drain', nil, nil,
+    --     "Shanti deals %s Spell damage and drain the enemy's ignea by 4, \z
+    --      recovering the same amount.",
+    --     'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+    --     { { 'Lanternfaire', 0 }, { 'Sorceress', 0 } },
+    --     { { F, T, T, T, F },
+    --       { F, T, T, T, F },
+    --       { F, F, F, F, F },
+    --       { F, F, F, F, F },
+    --       { F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
+    --     ENEMY, Scaling:new(4),
+    --     nil, nil, nil,
+    --     {
+    --         ['igneadrain'] = 1.0,
+    --         ['and'] =
+    --             function(a, a_a, b, b_a, st, dry, dry_res)
+    --                 if dry then
+    --                     dry_res['flat_ignea'] = dry_res['flat_ignea'] + 4
+    --                 else
+    --                     b.ignea = math.max(0, b.ignea - 4)
+    --                 end
+    --             end
+    --     }
+    -- )
 }

@@ -361,11 +361,12 @@ function Battle:getTmpAttributes(sp, with_eff, with_tile)
         y = with_tile[1]
         x = with_tile[2]
     end
-    return mkTmpAttrs(
+    local bs, hs, _ = mkTmpAttrs(
         sp.attributes,
         ite(with_eff, with_eff, self.status[sp:getId()]['effects']),
         ite(self:isAlly(sp), self.grid[y][x].assists, {})
     )
+    return bs, hs
 end
 
 function Battle:getSpriteRenderFlags(sp)
@@ -856,7 +857,7 @@ function Battle:buildReadyingBox(sp, attrs)
     local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false, attrs)
 
     -- Update priority for this sprite (would happen later anyway)
-    if hasSpecial(stat['effects'], {}, 'enrage') then
+    if hasSpecial(stat['effects'], {}, {}, 'enrage') then
         prep['prio'] = { FORCED, 'kath' }
     end
 
@@ -973,7 +974,7 @@ end
 function Battle:mkUsable(sp, sk_menu, ign_left)
     local sk = skills[sk_menu.id]
     sk_menu.hover_desc = 'Use ' .. sk_menu.name
-    local obsrv = hasSpecial(self.status[sp:getId()]['effects'], {}, 'observe')
+    local obsrv = hasSpecial(self.status[sp:getId()]['effects'], {}, {}, 'observe')
     if ign_left < sk.cost or (sk.id == 'observe' and obsrv) then
         sk_menu.setPen = function(g) return DISABLE end
     else
@@ -2212,7 +2213,7 @@ function Battle:planNextEnemyAction()
 
     -- If the current enemy is stunned, it misses it's action
     local stat = self.status[e:getId()]
-    if hasSpecial(stat['effects'], {}, 'stun') then
+    if hasSpecial(stat['effects'], {}, {}, 'stun') then
         local y, x = self:findSprite(e)
         local move = { ['cursor'] = { x, y }, ['sp'] = e }
         self.enemy_action = { self:stackBase(), move, {}, {}, move, {}, {} }
@@ -2220,7 +2221,7 @@ function Battle:planNextEnemyAction()
     end
 
     -- If the current enemy is enraged, force it to target Kath
-    if hasSpecial(stat['effects'], {}, 'enrage') then
+    if hasSpecial(stat['effects'], {}, {}, 'enrage') then
         stat['prepare']['prio'] = { FORCED, 'kath' }
     end
 
