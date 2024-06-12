@@ -139,8 +139,14 @@ EFFECT_NAMES = {
     ['flight']           = "Flight",
     ['flanking']         = "Flanking",
     ['ignea_efficiency'] = "-1 Ignea Costs",
-    ['lifesteal']        = "Lifesteal",
-    ['igneadrain']       = "Drain Ignea"
+    ['lifesteal']        = "% Hp Drain",
+    ['igneadrain']       = "% Ign Drain",
+    ['endurance']        = " Endurance",
+    ['focus']            = " Focus",
+    ['reaction']         = " Reaction",
+    ['force']            = " Force",
+    ['affinity']         = " Affinity",
+    ['agility']          = " Agility"
 }
 
 ATTRIBUTE_DESC = {

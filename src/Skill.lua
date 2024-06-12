@@ -28,8 +28,7 @@ function Buff:toStr()
     if self.val == 0 then
         return nil
     end
-    local attr = self.attr:sub(1,1):upper() .. self.attr:sub(2)
-    return ite(self.val > 0, '+', '-') .. abs(self.val) .. ' ' .. self.attr
+    return ite(self.val > 0, '+', '-') .. abs(self.val) .. EFFECT_NAMES[self.attr]
 end
 
 Effect = class('Effect')
@@ -1547,6 +1546,21 @@ skills = {
         nil, nil, nil, nil, nil, nil,
         { { 'lifesteal', Scaling:new(50, 'affinity', 10.0) } }, { EXP_TAG_ATTACK }
     ),
+    ['bleed_ignea'] = Skill:new('bleed_ignea', 'Bleed Ignea', nil, nil,
+        "Shanti empowers the assisted ally's attacks to restore ignea equal to %s %% of the damage dealt.",
+        'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
+        nil, nil, nil, nil, nil, nil,
+        { { 'igneadrain', Scaling:new(0, 'affinity', 4.0) } }, { EXP_TAG_ATTACK }
+    ),
+
 
 
 
