@@ -1932,9 +1932,13 @@ end
 -- Prepare this sprite's next skill
 function Battle:prepareSkill(e, used)
 
-    -- TODO: skill selection strategy
-    local sk = e.skills[1]
-    self.status[e:getId()]['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio } }
+    -- TODO: skill selection strategy (currently just cycles through all skills)
+    local prev = 0
+    local stat = self.status[e:getId()]
+    if stat['prepare'] then prev = stat['prepare']['index'] end
+    local i = (prev) % #e.skills + 1
+    local sk = e.skills[i]
+    self.status[e:getId()]['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio }, ['index'] = i }
 end
 
 function Battle:planTarget(e, plan)
@@ -2219,7 +2223,7 @@ function Battle:planNextEnemyAction()
     -- Prepare the first enemy's action, taking into account what the
     -- following enemies are planning and would prefer
     local m_c, a_c, _ = self:planAction(e, plans[1], plans)
-    self:prepareSkill(enemies[1], ite(a_c, true, false))
+    self:prepareSkill(e, ite(a_c, true, false))
 
     -- Declare next enemy action to be played as an action stack
     local move = { ['cursor'] = m_c, ['sp'] = e }
