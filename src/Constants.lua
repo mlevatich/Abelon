@@ -131,14 +131,15 @@ str_to_icon = {
 }
 
 EFFECT_NAMES = {
-    ['guardian_angel'] = "Resist Death",
-    ['forbearance']    = "Kath's Shield",
-    ['enrage']         = "Targeting Kath",
-    ['stun']           = "Stunned",
-    ['observe']        = "Observing",
-    ['hidden']         = "Hidden",
-    ['flight']         = "Flight",
-    ['flanking']       = "Flanking"
+    ['guardian_angel']   = "Resist Death",
+    ['forbearance']      = "Kath's Shield",
+    ['enrage']           = "Targeting Kath",
+    ['stun']             = "Stunned",
+    ['observe']          = "Observing",
+    ['hidden']           = "Hidden",
+    ['flight']           = "Flight",
+    ['flanking']         = "Flanking",
+    ['ignea_efficiency'] = "-1 Ignea Costs"
 }
 
 ATTRIBUTE_DESC = {
