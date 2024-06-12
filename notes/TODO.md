@@ -10,10 +10,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- Adjust how golems and other large sprites are positioned in battle
-- Shanti portrait
 - Shanti attributes and skills
-- Icons for lanternfaire, sorceress
 - Golem attributes and skills
 - Enemy AI for multiple and multi-target skills
 - Implement side objective: recover Shanti's ignea

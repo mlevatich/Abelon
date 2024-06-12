@@ -13,5 +13,5 @@ AttributesAdept: endurance:17 focus:0 force:15 affinity:0 reaction:3 agility:12
 AttributesNormal: endurance:16 focus:0 force:13 affinity:0 reaction:1 agility:11
 AttributesNovice: endurance:16 focus:0 force:10 affinity:0 reaction:0 agility:11
 Skilltrees:
-Skills: bite
+Skills: bludgeon,shockwave
 Description: Animate stone.

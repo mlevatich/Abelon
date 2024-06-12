@@ -1482,5 +1482,27 @@ skills = {
         {},
         { { T } }, DIRECTIONAL_AIM, 0,
         ALLY, Scaling:new(0, 'force', 1.0)
-    )
+    ),
+    ['bludgeon'] = Skill:new('bludgeon', 'Bludgeon', nil, nil,
+        "Bring down a mighty stone appendage, crushing enemies in a line. Deals \z
+         %s Weapon damage.",
+        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- GRID
+        {},
+        { { F, T, F },
+          { F, T, F },
+          { F, F, F } }, DIRECTIONAL_AIM, 0,
+        ALLY, Scaling:new(0, 'force', 1.5)
+    ),
+    ['shockwave'] = Skill:new('shockwave', 'Shockwave', nil, nil,
+        "Emit a powerful ignaeic shockwave. Deals \z
+        %s Spell damage to nearby enemies.",
+        'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- GRID
+        {},
+        { { F, F, T, F, F },
+          { F, T, T, T, F },
+          { T, T, F, T, T },
+          { F, T, T, T, F },
+          { F, F, T, F, F } }, SELF_CAST_AIM, 2,
+        ALLY, Scaling:new(0, 'force', 0.5)
+),
 }
