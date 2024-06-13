@@ -1984,25 +1984,38 @@ function Battle:planAction(e, plan, other_plans)
     local stat = self.status[e:getId()]
     local prio = stat['prepare']['prio'][1]
 
+    -- Pick a target from the set of choices based on the sprite's priorities
+    local tgt = nil -- Who to target
+    local candidate_moves = {} -- Candidate moves to get to this target
+
     -- If the target is forced, it doesn't matter where they are. Target them.
     if prio == FORCED then
         local sp = self.status[stat['prepare']['prio'][2]]['sp']
+        local found = false
         for i = 1, #plan['options'] do
             if sp == plan['options'][i]['sp'] then
-                return plan['options'][i], nil
+                found = true
+                tgt = plan['options'][i]
+                candidate_moves = tgt['moves']
             end
         end
-        return nil, nil
+        if not found then prio = KILL end
     end
 
-    -- The set of choices is all ally sprites, unless some sprites are within
-    -- striking distance, in which case only reachable sprites are considered
-    local tgts = filter(function(o) return o['reachable'] end, plan['options'])
-    if not next(tgts) then tgts = plan['options'] end
-
-    -- Pick a target from the set of choices based on the sprite's priorities
-    local tgt = nil -- Who to target
-    local mv  = nil -- Which move to take
+    -- The set of choices is all ally sprites that can be reached in the lowest possible
+    -- number of turns
+    local tgts = {}
+    local best_ttr = math.huge
+    for i=1, #plan['options'] do
+        local ttr = plan['options'][i]['ttr']
+        if ttr < best_ttr then
+            tgts = {}
+            best_ttr = ttr
+        end
+        if ttr == best_ttr then
+            table.insert(tgts, plan['options'][i])
+        end
+    end
 
     if prio == KILL then
 
@@ -2034,13 +2047,11 @@ function Battle:planAction(e, plan, other_plans)
 
         -- Assemble candidate moves
         -- If a target can be killed, they're the target
-        local candidate_moves = nil
         if max_percent_ind == 1 then
             tgt = ind_tgt
             candidate_moves = tgt['moves']
         else
             tgt = sum_tgt
-            candidate_moves = {}
             for j = 1, #tgt['moves'] do
                 local a = tgt['moves'][j]['attack']
                 local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
@@ -2049,32 +2060,36 @@ function Battle:planAction(e, plan, other_plans)
                 if sum == max_percent_sum then table.insert(candidate_moves, tgt['moves'][j]) end
             end
         end
+    end
 
-        -- After the best target and candidate moves have been found, pick the move
-        -- with the highest non-redundant movement cost (where redundant refers to circling
-        -- around an already-adjacent foe).
-        local min_dist = math.huge
-        local best_is_adj = false
-        for i = 1, #candidate_moves do
-            local d = candidate_moves[i]['attack']['dist']
-            local mv_c = candidate_moves[i]['move_c']
-            local y, x = self:findSprite(tgt['sp'])
-            local is_adj = (abs(mv_c[1] - x) + abs(mv_c[2] - y)) == 1
-            if is_adj and (not best_is_adj) then
-                best_is_adj = true
-                min_dist = d
-                mv = candidate_moves[i]
-            elseif ((is_adj and best_is_adj) or (not best_is_adj)) and d < min_dist then
-                min_dist = d
+    -- After the best target and candidate moves have been found, pick the move
+    -- which lands closest to the target (as the crow flies), with ties broken
+    -- by lower movement cost (to avoid, e.g. circling around an adjacent target).
+    local mv = nil
+    local min_cost = math.huge
+    local min_proximity = math.huge
+    for i = 1, #candidate_moves do
+        local cost = candidate_moves[i]['attack']['dist']
+        local mv_c = candidate_moves[i]['move_c']
+        local y, x = self:findSprite(tgt['sp'])
+        local proximity = abs(mv_c[1] - x) + abs(mv_c[2] - y)
+        if proximity < min_proximity then
+            min_proximity = proximity
+            min_cost = cost
+            mv = candidate_moves[i]
+        elseif proximity == min_proximity then
+            if cost < min_cost then
+                min_cost = cost
                 mv = candidate_moves[i]
             end
         end
     end
 
     -- Return move data, and attack data if target is reachable
-    if tgt['reachable'] then return mv['move_c'], mv['attack']['c'], tgt['sp']
-    else                     return mv['move_c'], nil,               nil
+    if tgt['ttr'] == 1 then
+        return mv['move_c'], mv['attack']['c'], tgt['sp']
     end
+    return mv['move_c'], nil, nil
 end
 
 function Battle:getAttackAngles(e, sp, sk)
@@ -2130,12 +2145,7 @@ function Battle:collectMoves(e, sps)
     -- Compute ALL movement options!
     local opts = {}
     for i = 1, #sps do
-
-        -- Init opts for this sprite
-        opts[i] = {}
-        opts[i]['sp'] = sps[i]
-        opts[i]['moves'] = {}
-        opts[i]['reachable'] = false
+        opts[i] = { ['sp'] = sps[i], ['ttr'] = math.huge, ['moves'] = {} }
 
         -- Get all attacks that can be made against this sprite using the skill
         local attacks = self:getAttackAngles(e, sps[i], sk)
@@ -2147,6 +2157,7 @@ function Battle:collectMoves(e, sps)
             if dist ~= math.huge then
 
                 -- Sprite should move to path node with dist == movement
+                local turns_to_reach = math.ceil(dist / movement)
                 local move_c = { attack_from[2], attack_from[1] }
                 local n = attack_from
                 for k = 1, dist - movement do
@@ -2165,19 +2176,15 @@ function Battle:collectMoves(e, sps)
                         ['dir'] = attacks[j]['dir']
                     }
                 }
-                local c_reachable = move_c[1] == attack_from[2]
-                                and move_c[2] == attack_from[1]
 
-                -- If candidate move is reachable, we will only accept reachable
-                -- moves now. Clean out moves (all unreachable) and mark flag.
-                if c_reachable and not opts[i]['reachable'] then
+                -- New best ttr, erase all other moves
+                if turns_to_reach < opts[i]['ttr'] then
                     opts[i]['moves'] = {}
-                    opts[i]['reachable'] = true
+                    opts[i]['ttr'] = turns_to_reach
                 end
 
-                -- If candidate is reachable, or if we don't care whether or not
-                -- it's reachable, add it to moves
-                if c_reachable or not opts[i]['reachable'] then
+                -- If this ttr matches our best, save it as a possible move
+                if turns_to_reach == opts[i]['ttr'] then
                     table.insert(opts[i]['moves'], c)
                 end
             end
