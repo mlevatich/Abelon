@@ -2,8 +2,8 @@
 
 TileOrigin: 45,24
 Allies: abelon:15,7 kath:15,8 elaine:15,6 shanti:7,3
-Enemies: golem1:8,5,1 golem2:9,8,2
-Order: golem1,golem2
+Enemies: golem1:8,5,1 golem2:9,8,2 golem3:3,4,2
+Order: golem1,golem2,golem3
 Wincon: rout
 Losscon: death
 Turnlimits: 7,6,6,5

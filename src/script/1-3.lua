@@ -316,7 +316,7 @@ s13['elaine'] = {
 }
 
 s13['golem-battle'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem1', 'golem2'},
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem1', 'golem2', 'golem3'},
     ['events'] = {
         changeMusic('Threat-Revealed'),
         focus(1, 200),
