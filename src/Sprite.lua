@@ -915,6 +915,11 @@ end
 function Sprite:animateBehaviorGeneric(doneAction, anim_name)
     local fired = false
     return function(sp, dt)
+        if self == nil then -- Game has crashed here before and I don't know why.
+            print("sp passed is: " .. sp.id)
+            print("anim name is: " .. anim_name)
+            print("fired is:     " .. fired)
+        end
         self:stop()
         if not fired then
             self:fireAnimation(anim_name, function()

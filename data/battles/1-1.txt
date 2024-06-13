@@ -2,7 +2,7 @@
 
 TileOrigin: 37,9
 Allies: abelon:5,2
-Enemies: wolf1:2,2
+Enemies: wolf1:2,2,1
 Order: wolf1
 Wincon: rout
 Losscon: death

@@ -111,7 +111,9 @@ function love.update(dt)
 
     -- Log if there were two bad long frames in a row (indicates poor performance)
     if slack < 0 and t > 1 then
-        if was_long_frame then log("WARN: " .. string.format("%.1f", 1 / dt_actual) .. "fps") end
+        if was_long_frame and 1 / dt_actual < 50 then
+            log("WARN: " .. string.format("%.1f", 1 / dt_actual) .. "fps")
+        end
         was_long_frame = true
     else
         was_long_frame = false

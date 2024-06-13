@@ -5,13 +5,10 @@
 ~torch3 26 49 L down
 ~torch4 26 52 L down
 ~bloodrite 26 49 R
-~scroll 20 50.5 R
-~igneashard1 7 43 R
 ~marker 14 44.5 L
 
 ~~south-forest Canopied-Steps
 
-~medallion 45 28.5 R
 ~marker 6.4 12.6 R
 ~marker 15.4 23.6 L
 
@@ -32,9 +29,7 @@
 
 ~~monastery-approach Canopied-Steps
 
-//~abelon 16 50 R P
-~igneashard3 9 71 R
-~igneashard4 52 76 L
+~abelon 16 50 R P
 ~igneashard5 67 3 R
 ~igneashard6 75 44 L
 ~igneashard7 109 20 R
@@ -47,7 +42,7 @@
 ~golem2 53.6875 31.1875 R
 ~golem3 47.6875 27.1875 R
 ~shanti 52 27 R
-~abelon 66 32 R P
+//~abelon 66 32 R P
 
 ~~waiting-room Canopied-Steps
 
@@ -64,16 +59,18 @@
 ->State saw-camp,carried-elaine
 ->State elaine-stays
 ->Party kath,elaine
-->Inventory journal,medallion,scroll,igneashard1,igneashard2
 ->Day
 ->Block west-forest
-->elaine
-+Level 1
-+BonusAttrs force:2
-+Exp 10
-->abelon
-+Exp 90
-->kath
-+Exp 90
+->Inventory journal,medallion,scroll,igneashard4
 
 ->Seen 1-3-battle
+->elaine
++Level 3
++BonusAttrs affinity:3 force:2
++Exp 30
+->abelon
++Level 2
++BonusAttrs force:1 agility:1
+->kath
++Level 1
++BonusAttrs reaction:1

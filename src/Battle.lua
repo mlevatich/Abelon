@@ -2157,7 +2157,7 @@ function Battle:collectMoves(e, sps)
             if dist ~= math.huge then
 
                 -- Sprite should move to path node with dist == movement
-                local turns_to_reach = math.ceil(dist / movement)
+                local turns_to_reach = math.max(1, math.ceil(dist / movement))
                 local move_c = { attack_from[2], attack_from[1] }
                 local n = attack_from
                 for k = 1, dist - movement do

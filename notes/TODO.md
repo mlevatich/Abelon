@@ -10,12 +10,15 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- If there are caster dryrun effects and the caster is a targeted sprite, merge effects
-- Enemy prefers moves that put it adjacent to target, then moves that use least movement
-- Golem attributes
-- Implement side objective: recover Shanti's belongings
-- Implement reinforcements/turn limit/escape for golem battle
-- Balance golem battle
+- Playthrough notes:
+    - Golem battle on master is actually pretty easy without the side objective
+    - Kath needs his riposte! Otherwise reaction comps suck. Reaction/endurance comps need a buff generally: give lester a counter and give people some more reaction-scaling abilities.
+    - The heavy hitters will soak up all of the exp when playing aggressively.
+
+- Prevent the ability to queue up another scene while one scene is ending.
+- Implement reinforcements/turn limit/escape for golem battle. Test and tweak.
+- Implement side objective: recover Shanti's belongings. Test and tweak.
+    - Shanti only starts with half of her ignea: she recovers the rest if you get her bag. And she likes you more.
 
 - 1-4 transition scene, evening
 - Lester battle scenes
@@ -26,15 +29,16 @@ Bullets that reference a github issue should close the issue when committed.
 - Balance and polish
 
 - Final battle scenes
+    - Battle opens with an absolute ton of wolves. The terrors don't show up until right before its escape time.
 - Forest terror sprite
 - Forest terror skills
 - Implement win condition: Escape
 - Final scene transition and return to title screen
 - Implement side objective: ???
 - Balance and polish
+- Final terror sprite
 
 - Monastery approach log piles, boulders and ground features (ignaeic runes, logs, markers, wolf den, scuffed ground, etc)
-- Final golem and terror sprites
 - Goodies, items, lore to pick up in monastery approach
 - Dealing with Elaine, wander behavior after scene ends
 - All 1-3, 1-4 scenes

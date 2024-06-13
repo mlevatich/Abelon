@@ -2,7 +2,7 @@
 
 TileOrigin: 14,37
 Allies: abelon:8,8 kath:9,7 elaine:10,8
-Enemies: wolf1:14,6 wolf2:3,8 alphawolf1:10,3 wolf3:9,3 alphawolf2:5,3
+Enemies: wolf1:14,6,1 wolf2:3,8,1 alphawolf1:10,3,1 wolf3:9,3,1 alphawolf2:5,3,1
 Order: wolf1,wolf2,wolf3,alphawolf1,alphawolf2
 Wincon: rout
 Losscon: death
