@@ -242,12 +242,9 @@ BUFF   = 1
 DEBUFF = 2
 
 -- Skill targeting algorithms (for enemies)
-CLOSEST   = 1
-KILL      = 2 -- Invert when targeting allies (heal closest to death)
-DAMAGE    = 3 -- Invert when targeting allies (biggest heal)
-STRONGEST = 4 -- Invert when targeting allies (heal strongest ally)
-MANUAL    = 5 -- For the player team
-FORCED    = 6
+KILL      = 1 -- Invert when targeting allies (heal closest to death)
+MANUAL    = 2 -- For the player team
+FORCED    = 3
 
 -- Skill animation enum
 SKILL_ANIM_GRID     = 1

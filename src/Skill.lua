@@ -591,10 +591,7 @@ end
 function Skill:mkPrioElements(prio)
     local header  = { 'Target:' }
     local ps = {
-        [ CLOSEST   ] = { 'Closest',  'enemy'   },
-        [ KILL      ] = { 'Killable', 'enemies' },
-        [ DAMAGE    ] = { 'Highest',  'damage'  },
-        [ STRONGEST ] = { 'Biggest',  'threat'  },
+        [ KILL      ] = { 'Killable', 'enemies' }
     }
     if prio[1] == MANUAL then
         return {}

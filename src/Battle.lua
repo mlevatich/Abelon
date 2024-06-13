@@ -1978,7 +1978,7 @@ function Battle:prepareSkill(e, i, no_increment, spent)
     stat['prepare'] = { ['sk'] = sk, ['prio'] = { sk.prio }, ['index'] = i }
 end
 
-function Battle:planTarget(e, plan)
+function Battle:planAction(e, plan, other_plans)
 
     -- Get targeting priority
     local stat = self.status[e:getId()]
@@ -2002,98 +2002,79 @@ function Battle:planTarget(e, plan)
 
     -- Pick a target from the set of choices based on the sprite's priorities
     local tgt = nil -- Who to target
-    local mv  = nil -- Which move to take (optional)
+    local mv  = nil -- Which move to take
 
-    if prio == CLOSEST then
+    if prio == KILL then
 
-        -- Target whichever sprite requires the least movement to attack
-        local min_dist = math.huge
-        for i = 1, #tgts do
-            for j = 1, #tgts[i]['moves'] do
-                local d = tgts[i]['moves'][j]['attack']['dist']
-                if d <= min_dist then
-                    min_dist = d
-                    tgt, mv = tgts[i], tgts[i]['moves'][j]
-                end
-            end
-        end
-    elseif prio == KILL then
-
-        -- Target whichever sprite will suffer the highest percent of their
-        -- current health in damage (with 100% meaning they'd die)
-        local max_percent = 0
-        for i = 1, #tgts do
-            for j = 1, #tgts[i]['moves'] do
-                local a = tgts[i]['moves'][j]['attack']
-                local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
-                for k = 1, #d do
-                    if d[k]['percent'] >= max_percent then
-                        max_percent = d[k]['percent']
-                        tgt, mv = tgts[i], tgts[i]['moves'][j]
-                    end
-                end
-            end
-        end
-    elseif prio == DAMAGE then
-
-        -- Target whichever sprite and move will achieve the maximum damage
-        -- across all affected sprites
-        local max_dmg = 0
+        -- Find target that will suffer the maximum percentage of their current health
+        -- as damage, and target that will allow the maximum percentage of current health
+        -- to be dealt overall (potentiall across multiple targets).
+        local max_percent_ind = 0
+        local max_percent_sum = 0
+        local ind_tgt = nil
+        local sum_tgt = nil
         for i = 1, #tgts do
             for j = 1, #tgts[i]['moves'] do
                 local a = tgts[i]['moves'][j]['attack']
                 local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
                 local sum = 0
-                for k = 1, #d do sum = sum + d[k]['flat'] end
-                if sum >= max_dmg then
-                    max_dmg = sum
-                    tgt, mv = tgts[i], tgts[i]['moves'][j]
+                for k = 1, #d do
+                    sum = sum + d[k]['percent']
+                    if d[k]['percent'] >= max_percent_ind then
+                        max_percent_ind = d[k]['percent']
+                        ind_tgt = tgts[i]
+                    end
+                end
+                if sum >= max_percent_sum then
+                    max_percent_sum = sum
+                    sum_tgt = tgts[i]
                 end
             end
         end
-    elseif prio == STRONGEST then
 
-        -- Target whichever sprite poses the biggest threat
-        local max_attrs = 0
-        for i = 1, #tgts do
-            local attrs, _ = self:getTmpAttributes(tgts[i]['sp'])
-            local sum = 0
-            for _,v in pairs(attrs) do sum = sum + v end
-            if sum >= max_attrs then
-                max_attrs = sum
-                tgt, mv = tgts[i], nil
+        -- Assemble candidate moves
+        -- If a target can be killed, they're the target
+        local candidate_moves = nil
+        if max_percent_ind == 1 then
+            tgt = ind_tgt
+            candidate_moves = tgt['moves']
+        else
+            tgt = sum_tgt
+            candidate_moves = {}
+            for j = 1, #tgt['moves'] do
+                local a = tgt['moves'][j]['attack']
+                local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
+                local sum = 0
+                for k = 1, #d do sum = sum + d[k]['percent'] end
+                if sum == max_percent_sum then table.insert(candidate_moves, tgt['moves'][j]) end
             end
         end
-    end
-    return tgt, mv
-end
 
-function Battle:planAction(e, plan, other_plans)
-
-    -- Select a target and move based on skill prio and enemies in range
-    local target, move = self:planTarget(e, plan)
-
-    -- Get skill being used and suggested move
-    local move = nil
-    if not move then
-
-        -- If no suggested move, compute the nearest one
-        -- TODO: pick a non-interfering tile based on other_plans
+        -- After the best target and candidate moves have been found, pick the move
+        -- with the highest non-redundant movement cost (where redundant refers to circling
+        -- around an already-adjacent foe).
         local min_dist = math.huge
-        for i = 1, #target['moves'] do
-            local d = target['moves'][i]['attack']['dist']
-            if d < min_dist then
+        local best_is_adj = false
+        for i = 1, #candidate_moves do
+            local d = candidate_moves[i]['attack']['dist']
+            local mv_c = candidate_moves[i]['move_c']
+            local y, x = self:findSprite(tgt['sp'])
+            local is_adj = (abs(mv_c[1] - x) + abs(mv_c[2] - y)) == 1
+            if is_adj and (not best_is_adj) then
+                best_is_adj = true
                 min_dist = d
-                move = target['moves'][i]
+                mv = candidate_moves[i]
+            elseif ((is_adj and best_is_adj) or (not best_is_adj)) and d < min_dist then
+                min_dist = d
+                mv = candidate_moves[i]
             end
         end
     end
 
     -- Return move data, and attack data if target is reachable
-    if target['reachable'] then
-        return move['move_c'], move['attack']['c'], target['sp']
+    if tgt['reachable'] then return mv['move_c'], mv['attack']['c'], tgt['sp']
+    else                     return mv['move_c'], nil,               nil
     end
-    return move['move_c'], nil, nil
 end
 
 function Battle:getAttackAngles(e, sp, sk)
@@ -2135,7 +2116,7 @@ function Battle:getAttackAngles(e, sp, sk)
     return attacks
 end
 
-function Battle:mkInitialPlan(e, sps)
+function Battle:collectMoves(e, sps)
 
     -- Get skill
     local sk = self.status[e:getId()]['prepare']['sk']
@@ -2180,7 +2161,7 @@ function Battle:mkInitialPlan(e, sps)
                     ['attack'] = {
                         ['dist'] = dist,
                         ['c'] = attacks[j]['c'],
-                        ['from'] = attacks[j]['from'],
+                        ['from'] = attack_from,
                         ['dir'] = attacks[j]['dir']
                     }
                 }
@@ -2247,7 +2228,7 @@ function Battle:planNextEnemyAction()
     for i = 1, #enemies do
 
         -- Precompute options for targeting all ally sprites
-        plans[i] = self:mkInitialPlan(enemies[i], sps)
+        plans[i] = self:collectMoves(enemies[i], sps)
 
         -- Compute this enemy's preferred action in a vacuum and add it to plan
         local pref_move, _, pref_target = self:planAction(enemies[i], plans[i])
