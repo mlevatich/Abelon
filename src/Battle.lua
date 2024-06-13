@@ -1243,20 +1243,20 @@ function Battle:dryrunAttributes(standing, other)
     if atk then
         ign = ign - atk.cost
         local dry = self:dryrunAttack()
-        if dry['caster'] then
-            eff = dry['caster']['new_stat']
-            hp = sp.health - dry['caster']['flat']
-            ign = ign - dry['caster']['flat_ignea']
-        else
-            for i=1, #dry do
-                if dry[i]['sp'] == sp then
-                    eff = dry[i]['new_stat']
-                    hp = sp.health - dry[i]['flat']
-                    ign = ign - dry[i]['flat_ignea']
-                    break
-                end
+        -- if dry['caster'] then
+        --     eff = dry['caster']['new_stat']
+        --     hp = sp.health - dry['caster']['flat']
+        --     ign = ign - dry['caster']['flat_ignea']
+        -- else
+        for i=1, #dry do
+            if dry[i]['sp'] == sp then
+                eff = dry[i]['new_stat']
+                hp = sp.health - dry[i]['flat']
+                ign = ign - dry[i]['flat_ignea']
+                break
             end
         end
+        -- end
     end
     local loc = { standing[2], standing[1] }
     local attrs, _ = self:getTmpAttributes(sp, eff, loc)
@@ -1265,12 +1265,28 @@ end
 
 function Battle:dryrunAttack()
     local atk = self:getAttack()
+    local dry = nil
     if atk then
         local sp_c = self.stack[2]['cursor']
         local atk_c = self.stack[4]['cursor']
         local sp = self:getSprite()
         local dir = self:getTargetDirection(atk, sp_c, atk_c)
-        return self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+        local dry = self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+        if dry['caster'] then
+            local found = false
+            for i = 1, #dry do
+                if dry[i]['sp'] == dry['caster']['sp'] then
+                    dry[i]['flat'] = dry[i]['flat'] + dry['caster']['flat']
+                    dry[i]['flat_ignea'] = dry[i]['flat_ignea'] + dry['caster']['flat_ignea']
+                    dry[i]['new_stat'] = concat(dry[i]['new_stat'], dry['caster']['new_stat'])
+                    found = true
+                    break
+                end
+            end
+            if not found then table.insert(dry, dry['caster']) end
+            dry['caster'] = nil
+        end
+        return dry
     end
 end
 
@@ -2875,9 +2891,9 @@ function Battle:renderAttackHoverBoxes(sk)
             break
         end
     end
-    if room and dry['caster'] then
-        renderBoxIfRoom(self:getSprite(), dry['caster'])
-    end
+    -- if room and dry['caster'] then
+    --     renderBoxIfRoom(self:getSprite(), dry['caster'])
+    -- end
 end
 
 function Battle:renderAssistHoverBox(sk)
