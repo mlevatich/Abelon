@@ -29,7 +29,7 @@
 
 ~~monastery-approach Canopied-Steps
 
-~abelon 16 50 R P
+//~abelon 16 50 R P
 ~igneashard5 67 3 R
 ~igneashard6 75 44 L
 ~igneashard7 109 20 R
@@ -42,7 +42,7 @@
 ~golem2 53.6875 31.1875 R
 ~golem3 47.6875 27.1875 R
 ~shanti 52 27 R
-//~abelon 66 32 R P
+~abelon 66 32 R P
 
 ~~waiting-room Canopied-Steps
 

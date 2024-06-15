@@ -16,7 +16,18 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- Implement counter skills
+- Make skill in use show up earlier for counters
+- Implement sample animations to test timing on playing actions under a variety of circumstances
+    - No counter enemy phase
+    - Single counter enemy phase
+    - Death from enemy
+    - Kill on enemy
+    - Multi counter
+    - Death by counter
+    - No damage taken (no hurt) from counter
+    - full attack with assist
+- Make party text in blue before battle when there are skills to learn
+
 
 - Prevent the ability to queue up another scene with a keyboard input while one scene is ending. Examples: 
     - Examining your bed between the transition from 1-1 to 1-2

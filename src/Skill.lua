@@ -371,13 +371,14 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
             -- Registering counters
             if t_team ~= sp_team then
-                if hasSpecial(t_stat, t_ass, t_specials, 'riposte') or hasSpecial(t_stat, t_ass, t_specials, 'martyr') then
+                local has_riposte = hasSpecial(t_stat, t_ass, t_specials, 'riposte')
+                if has_riposte or hasSpecial(t_stat, t_ass, t_specials, 'martyr') then
                     if dmg_type == WEAPON then
-                        table.insert(counters, { t, 0 } )
+                        table.insert(counters, { t, ite(has_riposte, 'riposte', 'martyr'), 0 } )
                     end
                 elseif hasSpecial(t_stat, t_ass, t_specials, 'retribution') then
                     if dealt > 0 then
-                        table.insert(counters, { t, dealt } )
+                        table.insert(counters, { t, 'retribution', dealt } )
                     end
                 end
             end
@@ -741,6 +742,42 @@ function isDebuffed(sp, stat)
     return false
 end
 
+-- Counter skill templates
+mkCounterSkill = {
+
+    ['riposte'] = function(v)
+        return Skill:new('riposte_active', 'Riposte', nil, nil,
+            "",
+            'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+            {},
+            { { T } }, FREE_AIM(100), 0,
+            ENEMY, Scaling:new(0, 'reaction', 1.0)
+        )
+    end,
+
+    ['martyr'] = function(v)
+        return Skill:new('martyr_active', 'Martyr', nil, nil,
+            "",
+            'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+            {},
+            { { T } }, FREE_AIM(100), 0,
+            ENEMY, Scaling:new(0, 'force', 1.5)
+        )
+    end,
+
+    ['retribution'] = function(v)
+        return Skill:new('retribution_active', 'Retribution', 'conflagration', 'conflagration',
+            "",
+            'Demon', SPELL, MANUAL, SKILL_ANIM_GRID,
+            {},
+            { { T } }, FREE_AIM(100), 0,
+            ENEMY, Scaling:new(v)
+        )
+    end
+
+}
+
+-- All skills
 skills = {
 
 
@@ -861,12 +898,6 @@ skills = {
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
         nil, { { { 'special', 'retribution', BUFF }, 1 } }
-    ),
-    ['retribution_active'] = Skill:new('retribution_active', 'Retribution', nil, nil,
-        "",
-        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { T } }, FREE_AIM(100), 0,
-        ENEMY, nil -- TODO: What is the damage on retribution?
     ),
     ['contempt'] = Skill:new('contempt', 'Contempt', nil, nil,
         "Glare with an evil eye lit by ignea, reducing the Force of \z
@@ -1009,12 +1040,6 @@ skills = {
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
         nil, { { { 'special', 'riposte', BUFF }, 1 } }
-    ),
-    ['riposte_active'] = Skill:new('riposte_active', 'Riposte', nil, nil,
-        "",
-        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { T } }, FREE_AIM(100), 0,
-        ENEMY, Scaling:new(0, 'reaction', 1.0)
     ),
     ['shove'] = Skill:new('shove', 'Shove', nil, nil,
         "Kath shoves an ally or enemy out of the way, moving them 2 tiles and raising \z

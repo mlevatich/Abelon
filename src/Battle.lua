@@ -1381,14 +1381,17 @@ function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
             atk_range[i][2] = atk_range[i][2] + ox - 1
         end
         return sp:skillBehaviorGeneric(function()
+            print("using skill: " .. attack.name)
+            self.skill_in_use = attack
             local moved, hurt, dead, counters, exp_gained = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
             for k,v in pairs(exp_gained) do 
                 if v ~= 0 then exp[k] = v end
             end
-            countering_sps = counters
+            for i=1, #counters do table.insert(countering_sps, counters[i]) end
             sp.ignea = sp.ignea - attack.cost
+            print("cost " .. attack.cost .. " ignea, now " .. sp.ignea)
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do
                 local t = moved[i]['sp']
@@ -1480,47 +1483,94 @@ function Battle:playAction()
     local seq = self:pathToWalk(sp, move1_path, attack)
 
     -- Attack
-    local exp, countering_sps, attackBehavior = self:mkAttackBehavior(sp, attack, attack_dir, c_attack)
+    self.exp_sources = {}
+    local atk_exp, countering_sps, attackBehavior = self:mkAttackBehavior(sp, attack, attack_dir, c_attack)
+    table.insert(self.exp_sources, atk_exp)
     table.insert(seq, attackBehavior)
 
-    -- Wait a moment before continuing
+    -- If there was an attack, check for and handle counters
+    local atleast_one_counter = false
     if attack then
+
+        -- First, if there are counters, hold on a moment to let the hurt animation finish
         table.insert(seq, function(d)
-            return sp:waitBehaviorGeneric(d, 'combat', 1)
+            local ttw = 0
+            if #countering_sps > 0 then ttw = 1 end
+            return sp:waitBehaviorGeneric(d, 'combat', ttw)
+        end)
+
+        -- The next thing this sprite does is wait for an amount of time that will outlast the counters
+        table.insert(seq, function(d)
+            local time_to_wait = 1
+            local counter_behaviors = {}
+
+            -- For each living sprite which is able to counter, register the counterattack behavior
+            for i=1, #countering_sps do
+                local ally_sp = countering_sps[i][1]
+                local cnt_sk_id = countering_sps[i][2]
+                local dmg_received = countering_sps[i][3]
+                if self.status[ally_sp:getId()]['alive'] and self.status[sp:getId()]['alive'] then
+                    atleast_one_counter = true
+                    local counter_sk = mkCounterSkill[cnt_sk_id](dmg_received)
+                    local cnt_c_y, cnt_c_x = self:findSprite(sp)
+                    local cnt_exp, _, counterBehavior = self:mkAttackBehavior(ally_sp, counter_sk, UP, { cnt_c_x, cnt_c_y })
+                    table.insert(self.exp_sources, cnt_exp)
+                    table.insert(counter_behaviors, { ally_sp, counterBehavior })
+                    time_to_wait = time_to_wait + 3
+                end
+            end
+            
+            -- Create a behavior sequence for the first counterattacking sprite. As a doneaction, this
+            -- behavior passes control to the next counterattacking sprite, and so on. The final
+            -- counterattacking sprite concludes the entire action.
+            local k = 1
+            function counter_doneAction()
+                k = k + 1
+
+                -- Don't signal the next counterattacker if the attacker is already dead or is currently dying
+                if k <= #counter_behaviors and self.status[sp:getId()]['alive'] and sp.animation_name ~= 'death' then
+                    -- Pass control to the next counterattacker
+                    counter_behaviors[k][1]:behaviorSequence({ counter_behaviors[k][2] }, counter_doneAction)
+                    counter_behaviors[k-1][1]:changeBehavior('battle')
+                else
+                    -- Final counter should set action finished after a moment of waiting
+                    counter_behaviors[k-1][1]:behaviorSequence(
+                        {  function(d) return counter_behaviors[k-1][1]:waitBehaviorGeneric(d, 'combat', 1) end },
+                        function()
+                            self.action_in_progress = nil
+                            self.skill_in_use = nil
+                            counter_behaviors[k-1][1]:changeBehavior('battle')
+                        end
+                    )
+                end
+            end
+            if #counter_behaviors > 0 then
+                counter_behaviors[k][1]:behaviorSequence({ counter_behaviors[k][2] }, counter_doneAction)
+            end
+
+            -- If the sprite was damaged by a counterattack, this
+            -- behavior will be overridden by a hurt/death sequence and the attacker's original
+            -- sequence will be broken. Hence, the final counterattacker closes out the action.
+            return sp:waitBehaviorGeneric(d, 'combat', 0)
         end)
     end
 
-    -- Any counters?
-    -- TODO: iterate over countering_sps and add behaviors
-    -- TODO: Acting sprite's behavior sequence needs to stop and then re-start, otherwise it will
-    -- continue moving before the counter finishes! re-start should be a done-action of the
-    -- counter. To initiate the counter, augment the doneAction of the above behavior to start a
-    -- counter behavior sequence. Then the done action of the counter launches the next counter. The
-    -- doneAction of the last counter launches move2
-    -- TODO: Alternatively, assume counters take a predictable amount of time, and have the doneAction
-    -- of the attack above launch a counter and then wait according to the number of counters ocurring.
-    -- TODO: If a sprite dies as a result of a counter, make sure the rest of their behavior sequence
-    -- does not continue!
-    -- TODO: set skill_in_use to the counter skill.
-    -- TODO: counter should include all of the behaviors of a normal attack (see above). Pull this
-    -- out into a function. Though a counter should not:
-        -- Cost ignea
-        -- Cause displacement
-        -- Create counters
-    -- TODO: Don't counter if the countering sprite or the acting sprite is dead!
-    -- TODO: Figure out how to get the dealt by the attack into retribution_active damage
-
-    -- Move 2 (with spoofed grid)
-    local grid = self:dryrunGrid(false)
-    local move2_path = sp:djikstra(grid,
-        { c_move1[2], c_move1[1] },
-        { c_move2[2], c_move2[1] }
-    )
-    seq = concat(seq, self:pathToWalk(sp, move2_path, assist))
-
-    -- Helper gains exp if sprite started on, or moved off, their agility
-    -- assist
+    -- Only allies get a second move and assist
     if self:isAlly(sp) then
+
+        -- Move 2 (with spoofed grid)
+        local grid = self:dryrunGrid(false)
+        local move2_path = sp:djikstra(grid,
+            { c_move1[2], c_move1[1] },
+            { c_move2[2], c_move2[1] }
+        )
+        seq = concat(seq, self:pathToWalk(sp, move2_path, assist))
+
+        -- Helper gains exp if sprite started on, or moved off, their agility
+        -- assist
+        local ass_exp = {}
+        table.insert(self.exp_sources, ass_exp)
+    
         local assists_1 = self.grid[sp_y][sp_x].assists
         local assists_2 = self.grid[c_move1[2]][c_move1[1]].assists
         local all_assists = concat(assists_1, assists_2)
@@ -1528,83 +1578,69 @@ function Battle:playAction()
             local a = all_assists[i]
             for j = 1, #a.xp_tags do
                 if a.xp_tags[j] == EXP_TAG_MOVE then
-                    exp[a.owner:getId()] = EXP_FOR_ASSIST
+                    ass_exp[a.owner:getId()] = EXP_FOR_ASSIST
                 end
             end
         end
-    end
 
-    -- Assist
-    table.insert(seq, function(d)
-        if not assist then
-            return sp:waitBehaviorGeneric(d, 'combat', 0.2)
-        end
-        ass_range = self:skillRange(assist, assist_dir, c_assist)
-        for i = 1, #ass_range do
-            ass_range[i][1] = ass_range[i][1] + oy - 1
-            ass_range[i][2] = ass_range[i][2] + ox - 1
-        end
-        return sp:skillBehaviorGeneric(function()
-            sp.ignea = sp.ignea - assist.cost
-            local t = self:skillRange(assist, assist_dir, c_assist)
-            for i = 1, #t do
+        -- Assist
+        table.insert(seq, function(d)
+            if not assist then
+                return sp:waitBehaviorGeneric(d, 'combat', 0.2)
+            end
+            ass_range = self:skillRange(assist, assist_dir, c_assist)
+            for i = 1, #ass_range do
+                ass_range[i][1] = ass_range[i][1] + oy - 1
+                ass_range[i][2] = ass_range[i][2] + ox - 1
+            end
+            return sp:skillBehaviorGeneric(function()
+                sp.ignea = sp.ignea - assist.cost
+                local t = self:skillRange(assist, assist_dir, c_assist)
+                for i = 1, #t do
 
-                -- Get the buffs this assist will confer, based on
-                -- the sprite's attributes
-                local attrs, helpers = self:getTmpAttributes(sp)
-                local buffs = assist:use(attrs, sp)
+                    -- Get the buffs this assist will confer, based on
+                    -- the sprite's attributes
+                    local attrs, helpers = self:getTmpAttributes(sp)
+                    local buffs = assist:use(attrs, sp)
 
-                -- Each buff owner with an EXP_TAG_ASSIST buff 
-                -- gets EXP_FOR_ASSIST
-                for owner_id,tags in pairs(helpers) do
-                    if tags[EXP_TAG_ASSIST] then
-                        if owner_id ~= sp:getId() then
-                            exp[owner_id] = EXP_FOR_ASSIST
+                    -- Each buff owner with an EXP_TAG_ASSIST buff 
+                    -- gets EXP_FOR_ASSIST
+                    for owner_id,tags in pairs(helpers) do
+                        if tags[EXP_TAG_ASSIST] then
+                            if owner_id ~= sp:getId() then
+                                ass_exp[owner_id] = EXP_FOR_ASSIST
+                            end
                         end
                     end
-                end
 
-                -- Put the buffs on the grid
-                local g = self.grid[t[i][1]][t[i][2]]
-                for j = 1, #buffs do
-                    table.insert(g.assists, buffs[j])
+                    -- Put the buffs on the grid
+                    local g = self.grid[t[i][1]][t[i][2]]
+                    for j = 1, #buffs do
+                        table.insert(g.assists, buffs[j])
+                    end
+                    g.n_assists = g.n_assists + 1
                 end
-                g.n_assists = g.n_assists + 1
-            end
-            d()
-        end, assist, assist_dir, c_assist[1] + ox, c_assist[2] + oy, ass_range)
-    end)
-
-    -- Wait a moment before continuing
-    if assist then
-        table.insert(seq, function(d)
-            return sp:waitBehaviorGeneric(d, 'combat', 1)
+                d()
+            end, assist, assist_dir, c_assist[1] + ox, c_assist[2] + oy, ass_range)
         end)
+
+        -- Wait a moment before continuing
+        if assist then
+            table.insert(seq, function(d)
+                return sp:waitBehaviorGeneric(d, 'combat', 1)
+            end)
+        end
     end
 
     -- Register behavior sequence with sprite
     sp:behaviorSequence(seq, function()
 
         -- Set action finished
-        self.action_in_progress = nil
-        self.skill_in_use = nil
-
-        -- Everyone gains experience
-        for sp_id, e in pairs(exp) do
-            local s = self.status[sp_id]['sp']
-            if self:isAlly(s) and e > 0 then
-
-                -- Render experience gained
-                local y, x = self:findSprite(s)
-                table.insert(self.render_exp, { x, y, e, 2 })
-
-                -- Gain experience and queue levelups
-                local lvls = s:gainExp(e)
-                if lvls > 0 then self.levelup_queue[sp_id] = lvls end
-            end
+        -- (if there were counters, the last counter will handle cleanup. Otherwise, this sprite will)
+        if not atleast_one_counter then
+            self.action_in_progress = nil
+            self.skill_in_use = nil
         end
-
-        -- Back to battle
         sp:changeBehavior('battle')
     end)
 
@@ -1885,6 +1921,33 @@ function Battle:update(keys, dt)
         -- Clean up after actions are performed
         if not self.action_in_progress then
 
+            -- Everyone gains experience
+            local total_exp = {}
+            for i=1, #self.exp_sources do
+                for sp_id, e in pairs(self.exp_sources[i]) do
+                    if total_exp[sp_id] ~= nil then
+                        total_exp[sp_id] = total_exp[sp_id] + e
+                    else
+                        total_exp[sp_id] = e
+                    end
+                end
+            end
+            for sp_id, e in pairs(total_exp) do
+                local s = self.status[sp_id]['sp']
+                if self:isAlly(s) and e > 0 then
+
+                    -- Render experience gained
+                    local y, x = self:findSprite(s)
+                    table.insert(self.render_exp, { x, y, e, 2 })
+
+                    -- Gain experience and queue levelups
+                    local lvls = s:gainExp(e)
+                    if lvls > 0 then self.levelup_queue[sp_id] = lvls end
+                end
+            end
+            self.exp_sources = {}
+
+            -- Check levelups
             if next(self.levelup_queue) then
                 self:push({
                     ['stage'] = STAGE_LEVELUP,
