@@ -57,10 +57,10 @@ Goal for Mona:
 - Assassin: Weapon: Thrown Dagger: No cost, free aim in radius 2, scales with 8 + Force * 0.5.
 - Assassin: Weapon: Pinpoint: Find a weak spot. Specific range required, puts a debuff on the enemy for 3 turns. No cost.
 - Assassin: Weapon: Assassinate: if pinpoint is on enemy, and you have at least 3 assists, does 10 + Force x 3 weapon damage to adjacent enemy. No cost.
+- Assassin: Spell: Martyr: Counter stance, deal 1.5 force damage to weapon attackers.
 - Assassin: Weapon: Shadowed: 1 ignea. Gain Agility * 0.5 Force for two turns, and enemies won't target you for one turn.
 - Assassin: Weapon: Weave: Deal (1.0 * Force) weapon damage to adjacent enemy and gain 8 agility for a turn.
 - Assassin: Weapon: Blade Dance: Deal (1.0 * Agility) weapon damage to a tight group of enemies.
-- Assassin: Spell: Martyr: Cost 4 ignea, deal (1.5 * Force) spell damage to all adjacent enemies and Lester, and pull them in.
 - Assassin: Assist: Escape: No cost, grants some faraway allies (Affinity * 1.0) agility, but they lose 10 force.
 - Assassin: Assist: Adrenaline: Long-ranged-only assist with an ignea cost that scales with affinity.
 - Naturalist: Weapon: First Aid: No cost, heal an adjacent ally by Agility.

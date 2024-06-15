@@ -12,6 +12,6 @@ Attributes: endurance:9 focus:4 force:15 affinity:8 reaction:4 agility:16
 AttributesAdept:
 AttributesNormal:
 AttributesNovice:
-Skilltrees: Assassin:thrown_dagger,pinpoint,assassinate,shadowed,escape,weave,martyr,adrenaline,blade_dance Naturalist:first_aid,warning,stalagmite,poison_coating,rain,grasping_roots,herbal_tonic,quake,erutas_bounty
-Skills: thrown_dagger,first_aid,warning,pinpoint,stalagmite,assassinate
+Skilltrees: Assassin:thrown_dagger,pinpoint,assassinate,martyr,shadowed,escape,weave,adrenaline,blade_dance Naturalist:first_aid,warning,poison_coating,stalagmite,rain,grasping_roots,herbal_tonic,quake,erutas_bounty
+Skills: thrown_dagger,first_aid,warning,pinpoint,poison_coating,assassinate,martyr
 Description: The knight Lester. EOS

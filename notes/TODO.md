@@ -8,19 +8,31 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-## Scene / Battle / Sprite work
-
 - Playthrough notes:
     - Golem battle on master is actually pretty easy without the side objective
     - Kath needs his riposte! Otherwise reaction comps suck. Reaction/endurance comps need a buff generally: give lester a counter and give people some more reaction-scaling abilities.
     - The heavy hitters will soak up all of the exp when playing aggressively.
+    - Even on master, I'm getting more ignea shards than I necessarily need. Can easily walk into golem fight with full ignea.
 
-- Prevent the ability to queue up another scene while one scene is ending.
-- Implement reinforcements/turn limit/escape for golem battle. Test and tweak.
-- Implement side objective: recover Shanti's belongings. Test and tweak.
-    - Shanti only starts with half of her ignea: she recovers the rest if you get her bag. And she likes you more.
+## Scene / Battle / Sprite work
 
-- 1-4 transition scene, evening
+- Implement counter skills
+
+- Prevent the ability to queue up another scene with a keyboard input while one scene is ending. Examples: 
+    - Examining your bed between the transition from 1-1 to 1-2
+    - Talking to elaine immediately after carrying her.
+
+- Golem battle:
+    - Stone markers, getups
+    - Reinforcements scene
+    - Escape objective, tiles to the east. One reinforcement golem also comes from there.
+    - Victory scene fades and teleports the team, despawns any remaining golems, initiates a trigger to the north preventing you from going back.
+    - Correct turn limits and turn limit defeat scene.
+    - Side objective to recover Shanti's belongings southwest of her. She only starts with half ignea, bag recovers the rest, and improves her impression.
+    - Better golem sprite
+    - Test and tweak
+
+- 1-4 transition scene, evening. Blocks way back north.
 - Lester battle scenes
 - Lester portrait
 - Lester attributes and skills

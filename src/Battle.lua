@@ -1316,10 +1316,10 @@ function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
         end
     end
     if not dryrun then
-        local moved, hurt, dead, exp_gained = atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
+        local mv, hurt, dead, cnts, ex = atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
         -- In case target lost ignea and needs to prepare a different skill
         for k=1, #enemies_hit do self:prepareSkill(enemies_hit[k], nil, true) end
-        return moved, hurt, dead, exp_gained
+        return mv, hurt, dead, cnts, ex
     else
         return atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
     end
@@ -1409,6 +1409,7 @@ function Battle:playAction()
 
     -- Attack
     local exp = {}
+    local countering_sps = nil
     table.insert(seq, function(d)
         if not attack then
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
@@ -1419,12 +1420,13 @@ function Battle:playAction()
             atk_range[i][2] = atk_range[i][2] + ox - 1
         end
         return sp:skillBehaviorGeneric(function()
-            local moved, hurt, dead, exp_gained = self:useAttack(sp,
+            local moved, hurt, dead, counters, exp_gained = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
             for k,v in pairs(exp_gained) do 
                 if v ~= 0 then exp[k] = v end
             end
+            countering_sps = counters
             sp.ignea = sp.ignea - attack.cost
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do
@@ -1481,6 +1483,20 @@ function Battle:playAction()
             return sp:waitBehaviorGeneric(d, 'combat', 1)
         end)
     end
+
+    -- Any counters?
+    -- TODO: iterate over countering_sps and add behaviors
+    -- TODO: attacking sprite (and countering sprites, if there are multiple), 
+    -- should wait an appropriate amount of time for counters to finish.
+    -- Initial countering sprite waits the same amount of time as above (1)
+    -- TODO: set skill_in_use to the counter skill.
+    -- TODO: counter should include all of the behaviors of a normal attack (see above). Pull this
+    -- out into a function. Thought a counter should not:
+        -- Cost ignea
+        -- Cause displacement
+        -- Create counters
+    -- TODO: Don't counter if the countering sprite died!
+    -- TODO: Figure out how to get the dealt by the attack into retribution_active damage
 
     -- Move 2 (with spoofed grid)
     local grid = self:dryrunGrid(false)

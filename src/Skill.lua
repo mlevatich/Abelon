@@ -119,10 +119,11 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     local ts_displace = self.ts_displace
     local modifiers = self.modifiers
 
-    -- Who was moved/hurt/killed by this attack?
+    -- Who was moved/hurt/killed/counters by this attack?
     local moved = {}
     local hurt = {}
     local dead = {}
+    local counters = {}
 
     -- Levelups gained by each sprite
     local lvlups = {}
@@ -160,6 +161,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         end
 
         -- Only hit targets passing the team filter
+        local dealt = 0
         if self:hits(sp, t, t_team) then
 
             -- Dryrun just computes results, doesn't deal damage or apply effects
@@ -202,7 +204,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     local max_hp = t_tmp_attrs['endurance'] * 2
                     local pre_hp = t.health
                     local n_hp = math.max(min, math.min(max_hp, t.health - dmg))
-                    local dealt = pre_hp - n_hp
+                    dealt = pre_hp - n_hp
                     total_dealt = total_dealt + dealt
                     if not dryrun then
                         t.health = n_hp
@@ -366,6 +368,19 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
                 z = z + 1
             end
+
+            -- Registering counters
+            if t_team ~= sp_team then
+                if hasSpecial(t_stat, t_ass, t_specials, 'riposte') or hasSpecial(t_stat, t_ass, t_specials, 'martyr') then
+                    if dmg_type == WEAPON then
+                        table.insert(counters, { t, 0 } )
+                    end
+                elseif hasSpecial(t_stat, t_ass, t_specials, 'retribution') then
+                    if dealt > 0 then
+                        table.insert(counters, { t, dealt } )
+                    end
+                end
+            end
         end
     end
 
@@ -428,7 +443,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
     if not dryrun then
         -- Return which targets were hurt/killed, and exp gained
-        return moved, hurt, dead, exp_gain
+        return moved, hurt, dead, counters, exp_gain
     else
         return dryrun_res
     end
@@ -829,14 +844,29 @@ skills = {
         { DOWN, 2 }
     ),
     ['judgement'] = Skill:new('judgement', 'Judgement', nil, nil,
-        "Instantly kill an enemy anywhere on the field with less than 10 \z
+        "Instantly kill an enemy anywhere on the field with less than 15 \z
          health remaining.",
         'Executioner', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 2 } },
         { { T } }, FREE_AIM(100), 1,
         ENEMY, Scaling:new(1000),
         nil, nil, nil,
-        { ['br'] = function(a, a_a, b, b_a, st) return b.health <= 10 end }
+        { ['br'] = function(a, a_a, b, b_a, st) return b.health <= 15 end }
+    ),
+    ['retribution'] = Skill:new('retribution', 'Retribution', nil, nil,
+        "For 1 turn, 150 %% of any damage you receive is dealt back \z
+         to the attacker as Spell damage.",
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 2 } },
+        { { T } }, SELF_CAST_AIM, 1,
+        ALLY, nil,
+        nil, { { { 'special', 'retribution', BUFF }, 1 } }
+    ),
+    ['retribution_active'] = Skill:new('retribution_active', 'Retribution', nil, nil,
+        "",
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { T } }, FREE_AIM(100), 0,
+        ENEMY, nil -- TODO: What is the damage on retribution?
     ),
     ['contempt'] = Skill:new('contempt', 'Contempt', nil, nil,
         "Glare with an evil eye lit by ignea, reducing the Force of \z
@@ -950,7 +980,7 @@ skills = {
     ['sweep'] = Skill:new('sweep', 'Sweep', nil, nil,
         "Slash in a wide arc. Deals %s Weapon damage to enemies in \z
          front of Kath, and grants %s Reaction for 1 turn.",
-        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
@@ -970,17 +1000,33 @@ skills = {
             return a_a['reaction'] > b_a['reaction'] end
         }
     ),
+    ['riposte'] = Skill:new('riposte', 'Riposte', nil, nil,
+        "For 1 turn, Kath will retaliate against any \z
+         Weapon skills used on him, dealing Weapon damage equal to \z
+         his Reaction.",
+        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Defender', 2 }, { 'Hero', 2 }, { 'Cleric', 1 } },
+        { { T } }, SELF_CAST_AIM, 0,
+        ALLY, nil,
+        nil, { { { 'special', 'riposte', BUFF }, 1 } }
+    ),
+    ['riposte_active'] = Skill:new('riposte_active', 'Riposte', nil, nil,
+        "",
+        'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { T } }, FREE_AIM(100), 0,
+        ENEMY, Scaling:new(0, 'reaction', 1.0)
+    ),
     ['shove'] = Skill:new('shove', 'Shove', nil, nil,
-        "Kath shoves an ally or enemy, moving them by 1 tile and raising \z
-         Kath's Reaction by %s for 1 turn.",
+        "Kath shoves an ally or enemy out of the way, moving them 2 tiles and raising \z
+         Kath's Reaction and Affinity by %s for 1 turn.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { 'Defender', 3 }, { 'Hero', 3 }, { 'Cleric', 0 } },
         { { F, F, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ALL, nil,
-        { { { 'reaction', Scaling:new(3) }, 1 } }, nil, 
-        { UP, 1 }
+        { { { 'reaction', Scaling:new(3) }, 1 }, { { 'affinity', Scaling:new(3) }, 1 } }, nil, 
+        { UP, 2 }
     ),
     ['javelin'] = Skill:new('javelin', 'Javelin', nil, nil,
         "Kath hurls a javelin at an enemy, dealing %s Weapon \z
@@ -996,7 +1042,7 @@ skills = {
         "Kath throws his body into a thrust, dealing %s Weapon \z
          damage to up to 2 enemies in a line.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 0 } },
+        { { 'Defender', 0 }, { 'Hero', 4 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
@@ -1006,7 +1052,7 @@ skills = {
         "Enrage nearby enemies with an ignaeic fog, so that their next \z
          actions will target Kath (whether or not they can reach him).",
         'Defender', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 3 }, { 'Hero', 2 }, { 'Cleric', 0 } },
+        { { 'Defender', 3 }, { 'Hero', 2 }, { 'Cleric', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
           { F, T, T, T, T, T, F },
@@ -1026,7 +1072,7 @@ skills = {
         { { T, T, T },
           { T, T, T },
           { T, T, T } }, FREE_AIM(3), 1,
-        ALLY, Scaling:new(0, 'affinity', -1.0)
+        ALLY, Scaling:new(0, 'affinity', -1.5)
     ),
     ['haste'] = Skill:new('haste', 'Haste', nil, nil,
         "Kath raises the Agility of allies around him by %s for 2 turns.",
@@ -1044,7 +1090,7 @@ skills = {
         "Kath launches a thrust powered by lightning, dealing %s \z
          Spell damage to up to 4 enemies in a line.",
         'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 5 }, { 'Cleric', 0 } },
+        { { 'Defender', 0 }, { 'Hero', 5 }, { 'Cleric', 4 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
@@ -1090,7 +1136,7 @@ skills = {
         "Kath catapults an empowered javelin which deals %s \z
          Weapon Damage and pushes the enemy back 2 tiles.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 4 }, { 'Hero', 6 }, { 'Cleric', 0 } },
+        { { 'Defender', 5 }, { 'Hero', 5 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1119,7 +1165,7 @@ skills = {
     ['forbearance'] = Skill:new('forbearance', 'Forbearance', nil, nil,
         "Kath receives all attacks meant for an adjacent assisted ally.",
         'Defender', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 2 }, { 'Hero', 1 }, { 'Cleric', 1 } },
+        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'special', 'forbearance', BUFF } }, { EXP_TAG_RECV }
