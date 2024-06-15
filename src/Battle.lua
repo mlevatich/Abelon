@@ -1366,51 +1366,12 @@ function Battle:computeDir(c1, c2)
     end
 end
 
-function Battle:playAction()
-
-    -- Skills used
-    local sp     = self:getSprite()
-    local attack = self:getAttack()
-    local assist = self:getAssist()
-
-    -- Cursor locations
-    local c_sp     = self.stack[1]['cursor']
-    local c_move1  = self.stack[2]['cursor']
-    local c_attack = self.stack[4]['cursor']
-    local c_move2  = self.stack[5]['cursor']
-    local c_assist = nil
-    if self.stack[7] then
-        c_assist = self.stack[7]['cursor']
-    end
-
-    -- Derive directions from cursor locations
-    local attack_dir = UP
-    if attack and attack.aim['type'] == DIRECTIONAL then
-        attack_dir = self:computeDir(c_attack, c_move1)
-    end
-    local assist_dir = UP
-    if assist and assist.aim['type'] == DIRECTIONAL then
-        assist_dir = self:computeDir(c_assist, c_move2)
-    end
-
-    -- Shorthand
+function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
     local ox = self.origin_x
     local oy = self.origin_y
-    local sp_y, sp_x = self:findSprite(sp)
-
-    -- Make behavior sequence
-
-    -- Move 1
-    local move1_path = sp:djikstra(self.grid,
-        { sp_y, sp_x },
-        { c_move1[2], c_move1[1] }
-    )
-    local seq = self:pathToWalk(sp, move1_path, attack)
-
-    -- Attack
     local exp = {}
-    local countering_sps = nil
-    table.insert(seq, function(d)
+    local countering_sps = {}
+    return exp, countering_sps, function(d)
         if not attack then
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
@@ -1430,7 +1391,6 @@ function Battle:playAction()
             sp.ignea = sp.ignea - attack.cost
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do
-                any_displaced = true
                 local t = moved[i]['sp']
                 if not find(dead, t) then
                     local sp_size_x_offset = (-1 * (t.w - TILE_WIDTH) / 2 - 0.5) / TILE_WIDTH
@@ -1475,7 +1435,53 @@ function Battle:playAction()
             end
             d()
         end, attack, attack_dir, c_attack[1] + ox, c_attack[2] + oy, atk_range)
-    end)
+    end
+end
+
+function Battle:playAction()
+
+    -- Skills used
+    local sp     = self:getSprite()
+    local attack = self:getAttack()
+    local assist = self:getAssist()
+
+    -- Cursor locations
+    local c_sp     = self.stack[1]['cursor']
+    local c_move1  = self.stack[2]['cursor']
+    local c_attack = self.stack[4]['cursor']
+    local c_move2  = self.stack[5]['cursor']
+    local c_assist = nil
+    if self.stack[7] then
+        c_assist = self.stack[7]['cursor']
+    end
+
+    -- Derive directions from cursor locations
+    local attack_dir = UP
+    if attack and attack.aim['type'] == DIRECTIONAL then
+        attack_dir = self:computeDir(c_attack, c_move1)
+    end
+    local assist_dir = UP
+    if assist and assist.aim['type'] == DIRECTIONAL then
+        assist_dir = self:computeDir(c_assist, c_move2)
+    end
+
+    -- Shorthand
+    local ox = self.origin_x
+    local oy = self.origin_y
+    local sp_y, sp_x = self:findSprite(sp)
+
+    -- Make behavior sequence
+
+    -- Move 1
+    local move1_path = sp:djikstra(self.grid,
+        { sp_y, sp_x },
+        { c_move1[2], c_move1[1] }
+    )
+    local seq = self:pathToWalk(sp, move1_path, attack)
+
+    -- Attack
+    local exp, countering_sps, attackBehavior = self:mkAttackBehavior(sp, attack, attack_dir, c_attack)
+    table.insert(seq, attackBehavior)
 
     -- Wait a moment before continuing
     if attack then
@@ -1486,16 +1492,22 @@ function Battle:playAction()
 
     -- Any counters?
     -- TODO: iterate over countering_sps and add behaviors
-    -- TODO: attacking sprite (and countering sprites, if there are multiple), 
-    -- should wait an appropriate amount of time for counters to finish.
-    -- Initial countering sprite waits the same amount of time as above (1)
+    -- TODO: Acting sprite's behavior sequence needs to stop and then re-start, otherwise it will
+    -- continue moving before the counter finishes! re-start should be a done-action of the
+    -- counter. To initiate the counter, augment the doneAction of the above behavior to start a
+    -- counter behavior sequence. Then the done action of the counter launches the next counter. The
+    -- doneAction of the last counter launches move2
+    -- TODO: Alternatively, assume counters take a predictable amount of time, and have the doneAction
+    -- of the attack above launch a counter and then wait according to the number of counters ocurring.
+    -- TODO: If a sprite dies as a result of a counter, make sure the rest of their behavior sequence
+    -- does not continue!
     -- TODO: set skill_in_use to the counter skill.
     -- TODO: counter should include all of the behaviors of a normal attack (see above). Pull this
-    -- out into a function. Thought a counter should not:
+    -- out into a function. Though a counter should not:
         -- Cost ignea
         -- Cause displacement
         -- Create counters
-    -- TODO: Don't counter if the countering sprite died!
+    -- TODO: Don't counter if the countering sprite or the acting sprite is dead!
     -- TODO: Figure out how to get the dealt by the attack into retribution_active damage
 
     -- Move 2 (with spoofed grid)
