@@ -490,6 +490,8 @@ function Game:updateScene(dt)
             self.chapter_transition_flag = false
             self:saveChapter()
         end
+        -- Guard to prevent the player from starting an interaction scene in between two triggers
+        self:stallInputs(0.1)
     end
 end
 

@@ -16,7 +16,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- Make party text in blue before battle when there are skills to learn
 - Prevent the ability to queue up another scene with a keyboard input while one scene is ending. Examples: 
     - Examining your bed between the transition from 1-1 to 1-2
     - Talking to elaine immediately after carrying her.
