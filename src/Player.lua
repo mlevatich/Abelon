@@ -77,8 +77,12 @@ function Player:openInventory()
 end
 
 function Player:mkPartyMenu(in_battle)
+    local any_unspent = false
+    for i=1, #self.party do if self.party[i].skill_points > 0 then any_unspent = true end end
     local party = mapf(function(sp) return sp:toPartyMember(in_battle) end, self.party)
-    return MenuItem:new('Party', party, 'View traveling companions')
+    return MenuItem:new('Party', party, 'View traveling companions', nil, nil, nil, 
+        function(g) if any_unspent then return HIGHLIGHT end end
+    )
 end
 
 function Player:mkQuitMenu()
