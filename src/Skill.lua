@@ -1272,13 +1272,13 @@ skills = {
          Reaction by %s for 2 turns.",
         'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
-        { { F, F, F, F, F },
+        { { F, T, T, T, F },
           { F, T, T, T, F },
           { F, T, T, T, F },
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, nil,
-        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.0) }, 2 } }
+        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.2) }, 2 } }
     ),
     ['butcher'] = Skill:new('butcher', 'Butcher', nil, nil,
         "Elaine expertly carves up an adjacent enemy with her hunting knife, \z
@@ -1520,7 +1520,7 @@ skills = {
         { { F, F, F },
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 0.5),
+        ENEMY, Scaling:new(0, 'force', 0.7),
         nil, nil,
         { UP, 1 }
     ),
@@ -1528,7 +1528,7 @@ skills = {
         "Shanti equips a long chain and flings her lantern, ensnaring an enemy \z
          and lowering its Agility by %s for 1 turn.",
         'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Lanternfaire', 3 }, { 'Sorceress', 0 } },
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 0 } },
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
@@ -1539,7 +1539,7 @@ skills = {
         "Shanti lights her lantern with activated ignea to draw from, reducing all of her \z
          ignea costs by 1 for 5 turns.",
         'Lanternfaire', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 3 }, { 'Sorceress', 4 } },
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
         nil, { { { 'special', 'ignea_efficiency', BUFF }, 5 } } -- TODO: implement reduced costs
@@ -1575,11 +1575,22 @@ skills = {
         nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'focus', -0.8) }, 2 } },
         { DOWN, 3 }
     ),
+    ['flashbang'] = Skill:new('flashbang', 'Flashbang', nil, nil,
+        "Shanti blinds nearby enemies, dealing %s Spell damage \z
+         and raising her Reaction by %s for 1 turn.",
+         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+         { { 'Lanternfaire', 4 }, { 'Sorceress', 3 } },
+         { { F, T, F },
+           { T, F, T },
+           { F, T, F } }, SELF_CAST_AIM, 1,
+         ENEMY, Scaling:new(0, 'reaction', 1.5),
+         { { { 'reaction', Scaling:new(5) }, 1 } }
+    ),
     ['gravity'] = Skill:new('gravity', 'Gravity', nil, nil,
         "Shanti pulls enemies 3 tiles towards her, \z
          dealing %s Spell damage and lowering their Reaction by %s.",
         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Lanternfaire', 3 }, { 'Sorceress', 4 } },
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 5 } },
         { { F, T, T, T, T, T, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1620,7 +1631,7 @@ skills = {
     ['bleed_vitality'] = Skill:new('bleed_vitality', 'Bleed Vitality', nil, nil,
         "Shanti empowers the assisted ally's attacks to heal them for %s %% of the damage dealt.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 4 }, { 'Sorceress', 3 } },
+        { { 'Lanternfaire', 3 }, { 'Sorceress', 3 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1634,7 +1645,7 @@ skills = {
     ['bleed_ignea'] = Skill:new('bleed_ignea', 'Bleed Ignea', nil, nil,
         "Shanti empowers the assisted ally's attacks to restore ignea equal to %s %% of the damage dealt.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
+        { { 'Lanternfaire', 5 }, { 'Sorceress', 4 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1671,7 +1682,7 @@ skills = {
     ['shockwave'] = Skill:new('shockwave', 'Shockwave', nil, nil,
         "Emit an ignaeic shockwave. Deals \z
         %s Spell damage to nearby enemies and lowers their Agility by 4 for 1 turn.",
-        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- RELATIVE
+        'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, T, F, F },
           { F, T, T, T, F },

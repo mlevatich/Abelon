@@ -8,17 +8,7 @@ Bullets that reference a github issue should close the issue when committed.
 
 # Checklist
 
-- Playthrough notes:
-    - Golem battle on master is actually pretty easy without the side objective
-    - Kath needs his riposte! Otherwise reaction comps suck. Reaction/endurance comps need a buff generally: give lester a counter and give people some more reaction-scaling abilities.
-    - The heavy hitters will soak up all of the exp when playing aggressively.
-    - Even on master, I'm getting more ignea shards than I necessarily need. Can easily walk into golem fight with full ignea.
-
 ## Scene / Battle / Sprite work
-
-- Prevent the ability to queue up another scene with a keyboard input while one scene is ending. Examples: 
-    - Examining your bed between the transition from 1-1 to 1-2
-    - Talking to elaine immediately after carrying her.
 
 - Implement placeholder animations (use a word) to test timing on playing actions under a variety of circumstances
     - No counter enemy phase
@@ -28,7 +18,10 @@ Bullets that reference a github issue should close the issue when committed.
     - Multi counter
     - Death by counter
     - No damage taken (no hurt) from counter
-    - full attack with assist
+    - full attack with assist, deal damage
+    - full attack with assist, deal no damage
+    - enemy phase, attack deals no damage
+- Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property.
 
 - Golem battle:
     - Reinforcemeents scene
