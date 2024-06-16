@@ -54,6 +54,12 @@
 ~wolf3 1 1 L
 ~wolf4 1 1 L
 ~shadow 1 1 L
+~golem4 1 1 L
+~golem5 1 1 L
+~golem6 1 1 L
+~golem7 1 1 L
+~golem8 1 1 L
+~golem9 1 1 L
 
 ->Seen 1-3-entry
 ->State saw-camp,carried-elaine

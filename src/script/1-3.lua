@@ -378,6 +378,95 @@ s13['golem-battle-ally-turn-1'] = {
     ['result'] = {}
 }
 
+s13['golem-battle-ally-turn-2'] = {
+    ['ids'] = {'kath'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 2, false,
+            "...Are all of these stone pillars in the ground really the heads of magical golems? That \z
+             would mean..."
+        ),
+        say(1, 3, false,
+            "...we're completely surrounded. We need to get away from this \z
+             clearing, and fast."
+        )
+    },
+    ['result'] = {}
+}
+
+s13['golem-battle-ally-turn-4'] = {
+    ['ids'] = {'kath'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 3, false,
+            "I have a bad feeling about this..."
+        ),
+    },
+    ['result'] = {}
+}
+
+s13['golem-battle-ally-turn-5'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9'},
+    ['events'] = {
+        focus(2, 170),
+        -- TODO: ground shakes
+        say(2, 2, false,
+            "Oh, for-"
+        ),
+        lookDir(5, RIGHT),
+        teleport(5, 44.6875 + 8, 23.1875 + 1, 'monastery-entrance'),
+        focus(5, 170),
+        waitForEvent('camera'),
+        -- TODO: delete stone marker and do getup animation
+        wait(0.5),
+        lookDir(6, RIGHT),
+        teleport(6, 44.6875 + 3, 23.1875 + 3, 'monastery-entrance'),
+        focus(6, 170),
+        waitForEvent('camera'),
+        -- TODO: delete stone marker and do getup animation
+        wait(0.5),
+        lookDir(7, RIGHT),
+        teleport(7, 44.6875 + 1, 23.1875 + 6, 'monastery-entrance'),
+        focus(7, 170),
+        waitForEvent('camera'),
+        -- TODO: delete stone marker and do getup animation
+        wait(0.5),
+        lookDir(8, RIGHT),
+        teleport(8, 44.6875 + 3, 23.1875 + 8, 'monastery-entrance'),
+        focus(8, 170),
+        waitForEvent('camera'),
+        -- TODO: delete stone marker and do getup animation
+        wait(0.5),
+        lookDir(9, RIGHT),
+        teleport(9, 44.6875 + 10, 23.1875 + 11, 'monastery-entrance'),
+        focus(9, 170),
+        waitForEvent('camera'),
+        -- TODO: delete stone marker and do getup animation
+        wait(0.5),
+        lookDir(10, LEFT),
+        teleport(10, 44.6875 + 16, 23.1875 + 6, 'monastery-entrance'),
+        focus(10, 170),
+        waitForEvent('camera'),
+        -- TODO: delete stone marker and do getup animation
+        wait(0.5),
+        focus(1, 170),
+        say(2, 3, false,
+            "By Ignus, they're everywhere! We can't take them all! Let's cut a path out of here!"
+        ),
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:addTiles({ {16,7}, {16,8}, {16,9} })
+            g.battle:joinBattle(g.sprites['golem4'], ENEMY, 8, 1, 2)
+            g.battle:joinBattle(g.sprites['golem5'], ENEMY, 3, 3, 1)
+            g.battle:joinBattle(g.sprites['golem6'], ENEMY, 1, 6, 2)
+            g.battle:joinBattle(g.sprites['golem7'], ENEMY, 3, 8, 1)
+            g.battle:joinBattle(g.sprites['golem8'], ENEMY, 10, 11, 2)
+            g.battle:joinBattle(g.sprites['golem9'], ENEMY, 16, 6, 2)
+        end
+    }
+}
+
 s13['golem-battle-demonic-spell'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {

@@ -21,24 +21,24 @@ Bullets that reference a github issue should close the issue when committed.
     - full attack with assist, deal damage
     - full attack with assist, deal no damage
     - enemy phase, attack deals no damage
-- Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property.
+- Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property (ignea arrowheads, bond)
 
 - Golem battle:
-    - Reinforcemeents scene
     - Stone markers, getups
-    - Escape objective, tiles to the east. One reinforcement golem also comes from there.
-    - Victory scene fades and teleports the team, despawns any remaining golems, initiates a trigger to the north preventing you from going back.
-    - Correct turn limits and turn limit defeat scene.
+    - Escape objective, tiles to the east.
     - Side objective to recover Shanti's belongings southwest of her. She only starts with half ignea, bag recovers the rest, and improves her impression.
+    - Correct turn limits and turn limit defeat scene.
+    - Victory scene fades and teleports the team, despawns any remaining golems, initiates a trigger to the north preventing you from going back.
     - Better golem sprite
     - Test and tweak
 
-- 1-4 transition scene, evening. Blocks way back north.
+- 1-4 transition scene, evening
 - Lester battle scenes
+    - Wolves + golems
 - Lester portrait
 - Lester attributes and skills
-- Implement win condition: Survive
-- Implement side objective: ???
+- Implement win condition: Survive N turns
+- Implement side objective: Heal Lester
 - Balance and polish
 
 - Final battle scenes
@@ -47,7 +47,6 @@ Bullets that reference a github issue should close the issue when committed.
 - Forest terror skills
 - Implement win condition: Escape
 - Final scene transition and return to title screen
-- Implement side objective: ???
 - Balance and polish
 - Final terror sprite
 

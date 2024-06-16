@@ -155,12 +155,20 @@ function Battle:readEntities(data, idx)
     return t
 end
 
-function Battle:joinBattle(sp, team, t_x, t_y)
+function Battle:addTiles(tiles)
+    for i=1, #tiles do
+        local t_x = tiles[i][1]
+        local t_y = tiles[i][2]
+        if not self.grid[t_y][t_x] then
+            self.grid[t_y][t_x] = GridSpace:new()
+        end
+    end
+end
+
+function Battle:joinBattle(sp, team, t_x, t_y, prep_id)
 
     -- Add sprite to grid
-    if not self.grid[t_y][t_x] then
-        self.grid[t_y][t_x] = GridSpace:new()
-    end
+    self:addTiles({{t_x, t_y}})
     self.grid[t_y][t_x].occupied = sp
 
     -- Add status for sprite
@@ -178,7 +186,12 @@ function Battle:joinBattle(sp, team, t_x, t_y)
 
     -- Add to participants, update n_allies
     table.insert(self.participants, sp)
-    if team == ALLY then self.n_allies = self.n_allies + 1 end
+    if team == ALLY then 
+        self.n_allies = self.n_allies + 1
+    else
+        table.insert(self.enemy_order, sp:getId())
+        self:prepareSkill(sp, tonumber(prep_id))
+    end
 
     -- Change behavior to battle
     sp:changeBehavior('battle')
