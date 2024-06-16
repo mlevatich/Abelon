@@ -16,8 +16,12 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- Make skill in use show up earlier for counters
-- Implement sample animations to test timing on playing actions under a variety of circumstances
+- Make party text in blue before battle when there are skills to learn
+- Prevent the ability to queue up another scene with a keyboard input while one scene is ending. Examples: 
+    - Examining your bed between the transition from 1-1 to 1-2
+    - Talking to elaine immediately after carrying her.
+
+- Implement placeholder animations (use a word) to test timing on playing actions under a variety of circumstances
     - No counter enemy phase
     - Single counter enemy phase
     - Death from enemy
@@ -26,16 +30,10 @@ Bullets that reference a github issue should close the issue when committed.
     - Death by counter
     - No damage taken (no hurt) from counter
     - full attack with assist
-- Make party text in blue before battle when there are skills to learn
-
-
-- Prevent the ability to queue up another scene with a keyboard input while one scene is ending. Examples: 
-    - Examining your bed between the transition from 1-1 to 1-2
-    - Talking to elaine immediately after carrying her.
 
 - Golem battle:
+    - Reinforcemeents scene
     - Stone markers, getups
-    - Reinforcements scene
     - Escape objective, tiles to the east. One reinforcement golem also comes from there.
     - Victory scene fades and teleports the team, despawns any remaining golems, initiates a trigger to the north preventing you from going back.
     - Correct turn limits and turn limit defeat scene.

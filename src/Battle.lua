@@ -1380,9 +1380,8 @@ function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
             atk_range[i][1] = atk_range[i][1] + oy - 1
             atk_range[i][2] = atk_range[i][2] + ox - 1
         end
+        self.skill_in_use = attack
         return sp:skillBehaviorGeneric(function()
-            print("using skill: " .. attack.name)
-            self.skill_in_use = attack
             local moved, hurt, dead, counters, exp_gained = self:useAttack(sp,
                 attack, attack_dir, c_attack
             )
@@ -1391,7 +1390,6 @@ function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
             end
             for i=1, #counters do table.insert(countering_sps, counters[i]) end
             sp.ignea = sp.ignea - attack.cost
-            print("cost " .. attack.cost .. " ignea, now " .. sp.ignea)
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do
                 local t = moved[i]['sp']

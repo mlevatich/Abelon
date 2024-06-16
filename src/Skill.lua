@@ -374,7 +374,13 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 local has_riposte = hasSpecial(t_stat, t_ass, t_specials, 'riposte')
                 if has_riposte or hasSpecial(t_stat, t_ass, t_specials, 'martyr') then
                     if dmg_type == WEAPON then
-                        table.insert(counters, { t, ite(has_riposte, 'riposte', 'martyr'), 0 } )
+                        local already = false
+                        for h=1,#counters do
+                            if counters[h][1] == t then already = true end
+                        end
+                        if not already then -- Kath can't counter an AoE attack twice via forbearance
+                            table.insert(counters, { t, ite(has_riposte, 'riposte', 'martyr'), 0 } )
+                        end
                     end
                 elseif hasSpecial(t_stat, t_ass, t_specials, 'retribution') then
                     if dealt > 0 then
@@ -771,7 +777,7 @@ mkCounterSkill = {
             'Demon', SPELL, MANUAL, SKILL_ANIM_GRID,
             {},
             { { T } }, FREE_AIM(100), 0,
-            ENEMY, Scaling:new(v)
+            ENEMY, Scaling:new(math.floor(v * 1.5))
         )
     end
 
@@ -1665,7 +1671,7 @@ skills = {
     ['shockwave'] = Skill:new('shockwave', 'Shockwave', nil, nil,
         "Emit an ignaeic shockwave. Deals \z
         %s Spell damage to nearby enemies and lowers their Agility by 4 for 1 turn.",
-        'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
+        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, T, F, F },
           { F, T, T, T, F },
