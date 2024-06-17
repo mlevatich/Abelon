@@ -42,7 +42,7 @@ function Battle:initialize(player, game, id)
     self.origin_y = tile_origin[2]
 
     -- Battle grid
-    local grid_index = 14
+    local grid_index = 15
     local grid_dim = readArray(data[grid_index], tonumber)
     self.grid_w = grid_dim[1]
     self.grid_h = grid_dim[2]
@@ -63,6 +63,7 @@ function Battle:initialize(player, game, id)
         self:readEntities(data, 4),
         self:readEntities(data, 5)
     )
+    self.escaped = {}
     self.n_allies = 0
     for i = 1, #self.participants do
         local p = self.participants[i]
@@ -73,10 +74,12 @@ function Battle:initialize(player, game, id)
     self.enemy_action = nil
 
     -- Win conditions and loss conditions
-    self.win  = readArray(data[7], function(s) return wincons[s]  end)
+    local win_names = readArray(data[7])
+    self.win = mapf(function(s) return wincons[s] end, win_names)
     self.lose = readArray(data[8], function(s) return losscons[s] end)
     self.turnlimits = readArray(data[9], tonumber)
     if next(self.turnlimits) then table.insert(self.lose, {}) end
+    self.scene_tiles = readDict(data[10], ARR, nil, tonumber)
     self:adjustDifficulty()
 
     -- Battle cam starting location
@@ -97,7 +100,7 @@ function Battle:initialize(player, game, id)
 
     -- Music
     self.game:stopMusic()
-    self.game.current_music = readField(data[10])
+    self.game.current_music = readField(data[11])
 
     -- Action stack
     self.suspend_stack = {}
@@ -593,8 +596,11 @@ function Battle:cleanupBattle()
     -- Restore ignea, health, and stats to all participants
     -- Ignea is restored by 0% on master, 25% on adept, 50% on normal/novice
     local ign_mul = 0.75 - (math.max(NORMAL, self.game.difficulty) * 0.25)
-    for i = 1, #self.participants do
-        local sp = self.participants[i]
+    local affected = {}
+    for i = 1, #self.participants do table.insert(affected, self.participants[i]) end
+    for i = 1, #self.escaped do table.insert(affected, self.escaped[i]) end
+    for i = 1, #affected do
+        local sp = affected[i]
         if self:isAlly(sp) then
             local max_ign = sp.attributes['focus']
             sp.ignea = math.min(sp.ignea + math.floor(max_ign * ign_mul), max_ign)
@@ -613,8 +619,12 @@ function Battle:awardBonusExp()
         bexp = bexp + (self.turnlimit - self.turn) * 15
         self.render_bexp = bexp
     end
-    for i = 1, #self.participants do
-        local sp = self.participants[i]
+
+    local affected = {}
+    for i = 1, #self.participants do table.insert(affected, self.participants[i]) end
+    for i = 1, #self.escaped do table.insert(affected, self.escaped[i]) end
+    for i = 1, #affected do
+        local sp = affected[i]
         if self:isAlly(sp) then
             local lvlups = sp:gainExp(bexp)
             if lvlups > 0 then
@@ -1336,6 +1346,25 @@ function Battle:useAttack(sp, atk, dir, atk_c, dryrun, sp_c)
     else
         return atk:use(sp, sp_a, ts, ts_a, dir, self.status, grid, dryrun)
     end
+end
+
+function Battle:escape(sp)
+
+    -- Remove sprite from participants, add to escaped
+    if self:isAlly(sp) then
+        for i=1, #self.participants do
+            if self.participants[i] == sp then
+                table.remove(self.participants, i)
+                break
+            end
+        end
+        table.insert(self.escaped, sp)
+    end
+
+    -- Teleport sprite out of battle
+    local i, j = self:findSprite(sp)
+    self.grid[i][j].occupied = nil
+    self.game:warpSprite(sp, 1, 1, 'waiting-room')
 end
 
 function Battle:kill(sp)
@@ -2362,6 +2391,12 @@ function Battle:planNextEnemyAction()
     self:prepareSkill(e, nil, false, spent)
 end
 
+function Battle:renderSceneTiles()
+    for _, v in pairs(self.scene_tiles) do
+        self:shadeSquare(v[2], v[1], AUTO_COLOR['Weapon'], 1)
+    end
+end
+
 function Battle:renderCursors()
     for i = 1, #self.stack do
         local c = self.stack[i]['cursor']
@@ -3066,8 +3101,20 @@ function Battle:renderHoverBoxes()
         end
         local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
         local h = BOX_MARGIN + LINE_HEIGHT
-        local clr = { 0, 0, 0 }
-        return { mkEle('text', 'Empty', HALF_MARGIN, HALF_MARGIN) }, w, h, clr
+        local alt_text = nil
+        for k, v in pairs(self.scene_tiles) do
+            if v[1] == c[1] and v[2] == c[2] then
+                alt_text = capitalize(k):gsub('_', ' '):gsub('%d','')
+
+            end
+        end
+        if alt_text then
+            local clr = { 0.4, 0.4, 0.2 }
+            return { mkEle('text', alt_text, HALF_MARGIN, HALF_MARGIN) }, w, h, clr
+        else
+            local clr = { 0, 0, 0 }
+            return { mkEle('text', 'Empty', HALF_MARGIN, HALF_MARGIN) }, w, h, clr
+        end
     end
     
     -- Get box elements for assists, only for ally sprite or empty space
@@ -3107,6 +3154,9 @@ function Battle:renderUnderlay()
 
     -- Render green squares on assisted grid tiles
     self:renderAssistSpaces()
+
+    -- Shade escape tiles yellow if there are any
+    self:renderSceneTiles()
 
     -- Render views over grid if we aren't watching a scene
     local s = self:getStage()
@@ -3187,9 +3237,14 @@ wincons = {
             return true
         end
     },
-    ['escape'] = { "escape the battlefield",
+    ['escape'] = { "all allies escape the battlefield",
         function(b)
-             return false
+            for _,sp in pairs(b.participants) do
+                if b.status[sp:getId()]['team'] == ALLY then
+                    return false
+                end
+            end
+            return true
         end
     }
 }

@@ -7,6 +7,7 @@ Order: wolf1,wolf2,wolf3,wolf4
 Wincon: rout
 Losscon: death
 Turnlimits: 8,7,7,6
+Scenetiles:
 Music: A-Single-Shard-Of-Ignea
 
 // Battle grid

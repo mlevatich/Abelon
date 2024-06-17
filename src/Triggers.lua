@@ -198,7 +198,7 @@ battle_triggers = {
                 if b.game.current_tutorial == "Battle: Reminder" then
                     return 'close-tutorial-4'
                 end
-                return falsef
+                return false
             end
         }
     },
@@ -232,6 +232,12 @@ battle_triggers = {
                 local atk = b.status['abelon']['attack']
                 if unseen and atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
                     return 'demonic-spell'
+                end
+                return false
+            end,
+            ['end-tutorial1'] = function(b)
+                if b.game.current_tutorial == "Battle: Objectives" then
+                    return 'close-tutorial-1'
                 end
                 return false
             end

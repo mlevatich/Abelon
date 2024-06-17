@@ -219,10 +219,13 @@ TUTORIALS = {
         "By battling, units gain experience and level up, granting attributes and a skill point.",
         "Spend your skill points in the party menu to learn new skills, if you meet their requirements."
     },
+    ['Battle: Objectives'] = {
+        "Battles can have objectives beyond defeating enemies. To escape or take an item, for example, an ally must end their action on the highlighted tile.",
+        "Mandatory win conditions appear as 'Objectives' in the battle menu, but your allies may suggest other, optional courses of action."
+    },
     ['Using and presenting items'] = {
-        "In some situations, it may be appropriate to use an item or cast a spell on a particular location or target.",
-        "Move close to the target and open your inventory. Navigate to the spell or item and 'Use' it.",
-        "To show an item to someone, select 'Present'."
+        "In some situations, it may be appropriate to use an item in a particular location or present it to someone nearby.",
+        "Move close to the target and open your inventory. Navigate to the item and 'Use' or 'Present' it."
     }
 }
 

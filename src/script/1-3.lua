@@ -367,29 +367,43 @@ s13['golem-battle'] = {
 }
 
 s13['golem-battle-ally-turn-1'] = {
-    ['ids'] = {'shanti'},
+    ['ids'] = {'shanti', 'kath'},
     ['events'] = {
+        focus(2, 170),
+        say(2, 2, false,
+            "...Are all of these stone pillars in the ground really the heads of magical golems? That \z
+             would mean..."
+        ),
+        say(2, 3, false,
+            "...we're completely surrounded. We need to get away from this \z
+             clearing, and fast."
+        ),
+        say(2, 3, false,
+            "Everyone, let's get Shanti to safety! Once you reach the eastern edge of the battlefield, \z
+             just keep running. We'll meet up again once we're all safe."
+        ),
         focus(1, 170),
         say(1, 2, false,
-            "They caught me off guard by rising up from underground. In my haste, I dropped my pack. \z
-             It has all of my ignea. I'll need help retrieving it."
+            "Wait, Captain Kath! The golems caught me by surprise, and... I left my pack by the ward. \z
+             It has my research notes. And some of my ignea. Someone needs to retrieve it... Please."
+        ),
+        focus(2, 170),
+        say(2, 3, false,
+            "I'm just not sure that's wise, when the other golems could awaken at any moment... \z
+             Abelon, you make the call."
         )
     },
-    ['result'] = {}
+    ['result'] = {
+        ['do'] = function(g)
+            g:startTutorial("Battle: Objectives")
+        end
+    }
 }
 
 s13['golem-battle-ally-turn-2'] = {
     ['ids'] = {'kath'},
     ['events'] = {
-        focus(1, 170),
-        say(1, 2, false,
-            "...Are all of these stone pillars in the ground really the heads of magical golems? That \z
-             would mean..."
-        ),
-        say(1, 3, false,
-            "...we're completely surrounded. We need to get away from this \z
-             clearing, and fast."
-        )
+        
     },
     ['result'] = {}
 }
@@ -474,6 +488,16 @@ s13['golem-battle-demonic-spell'] = {
     },
     ['result'] = {
         ['state'] = 'kath-saw-spell'
+    }
+}
+
+s13['golem-battle-close-tutorial-1'] = {
+    ['ids'] = {},
+    ['events'] = {},
+    ['result'] = {
+        ['do'] = function(g)
+            g:endTutorial()
+        end
     }
 }
 
