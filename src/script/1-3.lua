@@ -361,6 +361,7 @@ s13['golem-battle'] = {
         ['do'] = function(g)
             local shanti = g.sprites['shanti']
             g.player:joinParty(shanti)
+            shanti.ignea = math.floor(shanti.ignea - 7)
             g:launchBattle('golem-battle')
         end
     }
