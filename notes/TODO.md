@@ -11,14 +11,14 @@ Bullets that reference a github issue should close the issue when committed.
 ## Scene / Battle / Sprite work
 
 - Golem battle:
-    - Start shanti off with half ignea
-    - Guard other in-battle scenes with the assertion that the sprite is on the map. So if the sprite has escaped, a scene with them won't play (or will be something a little different). Turn limit defeat scene.
+    - Guard other in-battle scenes with the assertion that the sprite is in the battle. So if the sprite has escaped, a scene with them won't play (or will be something a little different). Turn limit defeat scene.
     - Victory scene fades and teleports the team, despawns any remaining golems, sets a trigger to the north preventing you from going back, sets a trigger for the walk south to transition to 1-4, team says a few words.
+    - 1-4 transition scene, evening
+    - Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property (ignea arrowheads, bond)
     - Stone markers, getups
     - Better golem sprite
     - Test and tweak
 
-- Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property (ignea arrowheads, bond)
 - Implement placeholder animations (use a word) to test timing on playing actions under a variety of circumstances
     - No counter enemy phase
     - Single counter enemy phase
@@ -31,9 +31,7 @@ Bullets that reference a github issue should close the issue when committed.
     - full attack with assist, deal no damage
     - enemy phase, attack deals no damage
 
-- 1-4 transition scene, evening
-- Lester battle scenes
-    - Wolves + golems
+- Lester battle scenes, Wolves + golems
 - Lester portrait
 - Lester attributes and skills
 - Implement win condition: Survive N turns
@@ -41,7 +39,7 @@ Bullets that reference a github issue should close the issue when committed.
 - Balance and polish
 
 - Final battle scenes
-    - Battle opens with an absolute ton of wolves. The terrors don't show up until right before its escape time.
+    - Battle opens with an absolute ton of wolves, arriving in waves. The terrors don't show up until right before its escape time.
 - Forest terror sprite
 - Forest terror skills
 - Implement win condition: Escape
