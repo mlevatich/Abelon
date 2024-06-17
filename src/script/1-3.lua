@@ -458,7 +458,7 @@ s13['golem-battle-ally-turn-5'] = {
         -- TODO: delete stone marker and do getup animation
         wait(0.5),
         lookDir(10, LEFT),
-        teleport(10, 44.6875 + 16, 23.1875 + 6, 'monastery-entrance'),
+        teleport(10, 44.6875 + 16, 23.1875 + 5, 'monastery-entrance'),
         focus(10, 170),
         waitForEvent('camera'),
         -- TODO: delete stone marker and do getup animation
@@ -476,7 +476,7 @@ s13['golem-battle-ally-turn-5'] = {
             g.battle:joinBattle(g.sprites['golem6'], ENEMY, 1, 6, 2)
             g.battle:joinBattle(g.sprites['golem7'], ENEMY, 3, 8, 1)
             g.battle:joinBattle(g.sprites['golem8'], ENEMY, 10, 11, 2)
-            g.battle:joinBattle(g.sprites['golem9'], ENEMY, 16, 6, 2)
+            g.battle:joinBattle(g.sprites['golem9'], ENEMY, 16, 5, 2)
         end
     }
 }
@@ -497,6 +497,108 @@ s13['golem-battle-close-tutorial-1'] = {
     ['result'] = {
         ['do'] = function(g)
             g:endTutorial()
+        end
+    }
+}
+
+s13['golem-battle-abelon-escape'] = {
+    ['ids'] = {'abelon'},
+    ['events'] = {
+        lookDir(1, RIGHT),
+        focus(1, 170),
+        wait(0.5),
+        lookDir(1, LEFT),
+        wait(1),
+        unlockCamera(),
+        walk(false, 1, 73, 31, 'walk'),
+        waitForEvent('walk')
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-kath-escape'] = {
+    ['ids'] = {'kath'},
+    ['events'] = {
+        lookDir(1, RIGHT),
+        focus(1, 170),
+        say(1, 1, false,
+            "How many of those stones in the ground did we pass on our way here? Don't tell me they've \z
+             all woken up... Ach, this expedition fares worse by the minute. Lester, you'd better be \z
+             alright..."
+        ),
+        unlockCamera(),
+        walk(false, 1, 72, 31, 'walk'),
+        waitForEvent('walk'),
+        teleport(1, 1, 1, 'waiting-room')
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-shanti-escape'] = {
+    ['ids'] = {'shanti'},
+    ['events'] = {
+        lookDir(1, RIGHT),
+        focus(1, 170),
+        wait(0.5),
+        lookDir(1, LEFT),
+        wait(0.5),
+        say(1, 3, false,
+            "Just what are these creatures? I've never seen anything like them before. What \z
+             I wouldn't give to study their bodies..."
+        ),
+        say(1, 1, false,
+            "Though I suppose I can simply take a closer look at the many such stone markers we've passed."
+        ),
+        unlockCamera(),
+        walk(false, 1, 72, 31, 'walk'),
+        waitForEvent('walk'),
+        teleport(1, 1, 1, 'waiting-room')
+    },
+    ['result'] = {
+
+    }
+}
+
+s13['golem-battle-elaine-escape'] = {
+    ['ids'] = {'elaine'},
+    ['events'] = {
+        lookDir(1, RIGHT),
+        focus(1, 170),
+        say(1, 3, false,
+            "Ok, just like Kath said. We meet up to the east, where we're out of danger. I hope everyone \z
+             will be ok..."
+        ),
+        unlockCamera(),
+        walk(false, 1, 72, 31, 'walk'),
+        waitForEvent('walk'),
+        teleport(1, 1, 1, 'waiting-room')
+    },
+    ['result'] = {
+
+    }
+}
+
+s13["golem-battle-shanti's_pack"] = {
+    ['ids'] = {'shanti'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 1, false,
+            "Thank Eruta! I would have been heartbroken to leave my notes and maps behind. \z
+             The mysteries of this valley are growing so many I can scarcely keep them all in my head."
+        ),
+        say(1, 1, false,
+            "And there's the ignea, of course. Never any shortage of monsters to blast away, \z
+             no, not in this company. I'll have to activate it before our next battle."
+        )
+    },
+    ['result'] = {
+        ['state'] = 'shanti-pack-recovered',
+        ['do'] = function(g)
+            g:getMap():dropSprite('shanti-pack')
         end
     }
 }

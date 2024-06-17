@@ -124,7 +124,7 @@ function Battle:readEntities(data, idx)
         local team = ite(idx == 4, ALLY, ENEMY)
 
         -- Ignore listed allies not in the player's party
-        if team == ENEMY or find(self.game.player.party, sp) then
+        if team == ENEMY or find(self.player.party, sp) then
             table.insert(t, sp)
             self.grid[v[2]][v[1]] = GridSpace:new(sp)
 
@@ -136,6 +136,7 @@ function Battle:readEntities(data, idx)
                 ['effects']  = {},
                 ['alive']    = true,
                 ['acted']    = false,
+                ['inbattle'] = true,
                 ['attack']   = nil,
                 ['assist']   = nil,
                 ['prepare']  = nil
@@ -459,6 +460,25 @@ function Battle:closeMenu()
     end
 end
 
+function Battle:checkSceneTiles()
+    local sp = self:getSprite()
+    local end_y, end_x = self:findSprite(sp)
+    for k, v in pairs(self.scene_tiles) do
+        if end_x == v[1] and end_y == v[2] and self.status[sp:getId()]['inbattle'] then
+            local scene_id = k:gsub('%d','')
+            if scene_id == 'escape' then
+                scene_id = sp:getId() .. '-escape'
+                self:escape(sp)
+            else
+                self.scene_tiles[k] = nil
+            end
+            self:suspend(self.id .. '-' .. scene_id)
+            return true
+        end
+    end
+    return false
+end
+
 function Battle:checkTriggers(phase, doneAction)
     local triggers = battle_triggers[self.id][phase]
     for k, v in pairs(triggers) do
@@ -726,7 +746,15 @@ function Battle:openBeginTurnMenu()
             self:closeMenu()
             self:turnRefresh()
             self.stack = { self:stackBase() }
-            local y, x = self:findSprite(self.player.sp)
+            local focus_sp = nil
+            for i=1, #self.participants do
+                local sp = self.participants[i]
+                if self:isAlly(sp) and self.status[sp:getId()]['inbattle'] then
+                    focus_sp = sp
+                    break
+                end
+            end
+            local y, x = self:findSprite(focus_sp)
             local c = self:getCursor()
             c[1] = x
             c[2] = y
@@ -1361,16 +1389,17 @@ function Battle:escape(sp)
         table.insert(self.escaped, sp)
     end
 
-    -- Teleport sprite out of battle
+    -- Remove sprite from grid and battle (escape scene will handle teleporting them out)
     local i, j = self:findSprite(sp)
+    self.status[sp:getId()]['inbattle'] = false
     self.grid[i][j].occupied = nil
-    self.game:warpSprite(sp, 1, 1, 'waiting-room')
 end
 
 function Battle:kill(sp)
     local i, j = self:findSprite(sp)
     self.grid[i][j].occupied = nil
     self.status[sp:getId()]['alive'] = false
+    self.status[sp:getId()]['inbattle'] = false
 end
 
 function Battle:pathToWalk(sp, path, next_sk)
@@ -1974,7 +2003,7 @@ function Battle:update(keys, dt)
             end
             for sp_id, e in pairs(total_exp) do
                 local s = self.status[sp_id]['sp']
-                if self:isAlly(s) and e > 0 then
+                if self:isAlly(s) and e > 0 and self.status[sp_id]['inbattle'] then
 
                     -- Render experience gained
                     local y, x = self:findSprite(s)
@@ -2002,9 +2031,14 @@ function Battle:update(keys, dt)
                 return
             end
 
+            -- Check scene tiles
+            if self:checkSceneTiles() then
+                self.stall_battle_cam = true
+                return
+            end
+
             -- Say this sprite acted and reset stack
-            local sp = self:getSprite()
-            self.status[sp:getId()]['acted'] = true
+            self.status[self:getSprite():getId()]['acted'] = true
             self.stack = { self.stack[1] }
 
             -- Check win and loss

@@ -6,8 +6,8 @@ Enemies: golem1:8,5,1 golem2:9,8,2 golem3:3,4,2
 Order: golem1,golem2,golem3
 Wincon: escape
 Losscon: death
-Turnlimits: 7,6,6,5
-Scenetiles: escape1:16,7 escape2:16,8 escape3:16,9 shanti's_pack:5,7
+Turnlimits: 10,10,10,10
+Scenetiles: escape1:16,6 escape2:16,7 escape3:16,8 shanti's_pack:5,7
 Music: A-Single-Shard-Of-Ignea
 
 // Battle grid
@@ -18,10 +18,10 @@ FFFFFTTTTFFFFFFF
 FFFTTTTTTTFFFFFF
 FTTTTTTTTTTTTTTF
 TTTTTTTTTTTTTTTF
-FTTTTTTTTTTTTTTF
+FTTTTTTTTTTTTTTT
 FTTTTTTTTTTTTTTT
 FFFTTTTTTTTTTTTT
-FFFFFTTTTTTTTTTT
+FFFFFTTTTTTTTTTF
 FFFFFFTTTTTTTTTF
 FFFFFFFFFFTTTTTF
 FFFFFFFFFFFFTTTF

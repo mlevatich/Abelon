@@ -94,6 +94,12 @@ function focus(p1, speed)
     end
 end
 
+function unlockCamera()
+    return function(scene)
+        scene.cam_speed = 0
+    end
+end
+
 function putOut(p1)
     return function(scene)
         local sp = scene.participants[p1]

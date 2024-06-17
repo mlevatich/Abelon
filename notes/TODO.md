@@ -11,18 +11,14 @@ Bullets that reference a github issue should close the issue when committed.
 ## Scene / Battle / Sprite work
 
 - Golem battle:
-    - Escape objective:
-        - Guard in-battle scenes with the assertion that the sprite is on the map. So if the sprite has escaped, a scene with them won't play (or will be something a little different).
-        - After a sprite completes its action, if it is on an escape tile, start a unique per-sprite escape scene (sprite says something and then runs away), and then call the escape() function on conclusion of the scene. This can be a per-sprite END_ACTION trigger like demonic-spell, guarded by whether the sprite is on an escape tile. Make sure two scenes can play in a queue (e.g. demonic spell, followed by escape scene).
-        - Escape scene doesn't happen if the sprite is displaced onto an escape tile. They have to end their own action on it.
-    - Side objective to recover Shanti's belongings southwest of her, on (5,7). She only starts with half ignea, bag recovers the rest, and improves her impression.
-        - Like an escape tile. Ending your action on it triggers the scene that despawns the belongings. Shanti says something to this effect (just get me over there and I'll do the rest).
-    - Correct turn limits and turn limit defeat scene (we wont make it!)
-    - Victory scene fades and teleports the team, despawns any remaining golems, initiates a trigger to the north preventing you from going back.
+    - Start shanti off with half ignea
+    - Guard other in-battle scenes with the assertion that the sprite is on the map. So if the sprite has escaped, a scene with them won't play (or will be something a little different). Turn limit defeat scene.
+    - Victory scene fades and teleports the team, despawns any remaining golems, sets a trigger to the north preventing you from going back, sets a trigger for the walk south to transition to 1-4, team says a few words.
     - Stone markers, getups
     - Better golem sprite
     - Test and tweak
 
+- Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property (ignea arrowheads, bond)
 - Implement placeholder animations (use a word) to test timing on playing actions under a variety of circumstances
     - No counter enemy phase
     - Single counter enemy phase
@@ -34,7 +30,6 @@ Bullets that reference a github issue should close the issue when committed.
     - full attack with assist, deal damage
     - full attack with assist, deal no damage
     - enemy phase, attack deals no damage
-- Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property (ignea arrowheads, bond)
 
 - 1-4 transition scene, evening
 - Lester battle scenes
