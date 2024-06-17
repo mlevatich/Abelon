@@ -452,7 +452,6 @@ end
 function log(s)
     if debug then 
         print(s)
-        io.flush(io.stdout)
     end
 end
 

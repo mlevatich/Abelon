@@ -1149,7 +1149,7 @@ function Battle:selectTarget()
     if #moves <= 1 then
         self:push(self:stackBubble(c, moves, self.stack[2]['sp_dir']))
         if self.n_allies > 1 then
-            self:openAssistMenu(sp)
+            self:openAssistMenu()
         else
             self:endAction(false)
         end
@@ -3112,7 +3112,7 @@ function Battle:renderHoverBoxes()
     local g = grid[c[2]][c[1]]
     local sp = g.occupied
 
-    local res, atk = nil
+    local res, atk = nil, nil
     local dry = self:dryrunAttack()
     if dry then
         atk = self:getAttack()

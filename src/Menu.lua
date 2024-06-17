@@ -138,6 +138,7 @@ function initSubmenu(cur, parent)
         n.action = function(c) submenu:back() end
         y.action = function(c, m)
             submenu:back()
+---@diagnostic disable-next-line: redundant-parameter
             inherited_action(c, m)
         end
         cur.action = function(c)
