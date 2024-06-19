@@ -378,12 +378,12 @@ function Battle:getTmpAttributes(sp, with_eff, with_tile)
         y = with_tile[1]
         x = with_tile[2]
     end
-    local bs, hs, _ = mkTmpAttrs(
+    local bs, hs, ss = mkTmpAttrs(
         sp.attributes,
         ite(with_eff, with_eff, self.status[sp:getId()]['effects']),
         ite(self:isAlly(sp), self.grid[y][x].assists, {})
     )
-    return bs, hs
+    return bs, hs, ss
 end
 
 function Battle:getSpriteRenderFlags(sp)
@@ -776,19 +776,18 @@ end
 function Battle:openAttackMenu()
     local sp = self:getSprite()
     local atk_loc = self:getCursor()
-    local loc = { atk_loc[2], atk_loc[1] }
-    local attrs, _ = self:getTmpAttributes(sp, nil, loc)
+    local attrs, _, specials = self:getTmpAttributes(sp, nil, { atk_loc[2], atk_loc[1] })
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s attack", nil, function(c)
             self:push(self:stackBubble())
             self:selectTarget()
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true, false, attrs)
+    local skills_menu = sp:mkSkillsMenu(true, false, attrs, nil, nil)
     local weapon = skills_menu.children[1]
     local spell = skills_menu.children[2]
-    for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i], sp.ignea) end
-    for i = 1, #spell.children do self:mkUsable(sp, spell.children[i], sp.ignea) end
+    for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i], sp.ignea, specials) end
+    for i = 1, #spell.children do self:mkUsable(sp, spell.children[i], sp.ignea, specials) end
     local opts = { weapon, spell, wait }
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
@@ -798,7 +797,7 @@ end
 
 function Battle:openAssistMenu()
     local sp = self:getSprite()
-    local attrs, hp, ign = self:dryrunAttributes(self:getCursor())
+    local attrs, specials, hp, ign = self:dryrunAttributes(self:getCursor())
     local wait = MenuItem:new('Skip', {},
         'Skip ' .. sp.name .. "'s assist", nil, function(c)
             self:endAction(false)
@@ -806,7 +805,7 @@ function Battle:openAssistMenu()
     )
     local skills_menu = sp:mkSkillsMenu(true, false, attrs, hp, ign)
     local assist = skills_menu.children[3]
-    for i = 1, #assist.children do self:mkUsable(sp, assist.children[i], ign) end
+    for i = 1, #assist.children do self:mkUsable(sp, assist.children[i], ign, specials) end
     local opts = { assist, wait }
     local moves = self:getMoves()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
@@ -815,7 +814,7 @@ function Battle:openAssistMenu()
 end
 
 function Battle:openAllyMenu(sp)
-    local tmp_attrs, _ = self:getTmpAttributes(sp)
+    local tmp_attrs = self:getTmpAttributes(sp)
     local attrs = MenuItem:new('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
         ['elements'] = sp:buildAttributeBox(tmp_attrs),
@@ -827,10 +826,10 @@ function Battle:openAllyMenu(sp)
 end
 
 function Battle:openEnemyMenu(sp)
-    local attrs, _ = self:getTmpAttributes(sp)
+    local attrs, _, specials = self:getTmpAttributes(sp)
     local readying = MenuItem:new('Next Attack', {},
         'Prepared skill and target', {
-        ['elements'] = self:buildReadyingBox(sp, attrs),
+        ['elements'] = self:buildReadyingBox(sp, attrs, specials),
         ['w'] = HBOX_WIDTH
     })
     local skills = sp:mkSkillsMenu(false, true, attrs, nil, nil, 380)
@@ -900,7 +899,7 @@ function Battle:endAction(used_assist)
     self:openMenu(Menu:new(nil, { end_menu }, BOX_MARGIN, BOX_MARGIN, false), views)
 end
 
-function Battle:buildReadyingBox(sp, attrs)
+function Battle:buildReadyingBox(sp, attrs, specials)
 
     -- Start with basic skill box
     local stat = self.status[sp:getId()]
@@ -908,7 +907,7 @@ function Battle:buildReadyingBox(sp, attrs)
     local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false, attrs)
 
     -- Update priority for this sprite (would happen later anyway)
-    if hasSpecial(stat['effects'], {}, {}, 'enrage') then
+    if specials['enrage'] then
         prep['prio'] = { FORCED, 'kath' }
     end
 
@@ -1022,11 +1021,11 @@ function Battle:getCursorSuggestion(sp, sk)
     return options[most_hit_i]
 end
 
-function Battle:mkUsable(sp, sk_menu, ign_left)
+function Battle:mkUsable(sp, sk_menu, ign_left, specials)
     local sk = skills[sk_menu.id]
     sk_menu.hover_desc = 'Use ' .. sk_menu.name
-    local nostack = hasSpecial(self.status[sp:getId()]['effects'], {}, {}, sk.id)
-    if ign_left < sk.cost or nostack then
+    if ign_left < sk:getCost(specials) or specials[sk.id] then
+        sk_menu.hover_desc = ite(specials[sk.id], 'Already active', 'Not enough ignea')
         sk_menu.setPen = function(g) return DISABLE end
     else
         sk_menu.setPen = function(g) return WHITE end
@@ -1041,7 +1040,6 @@ function Battle:mkUsable(sp, sk_menu, ign_left)
             -- Set initial direction of sprite copy based on new cursor
             local move_c = self:getCursor()
             local stk = self.stack[ite(sk.type == ASSIST, 5, 2)]
-            local sp_dir = stk['sp_dir']
             if best_c[1] > move_c[1] then
                 stk['sp_dir'] = RIGHT
             elseif best_c[1] < move_c[1] then
@@ -1083,7 +1081,6 @@ function Battle:selectAlly(sp)
                     local lb = self.stack[5]['leave_behind']
                     if lb then active_c = lb end
 
-                    local y, x = b:findSprite(sp)
                     local dir = b.stack[2]['sp_dir']
                     if new_c[1] ~= active_c[1] or new_c[2] ~= active_c[2] then
                         b:renderSpriteImage(new_c[1], new_c[2], sp, dir, 0.5)
@@ -1111,7 +1108,7 @@ function Battle:getSpent(i, j)
 end
 
 function Battle:getMovement(sp, i, j)
-    local attrs, _, _ = self:dryrunAttributes({ j, i }, sp)
+    local attrs, _, _, _ = self:dryrunAttributes({ j, i }, sp)
     local pts = math.floor(attrs['agility'] / 4)
     local bonus = pts - math.floor(sp.attributes['agility'] / 4)
     local spent = self:getSpent(i, j)
@@ -1289,16 +1286,14 @@ function Battle:dryrunAttributes(standing, other)
     local sp = ite(other, other, self:getSprite())
     local atk = self:getAttack()
     local eff = self.status[sp:getId()]['effects']
+
     local hp = sp.health
     local ign = sp.ignea
     if atk then
-        ign = ign - atk.cost
+        atk_loc = self.stack[2]['cursor']
+        local _, _, specials_before = self:getTmpAttributes(sp, nil, { atk_loc[2], atk_loc[1] })
+        ign = ign - atk:getCost(specials_before)
         local dry = self:dryrunAttack()
-        -- if dry['caster'] then
-        --     eff = dry['caster']['new_stat']
-        --     hp = sp.health - dry['caster']['flat']
-        --     ign = ign - dry['caster']['flat_ignea']
-        -- else
         for i=1, #dry do
             if dry[i]['sp'] == sp then
                 eff = dry[i]['new_stat']
@@ -1307,11 +1302,11 @@ function Battle:dryrunAttributes(standing, other)
                 break
             end
         end
-        -- end
     end
+
     local loc = { standing[2], standing[1] }
-    local attrs, _ = self:getTmpAttributes(sp, eff, loc)
-    return attrs, hp, ign
+    local attrs, _, specials = self:getTmpAttributes(sp, eff, loc)
+    return attrs, specials, hp, ign
 end
 
 function Battle:dryrunAttack()
@@ -1322,7 +1317,7 @@ function Battle:dryrunAttack()
         local atk_c = self.stack[4]['cursor']
         local sp = self:getSprite()
         local dir = self:getTargetDirection(atk, sp_c, atk_c)
-        local dry = self:useAttack(sp, atk, dir, atk_c, true, sp_c)
+        dry = self:useAttack(sp, atk, dir, atk_c, true, sp_c)
         if dry['caster'] then
             local found = false
             for i = 1, #dry do
@@ -1460,7 +1455,6 @@ function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
                 if v ~= 0 then exp[k] = v end
             end
             for i=1, #counters do table.insert(countering_sps, counters[i]) end
-            sp.ignea = sp.ignea - attack.cost
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do
                 local t = moved[i]['sp']
@@ -1663,26 +1657,26 @@ function Battle:playAction()
                 ass_range[i][2] = ass_range[i][2] + ox - 1
             end
             return sp:skillBehaviorGeneric(function()
-                sp.ignea = sp.ignea - assist.cost
-                local t = self:skillRange(assist, assist_dir, c_assist)
-                for i = 1, #t do
+                
 
-                    -- Get the buffs this assist will confer, based on
-                    -- the sprite's attributes
-                    local attrs, helpers = self:getTmpAttributes(sp)
-                    local buffs = assist:use(attrs, sp)
+                -- Get the buffs this assist will confer, based on
+                -- the sprite's attributes
+                local attrs, helpers, specials = self:getTmpAttributes(sp)
+                local buffs = assist:use(attrs, specials, false, sp)
 
-                    -- Each buff owner with an EXP_TAG_ASSIST buff 
-                    -- gets EXP_FOR_ASSIST
-                    for owner_id,tags in pairs(helpers) do
-                        if tags[EXP_TAG_ASSIST] then
-                            if owner_id ~= sp:getId() then
-                                ass_exp[owner_id] = EXP_FOR_ASSIST
-                            end
+                -- Each buff owner with an EXP_TAG_ASSIST buff 
+                -- gets EXP_FOR_ASSIST
+                for owner_id,tags in pairs(helpers) do
+                    if tags[EXP_TAG_ASSIST] then
+                        if owner_id ~= sp:getId() then
+                            ass_exp[owner_id] = EXP_FOR_ASSIST
                         end
                     end
+                end
 
-                    -- Put the buffs on the grid
+                -- Put the buffs on the grid
+                local t = self:skillRange(assist, assist_dir, c_assist)
+                for i = 1, #t do
                     local g = self.grid[t[i][1]][t[i][2]]
                     for j = 1, #buffs do
                         table.insert(g.assists, buffs[j])
@@ -2304,7 +2298,7 @@ function Battle:collectMoves(e, sps)
     -- Preemptively get shortest paths for the grid, and enemy movement
     local y, x = self:findSprite(e)
     local paths_dist, paths_prev = e:djikstra(self.grid, { y, x })
-    local attrs, _ = self:getTmpAttributes(e)
+    local attrs = self:getTmpAttributes(e)
     local movement = math.floor(attrs['agility'] / 4)
 
     -- Compute ALL movement options!
@@ -2382,7 +2376,8 @@ function Battle:planNextEnemyAction()
 
     -- If the current enemy is stunned, it misses it's action
     local stat = self.status[e:getId()]
-    if hasSpecial(stat['effects'], {}, {}, 'stun') then
+    local _, _, specials = self:getTmpAttributes(e)
+    if specials['stun'] then
         local y, x = self:findSprite(e)
         local move = { ['cursor'] = { x, y }, ['sp'] = e }
         self.enemy_action = { self:stackBase(), move, {}, {}, move, {}, {} }
@@ -2390,7 +2385,7 @@ function Battle:planNextEnemyAction()
     end
 
     -- If the current enemy is enraged, force it to target Kath
-    if hasSpecial(stat['effects'], {}, {}, 'enrage') then
+    if specials['enrage'] then
         stat['prepare']['prio'] = { FORCED, 'kath' }
     end
 
@@ -2680,7 +2675,7 @@ function Battle:renderStatus(x, y, statuses)
     for i = 1, #statuses do
         if not statuses[i].hidden then
             local b = statuses[i].buff
-            if b.attr == 'special' then
+            if isSpecial(b.attr) then
                 if b.type == BUFF   then augmented = true end
                 if b.type == DEBUFF then impaired  = true end
             else
@@ -3004,7 +2999,11 @@ end
 function Battle:boxElementsFromDryrun(sp, sk, result)
     local hp = sp.health - result['flat']
     local ign = sp.ignea - result['flat_ignea']
-    if sp == self:getSprite() then ign = ign - sk.cost end
+    if sp == self:getSprite() then
+        local move1 = self:getCursor(2)
+        local _, _, specials = self:getTmpAttributes(sp, nil, { move1[2], move1[1] })
+        ign = ign - sk:getCost(specials)
+    end
     return self:boxElementsFromInfo(sp, hp, ign, result['new_stat'])
 end
 
@@ -3058,17 +3057,14 @@ function Battle:renderAttackHoverBoxes(sk)
             break
         end
     end
-    -- if room and dry['caster'] then
-    --     renderBoxIfRoom(self:getSprite(), dry['caster'])
-    -- end
 end
 
 function Battle:renderAssistHoverBox(sk)
 
     -- Get the sprites new attributes and assist effect after
     -- attacking and moving
-    local attrs, _, _ = self:dryrunAttributes(self:getCursor(2))
-    local buffs = sk:use(attrs)
+    local attrs, specials, _, _ = self:dryrunAttributes(self:getCursor(2))
+    local buffs = sk:use(attrs, specials, true)
     
     -- Get box elements and render box
     local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD

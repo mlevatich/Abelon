@@ -11,6 +11,10 @@ function Scaling:initialize(base, attr, mul)
     self.mul  = ite(mul, mul, 0)
 end
 
+function Scaling:none()
+    return self.base == 0 and self.mul == 0
+end
+
 Buff = class('Buff')
 
 function Buff:initialize(attr, val, ty, owner, xp_tags)
@@ -22,13 +26,11 @@ function Buff:initialize(attr, val, ty, owner, xp_tags)
 end
 
 function Buff:toStr()
-    if self.attr == 'special' then
-        return EFFECT_NAMES[self.val]
-    end
+    local name = EFFECT_NAMES[self.attr]
     if self.val == 0 then
-        return nil
+        return ite(isSpecial(self.attr), name, nil)
     end
-    return ite(self.val > 0, '+', '-') .. abs(self.val) .. EFFECT_NAMES[self.attr]
+    return ite(self.val > 0, '+', '-') .. abs(self.val) .. name
 end
 
 Effect = class('Effect')
@@ -87,8 +89,13 @@ function Skill:initialize(id, n, alt_anim, alt_sfx, desc, ti, st, prio, anim_typ
     self.owner_exp_when = owner_exp_when
 end
 
+function Skill:getCost(sp_specials)
+    local cost_mod = sp_specials['ignite_lantern']
+    return math.max(0, self.cost + ite(cost_mod, cost_mod, 0))
+end
+
 function Skill:use(a, b, c, d, e, f, g, h)
-    if self.type == ASSIST then return self:assist(a, b)
+    if self.type == ASSIST then return self:assist(a, b, c, d)
     else                        return self:attack(a, b, c, d, e, f, g, h)
     end
 end
@@ -100,7 +107,15 @@ function Skill:hits(caster, target, t_team)
         or (caster == target and self.modifiers['self'])
 end
 
-function Skill:assist(attrs, sp)
+function Skill:assist(attrs, specials, dryrun, sp)
+
+    -- Spend ignea
+    if not dryrun then
+        sp.ignea = sp.ignea - self:getCost(specials)
+        assert(sp.ignea >= 0)
+    end
+
+    -- Assemble buffs
     local buffs = {}
     for i = 1, #self.buff_templates do
         local exp_tag = ite(i == 1, self.owner_exp_when, {})
@@ -127,13 +142,18 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     local counters = {}
 
     -- Levelups gained by each sprite
-    local lvlups = {}
     local exp_gain = { [sp:getId()] = 0 }
 
     -- Temporary attributes and special effects for the caster
     local sp_team = status[sp:getId()]['team']
     local sp_stat = status[sp:getId()]['effects']
     local sp_tmp_attrs, sp_helpers, sp_specials = mkTmpAttrs(sp.attributes, sp_stat, sp_assists)
+
+    -- Spend ignea
+    if not dryrun then
+        sp.ignea = sp.ignea - self:getCost(sp_specials)
+        assert(sp.ignea >= 0)
+    end
 
     -- Affect targets
     local dryrun_res = {}
@@ -151,7 +171,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
         -- If attacker is an enemy and target has forbearance, the target
         -- switches to Kath
-        if hasSpecial(t_stat, t_ass, t_specials, 'forbearance')
+        if t_specials['forbearance']
         and sp_team == ENEMY then
             local s_kath = status['kath']
             local loc = s_kath['location']
@@ -177,7 +197,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
             -- Some modifiers prevent a target from taking damage
             -- except under special circumstances
-            if not modifiers['br'] 
+            if not modifiers['br']
             or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status) then
 
                 -- If there's no scaling, the attack does no damage
@@ -196,8 +216,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     -- If this is a self hit or the target has guardian angel
                     -- they can't die
                     local min = 0
-                    if (t == sp and modifiers['self'])
-                    or hasSpecial(t_stat, t_ass, t_specials, 'guardian_angel') then
+                    if (t == sp and modifiers['self']) or t_specials['guardian_angel'] then
                         min = 1
                     end
 
@@ -277,10 +296,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     t_stat = copy(t_stat)
                 end
                 ts_effects = copy(ts_effects)
-                if hasSpecial(sp_stat, sp_assists, sp_specials, 'flanking') then
-                    table.insert(ts_effects,
-                        { { 'reaction', Scaling:new(-6) }, 1 }
-                    )
+                if sp_specials['flanking'] then
+                    table.insert(ts_effects, { { 'reaction', Scaling:new(-6) }, 1 })
                 end
                 for j = 1, #ts_effects do
                     local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
@@ -289,11 +306,11 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     -- Allies gain exp for applying negative status to enemies
                     -- or applying positive statuses to allies
                     local exp = 0
-                    if (b.type == DEBUFF and sp_team == ALLY and t_team == ENEMY)
-                    or (b.type == BUFF and sp_team == ALLY and t_team == ALLY)
+                    if ((b.type == DEBUFF and sp_team == ALLY and t_team == ENEMY)
+                    or (b.type == BUFF and sp_team == ALLY and t_team == ALLY)) and not ts_effects[j][3]
                     then
                         exp = EXP_ON_SPECIAL
-                        if b.attr ~= 'special' then exp = abs(b.val) end
+                        if not isSpecial(b.attr) then exp = abs(b.val) end
                     end
                     status_xp = math.min(status_xp + exp, EXP_STATUS_MAX)
                 end
@@ -372,18 +389,17 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
             -- Registering counters
             if t_team ~= sp_team then
-                local has_riposte = hasSpecial(t_stat, t_ass, t_specials, 'riposte')
-                if has_riposte or hasSpecial(t_stat, t_ass, t_specials, 'martyr') then
+                if t_specials['riposte'] or t_specials['martyr'] then
                     if dmg_type == WEAPON then
                         local already = false
                         for h=1,#counters do
                             if counters[h][1] == t then already = true end
                         end
                         if not already then -- Kath can't counter an AoE attack twice via forbearance
-                            table.insert(counters, { t, ite(has_riposte, 'riposte', 'martyr'), 0 } )
+                            table.insert(counters, { t, ite(t_specials['riposte'], 'riposte', 'martyr'), 0 } )
                         end
                     end
-                elseif hasSpecial(t_stat, t_ass, t_specials, 'retribution') then
+                elseif t_specials['retribution'] then
                     if dealt > 0 then
                         table.insert(counters, { t, 'retribution', dealt } )
                     end
@@ -402,31 +418,27 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
         -- Allies gain exp for applying positive status to themselves
         local exp = 0
-        if b.type == BUFF and sp_team == ALLY then
+        if b.type == BUFF and sp_team == ALLY and not sp_effects[j][3] then
             exp = EXP_ON_SPECIAL
-            if b.attr ~= 'special' then exp = abs(b.val) end
+            if not isSpecial(b.attr) then exp = abs(b.val) end
         end
         status_xp = math.min(status_xp + exp, EXP_STATUS_MAX)
     end
 
     -- Set lifesteal
     local lifesteal = 0
-    local has_ls, ls_val = hasSpecial(sp_stat, sp_assists, sp_specials, 'lifesteal')
-    if has_ls and ls_val == nil then ls_val = 100 end
-    if has_ls then lifesteal = lifesteal + ls_val / 100 end
+    if sp_specials['lifesteal'] then lifesteal = sp_specials['lifesteal'] / 100 end
     if modifiers['lifesteal'] then lifesteal = lifesteal + modifiers['lifesteal'] / 100 end
 
     -- Set igneadrain
     local igneadrain = 0
-    local has_id, id_val = hasSpecial(sp_stat, sp_assists, sp_specials, 'igneadrain')
-    if has_id and id_val == nil then id_val = 100 end
-    if has_id then igneadrain = igneadrain + id_val / 100 end
+    if sp_specials['igneadrain'] then igneadrain = sp_specials['igneadrain'] / 100 end
     if modifiers['igneadrain'] then igneadrain = igneadrain + modifiers['igneadrain'] / 100 end
 
     -- Effects on caster
     if #sp_effects > 0 or lifesteal > 0 or igneadrain > 0 then
         dryrun_res['caster'] = { ['sp'] = sp, ['flat'] = 0, ['flat_ignea'] = 0, ['new_stat'] = sp_stat }
-        if lifesteal > 0 then
+        if lifesteal > 0 and dmg_type == WEAPON then
             local heal = math.floor(total_dealt * lifesteal)
             local healed = math.min(sp.attributes['endurance'] * 2 - sp.health, heal)
             dryrun_res['caster']['flat'] = -healed
@@ -434,9 +446,9 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 sp.health = sp.health + healed
             end
         end
-        if igneadrain then
+        if igneadrain > 0 and dmg_type == WEAPON then
             local drain = math.floor(total_dealt * igneadrain)
-            local drained = math.min(sp.attributes['focus'] - (sp.ignea - self.cost), drain)
+            local drained = math.min(sp.attributes['focus'] - sp.ignea, drain)
             dryrun_res['caster']['flat_ignea'] = -drained
             if not dryrun then
                 sp.ignea = sp.ignea + drained
@@ -472,21 +484,21 @@ function Skill:prepareDesc(tmp_attrs, show_scaling)
     if self.scaling then table.insert(scalings, self.scaling) end
     for i=1, #self.sp_effects do
         local eff = self.sp_effects[i][1]
-        if eff[1] ~= 'special' then
-            table.insert(scalings, self.sp_effects[i][1][2])
+        if not eff[2]:none() then
+            table.insert(scalings, eff[2])
         end
     end
     for i=1, #self.ts_effects do
         local eff = self.ts_effects[i][1]
-        if eff[1] ~= 'special' then
-            table.insert(scalings, self.ts_effects[i][1][2])
+        if not eff[2]:none() then
+            table.insert(scalings, eff[2])
         end
     end
     if self.buff_templates then
         for i=1, #self.buff_templates do
             local eff = self.buff_templates[i]
-            if eff[1] ~= 'special' then
-                table.insert(scalings, self.buff_templates[i][2])
+            if not eff[2]:none() then
+                table.insert(scalings, eff[2])
             end
         end
     end
@@ -678,42 +690,43 @@ function mkTmpAttrs(bases, effects, assists)
         local a = buffs[i].attr
         if tmp_attrs[a] then
             tmp_attrs[a] = tmp_attrs[a] + buffs[i].val
+        elseif specials[a] then
+            specials[a] = specials[a] + buffs[i].val
         else
-            table.insert(specials, buffs[i])
+            specials[a] = buffs[i].val
         end
     end
 
     -- No negative attributes
     for k,v in pairs(tmp_attrs) do
-        tmp_attrs[k] = math.max(0, tmp_attrs[k])
+        tmp_attrs[k] = math.max(0, v)
     end
     return tmp_attrs, helpers, specials
 end
 
 -- Create a buff, given an attribute set, the buffed stat, and buff scaling
 function mkBuff(attrs, template, sp, exp_tag)
-    if template[1] == 'special' then
-        return Buff:new(template[1], template[2], template[3], sp, exp_tag)
-    else
-        local s = template[2]
-        local ty = ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF)
-        local val = attrs[s.attr] * s.mul
-        val = s.base + ite(val < 0, math.ceil(val), math.floor(val))
-        return Buff:new(template[1], val, ty, sp, exp_tag)
-    end
+    local s = template[2]
+    local ty = ite(template[3], template[3], ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF))
+    local val = attrs[s.attr] * s.mul
+    val = s.base + ite(val < 0, math.ceil(val), math.floor(val))
+    return Buff:new(template[1], val, ty, sp, exp_tag)
+end
+
+function isSpecial(attr)
+    return find({'endurance', 'focus', 'force', 'affinity', 'reaction', 'agility'}, attr) == nil
 end
 
 -- Add effect to a sprite's status effects, maintaining rendering order
 function addStatus(stat, eff)
-    local spc = function(e) return e.buff.attr == 'special' end
-    local dur = function(e) return e.duration               end
 
+    local dur = function(e) return e.duration end
     local f = false
     for i = 1, #stat do
         local st = stat[i]
-        if spc(eff) and not spc(st) then                              f = true
-        elseif spc(eff) and spc(st) and dur(eff) >= dur(st) then      f = true
-        elseif not (spc(eff) or spc(st)) and dur(eff) >= dur(st) then f = true
+        if isSpecial(eff) and not isSpecial(st) then                              f = true
+        elseif isSpecial(eff) and isSpecial(st) and dur(eff) >= dur(st) then      f = true
+        elseif not (isSpecial(eff) or isSpecial(st)) and dur(eff) >= dur(st) then f = true
         end
         if f then
             table.insert(stat, i, eff)
@@ -721,26 +734,6 @@ function addStatus(stat, eff)
         end
     end
     table.insert(stat, eff)
-end
-
--- Determine whether the status effects on a character include a given special
-function hasSpecial(stat, ass, specs, spec)
-    for i = 1, #stat do
-        if stat[i].buff.attr == 'special' and stat[i].buff.val == spec then
-            return true, nil
-        end
-    end
-    for i = 1, #ass do
-        if ass[i].attr == 'special' and ass[i].val == spec then
-            return true, nil
-        end
-    end
-    for i = 1, #specs do
-        if specs[i].attr == spec then
-            return true, specs[i].val
-        end
-    end
-    return false, nil
 end
 
 function isDebuffed(sp, stat)
@@ -828,7 +821,7 @@ skills = {
         ALLY, nil,
         nil, { { { 'force', Scaling:new(0, 'agility', 0.5) }, 2 },
                { { 'agility', Scaling:new(0, 'force', 0.5) }, 2 },
-               { { 'special', 'pursuit', BUFF }, 2, HIDDEN } }
+               { { 'pursuit', Scaling:new(0), BUFF }, 2, HIDDEN } }
     ),
     ['siphon'] = Skill:new('siphon', 'Siphon', nil, nil,
         "Strike an evil, life draining blow. Deals \z
@@ -905,7 +898,7 @@ skills = {
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 2 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'special', 'retribution', BUFF }, 1 } }
+        nil, { { { 'retribution', Scaling:new(0), BUFF }, 1 } }
     ),
     ['contempt'] = Skill:new('contempt', 'Contempt', nil, nil,
         "Glare with an evil eye lit by ignea, reducing the Force of \z
@@ -1010,7 +1003,7 @@ skills = {
           { T, F, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'flanking', BUFF } }, { EXP_TAG_ATTACK }
+        { { 'flanking', Scaling:new(0), BUFF } }, { EXP_TAG_ATTACK }
     ),
 
 
@@ -1034,7 +1027,7 @@ skills = {
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 0.5),
-        nil, { { { 'special', 'stun', DEBUFF }, 1 } }, nil,
+        nil, { { { 'stun', Scaling:new(0), DEBUFF }, 1 } }, nil,
         { ['br'] = function(a, a_a, b, b_a, st)
             return a_a['reaction'] > b_a['reaction'] end
         }
@@ -1047,7 +1040,7 @@ skills = {
         { { 'Defender', 2 }, { 'Hero', 2 }, { 'Cleric', 1 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
-        nil, { { { 'special', 'riposte', BUFF }, 1 } }
+        nil, { { { 'riposte', Scaling:new(0), BUFF }, 1 } }
     ),
     ['shove'] = Skill:new('shove', 'Shove', nil, nil,
         "Kath shoves an ally or enemy out of the way, moving them 2 tiles and raising \z
@@ -1094,7 +1087,7 @@ skills = {
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'special', 'enrage', DEBUFF }, 1 } }
+        nil, { { { 'enrage', Scaling:new(0), DEBUFF }, 1 } }
     ),
     ['healing_mist'] = Skill:new('healing_mist', 'Healing Mist', nil, nil,
         "Infuse the air to close wounds. Allies in the area recover \z
@@ -1140,7 +1133,7 @@ skills = {
         { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil, nil,
-        { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 }, { { 'special', 'caution', BUFF }, 5, HIDDEN } }
+        { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 }, { { 'caution', Scaling:new(0), BUFF }, 5, HIDDEN } }
     ),
     ['sacrifice'] = Skill:new('sacrifice', 'Sacrifice', nil, nil,
         "Kath transfers his vitality, restoring %s health \z
@@ -1161,7 +1154,7 @@ skills = {
         { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 3 } },
         { { T } }, FREE_AIM(3), 2,
         ALLY, nil,
-        { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 }, { { 'special', 'bond', BUFF }, 3, HIDDEN } },
+        { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 }, { { 'bond', Scaling:new(0), BUFF }, 3, HIDDEN } },
         { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 } },
         nil
     ),
@@ -1201,7 +1194,7 @@ skills = {
         { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'forbearance', BUFF } }, { EXP_TAG_RECV }
+        { { 'forbearance', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
     ),
     ['invigorate'] = Skill:new('invigorate', 'Invigorate', nil, nil,
         "Kath renews allies near him with a cantrip. Allies on the assist gain \z
@@ -1236,7 +1229,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'guardian_angel', BUFF } }, { EXP_TAG_RECV }
+        { { 'guardian_angel', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
     ),
     ['steadfast'] = Skill:new('steadfast', 'Steadfast', nil, nil,
         "Kath helps allies fortify their positions. Allies on the assist \z
@@ -1351,7 +1344,7 @@ skills = {
         { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, FREE_AIM(100), 0,
         ALLY, nil,
-        { { { 'special', 'observe', BUFF }, math.huge } }, nil, nil,
+        { { { 'observe', Scaling:new(0), BUFF }, math.huge } }, nil, nil,
         { ['and'] =
             function(a, a_a, b, b_a, st, dry, dry_res)
                 if not dry then
@@ -1390,7 +1383,7 @@ skills = {
         { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 4 }, { { 'special', 'ignea_arrowheads', BUFF }, 4, HIDDEN } }
+        nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 4 }, { { 'ignea_arrowheads', Scaling:new(0), BUFF }, 4, HIDDEN } }
     ),
     ['wind_blast'] = Skill:new('wind_blast', 'Wind Blast', nil, nil,
         "Elaine conjures a concussive gust of wind to blow an enemy back \z
@@ -1441,7 +1434,7 @@ skills = {
         { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'hidden', BUFF } }, {} -- TODO: implement hidden
+        { { 'hidden', Scaling:new(0), BUFF } }, {} -- TODO: implement hidden
     ),
     ['harmonize'] = Skill:new('harmonize', 'Harmonize', nil, nil,
         "Elaine channels her power into Ignea and projects it outwards. \z
@@ -1454,7 +1447,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'special', 'harmony', BUFF } }, -- TODO: change this
+        { { 'harmony', Scaling:new(0), BUFF } }, -- TODO: change this
         { EXP_TAG_ATTACK, EXP_TAG_RECV, EXP_TAG_MOVE }
     ),
     ['flight'] = Skill:new('flight', 'Flight', nil, nil,
@@ -1467,7 +1460,7 @@ skills = {
           { F, T, F } }, SELF_CAST_AIM, 4,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'special', 'flight', BUFF }, -- TODO: implement flight
+            { 'flight', Scaling:new(0), BUFF }, -- TODO: implement flight
             { 'agility', Scaling:new(0, 'affinity', 1.0) }
         }, { EXP_TAG_MOVE }
     ),
@@ -1544,7 +1537,7 @@ skills = {
         { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'special', 'ignea_efficiency', BUFF }, 5 }, { { 'special', 'ignite_lantern', BUFF }, 5, HIDDEN } } -- TODO: implement reduced costs
+        nil, { { { 'ignite_lantern', Scaling:new(-1), BUFF }, 5 } }
     ),
     ['searing_light'] = Skill:new('searing_light', 'Searing Light', nil, nil,
         "Shanti scorches enemies with burning ignaeic light, dealing %s Spell damage.",
@@ -1631,7 +1624,7 @@ skills = {
         { { 'force', Scaling:new(15, 'affinity', 0.3) } }, { EXP_TAG_ATTACK }
     ),
     ['bleed_vitality'] = Skill:new('bleed_vitality', 'Bleed Vitality', nil, nil,
-        "Shanti empowers the assisted ally's attacks to heal them for %s %% of the damage dealt.",
+        "Shanti empowers the assisted ally's Weapon attacks to heal them for %s %% of the damage dealt.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 3 }, { 'Sorceress', 3 } },
         { { F, F, F, T, F, F, F },
@@ -1642,10 +1635,10 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
         nil, nil, nil, nil, nil, nil,
-        { { 'lifesteal', Scaling:new(50, 'affinity', 10.0) } }, { EXP_TAG_ATTACK }
+        { { 'lifesteal', Scaling:new(40, 'affinity', 10.0), BUFF } }, { EXP_TAG_ATTACK }
     ),
     ['bleed_ignea'] = Skill:new('bleed_ignea', 'Bleed Ignea', nil, nil,
-        "Shanti empowers the assisted ally's attacks to restore ignea equal to %s %% of the damage dealt.",
+        "Shanti empowers the assisted ally's Weapon attacks to restore ignea equal to %s %% of the damage dealt.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 5 }, { 'Sorceress', 4 } },
         { { F, F, F, T, F, F, F },
@@ -1656,7 +1649,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         nil, nil, nil, nil, nil, nil,
-        { { 'igneadrain', Scaling:new(0, 'affinity', 4.0) } }, { EXP_TAG_ATTACK }
+        { { 'igneadrain', Scaling:new(0, 'affinity', 4.0), BUFF } }, { EXP_TAG_ATTACK }
     ),
 
 

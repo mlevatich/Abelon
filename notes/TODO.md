@@ -10,14 +10,19 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
+- Implement camoflauge, flight, replace harmonize
+
 - Golem battle:
     - Guard other in-battle scenes with the assertion that the sprite is in the battle. So if the sprite has escaped, a scene with them won't play (or will be something a little different). Turn limit defeat scene.
     - Victory scene fades and teleports the team, despawns any remaining golems, sets a trigger to the north preventing you from going back, sets a trigger for the walk south to transition to 1-4, team says a few words.
     - 1-4 transition scene, evening
-    - Should not be able to stack caution. Have it give a special. Any ability with more than a 2 turn effect should have this property (ignea arrowheads, bond)
     - Stone markers, getups
     - Better golem sprite
     - Test and tweak
+
+- Fix stuttering when walking around
+    - Idea: measure the distance the camera moves on each frame, and as a function of time passed. Should be very consistent! If it is consistent, maybe things just arent always rendering in the same place?
+- Implement performance improvements (see note on phone)
 
 - Implement placeholder animations (use a word) to test timing on playing actions under a variety of circumstances
     - No counter enemy phase
@@ -31,14 +36,10 @@ Bullets that reference a github issue should close the issue when committed.
     - full attack with assist, deal no damage
     - enemy phase, attack deals no damage
 
-- Fix stuttering when walking around
-    - Idea: measure the distance the camera moves on each frame, and as a function of time passed. Should be very consistent! If it is consistent, maybe things just arent always rendering in the same place?
-- Implement performance improvements (see note on phone)
-
 - Lester battle scenes, Wolves + golems
 - Lester portrait
 - Lester attributes and skills
-- Implement win condition: Survive N turns
+- Implement win condition: Survive N turns (or just make it a rout map?)
 - Implement side objective: Heal Lester
 - Balance and polish
 
