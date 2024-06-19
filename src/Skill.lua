@@ -960,7 +960,7 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(0, 'affinity', 0.5) } }, { EXP_TAG_RECV }
+        { { 'reaction', Scaling:new(0, 'affinity', 0.8) } }, { EXP_TAG_RECV }
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire', nil, nil,
         "Inspire an ally with a courageous cry. They gain %s \z
@@ -1504,19 +1504,11 @@ skills = {
 
 
     -- SHANTI
-    ['heavy_swing'] = Skill:new('heavy_swing', 'Heavy Swing', nil, nil,
-        "Shanti brings her lantern down on an adjacent enemy, \z
-         dealing %s Weapon damage.",
-        'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Lanternfaire', 0 }, { 'Sorceress', 0 } },
-        { { T } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.0)
-    ),
     ['knockback'] = Skill:new('knockback', 'Knockback', nil, nil,
         "Shanti spins her lantern by its chain, knocking back nearby enemies \z
          and dealing %s Weapon damage.",
         'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Lanternfaire', 2 }, { 'Sorceress', 0 } },
+        { { 'Lanternfaire', 0 }, { 'Sorceress', 0 } },
         { { F, F, F },
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
@@ -1528,12 +1520,20 @@ skills = {
         "Shanti equips a long chain and flings her lantern, ensnaring an enemy \z
          and lowering its Agility by %s for 1 turn.",
         'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Lanternfaire', 4 }, { 'Sorceress', 0 } },
+        { { 'Lanternfaire', 2 }, { 'Sorceress', 0 } },
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, nil,
         nil, { { { 'agility', Scaling:new(0, 'reaction', -1.0) }, 1 } }
+    ),
+    ['heavy_swing'] = Skill:new('heavy_swing', 'Heavy Swing', nil, nil,
+        "Shanti brings her lantern down on an adjacent enemy, \z
+         dealing %s Weapon damage.",
+        'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 0 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(0, 'force', 1.2)
     ),
     ['ignite_lantern'] = Skill:new('ignite_lantern', 'Ignite Lantern', nil, nil,
         "Shanti lights her lantern with activated ignea to draw from, reducing all of her \z

@@ -31,6 +31,10 @@ Bullets that reference a github issue should close the issue when committed.
     - full attack with assist, deal no damage
     - enemy phase, attack deals no damage
 
+- Fix stuttering when walking around
+    - Idea: measure the distance the camera moves on each frame, and as a function of time passed. Should be very consistent! If it is consistent, maybe things just arent always rendering in the same place?
+- Implement performance improvements (see note on phone)
+
 - Lester battle scenes, Wolves + golems
 - Lester portrait
 - Lester attributes and skills
