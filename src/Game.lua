@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field
 require 'src.Util'
 require 'src.Constants'
 
@@ -173,38 +174,37 @@ function Game:loadFresh()
     local lines = readLines(chap_file)
 
     -- Iterate over lines of file
-    local audio_sources = {}
     local current_map_name = nil
-    local sprite_ff = nil
+    local sprite_ff = self.sprites[0] -- nil value
     for i=1, #lines do
 
         -- Lines starting with -> denote a state fast-forward
         if lines[i]:sub(1,2) == '->' then
             local fname, vals = readNamed(lines[i]:sub(3), readArray)
             if fname == 'State' then
-                for i=1, #vals do
-                    self.state[vals[i]] = true
+                for j=1, #vals do
+                    self.state[vals[j]] = true
                 end
             elseif fname == 'Seen' then
-                for i=1, #vals do
-                    self.seen[vals[i]] = true
+                for j=1, #vals do
+                    self.seen[vals[j]] = true
                 end
             elseif fname == 'Inventory' then
-                for i=1, #vals do
-                    local sp = self.sprites[vals[i]]
+                for j=1, #vals do
+                    local sp = self.sprites[vals[j]]
                     if not sp then
-                        sp = Sprite:new(vals[i], self)
-                        self.sprites[vals[i]] = sp
+                        sp = Sprite:new(vals[j], self)
+                        self.sprites[vals[j]] = sp
                     end
                     self.player:introduce(sp:getId())
                     self.player:acquire(sp)
                 end
             elseif fname == 'Party' then
-                for i=1, #vals do
-                    local sp = self.sprites[vals[i]]
+                for j=1, #vals do
+                    local sp = self.sprites[vals[j]]
                     if not sp then
-                        sp = Sprite:new(vals[i], self)
-                        self.sprites[vals[i]] = sp
+                        sp = Sprite:new(vals[j], self)
+                        self.sprites[vals[j]] = sp
                     end
                     self.player:introduce(sp:getId())
                     self.player:joinParty(sp)
@@ -217,8 +217,8 @@ function Game:loadFresh()
                     end
                 end
             elseif fname == 'Block' then
-                for i=1, #vals do
-                    self.current_map:blockExit(vals[i])
+                for j=1, #vals do
+                    self.current_map:blockExit(vals[j])
                 end
             else
                 sprite_ff = self.sprites[fname]

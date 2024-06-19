@@ -1,3 +1,5 @@
+---@diagnostic disable: duplicate-set-field, undefined-field
+
 -- Seed RNG
 math.randomseed(os.time())
 

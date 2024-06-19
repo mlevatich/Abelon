@@ -539,7 +539,7 @@ function Sprite:buildAttributeBox(tmp_attrs, tmp_hp, tmp_ign)
                             .. tostring(self.attributes['focus'])
     local nxt = "MAX"
     if self.level <= #EXP_NEXT then
-        nxt = EXP_NEXT[self.level]
+        nxt = tostring(EXP_NEXT[self.level])
     end
     local exp_str = 'Exp: ' .. tostring(self.exp) .. '/' .. nxt
     local icon = function(i)
