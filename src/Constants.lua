@@ -245,6 +245,7 @@ FREE_AIM        = function(s) return { ['type'] = FREE, ['scale'] = s } end
 -- Buff or debuff?
 BUFF   = 1
 DEBUFF = 2
+HIDDEN = true -- Is buff hidden?
 
 -- Skill targeting algorithms (for enemies)
 KILL      = 1 -- Invert when targeting allies (heal closest to death)

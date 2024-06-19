@@ -1025,8 +1025,8 @@ end
 function Battle:mkUsable(sp, sk_menu, ign_left)
     local sk = skills[sk_menu.id]
     sk_menu.hover_desc = 'Use ' .. sk_menu.name
-    local obsrv = hasSpecial(self.status[sp:getId()]['effects'], {}, {}, 'observe')
-    if ign_left < sk.cost or (sk.id == 'observe' and obsrv) then
+    local nostack = hasSpecial(self.status[sp:getId()]['effects'], {}, {}, sk.id)
+    if ign_left < sk.cost or nostack then
         sk_menu.setPen = function(g) return DISABLE end
     else
         sk_menu.setPen = function(g) return WHITE end
@@ -2678,13 +2678,15 @@ function Battle:renderStatus(x, y, statuses)
     local augmented = false
     local impaired  = false
     for i = 1, #statuses do
-        local b = statuses[i].buff
-        if b.attr == 'special' then
-            if b.type == BUFF   then augmented = true end
-            if b.type == DEBUFF then impaired  = true end
-        else
-            if b.type == BUFF   then buffed   = true end
-            if b.type == DEBUFF then debuffed = true end
+        if not statuses[i].hidden then
+            local b = statuses[i].buff
+            if b.attr == 'special' then
+                if b.type == BUFF   then augmented = true end
+                if b.type == DEBUFF then impaired  = true end
+            else
+                if b.type == BUFF   then buffed   = true end
+                if b.type == DEBUFF then debuffed = true end
+            end
         end
     end
 
@@ -2930,28 +2932,29 @@ function Battle:boxElementsFromInfo(sp, hp, ign, statuses)
     local w = BOX_MARGIN + CHAR_WIDTH * MAX_WORD
 
     -- Box contains sprite's name and status
-    local name_str = sp.name
     local hp_str   = hp  .. "/" .. (sp.attributes['endurance'] * 2)
     local ign_str  = ign .. "/" ..  sp.attributes['focus']
 
     -- Compute box width from longest status
     local longest_status = 0
     for i = 1, #statuses do
+        if not statuses[i].hidden then
 
-        -- Space (in characters) between two strings in hover box
-        local buf = 3
+            -- Space (in characters) between two strings in hover box
+            local buf = 3
 
-        -- Length of duration string
-        local d = statuses[i].duration
-        local dlen = ite(d == math.huge, 0, ite(d < 10, 2, 3))
+            -- Length of duration string
+            local d = statuses[i].duration
+            local dlen = ite(d == math.huge, 0, ite(d < 10, 2, 3))
 
-        -- Length of buff string
-        local b = statuses[i].buff
-        local blen = 0
-        if b:toStr() then blen = #b:toStr() end
+            -- Length of buff string
+            local b = statuses[i].buff
+            local blen = 0
+            if b:toStr() then blen = #b:toStr() end
 
-        -- Combine them all to get character size
-        longest_status = math.max(longest_status, dlen + blen + buf)
+            -- Combine them all to get character size
+            longest_status = math.max(longest_status, dlen + blen + buf)
+        end
     end
     w = math.max(w, longest_status * CHAR_WIDTH + BOX_MARGIN)
 
@@ -2971,17 +2974,22 @@ function Battle:boxElementsFromInfo(sp, hp, ign, statuses)
     -- Add sprite statuses
     local stat_eles = {}
     local y = HALF_MARGIN + LINE_HEIGHT * 3 + BOX_MARGIN
+    local n_hidden = 0
     for i = 1, #statuses do
-        local cy = y + LINE_HEIGHT * (i - 1)
-        local b = statuses[i].buff
-        local d = statuses[i].duration
-        local dur = ite(d ~= math.huge, d .. 't', '')
-        table.insert(stat_eles, mkEle('text', dur,
-            w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
-        ))
-        local str = b:toStr()
-        if str then
-            table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+        if not statuses[i].hidden then
+            local cy = y + LINE_HEIGHT * (i - n_hidden - 1)
+            local b = statuses[i].buff
+            local d = statuses[i].duration
+            local dur = ite(d ~= math.huge, d .. 't', '')
+            table.insert(stat_eles, mkEle('text', dur,
+                w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
+            ))
+            local str = b:toStr()
+            if str then
+                table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+            end
+        else
+            n_hidden = n_hidden + 1
         end
     end
 

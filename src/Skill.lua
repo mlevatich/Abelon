@@ -33,9 +33,10 @@ end
 
 Effect = class('Effect')
 
-function Effect:initialize(buff, dur)
+function Effect:initialize(buff, dur, hidden)
     self.buff     = buff
     self.duration = dur
+    self.hidden   = ite(hidden, true, false)
 end
 
 Skill = class('Skill')
@@ -283,7 +284,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 end
                 for j = 1, #ts_effects do
                     local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
-                    addStatus(t_stat, Effect:new(b, ts_effects[j][2]))
+                    addStatus(t_stat, Effect:new(b, ts_effects[j][2], ts_effects[j][3]))
 
                     -- Allies gain exp for applying negative status to enemies
                     -- or applying positive statuses to allies
@@ -397,7 +398,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     end
     for j = 1, #sp_effects do
         local b = mkBuff(sp_tmp_attrs, sp_effects[j][1])
-        addStatus(sp_stat, Effect:new(b, sp_effects[j][2]))
+        addStatus(sp_stat, Effect:new(b, sp_effects[j][2], sp_effects[j][3]))
 
         -- Allies gain exp for applying positive status to themselves
         local exp = 0
@@ -820,13 +821,14 @@ skills = {
     ),
     ['pursuit'] = Skill:new('pursuit', 'Pursuit', nil, nil,
         "Give chase. Gain %s Force and %s Agility \z
-         for 2 turns.",
+         for 2 turns. Cannot stack.",
         'Executioner', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 3 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
-        nil, { { { 'force', Scaling:new(0, 'agility', 0.5) }, 2 }, 
-               { { 'agility', Scaling:new(0, 'force', 0.5) }, 2 } }
+        nil, { { { 'force', Scaling:new(0, 'agility', 0.5) }, 2 },
+               { { 'agility', Scaling:new(0, 'force', 0.5) }, 2 },
+               { { 'special', 'pursuit', BUFF }, 2, HIDDEN } }
     ),
     ['siphon'] = Skill:new('siphon', 'Siphon', nil, nil,
         "Strike an evil, life draining blow. Deals \z
@@ -1056,7 +1058,7 @@ skills = {
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ALL, nil,
-        { { { 'reaction', Scaling:new(3) }, 1 }, { { 'affinity', Scaling:new(3) }, 1 } }, nil, 
+        { { { 'reaction', Scaling:new(3) }, 1 }, { { 'affinity', Scaling:new(3) }, 1 } }, nil,
         { UP, 2 }
     ),
     ['javelin'] = Skill:new('javelin', 'Javelin', nil, nil,
@@ -1133,12 +1135,12 @@ skills = {
     ),
     ['caution'] = Skill:new('caution', 'Caution', nil, nil,
         "Kath enters a defensive stance, raising his Reaction by %s and \z
-         lowering his Force by %s for 5 turns.",
+         lowering his Force by %s for 5 turns. Cannot stack.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil, nil,
-        { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 } }
+        { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 }, { { 'special', 'caution', BUFF }, 5, HIDDEN } }
     ),
     ['sacrifice'] = Skill:new('sacrifice', 'Sacrifice', nil, nil,
         "Kath transfers his vitality, restoring %s health \z
@@ -1152,14 +1154,14 @@ skills = {
         { { { 'reaction', Scaling:new(-10) }, 1 } }, nil, nil
     ),
     ['bond'] = Skill:new('bond', 'Bond', nil, nil,
-        "Kath ignites a bond, raising his and an ally's \z
+        "Kath raises his and an ally's \z
          Affinity by %s for 3 turns. Can target any \z
-         ally within 3 tiles.",
+         ally within 3 tiles. Cannot stack.",
         'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 3 } },
         { { T } }, FREE_AIM(3), 2,
         ALLY, nil,
-        { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 } },
+        { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 }, { { 'special', 'bond', BUFF }, 3, HIDDEN } },
         { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 } },
         nil
     ),
@@ -1382,13 +1384,13 @@ skills = {
         nil, { { { 'agility', Scaling:new(-4, 'agility', -0.5) }, 1 } }
     ),
     ['ignea_arrowheads'] = Skill:new('ignea_arrowheads', 'Ignea Arrowheads', nil, nil,
-        "Elaine fashions arrowheads from Ignea and charges them with magic, \z
-         increasing her Force by %s for 4 turns.",
+        "Elaine fashions activated Ignea arrowheads, \z
+         increasing her Force by %s for 4 turns. Cannot stack.",
         'Apprentice', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 4 } }
+        nil, { { { 'force', Scaling:new(2, 'focus', 1.0) }, 4 }, { { 'special', 'ignea_arrowheads', BUFF }, 4, HIDDEN } }
     ),
     ['wind_blast'] = Skill:new('wind_blast', 'Wind Blast', nil, nil,
         "Elaine conjures a concussive gust of wind to blow an enemy back \z
@@ -1537,12 +1539,12 @@ skills = {
     ),
     ['ignite_lantern'] = Skill:new('ignite_lantern', 'Ignite Lantern', nil, nil,
         "Shanti lights her lantern with activated ignea to draw from, reducing all of her \z
-         ignea costs by 1 for 5 turns.",
+         ignea costs by 1 for 5 turns. Cannot stack.",
         'Lanternfaire', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'special', 'ignea_efficiency', BUFF }, 5 } } -- TODO: implement reduced costs
+        nil, { { { 'special', 'ignea_efficiency', BUFF }, 5 }, { { 'special', 'ignite_lantern', BUFF }, 5, HIDDEN } } -- TODO: implement reduced costs
     ),
     ['searing_light'] = Skill:new('searing_light', 'Searing Light', nil, nil,
         "Shanti scorches enemies with burning ignaeic light, dealing %s Spell damage.",
