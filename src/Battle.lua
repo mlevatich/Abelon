@@ -2304,49 +2304,53 @@ function Battle:collectMoves(e, sps)
     -- Compute ALL movement options!
     local opts = {}
     for i = 1, #sps do
-        opts[i] = { ['sp'] = sps[i], ['ttr'] = math.huge, ['moves'] = {} }
+        local _, _, specials = self:getTmpAttributes(sps[i])
+        if not specials['hidden'] then
+            local sp_opts = { ['sp'] = sps[i], ['ttr'] = math.huge, ['moves'] = {} }
 
-        -- Get all attacks that can be made against this sprite using the skill
-        local attacks = self:getAttackAngles(e, sps[i], sk)
-        for j = 1, #attacks do
+            -- Get all attacks that can be made against this sprite using the skill
+            local attacks = self:getAttackAngles(e, sps[i], sk)
+            for j = 1, #attacks do
 
-            -- Get distance and path to attack location
-            local attack_from = attacks[j]['from']
-            local dist = paths_dist[attack_from[1]][attack_from[2]]
-            if dist ~= math.huge then
+                -- Get distance and path to attack location
+                local attack_from = attacks[j]['from']
+                local dist = paths_dist[attack_from[1]][attack_from[2]]
+                if dist ~= math.huge then
 
-                -- Sprite should move to path node with dist == movement
-                local turns_to_reach = math.max(1, math.ceil(dist / movement))
-                local move_c = { attack_from[2], attack_from[1] }
-                local n = attack_from
-                for k = 1, dist - movement do
-                    n = paths_prev[n[1]][n[2]]
-                    move_c[1] = n[2]
-                    move_c[2] = n[1]
-                end
+                    -- Sprite should move to path node with dist == movement
+                    local turns_to_reach = math.max(1, math.ceil(dist / movement))
+                    local move_c = { attack_from[2], attack_from[1] }
+                    local n = attack_from
+                    for k = 1, dist - movement do
+                        n = paths_prev[n[1]][n[2]]
+                        move_c[1] = n[2]
+                        move_c[2] = n[1]
+                    end
 
-                -- Candidate move
-                local c = {
-                    ['move_c'] = move_c,
-                    ['attack'] = {
-                        ['dist'] = dist,
-                        ['c'] = attacks[j]['c'],
-                        ['from'] = attack_from,
-                        ['dir'] = attacks[j]['dir']
+                    -- Candidate move
+                    local c = {
+                        ['move_c'] = move_c,
+                        ['attack'] = {
+                            ['dist'] = dist,
+                            ['c'] = attacks[j]['c'],
+                            ['from'] = attack_from,
+                            ['dir'] = attacks[j]['dir']
+                        }
                     }
-                }
 
-                -- New best ttr, erase all other moves
-                if turns_to_reach < opts[i]['ttr'] then
-                    opts[i]['moves'] = {}
-                    opts[i]['ttr'] = turns_to_reach
-                end
+                    -- New best ttr, erase all other moves
+                    if turns_to_reach < sp_opts['ttr'] then
+                        sp_opts['moves'] = {}
+                        sp_opts['ttr'] = turns_to_reach
+                    end
 
-                -- If this ttr matches our best, save it as a possible move
-                if turns_to_reach == opts[i]['ttr'] then
-                    table.insert(opts[i]['moves'], c)
+                    -- If this ttr matches our best, save it as a possible move
+                    if turns_to_reach == sp_opts['ttr'] then
+                        table.insert(sp_opts['moves'], c)
+                    end
                 end
             end
+            table.insert(opts, sp_opts)
         end
     end
     return { ['sk'] = sk, ['options'] = opts }

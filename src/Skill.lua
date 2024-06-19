@@ -1434,7 +1434,7 @@ skills = {
         { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'hidden', Scaling:new(0), BUFF } }, {} -- TODO: implement hidden
+        { { 'hidden', Scaling:new(0), BUFF } }, {}
     ),
     ['harmonize'] = Skill:new('harmonize', 'Harmonize', nil, nil,
         "Elaine channels her power into Ignea and projects it outwards. \z
