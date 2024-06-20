@@ -58,7 +58,7 @@ Goal for Mona:
 - Assassin: Weapon: Pinpoint: Find a weak spot. Specific range required, puts a debuff on the enemy for 3 turns. No cost.
 - Assassin: Weapon: Assassinate: if pinpoint is on enemy, and you have at least 3 assists, does 10 + Force x 3 weapon damage to adjacent enemy. No cost.
 - Assassin: Spell: Martyr: Counter stance, deal 1.5 force damage to weapon attackers.
-- Assassin: Weapon: Shadowed: 1 ignea. Gain Agility * 0.5 Force for two turns, and enemies won't target you for one turn.
+- Assassin: Weapon: Shadowed: 1 ignea. Gain 8 Agility for two turns and enemies won't target you for one turn.
 - Assassin: Weapon: Weave: Deal (1.0 * Force) weapon damage to adjacent enemy and gain 8 agility for a turn.
 - Assassin: Weapon: Blade Dance: Deal (1.0 * Agility) weapon damage to a tight group of enemies.
 - Assassin: Assist: Escape: No cost, grants some faraway allies (Affinity * 1.0) agility, but they lose 10 force.
