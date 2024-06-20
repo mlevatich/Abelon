@@ -235,12 +235,8 @@ end
 
 function concat(t1, t2)
     local t3 = {}
-    for _,v in pairs(t1) do
-        table.insert(t3, v)
-    end
-    for _,v in pairs(t2) do
-        table.insert(t3, v)
-    end
+    for i=1,#t1 do table.insert(t3, t1[i]) end
+    for i=1,#t2 do table.insert(t3, t2[i]) end
     return t3
 end
 

@@ -65,12 +65,21 @@ function Battle:initialize(player, game, id)
     )
     self.escaped = {}
     self.n_allies = 0
+    local player_at = nil
     for i = 1, #self.participants do
         local p = self.participants[i]
         if self:isAlly(p) then
             self.n_allies = self.n_allies + 1
         end
+        if p == self.player.sp then
+            player_at = i
+        end
     end
+    if player_at then
+        table.remove(self.participants, player_at)
+        table.insert(self.participants, 1, self.player.sp)
+    end
+    
     self.enemy_action = nil
 
     -- Win conditions and loss conditions
@@ -146,10 +155,10 @@ function Battle:readEntities(data, idx)
             local sp_size_x_offset = (-1 * (sp.w - TILE_WIDTH) / 2 - 0.5) / TILE_WIDTH
             local sp_size_y_offset = (-1 * (sp.h - TILE_HEIGHT) - 1) / TILE_HEIGHT
             local x, y = tileToPixels(x_tile + sp_size_x_offset, y_tile + sp_size_y_offset)
-            sp:resetPosition(x, y)
+            self.game:warpSprite(sp, x, y, self.game:getMap():getName())
 
             -- If an enemy, prepare their first skill
-            if self.status[sp:getId()]['team'] == ENEMY then 
+            if self.status[sp:getId()]['team'] == ENEMY then
                 if v[3] then
                     self:prepareSkill(sp, tonumber(v[3]))
                 end

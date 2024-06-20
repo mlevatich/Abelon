@@ -10,10 +10,6 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- Skills for alpha:
-    - Lester skills: thrown_dagger,escape,martyr,assassinate,shadowed,blade_dance,first_aid,warning,poison_coating,stalagmite,grasping_roots,quake
-    - Implement flight
-
 - Golem battle:
     - Guard other in-battle scenes with the assertion that the sprite is in the battle. So if the sprite has escaped, a scene with them won't play (or will be something a little different). Turn limit defeat scene.
     - Victory scene fades and teleports the team, despawns any remaining golems, sets a trigger to the north preventing you from going back, sets a trigger for the walk south to transition to 1-4, team says a few words.

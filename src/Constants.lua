@@ -130,7 +130,9 @@ str_to_icon = {
     ['Apprentice'] = 18,
     ['Sniper'] = 19,
     ['Lanternfaire'] = 20,
-    ['Sorceress'] = 21
+    ['Sorceress'] = 21,
+    ['Assassin'] = 22,
+    ['Naturalist'] = 23
 }
 
 EFFECT_NAMES = {
@@ -142,12 +144,14 @@ EFFECT_NAMES = {
     ['hidden']           = "Hidden",
     ['ghosting']         = "Flight",
     ['flanking']         = "Flanking",
+    ['poison_coat']      = "Poison Coat",
     ['death_blessing']   = "Death Blessing",
     ['inversion']        = "Inversion",
     ['ignea_efficiency'] = " Ignea Costs",
     ['lifesteal']        = "% Hp Drain",
     ['igneadrain']       = "% Ign Drain",
     ['riposte']          = "Riposte",
+    ['martyr']           = "Martyr",
     ['retribution']      = "Retribution",
     ['endurance']        = " Endurance",
     ['focus']            = " Focus",

@@ -306,6 +306,9 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 if sp_specials['flanking'] then
                     table.insert(ts_effects, { { 'reaction', Scaling:new(-8) }, 1 })
                 end
+                if sp_specials['poison_coat'] then
+                    table.insert(ts_effects, { { 'force', Scaling:new(sp_specials['poison_coat']) }, 2 })
+                end
                 for j = 1, #ts_effects do
                     local b = mkBuff(sp_tmp_attrs, ts_effects[j][1], sp_specials)
                     addStatus(t_stat, Effect:new(b, ts_effects[j][2], ts_effects[j][3]))
@@ -780,7 +783,7 @@ mkCounterSkill = {
     ['martyr'] = function(v)
         return Skill:new('martyr_active', 'Martyr', nil, nil,
             "",
-            'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+            'Assassin', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
             {},
             { { T } }, FREE_AIM(100), 0,
             ENEMY, Scaling:new(0, 'force', 1.5)
@@ -923,7 +926,7 @@ skills = {
         nil, { { { 'retribution', Scaling:new(0), BUFF }, 1 } }
     ),
     ['contempt'] = Skill:new('contempt', 'Contempt', nil, nil,
-        "Glare with an evil eye lit by ignea, reducing the Force of \z
+        "Glare with an evil eye lit by Ignea, reducing the Force of \z
          affected enemies by %s for 2 turns.",
         'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Demon', 2 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
@@ -1577,8 +1580,8 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 1.3)
     ),
     ['ignite_lantern'] = Skill:new('ignite_lantern', 'Ignite Lantern', nil, nil,
-        "Shanti lights her lantern with activated ignea to draw from, reducing all of her \z
-         ignea costs by 1 for 5 turns. Cannot stack.",
+        "Shanti lights her lantern with activated Ignea to draw from, reducing all of her \z
+         Ignea costs by 1 for 5 turns. Cannot stack.",
         'Lanternfaire', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 3 }, { 'Sorceress', 3 } },
         { { T } }, SELF_CAST_AIM, 1,
@@ -1598,7 +1601,7 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 1.0)
     ),
     ['detonate'] = Skill:new('detonate', 'Detonate', nil, nil,
-        "Shanti over-activates a chunk of ignea and propels it at an enemy, \z
+        "Shanti over-activates a chunk of Ignea and propels it at an enemy, \z
          blowing them up and dealing %s Spell damage.",
         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Lanternfaire', 1 }, { 'Sorceress', 2 } },
@@ -1614,8 +1617,7 @@ skills = {
         { { 'Lanternfaire', 2 }, { 'Sorceress', 4 } },
         { { T } }, FREE_AIM(4), 2,
         ENEMY, nil,
-        nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'force', -0.8) }, 2 } },
-        { DOWN, 3 }
+        nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'force', -0.8) }, 2 } }
     ),
     ['flashbang'] = Skill:new('flashbang', 'Flashbang', nil, nil,
         "Shanti blinds nearby enemies, dealing %s Spell damage \z
@@ -1685,7 +1687,7 @@ skills = {
         { { 'lifesteal', Scaling:new(40, 'affinity', 10.0), BUFF } }, { EXP_TAG_ATTACK }
     ),
     ['ignaeic_veins'] = Skill:new('ignaeic_veins', 'Ignaeic Veins', nil, nil,
-        "Shanti surfaces veins of ignea from underground. Allies on the assist have their ignea costs \z
+        "Shanti surfaces veins of Ignea from underground. Allies on the assist have their ignea costs \z
          reduced by %s.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 5 }, { 'Sorceress', 4 } },
@@ -1700,7 +1702,7 @@ skills = {
         { { 'ignea_efficiency', Scaling:new(-1, 'affinity', -0.2), BUFF } }, { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
     ),
     ['bleed_ignea'] = Skill:new('bleed_ignea', 'Bleed Ignea', nil, nil,
-        "Shanti empowers the assisted ally's Weapon attacks to restore ignea equal to %s %% of the damage dealt.",
+        "Shanti empowers the assisted ally's Weapon attacks to restore Ignea equal to %s %% of the damage dealt.",
         'Sorceress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 4 }, { 'Sorceress', 5 } },
         { { F, F, F, T, F, F, F },
@@ -1716,6 +1718,140 @@ skills = {
 
 
 
+    -- LESTER
+    ['thrown_dagger'] = Skill:new('thrown_dagger', 'Thrown Dagger', nil, nil,
+        "Lester throws a carefully aimed dagger at any enemy within 2 tiles. \z
+         Deals %s Weapon damage.",
+        'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 0 }, { 'Naturalist', 0 } },
+        { { T } }, FREE_AIM(2), 0,
+        ENEMY, Scaling:new(10, 'force', 1.0)
+    ),
+    ['assassinate'] = Skill:new('assassinate', 'Assassinate', nil, nil,
+        "Lester goes all out for an enemy's vitals. Deals %s Weapon damage to an \z
+         adjacent enemy.",
+        'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 3 }, { 'Naturalist', 0 } },
+        { { T } }, DIRECTIONAL_AIM, 2,
+        ENEMY, Scaling:new(0, 'force', 2.0)
+    ),
+    ['blade_dance'] = Skill:new('blade_dance', 'Blade Dance', nil, nil,
+        "Lester nimbly whirls his blades to cut through a group of enemies, dealing \z
+         %s Weapon damage.",
+        'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 5 }, { 'Naturalist', 0 } },
+        { { F, F, F, F, F },
+          { F, T, T, T, F },
+          { F, T, T, T, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(0, 'agility', 1.0)
+    ),
+    ['first_aid'] = Skill:new('first_aid', 'First Aid', nil, nil,
+        "Lester quickly patches up an adjacent ally with his medicinal kit, restoring \z
+         %s health to them.",
+        'Naturalist', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 0 }, { 'Naturalist', 1 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        ALLY, Scaling:new(0, 'agility', -1.0)
+    ),
+    ['shadowed'] = Skill:new('shadowed', 'Shadowed', nil, nil,
+        "Lester conceals his presence. He gains 8 Agility for 2 turns and \z
+         won't be directly targeted on the next enemy phase.",
+        'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 4 }, { 'Naturalist', 3 } },
+        { { T } }, SELF_CAST_AIM, 1,
+        ALLY, nil,
+        nil, { { { 'agility', Scaling:new(8) }, 2 }, { { 'hidden', Scaling:new(0), BUFF }, 1 } }
+    ),
+    ['martyr'] = Skill:new('martyr', 'Martyr', nil, nil,
+        "For 1 turn, enemies who attack Lester with \z
+         Weapon skills explode, taking 150 %% of Lester's Force as Spell damage.",
+        'Assassin', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 2 }, { 'Naturalist', 2 } },
+        { { T } }, SELF_CAST_AIM, 1,
+        ALLY, nil,
+        nil, { { { 'martyr', Scaling:new(0), BUFF }, 1 } }
+    ),
+    ['stalagmite'] = Skill:new('stalagmite', 'Stalagmite', nil, nil,
+        "Lester conjures a stone spike, dealing %s Spell damage \z
+         to an enemy and pushing them 1 tile.",
+        'Naturalist', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Assassin', 3 }, { 'Naturalist', 3 } },
+        { { F, T, F },
+          { F, F, F },
+          { F, F, F } }, DIRECTIONAL_AIM, 1,
+        ENEMY, Scaling:new(10, 'force', 1.0),
+        nil, nil, { UP, 1 }
+    ),
+    ['quake'] = Skill:new('quake', 'Quake', nil, nil,
+        "Lester causes a targeted earthquake, dealing %s Spell damage to enemies hit.",
+        'Naturalist', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Assassin', 4 }, { 'Naturalist', 4 } },
+        { { F, T, F, T, F, T, F },
+          { F, F, T, F, T, F, F },
+          { F, T, F, T, F, T, F },
+          { F, F, T, F, T, F, F },
+          { F, T, F, F, F, T, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+        ENEMY, Scaling:new(20, 'force', 0.5)
+    ),
+    ['warning'] = Skill:new('warning', 'Warning', nil, nil,
+        "Lester shouts at an ally to warn them of nearby danger. They gain %s \z
+         Reaction.",
+        'Naturalist', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 0 }, { 'Naturalist', 0 } },
+        { { F, F, F, T, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
+        nil, nil, nil, nil, nil, nil,
+        { { 'reaction', Scaling:new(0, 'affinity', 1.0) } }, { EXP_TAG_RECV }
+    ),
+    ['poison_coating'] = Skill:new('poison_coating', 'Poison Coating', nil, nil,
+        "Lester shares a deadly poison with nearby allies. Their attacks will \z
+         reduce enemy Force by %s for 2 turns.",
+        'Naturalist', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 2 }, { 'Naturalist', 2 } },
+        { { F, T, F },
+          { T, F, T },
+          { F, T, F } }, SELF_CAST_AIM, 0,
+        nil, nil, nil, nil, nil, nil,
+        { { 'poison_coat', Scaling:new(0, 'affinity', -0.5), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
+    ),
+    ['escape'] = Skill:new('escape', 'Escape', nil, nil,
+        "Lester identifies an escape route with Ignea-enhanced perception. Assisted allies \z
+         lose 10 Force but gain %s Agility.",
+        'Assassin', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 1 }, { 'Naturalist', 1 } },
+        { { F, F, T, T, T, F, F },
+          { F, F, T, T, T, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+        nil, nil, nil, nil, nil, nil,
+        {
+            { 'agility', Scaling:new(0, 'affinity', 1.0) },
+            { 'force', Scaling:new(-10) }
+        },
+        { EXP_TAG_MOVE }
+    ),
+    ['suspicious_tonic'] = Skill:new('suspicious_tonic', 'Suspicious Tonic', nil, nil,
+        "Lester gives assisted allies a dubious remedy. Their Ignea costs \z
+         are raised by %s, but they gain %s Force.",
+        'Naturalist', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Assassin', 0 }, { 'Naturalist', 3 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        nil, nil, nil, nil, nil, nil,
+        { { 'ignea_efficiency', Scaling:new(1), DEBUFF }, { 'force', Scaling:new(0, 'affinity', 1.0) } },
+        { EXP_TAG_ATTACK }
+    ),
 
     -- ENEMY
     ['bite'] = Skill:new('bite', 'Bite', nil, nil,
