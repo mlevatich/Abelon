@@ -1,0 +1,17 @@
+// Sprite attributes
+
+Name: Forest Terror
+Ground: no
+Shadow: yes
+Interactive: no
+Hitbox: 11,30,28,26
+Discard: no
+Present:
+Level: 16
+Attributes: endurance:75 focus:14 force:30 affinity:0 reaction:15 agility:16
+AttributesAdept: endurance:50 focus:12 force:25 affinity:0 reaction:10 agility:15
+AttributesNormal: endurance:40 focus:11 force:20 affinity:0 reaction:8 agility:13
+AttributesNovice: endurance:30 focus:10 force:15 affinity:0 reaction:6 agility:12
+Skilltrees:
+Skills: the_howl,the_eye,the_claws
+Description: An awful eldritch beast of the forest.

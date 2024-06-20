@@ -1884,5 +1884,45 @@ skills = {
           { F, F, T, F, F } }, SELF_CAST_AIM, 4,
         ALLY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'agility', Scaling:new(-4) }, 2 } }
-    )
+    ),
+    ['the_howl'] = Skill:new('the_howl', 'The Howl', nil, nil,
+        "The Terror looses an ear-splitting howl, dealing %s Spell damage and \z
+         lowering targets' Force by %s for 1 turn.",
+        'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
+        {},
+        { { F, F, F, T, F, F, F },
+          { F, F, T, T, T, F, F },
+          { F, T, T, T, T, T, F },
+          { T, T, T, F, T, T, T },
+          { F, T, T, T, T, T, F },
+          { F, F, T, T, T, F, F },
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 2,
+        ALLY, Scaling:new(10),
+        nil, { { { 'force', Scaling:new(-5) }, 2 } }
+    ),
+    ['the_eye'] = Skill:new('the_eye', 'The Eye', nil, nil,
+        "The Terror levels its grotesque gaze at its enemies, paralyzing them with fear. \z
+         They are unable to act for 1 turn.",
+        'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
+        {},
+        { { F, F, F, F, F },
+          { F, T, T, T, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
+        ALLY, nil,
+        nil, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
+    ),
+    ['the_claws'] = Skill:new('the_claws', 'The Claws', nil, nil,
+        "The Terror rakes its claws through any enemies within its reach, dealing \z
+         %s Weapon damage.",
+        'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- RELATIVE
+        {},
+        { { F, F, F, F, F },
+          { F, T, T, T, F },
+          { T, T, T, T, T },
+          { T, T, F, T, T },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
+        ALLY, Scaling:new(0, 'force', 1.5)
+    ),
 }

@@ -569,9 +569,19 @@ function Battle:turnRefresh()
         end
     end
 
-    -- Nobody has acted
+    -- Nobody has acted, unless an ally is stunned
     for i = 1, #self.participants do
         self.status[self.participants[i]:getId()]['acted'] = false
+    end
+    for i = 1, #self.participants do
+        local stat = self.status[self.participants[i]:getId()]
+        if self:isAlly(self.participants[i]) then
+            for j = 1, #stat['effects'] do
+                if stat['effects'][j].buff.attr == 'stun' then
+                    stat['acted'] = true
+                end
+            end
+        end
     end
 end
 

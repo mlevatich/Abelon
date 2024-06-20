@@ -15,8 +15,8 @@ Bullets that reference a github issue should close the issue when committed.
     - Victory scene fades and teleports the team, despawns any remaining golems, sets a trigger to the north preventing you from going back, sets a trigger for the walk south to transition to 1-4, team says a few words.
     - 1-4 transition scene, evening
     - Stone markers, getups
-    - Better golem sprite
     - Test and tweak
+    - Better golem sprite
 
 - Fix stuttering when walking around
     - Idea: measure the distance the camera moves on each frame, and as a function of time passed. Should be very consistent! If it is consistent, maybe things just arent always rendering in the same place?
@@ -34,19 +34,16 @@ Bullets that reference a github issue should close the issue when committed.
     - full attack with assist, deal no damage
     - enemy phase, attack deals no damage
 
-- Lester battle scenes, Wolves + golems
 - Lester portrait
-- Lester attributes and skills
+- Lester battle scenes, Wolves + golems
 - Implement win condition: Survive N turns (or just make it a rout map?)
 - Implement side objective: Heal Lester
 - Balance and polish
 
 - Final battle scenes
-    - Battle opens with an absolute ton of wolves, arriving in waves. The terrors don't show up until right before its escape time.
-- Forest terror sprite
-- Forest terror skills
-- Implement win condition: Escape
+    - Battle opens with an absolute ton of wolves, arriving in waves. The terrors don't show up until right before its escape time
 - Final scene transition and return to title screen
+- Side objective?
 - Balance and polish
 - Final terror sprite
 

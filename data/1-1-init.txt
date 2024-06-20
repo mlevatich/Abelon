@@ -70,5 +70,6 @@
 ~golem8 1 1 L
 ~golem9 1 1 L
 ~lester 1 1 L
+~terror1 1 1 L
 
 ->Inventory journal

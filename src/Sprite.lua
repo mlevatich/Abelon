@@ -1722,6 +1722,13 @@ sprite_data = {
         ['n'] = 9
     },
     {
+        ['id'] = 'terror',
+        ['w'] = 56,
+        ['h'] = 57,
+        ['animations'] = living,
+        ['n'] = 2
+    },
+    {
         ['id'] = 'journal',
         ['w'] = 0,
         ['h'] = 0
