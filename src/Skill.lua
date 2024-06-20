@@ -17,18 +17,21 @@ end
 
 Buff = class('Buff')
 
-function Buff:initialize(attr, val, ty, owner, xp_tags)
-    self.attr    = attr
-    self.val     = val
-    self.type    = ty
-    self.owner   = owner
-    self.xp_tags = ite(xp_tags ~= nil, xp_tags, {})
+function Buff:initialize(attr, val, ty, owner, xp_tags, value_hidden)
+    self.attr     = attr
+    self.val      = val
+    self.type     = ty
+    self.owner    = owner
+    self.hide_val = ite(value_hidden, true, false)
+    self.xp_tags  = ite(xp_tags ~= nil, xp_tags, {})
 end
 
 function Buff:toStr()
     local name = EFFECT_NAMES[self.attr]
     if self.val == 0 then
         return ite(isSpecial(self.attr), name, nil)
+    elseif self.hide_val then
+        return name
     end
     return ite(self.val > 0, '+', '-') .. abs(self.val) .. name
 end
@@ -301,7 +304,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 end
                 ts_effects = copy(ts_effects)
                 if sp_specials['flanking'] then
-                    table.insert(ts_effects, { { 'reaction', Scaling:new(-6) }, 1 })
+                    table.insert(ts_effects, { { 'reaction', Scaling:new(-8) }, 1 })
                 end
                 for j = 1, #ts_effects do
                     local b = mkBuff(sp_tmp_attrs, ts_effects[j][1], sp_specials)
@@ -416,6 +419,13 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     if dryrun then
         sp_stat = copy(sp_stat)
     end
+
+    sp_effects = copy(sp_effects)
+    if #dead > 0 and sp_specials['death_blessing'] then
+        table.insert(sp_effects, { { 'affinity', Scaling:new(sp_specials['death_blessing']) }, 1 })
+        table.insert(sp_effects, { { 'agility', Scaling:new(sp_specials['death_blessing']) }, 1 })
+    end
+
     for j = 1, #sp_effects do
         local b = mkBuff(sp_tmp_attrs, sp_effects[j][1], sp_specials)
         addStatus(sp_stat, Effect:new(b, sp_effects[j][2], sp_effects[j][3]))
@@ -716,12 +726,13 @@ function mkBuff(attrs, template, specials, sp, exp_tag)
     local s = template[2]
     local ty = ite(template[3], template[3], ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF))
     local attr = s.attr
+    local value_hidden = template[4]
     if specials['inversion'] then
         if attr == 'force' then attr = 'affinity' elseif attr == 'affinity' then attr = 'force' end
     end
     local val = attrs[attr] * s.mul
     val = s.base + ite(val < 0, math.ceil(val), math.floor(val))
-    return Buff:new(template[1], val, ty, sp, exp_tag)
+    return Buff:new(template[1], val, ty, sp, exp_tag, value_hidden)
 end
 
 function isSpecial(attr)
@@ -827,7 +838,7 @@ skills = {
         "Give chase. Gain %s Force and %s Agility \z
          for 2 turns. Cannot stack.",
         'Executioner', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 3 } },
+        { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 2 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
         nil, { { { 'force', Scaling:new(0, 'agility', 0.5) }, 2 },
@@ -1007,7 +1018,7 @@ skills = {
     ),
     ['flank'] = Skill:new('flank', 'Flank', nil, nil,
         "Prepare to surround and overwhelm an enemy. Ally \z
-         attacks will reduce enemy Reaction by 6 for 1 turn.",
+         attacks will reduce enemy Reaction by 8 for 1 turn.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 0 }, { 'Veteran', 4 }, { 'Executioner', 2 } },
         { { F, T, F },
@@ -1015,6 +1026,17 @@ skills = {
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'flanking', Scaling:new(0), BUFF } }, { EXP_TAG_ATTACK }
+    ),
+    ["deaths_blessing"] = Skill:new('deaths_blessing', "Death's Blessing", nil, nil,
+        "Cast a grim enchantment. Assisted allies who kill an enemy \z
+         gain %s Agility and Affinity for the rest of the turn.",
+        'Executioner', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Demon', 3 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
+        { { F, F, F },
+          { F, F, T },
+          { F, F, F } }, DIRECTIONAL_AIM, 1,
+        nil, nil, nil, nil, nil, nil,
+        { { 'death_blessing', Scaling:new(0, 'affinity', 1.0), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
 
 

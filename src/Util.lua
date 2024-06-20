@@ -97,10 +97,11 @@ function autoColor(strs)
                     char_color[j] = HIGHLIGHT
                 end
             end
-            for k, clr in pairs(AUTO_COLOR) do
+            for j = 1, #AUTO_COLOR_ARR do
+                local k = AUTO_COLOR_ARR[j]
                 local st, ed = s:find(k)
                 while st and ed do
-                    for j = st, ed do char_color[j] = clr end
+                    for j = st, ed do char_color[j] = AUTO_COLOR[k] end
                     st, ed = s:find(k, ed)
                 end
             end

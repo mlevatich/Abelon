@@ -32,7 +32,6 @@ Goal for Mona:
 - Demon: Spell: The Contract: Invoke The Contract
 - Demon: Spell: Retribution: Enemies that attack Abelon suffer a big debuff. Moderate cost.
 - Demon: Assist: ???:
-- Executioner: Assist: Death Blessing: Grants allies agility and affinity on kill, scales with abelon's affinity. Moderate cost.
 - Executioner: Spell: Gallows: Every turn, all stats of an enemy will permanently lower by one. Big cost.
 - Executioner: Assist: ???:
 - Veteran: Assist: Knights of Ebonach: High cost assist with massive range and an assortment of stat buffs. Scales well with Affinity.

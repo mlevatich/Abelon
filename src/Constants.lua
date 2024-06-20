@@ -80,6 +80,9 @@ HIGHLIGHT         = { 0.5,   1,   1,   1 }
 RED               = { 1,   0.6, 0.6,   1 }
 GREEN             = { 0.6,   1, 0.6,   1 }
 WHITE             = {0.95,0.95,0.95, 1.0 }
+AUTO_COLOR_ARR    = {
+    'Weapon', 'Spell', 'Assist', 'Endurance', 'Focus', 'Force', 'Affinity', 'Reaction', 'Agility', 'Assisted'
+}
 AUTO_COLOR        = {
     ['Weapon']    = {    1,    1,  0.5,   1 }, -- Yellow
     ['Spell']     = { 0.85, 0.55,    1,   1 }, -- Purple
@@ -90,6 +93,7 @@ AUTO_COLOR        = {
     ['Affinity']  = { 0.85,    1,  0.6,   1 }, -- Yellow green
     ['Reaction']  = {  0.6, 0.85,  0.7,   1 }, -- Dark green
     ['Agility']   = {  0.6, 0.85,    1,   1 }, -- Light blue
+    ['Assisted']  = WHITE
 }
 
 -- Direction enum
@@ -138,6 +142,7 @@ EFFECT_NAMES = {
     ['hidden']           = "Hidden",
     ['flight']           = "Flight",
     ['flanking']         = "Flanking",
+    ['death_blessing']   = "Death Blessing",
     ['inversion']        = "Inversion",
     ['ignea_efficiency'] = " Ignea Costs",
     ['lifesteal']        = "% Hp Drain",
@@ -245,7 +250,8 @@ FREE_AIM        = function(s) return { ['type'] = FREE, ['scale'] = s } end
 -- Buff or debuff?
 BUFF   = 1
 DEBUFF = 2
-HIDDEN = true -- Is buff hidden?
+HIDDEN = true -- Is buff or val hidden?
+VALUE_HIDDEN = true
 
 -- Skill targeting algorithms (for enemies)
 KILL      = 1 -- Invert when targeting allies (heal closest to death)
