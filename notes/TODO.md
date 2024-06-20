@@ -10,7 +10,9 @@ Bullets that reference a github issue should close the issue when committed.
 
 ## Scene / Battle / Sprite work
 
-- Implement camoflauge, flight, replace harmonize
+- Skills for alpha:
+    - Lester skills: thrown_dagger,escape,martyr,assassinate,shadowed,blade_dance,first_aid,warning,poison_coating,stalagmite,grasping_roots,quake
+    - Implement flight
 
 - Golem battle:
     - Guard other in-battle scenes with the assertion that the sprite is in the battle. So if the sprite has escaped, a scene with them won't play (or will be something a little different). Turn limit defeat scene.

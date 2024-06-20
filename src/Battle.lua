@@ -1108,29 +1108,29 @@ function Battle:getSpent(i, j)
 end
 
 function Battle:getMovement(sp, i, j)
-    local attrs, _, _, _ = self:dryrunAttributes({ j, i }, sp)
+    local attrs, specials, _, _ = self:dryrunAttributes({ j, i }, sp)
     local pts = math.floor(attrs['agility'] / 4)
     local bonus = pts - math.floor(sp.attributes['agility'] / 4)
     local spent = self:getSpent(i, j)
-    return math.max(0, pts - spent), bonus
+    return math.max(0, pts - spent), bonus, specials
 end
 
 function Battle:validMoves(sp, i, j)
 
     -- Get sprite's base movement points
-    local move, bonus = self:getMovement(sp, i, j)
+    local move, bonus, specials = self:getMovement(sp, i, j)
 
     -- Spoof a shallow copy of the grid dryrun-move tiles occupied
     local grid = self:dryrunGrid(false)
 
     -- Run djikstra's algorithm on grid
-    local dist, _ = sp:djikstra(grid, { i, j }, nil, move)
+    local dist, _ = sp:djikstra(grid, { i, j }, nil, move, specials['ghosting'])
 
-    -- Reachable nodes have distance < move
+    -- Reachable nodes have distance < move and are not occupied
     local moves = {}
     for y = math.max(i - move, 1), math.min(i + move, #self.grid) do
         for x = math.max(j - move, 1), math.min(j + move, #self.grid[y]) do
-            if dist[y][x] <= move then
+            if dist[y][x] <= move and (not grid[y][x].occupied or grid[y][x].occupied == sp) then
                 local spend = math.max(0, dist[y][x] - bonus)
                 table.insert(moves, { ['to'] = { y, x }, ['spend'] = spend })
             end
@@ -1397,7 +1397,7 @@ function Battle:kill(sp)
     self.status[sp:getId()]['inbattle'] = false
 end
 
-function Battle:pathToWalk(sp, path, next_sk)
+function Battle:pathToWalk(sp, path, next_sk, ghosting)
     local move_seq = {}
     if #path == 0 then
         table.insert(move_seq, function(d)
@@ -1409,10 +1409,14 @@ function Battle:pathToWalk(sp, path, next_sk)
     local sp_size_y_offset = -1 * (sp.h - TILE_HEIGHT) - 1
     for i = 1, #path do
         table.insert(move_seq, function(d)
+            sp.flying = ite(ghosting, true, false)
             self.skill_in_use = next_sk
             return sp:walkToBehaviorGeneric(
                 function()
-                    self:moveSprite(sp, path[i][2], path[i][1])
+                    if i == #path then
+                        self:moveSprite(sp, path[i][2], path[i][1])
+                        sp.flying = false
+                    end
                     d()
                 end,
                 self.origin_x + path[i][2] + sp_size_x_offset / TILE_WIDTH, 
@@ -1539,11 +1543,13 @@ function Battle:playAction()
     -- Make behavior sequence
 
     -- Move 1
+    local _, _, m1_specials = self:getTmpAttributes(sp)
     local move1_path = sp:djikstra(self.grid,
         { sp_y, sp_x },
-        { c_move1[2], c_move1[1] }
+        { c_move1[2], c_move1[1] },
+        nil, m1_specials['ghosting']
     )
-    local seq = self:pathToWalk(sp, move1_path, attack)
+    local seq = self:pathToWalk(sp, move1_path, attack, m1_specials['ghosting'])
 
     -- Attack
     self.exp_sources = {}
@@ -1582,7 +1588,7 @@ function Battle:playAction()
                     time_to_wait = time_to_wait + 3
                 end
             end
-            
+
             -- Create a behavior sequence for the first counterattacking sprite. As a doneaction, this
             -- behavior passes control to the next counterattacking sprite, and so on. The final
             -- counterattacking sprite concludes the entire action.
@@ -1623,11 +1629,13 @@ function Battle:playAction()
 
         -- Move 2 (with spoofed grid)
         local grid = self:dryrunGrid(false)
+        local _, m2_specials = self:dryrunAttributes(c_move1)
         local move2_path = sp:djikstra(grid,
             { c_move1[2], c_move1[1] },
-            { c_move2[2], c_move2[1] }
+            { c_move2[2], c_move2[1] },
+            nil, m2_specials['ghosting']
         )
-        seq = concat(seq, self:pathToWalk(sp, move2_path, assist))
+        seq = concat(seq, self:pathToWalk(sp, move2_path, assist, m2_specials['ghosting']))
 
         -- Helper gains exp if sprite started on, or moved off, their agility
         -- assist

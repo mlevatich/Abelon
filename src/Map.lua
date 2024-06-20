@@ -387,11 +387,17 @@ end
 function Map:renderStandingSprites()
 
     -- Render all sprites above ground depth
+    local flying = {}
     for i=1, #self.sprites do
         if not self.sprites[i]:isGround() then
-            self.sprites[i]:render()
+            if self.sprites[i]:isFlying() then
+                table.insert(flying, self.sprites[i])
+            else
+                self.sprites[i]:render()
+            end
         end
     end
+    for i=1, #flying do flying[i]:render() end
 end
 
 -- Apply lighting effects to map

@@ -1506,8 +1506,8 @@ skills = {
           { F, T, F } }, SELF_CAST_AIM, 4,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'flight', Scaling:new(0), BUFF }, -- TODO: implement flight
-            { 'agility', Scaling:new(0, 'affinity', 1.0) }
+            { 'agility', Scaling:new(0, 'affinity', 1.0) },
+            { 'ghosting', Scaling:new(1), BUFF, VALUE_HIDDEN }
         }, { EXP_TAG_MOVE }
     ),
     ['farsight'] = Skill:new('farsight', 'Farsight', nil, nil,

@@ -61,6 +61,11 @@ function Sprite:initialize(id, game)
     self.x = 0
     self.y = 0
 
+    -- Flying?
+    self.flying = false
+    self.flying_height = 0
+    self.flying_dy = 0
+
     -- Anchor position for a wandering sprite
     self.leash_x = 0
     self.leash_y = 0
@@ -178,6 +183,10 @@ end
 -- Is this sprite blocking?
 function Sprite:isBlocking()
     return #self.hitbox > 0
+end
+
+function Sprite:isFlying()
+    return self.flying
 end
 
 function Sprite:getHitboxRect()
@@ -703,7 +712,7 @@ function Sprite:changeAwareness(value)
     end
 end
 
-function Sprite:djikstra(graph, src, dst, depth)
+function Sprite:djikstra(graph, src, dst, depth, ghosting)
 
     local map = self.game:getMap()
 
@@ -780,7 +789,7 @@ function Sprite:djikstra(graph, src, dst, depth)
         for i = 1, #graph do
             for j = 1, #graph[i] do
                 if un[i][j] and graph[i][j]
-                and not (graph[i][j].occupied and graph[i][j].occupied ~= self)
+                and (ghosting or (not (graph[i][j].occupied and graph[i][j].occupied ~= self)))
                 then
                     if dist[i][j] < min_dist then
                         n = { i, j }
@@ -819,7 +828,7 @@ function Sprite:djikstra(graph, src, dst, depth)
                     or not un[v[1]][v[2]]
                     or not graph[v[1]][v[2]]
                     or (graph[v[1]][v[2]].occupied and
-                        graph[v[1]][v[2]].occupied ~= self)
+                        graph[v[1]][v[2]].occupied ~= self and not ghosting)
                     then
                         table.remove(neighbors, k)
                     else
@@ -1255,8 +1264,7 @@ function Sprite:_checkSpriteCollisions()
 
     -- Iterate over all active sprites
     for _, sp in ipairs(self.game:getActiveSprites()) do
-        if sp.name ~= self.name and sp:isBlocking() then
-
+        if sp.name ~= self.name and sp:isBlocking() and (not self:isFlying()) and (not sp:isFlying()) then
             local x,  y,  w,  h  = self:getHitboxRect()
             local x2, y2, w2, h2 = sp:getHitboxRect()
 
@@ -1266,10 +1274,10 @@ function Sprite:_checkSpriteCollisions()
             local right_dist = x - (x2 + w2)
             local left_dist = x2 - (x + w)
             if y_inside and right_dist <= 0 and
-               right_dist > -w2/2 and self.dx < 0 then
+            right_dist > -w2/2 and self.dx < 0 then
                 x_move = x2 + w2
             elseif y_inside and left_dist <= 0 and
-                   left_dist > -w2/2 and self.dx > 0 then
+                left_dist > -w2/2 and self.dx > 0 then
                 x_move = x2 - w
             end
 
@@ -1279,10 +1287,10 @@ function Sprite:_checkSpriteCollisions()
             local down_dist = y - (y2 + h2)
             local up_dist = y2 - (y + h)
             if x_inside and down_dist <= 0 and
-               down_dist > -h2/2 and self.dy < 0 then
+            down_dist > -h2/2 and self.dy < 0 then
                 y_move = y2 + h2
             elseif x_inside and up_dist <= 0 and
-                   up_dist > -h2/2 and self.dy > 0 then
+                up_dist > -h2/2 and self.dy > 0 then
                 y_move = y2 - h
             end
 
@@ -1409,6 +1417,19 @@ function Sprite:update(dt)
     -- and animation based on current behavior
     self.behaviors[self.current_behavior](self, dt)
 
+    -- Flying height oscillates
+    if self:isFlying() then
+        if self.flying_height < 10 then
+            self.flying_dy = 20
+        end
+        if self.flying_height > 15 then
+            self.flying_dy = -20
+        end
+        self.flying_height = self.flying_height + self.flying_dy * dt
+    else
+        self.flying_height = math.max(0, self.flying_height - 40 * dt)
+    end
+
     -- Update frame of animation
     self:updateAnimation(dt)
 
@@ -1458,7 +1479,7 @@ function Sprite:render()
         spritesheet,
         self:getCurrentQuad(),
         self.x + self.w / 2,
-        self.y + self.h / 2,
+        self.y + self.h / 2 - self.flying_height,
         self.rot,
         self.dir,
         1,
