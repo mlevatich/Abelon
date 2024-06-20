@@ -119,7 +119,7 @@ function Skill:assist(attrs, specials, dryrun, sp)
     local buffs = {}
     for i = 1, #self.buff_templates do
         local exp_tag = ite(i == 1, self.owner_exp_when, {})
-        table.insert(buffs, mkBuff(attrs, self.buff_templates[i], sp, exp_tag))
+        table.insert(buffs, mkBuff(attrs, self.buff_templates[i], specials, sp, exp_tag))
     end
     return buffs
 end
@@ -204,8 +204,12 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 if scaling then
 
                     -- Compute damage or healing (MUST be a SPELL to heal)
+                    local attr = scaling.attr
+                    if sp_specials['inversion'] then
+                        if attr == 'force' then attr = 'affinity' elseif attr == 'affinity' then attr = 'force' end
+                    end
                     local atk = scaling.base
-                            + math.floor(sp_tmp_attrs[scaling.attr]
+                            + math.floor(sp_tmp_attrs[attr]
                             * scaling.mul)
                     local dmg = atk
                     if dmg_type == WEAPON then
@@ -300,7 +304,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     table.insert(ts_effects, { { 'reaction', Scaling:new(-6) }, 1 })
                 end
                 for j = 1, #ts_effects do
-                    local b = mkBuff(sp_tmp_attrs, ts_effects[j][1])
+                    local b = mkBuff(sp_tmp_attrs, ts_effects[j][1], sp_specials)
                     addStatus(t_stat, Effect:new(b, ts_effects[j][2], ts_effects[j][3]))
 
                     -- Allies gain exp for applying negative status to enemies
@@ -413,7 +417,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         sp_stat = copy(sp_stat)
     end
     for j = 1, #sp_effects do
-        local b = mkBuff(sp_tmp_attrs, sp_effects[j][1])
+        local b = mkBuff(sp_tmp_attrs, sp_effects[j][1], sp_specials)
         addStatus(sp_stat, Effect:new(b, sp_effects[j][2], sp_effects[j][3]))
 
         -- Allies gain exp for applying positive status to themselves
@@ -469,15 +473,15 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     end
 end
 
-function Skill:toMenuItem(itex, icons, with_skilltrees, with_prio, attrs)
-    local hbox = self:mkSkillBox(itex, icons, with_skilltrees, with_prio, attrs)
+function Skill:toMenuItem(itex, icons, with_skilltrees, with_prio, attrs, specs)
+    local hbox = self:mkSkillBox(itex, icons, with_skilltrees, with_prio, attrs, specs)
     return MenuItem:new(self.name, {}, nil, {
         ['elements'] = hbox,
         ['w'] = HBOX_WIDTH
     }, nil, nil, nil, self.id)
 end
 
-function Skill:prepareDesc(tmp_attrs, show_scaling)
+function Skill:prepareDesc(tmp_attrs, specials, show_scaling)
 
     -- Combine all sources of scaling, in order
     local scalings = {}
@@ -502,13 +506,16 @@ function Skill:prepareDesc(tmp_attrs, show_scaling)
             end
         end
     end
-    
+
     -- Create a colored string template for each scaling
     local sc_strs = {}
     local formats = {}
     for i=1, #scalings do
-        local sc = scalings[i]
+        local sc = copy(scalings[i])
         local sc_str = nil
+        if specials['inversion'] then
+            if sc.attr == 'force' then sc.attr = 'affinity' elseif sc.attr == 'affinity' then sc.attr = 'force' end
+        end
         if (not sc.mul) or sc.mul == 0 then
             sc_str = {{tostring(abs(sc.base))}}
         else
@@ -571,7 +578,7 @@ function Skill:prepareDesc(tmp_attrs, show_scaling)
     return lines
 end
 
-function Skill:mkSkillBox(itex, icons, with_skilltrees, with_prio, attrs)
+function Skill:mkSkillBox(itex, icons, with_skilltrees, with_prio, attrs, specs)
     local req_x = 410
     local req_y = HALF_MARGIN
     local desc_x = HALF_MARGIN * 3 + PORTRAIT_SIZE - 5
@@ -583,8 +590,8 @@ function Skill:mkSkillBox(itex, icons, with_skilltrees, with_prio, attrs)
             HALF_MARGIN, 7, itex),
         mkEle('image', icons[self.type],
             HALF_MARGIN + 25, 7, itex),
-        mkEle('text', self:prepareDesc(attrs, false),
-            desc_x, BOX_MARGIN + LINE_HEIGHT - 3, nil, true, self:prepareDesc(attrs, true)),
+        mkEle('text', self:prepareDesc(attrs, specs, false),
+            desc_x, BOX_MARGIN + LINE_HEIGHT - 3, nil, true, self:prepareDesc(attrs, specs, true)),
         mkEle('text', {ite(self.cost == 0, 'No Ignea cost', 'Ignea cost')},
             req_x + BOX_MARGIN * 2 - ite(self.cost == 0, 45, 33), req_y + LINE_HEIGHT * 4 + HALF_MARGIN + ite(self.cost == 0, 10, 25)),
         mkEle('text', {"Hold 'R' to see attribute scaling"},
@@ -705,10 +712,14 @@ function mkTmpAttrs(bases, effects, assists)
 end
 
 -- Create a buff, given an attribute set, the buffed stat, and buff scaling
-function mkBuff(attrs, template, sp, exp_tag)
+function mkBuff(attrs, template, specials, sp, exp_tag)
     local s = template[2]
     local ty = ite(template[3], template[3], ite(s.mul > 0 or (s.mul == 0 and s.base >= 0), BUFF, DEBUFF))
-    local val = attrs[s.attr] * s.mul
+    local attr = s.attr
+    if specials['inversion'] then
+        if attr == 'force' then attr = 'affinity' elseif attr == 'affinity' then attr = 'force' end
+    end
+    local val = attrs[attr] * s.mul
     val = s.base + ite(val < 0, math.ceil(val), math.floor(val))
     return Buff:new(template[1], val, ty, sp, exp_tag)
 end
@@ -868,8 +879,8 @@ skills = {
         ENEMY, Scaling:new(30)
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches', nil, nil,
-        "Pull an enemy to you, dealing %s Spell damage and \z
-         reducing the enemy's Reaction by %s for 2 turns.",
+        "Pull an enemy in, dealing %s Spell damage and \z
+         reducing the enemy's Reaction by %s for 2 turns",
         'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, T, F, F },
@@ -1116,7 +1127,7 @@ skills = {
         "Kath launches a thrust powered by lightning, dealing %s \z
          Spell damage to up to 4 enemies in a line.",
         'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 5 }, { 'Cleric', 4 } },
+        { { 'Defender', 0 }, { 'Hero', 4 }, { 'Cleric', 3 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
@@ -1227,7 +1238,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
         nil, nil, nil, nil, nil, nil,
         { { 'guardian_angel', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
     ),
@@ -1392,7 +1403,7 @@ skills = {
         { { 'Huntress', 1 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, T, F },
           { F, F, F },
-          { F, F, F } }, DIRECTIONAL_AIM, 2,
+          { F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
         nil, nil, { UP, 3 }
     ),
@@ -1436,19 +1447,19 @@ skills = {
         nil, nil, nil, nil, nil, nil,
         { { 'hidden', Scaling:new(0), BUFF } }, {}
     ),
-    ['harmonize'] = Skill:new('harmonize', 'Harmonize', nil, nil,
-        "Elaine channels her power into Ignea and projects it outwards. \z
-         Allies on the assist take on Elaine's attributes.",
+    ['inversion'] = Skill:new('inversion', 'Inversion', nil, nil,
+        "Elaine creates a field of emotional distortion. \z
+         Allies on the assist swap their Force and Affinity when using skills.",
         'Apprentice', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 3 }, { 'Sniper', 0 } },
         { { F, F, T, F, F },
           { F, F, F, F, F },
           { T, F, F, F, T },
           { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
         nil, nil, nil, nil, nil, nil,
-        { { 'harmony', Scaling:new(0), BUFF } }, -- TODO: change this
-        { EXP_TAG_ATTACK, EXP_TAG_RECV, EXP_TAG_MOVE }
+        { { 'inversion', Scaling:new(0), BUFF } },
+        { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
     ),
     ['flight'] = Skill:new('flight', 'Flight', nil, nil,
         "Elaine whips the wind into currents, letting allies fly. They gain \z
@@ -1567,7 +1578,7 @@ skills = {
         { { 'Lanternfaire', 2 }, { 'Sorceress', 3 } },
         { { T } }, FREE_AIM(4), 2,
         ENEMY, nil,
-        nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'focus', -0.8) }, 2 } },
+        nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'force', -0.8) }, 2 } },
         { DOWN, 3 }
     ),
     ['flashbang'] = Skill:new('flashbang', 'Flashbang', nil, nil,

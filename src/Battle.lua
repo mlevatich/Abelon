@@ -783,7 +783,7 @@ function Battle:openAttackMenu()
             self:selectTarget()
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true, false, attrs, nil, nil)
+    local skills_menu = sp:mkSkillsMenu(true, false, attrs, specials, nil, nil)
     local weapon = skills_menu.children[1]
     local spell = skills_menu.children[2]
     for i = 1, #weapon.children do self:mkUsable(sp, weapon.children[i], sp.ignea, specials) end
@@ -803,7 +803,7 @@ function Battle:openAssistMenu()
             self:endAction(false)
         end
     )
-    local skills_menu = sp:mkSkillsMenu(true, false, attrs, hp, ign)
+    local skills_menu = sp:mkSkillsMenu(true, false, attrs, specials, hp, ign)
     local assist = skills_menu.children[3]
     for i = 1, #assist.children do self:mkUsable(sp, assist.children[i], ign, specials) end
     local opts = { assist, wait }
@@ -814,13 +814,13 @@ function Battle:openAssistMenu()
 end
 
 function Battle:openAllyMenu(sp)
-    local tmp_attrs = self:getTmpAttributes(sp)
+    local tmp_attrs, _, specials = self:getTmpAttributes(sp)
     local attrs = MenuItem:new('Attributes', {},
         'View ' .. sp.name .. "'s attributes", {
         ['elements'] = sp:buildAttributeBox(tmp_attrs),
         ['w'] = HBOX_WIDTH
     })
-    local sks = sp:mkSkillsMenu(true, false, tmp_attrs)
+    local sks = sp:mkSkillsMenu(true, false, tmp_attrs, specials)
     sfx['open']:play()
     self:openMenu(Menu:new(nil, { attrs, sks }, BOX_MARGIN, BOX_MARGIN, false), {})
 end
@@ -832,7 +832,7 @@ function Battle:openEnemyMenu(sp)
         ['elements'] = self:buildReadyingBox(sp, attrs, specials),
         ['w'] = HBOX_WIDTH
     })
-    local skills = sp:mkSkillsMenu(false, true, attrs, nil, nil, 380)
+    local skills = sp:mkSkillsMenu(false, true, attrs, specials, nil, nil, 380)
     local opts = { skills, readying }
     sfx['open']:play()
     self:openMenu(Menu:new(nil, opts, BOX_MARGIN, BOX_MARGIN, false), {
@@ -904,7 +904,7 @@ function Battle:buildReadyingBox(sp, attrs, specials)
     -- Start with basic skill box
     local stat = self.status[sp:getId()]
     local prep = stat['prepare']
-    local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false, attrs)
+    local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false, attrs, specials)
 
     -- Update priority for this sprite (would happen later anyway)
     if specials['enrage'] then

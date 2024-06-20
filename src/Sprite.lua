@@ -404,17 +404,18 @@ function Sprite:mkLearnable(sk_id, sk_item)
     return sk_item
 end
 
-function Sprite:mkSkillsMenu(with_skilltrees, with_prio, attrs, hp, ign, hbox_w)
+function Sprite:mkSkillsMenu(with_skilltrees, with_prio, attrs, specs, hp, ign, hbox_w)
 
     -- If temp attributes were provided, use those
     local att = ite(attrs, attrs, self.attributes)
+    local specs = ite(specs, specs, {})
 
     -- Helpers
     local learnedOf = function(t)
         return filter(function(s) return s.type == t end, self.skills)
     end
     local skToMenu = function(s)
-        return s:toMenuItem(icon_texture, icons, with_skilltrees, with_prio, att)
+        return s:toMenuItem(icon_texture, icons, with_skilltrees, with_prio, att, specs)
     end
     local hbox = {
         ['elements'] = self:buildAttributeBox(att, hp, ign),
@@ -448,7 +449,7 @@ function Sprite:mkLearnMenu()
     end
     local mkLearn = function(s)
         return self:mkLearnable(s.id,
-            s:toMenuItem(icon_texture, icons, true, false, self.attributes)
+            s:toMenuItem(icon_texture, icons, true, false, self.attributes, {})
         )
     end
     local hbox = {

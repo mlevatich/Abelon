@@ -138,6 +138,7 @@ EFFECT_NAMES = {
     ['hidden']           = "Hidden",
     ['flight']           = "Flight",
     ['flanking']         = "Flanking",
+    ['inversion']        = "Inversion",
     ['ignite_lantern']   = " Ignea Costs",
     ['lifesteal']        = "% Hp Drain",
     ['igneadrain']       = "% Ign Drain",
