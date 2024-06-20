@@ -907,7 +907,7 @@ function Battle:buildReadyingBox(sp, attrs, specials)
     local hbox = prep['sk']:mkSkillBox(icon_texture, icons, false, false, attrs, specials)
 
     -- Update priority for this sprite (would happen later anyway)
-    if specials['enrage'] then
+    if specials['taunt'] then
         prep['prio'] = { FORCED, 'kath' }
     end
 
@@ -2389,7 +2389,7 @@ function Battle:planNextEnemyAction()
     end
 
     -- If the current enemy is enraged, force it to target Kath
-    if specials['enrage'] then
+    if specials['taunt'] then
         stat['prepare']['prio'] = { FORCED, 'kath' }
     end
 

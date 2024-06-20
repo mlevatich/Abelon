@@ -42,9 +42,6 @@ Goal for Mona:
 
 - Cleric: Spell: Regenerate: Adjacent ally heals 5hp every turn for 5 turns. Free.
 - Cleric: Assist: Ward: allies on the assist are immune to spell damage. Costs 4 ignea.
-- Cleric: Assist: Disperse Ignea: assist costs 2 ignea, allies have ignea costs reduced by affinity * 0.2
-- Defender: Weapon: Riposte: kath retaliates against any weapon damage dealt to him. Scales on reaction
-- Hero: Assist: Reliance: Allies lose all force but gain big affinity.
 
 #### Elaine
 

@@ -1079,14 +1079,14 @@ skills = {
         "Kath throws his body into a thrust, dealing %s Weapon \z
          damage to up to 2 enemies in a line.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 4 }, { 'Cleric', 0 } },
+        { { 'Defender', 3 }, { 'Hero', 3 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.0)
     ),
-    ['enrage'] = Skill:new('enrage', 'Enrage', nil, nil,
-        "Enrage nearby enemies with an ignaeic fog, so that their next \z
+    ['taunt'] = Skill:new('taunt', 'Taunt', nil, nil,
+        "Taunt nearby enemies, so that their next \z
          actions will target Kath (whether or not they can reach him).",
         'Defender', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Defender', 3 }, { 'Hero', 2 }, { 'Cleric', 2 } },
@@ -1098,7 +1098,7 @@ skills = {
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'enrage', Scaling:new(0), DEBUFF }, 1 } }
+        nil, { { { 'taunt', Scaling:new(0), DEBUFF }, 1 } }
     ),
     ['healing_mist'] = Skill:new('healing_mist', 'Healing Mist', nil, nil,
         "Infuse the air to close wounds. Allies in the area recover \z
@@ -1114,7 +1114,7 @@ skills = {
     ['haste'] = Skill:new('haste', 'Haste', nil, nil,
         "Kath raises the Agility of allies around him by %s for 2 turns.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 1 }, { 'Hero', 0 }, { 'Cleric', 2 } },
+        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 2 } },
         { { F, F, T, F, F },
           { F, F, T, F, F },
           { T, T, F, T, T },
@@ -1173,7 +1173,7 @@ skills = {
         "Kath catapults an empowered javelin which deals %s \z
          Weapon Damage and pushes the enemy back 2 tiles.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 5 }, { 'Hero', 5 }, { 'Cleric', 0 } },
+        { { 'Defender', 4 }, { 'Hero', 5 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1231,7 +1231,7 @@ skills = {
         "Kath casts a powerful protective ward. Allies on the assist cannot \z
          drop below 1 health.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 4 }, { 'Hero', 0 }, { 'Cleric', 4 } },
+        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 4 } },
         { { F, F, T, T, T, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1259,6 +1259,19 @@ skills = {
             { 'reaction', Scaling:new(0, 'affinity', 1.0) },
             { 'agility', Scaling:new(-99) }
         }, { EXP_TAG_RECV }
+    ),
+    ['peace'] = Skill:new('peace', 'Peace', nil, nil,
+        "Kath casts a calming spell. Allies on the assist lose all Force but gain %s Affinity.",
+        'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 2 } },
+        { { F, T, F },
+          { T, F, T },
+          { F, T, F } }, SELF_CAST_AIM, 1,
+        nil, nil, nil, nil, nil, nil,
+        {
+            { 'affinity', Scaling:new(0, 'affinity', 1.0) },
+            { 'force', Scaling:new(-99) }
+        }, { EXP_TAG_ASSIST }
     ),
 
 
