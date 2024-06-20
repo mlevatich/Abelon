@@ -7,11 +7,11 @@ Interactive: yes
 Hitbox: 4,21,23,11
 Discard: no
 Present:
-Level: 7
+Level: 8
 Attributes: endurance:12 focus:15 force:14 affinity:6 reaction:5 agility:9
 AttributesAdept:
 AttributesNormal:
 AttributesNovice:
-Skilltrees: Lanternfaire:knockback,shine,lasso,bleed_vitality,heavy_swing,ignite_lantern,bleed_ignea Sorceress:searing_light,hypnotize,detonate,berserk,flashbang,gravity
-Skills: knockback,searing_light,shine,lasso,hypnotize,detonate,bleed_vitality
+Skilltrees: Lanternfaire:knockback,shine,lasso,ignite_lantern,crushing_swing,flashbang,ignaeic_veins Sorceress:searing_light,hypnotize,detonate,bleed_vitality,berserk,gravity,bleed_ignea
+Skills: knockback,searing_light,shine,lasso,hypnotize,detonate,ignite_lantern,bleed_vitality,ignaeic_veins
 Description: The scholar Shanti. EOS

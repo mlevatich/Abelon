@@ -90,7 +90,7 @@ function Skill:initialize(id, n, alt_anim, alt_sfx, desc, ti, st, prio, anim_typ
 end
 
 function Skill:getCost(sp_specials)
-    local cost_mod = sp_specials['ignite_lantern']
+    local cost_mod = sp_specials['ignea_efficiency']
     return math.max(0, self.cost + ite(cost_mod, cost_mod, 0))
 end
 
@@ -1533,22 +1533,23 @@ skills = {
         ENEMY, nil,
         nil, { { { 'agility', Scaling:new(0, 'reaction', -1.0) }, 1 } }
     ),
-    ['heavy_swing'] = Skill:new('heavy_swing', 'Heavy Swing', nil, nil,
-        "Shanti brings her lantern down on an adjacent enemy, \z
+    ['crushing_swing'] = Skill:new('crushing_swing', 'Crushing Swing', nil, nil,
+        "Shanti brings her lantern down hard on an adjacent enemy, \z
          dealing %s Weapon damage.",
         'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Lanternfaire', 4 }, { 'Sorceress', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.2)
+        ENEMY, Scaling:new(0, 'force', 1.3)
     ),
     ['ignite_lantern'] = Skill:new('ignite_lantern', 'Ignite Lantern', nil, nil,
         "Shanti lights her lantern with activated ignea to draw from, reducing all of her \z
          ignea costs by 1 for 5 turns. Cannot stack.",
         'Lanternfaire', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
+        { { 'Lanternfaire', 3 }, { 'Sorceress', 3 } },
         { { T } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'ignite_lantern', Scaling:new(-1), BUFF }, 5 } }
+        nil, { { { 'ignea_efficiency', Scaling:new(-1), BUFF }, 5 },
+               { { 'ignite_lantern', Scaling:new(0), BUFF }, 5, HIDDEN } }
     ),
     ['searing_light'] = Skill:new('searing_light', 'Searing Light', nil, nil,
         "Shanti scorches enemies with burning ignaeic light, dealing %s Spell damage.",
@@ -1575,7 +1576,7 @@ skills = {
         "Shanti enchants an enemy into a rage, \z
          raising its Force by %s and lowering its Reaction by %s for 2 turns.",
         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 2 }, { 'Sorceress', 3 } },
+        { { 'Lanternfaire', 2 }, { 'Sorceress', 4 } },
         { { T } }, FREE_AIM(4), 2,
         ENEMY, nil,
         nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'force', -0.8) }, 2 } },
@@ -1584,8 +1585,8 @@ skills = {
     ['flashbang'] = Skill:new('flashbang', 'Flashbang', nil, nil,
         "Shanti blinds nearby enemies, dealing %s Spell damage \z
          and raising her Reaction by %s for 1 turn.",
-         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-         { { 'Lanternfaire', 4 }, { 'Sorceress', 3 } },
+         'Lanternfaire', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+         { { 'Lanternfaire', 4 }, { 'Sorceress', 4 } },
          { { F, T, F },
            { T, F, T },
            { F, T, F } }, SELF_CAST_AIM, 1,
@@ -1596,7 +1597,7 @@ skills = {
         "Shanti pulls enemies 3 tiles towards her, \z
          dealing %s Spell damage and lowering their Reaction by %s.",
         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Lanternfaire', 4 }, { 'Sorceress', 5 } },
+        { { 'Lanternfaire', 0 }, { 'Sorceress', 5 } },
         { { F, T, T, T, T, T, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1629,15 +1630,15 @@ skills = {
     ['hypnotize'] = Skill:new('hypnotize', 'Hypnotize', nil, nil,
         "Shanti hypnotizes an assisted ally into a frenzied state, raising their Force by %s.",
         'Sorceress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 2 }, { 'Sorceress', 1 } },
+        { { 'Lanternfaire', 1 }, { 'Sorceress', 1 } },
         { { T } }, DIRECTIONAL_AIM, 3,
         nil, nil, nil, nil, nil, nil,
         { { 'force', Scaling:new(15, 'affinity', 0.3) } }, { EXP_TAG_ATTACK }
     ),
     ['bleed_vitality'] = Skill:new('bleed_vitality', 'Bleed Vitality', nil, nil,
         "Shanti empowers the assisted ally's Weapon attacks to heal them for %s %% of the damage dealt.",
-        'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Lanternfaire', 3 }, { 'Sorceress', 3 } },
+        'Sorceress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Lanternfaire', 2 }, { 'Sorceress', 3 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1648,10 +1649,25 @@ skills = {
         nil, nil, nil, nil, nil, nil,
         { { 'lifesteal', Scaling:new(40, 'affinity', 10.0), BUFF } }, { EXP_TAG_ATTACK }
     ),
-    ['bleed_ignea'] = Skill:new('bleed_ignea', 'Bleed Ignea', nil, nil,
-        "Shanti empowers the assisted ally's Weapon attacks to restore ignea equal to %s %% of the damage dealt.",
+    ['ignaeic_veins'] = Skill:new('ignaeic_veins', 'Ignaeic Veins', nil, nil,
+        "Shanti surfaces veins of ignea from underground. Allies on the assist have their ignea costs \z
+         reduced by %s.",
         'Lanternfaire', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 5 }, { 'Sorceress', 4 } },
+        { { T, F, F, T, F, F, T },
+          { F, T, F, T, F, T, F },
+          { F, F, F, F, F, F, F },
+          { T, T, F, F, F, T, T },
+          { F, F, F, F, F, F, F },
+          { F, T, F, T, F, T, F },
+          { T, F, F, T, F, F, T } }, SELF_CAST_AIM, 1,
+        nil, nil, nil, nil, nil, nil,
+        { { 'ignea_efficiency', Scaling:new(-1, 'affinity', -0.2), BUFF } }, { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
+    ),
+    ['bleed_ignea'] = Skill:new('bleed_ignea', 'Bleed Ignea', nil, nil,
+        "Shanti empowers the assisted ally's Weapon attacks to restore ignea equal to %s %% of the damage dealt.",
+        'Sorceress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Lanternfaire', 4 }, { 'Sorceress', 5 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1660,7 +1676,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         nil, nil, nil, nil, nil, nil,
-        { { 'igneadrain', Scaling:new(0, 'affinity', 4.0), BUFF } }, { EXP_TAG_ATTACK }
+        { { 'igneadrain', Scaling:new(0, 'affinity', 4.0), BUFF } }, { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
     ),
 
 
@@ -1698,29 +1714,4 @@ skills = {
         ALLY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'agility', Scaling:new(-4) }, 2 } }
     )
-
-    -- ['drain'] = Skill:new('drain', 'Drain', nil, nil,
-    --     "Shanti deals %s Spell damage and drain the enemy's ignea by 4, \z
-    --      recovering the same amount.",
-    --     'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-    --     { { 'Lanternfaire', 0 }, { 'Sorceress', 0 } },
-    --     { { F, T, T, T, F },
-    --       { F, T, T, T, F },
-    --       { F, F, F, F, F },
-    --       { F, F, F, F, F },
-    --       { F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
-    --     ENEMY, Scaling:new(4),
-    --     nil, nil, nil,
-    --     {
-    --         ['igneadrain'] = 1.0,
-    --         ['and'] =
-    --             function(a, a_a, b, b_a, st, dry, dry_res)
-    --                 if dry then
-    --                     dry_res['flat_ignea'] = dry_res['flat_ignea'] + 4
-    --                 else
-    --                     b.ignea = math.max(0, b.ignea - 4)
-    --                 end
-    --             end
-    --     }
-    -- )
 }
