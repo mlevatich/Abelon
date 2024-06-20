@@ -182,7 +182,7 @@ function Player:mkTutorialBox(n, w, chars)
             HALF_MARGIN + row * LINE_HEIGHT, { 0.8, 0.8, 0.8, 1 }, true)
         row = row + #lines + 1
     end
-    return { ['w'] = w, ['elements'] = eles, ['light'] = true }
+    return { ['w'] = w, ['elements'] = eles, ['light'] = false }
 end
 
 function Player:mkTutorialsMenu()

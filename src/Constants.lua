@@ -208,9 +208,8 @@ TUTORIALS = {
         "To recover Ignea, you will have to find it on your journey. On %s difficulty, %s is restored after battle."
     },
     ['Battle: Attributes'] = {
-        "Units have six Attributes. Endurance determines maximum health, and Focus determines maximum Ignea.",
-        "Force empowers attacks, and Affinity empowers assists.",
-        "A point of Reaction reduces Weapon damage by one. Four points of Agility confers one tile of movement."
+        "Units have six attributes. Endurance and Focus confer maximum health and Ignea. Force empowers attacks and Affinity empowers assists. Reaction reduces Weapon damage by one. Four points of Agility confers one tile of movement.",
+        "Hold 'R' to see how skills scale with attributes."
     },
     ['Battle: Reminder'] = {
         "All battle tutorials are available for review under 'Tutorials' in the settings menu.",
