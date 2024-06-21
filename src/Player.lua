@@ -400,7 +400,7 @@ function Player:sceneMode()
     -- Get keypresses
     local u = love.keyboard.wasPressed('up') or ite(debug, love.keyboard.wasPressed('p'), false)
     local d = love.keyboard.wasPressed('down') or ite(debug, love.keyboard.wasPressed(';'), false)
-    local f = love.keyboard.wasPressed('f')
+    local f = love.keyboard.wasPressed('f') or ite(debug, love.keyboard.isDown('.'), false)
 
     -- Advance scene based on keypresses
     self:getGame():sceneInput(f, u, d)
