@@ -51,6 +51,15 @@ function brState(key, t_events, f_events)
     end
 end
 
+function brPresent(p1, t_events, f_events)
+    return function(scene)
+        local stat = scene.game.battle.status
+        local sp = scene.participants[p1]
+        local events = ite(stat[sp:getId()]['inbattle'], t_events, f_events)
+        addEvents(scene, events, scene.event + 1)
+    end
+end
+
 function waitForText()
     return function(scene)
         if scene.text_state then

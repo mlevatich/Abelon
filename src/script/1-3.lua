@@ -183,7 +183,6 @@ s13['demonic-spell'] = {
 local subscene_kath_defeat = {
     focus(2, 170),
     wait(0.5),
-    lookAt(1, 2),
     say(2, 2, false,
         "Urgh. Damn, hurts........ But I refuse... to........"
     )
@@ -236,24 +235,20 @@ s13['elaine-defeat'] = {
     }
 }
 
-local subscene_turnlimit_defeat = {
-    focus(2, 170),
-    wait(0.5),
-    lookAt(1, 2),
-    say(2, 2, false, 
-        "We're losing daylight, and we've not even found the ruins we're \z
-         looking for. And the longer we're out here, the more monsters will arrive... \z
-         To say nothing of how Lester and Shanti fare..."
-    ),
-    say(2, 2, false,
-        "...could it be this expedition has already failed?"
-    )
-}
-
 s13['turnlimit-defeat'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
-        insertEvents(subscene_turnlimit_defeat)
+        focus(2, 170),
+        wait(0.5),
+        lookAt(1, 2),
+        say(2, 2, false, 
+            "We're losing daylight, and we've not even found the monastery we're \z
+            looking for. And the longer we're out here, the more monsters will arrive... \z
+            To say nothing of how Lester and Shanti fare..."
+        ),
+        say(2, 2, false,
+            "...could it be this expedition has already failed?"
+        )
     },
     ['result'] = {
 
@@ -401,21 +396,15 @@ s13['golem-battle-ally-turn-1'] = {
     }
 }
 
-s13['golem-battle-ally-turn-2'] = {
-    ['ids'] = {'kath'},
-    ['events'] = {
-        
-    },
-    ['result'] = {}
-}
-
 s13['golem-battle-ally-turn-4'] = {
     ['ids'] = {'kath'},
     ['events'] = {
-        focus(1, 170),
-        say(1, 3, false,
-            "I have a bad feeling about this..."
-        ),
+        brPresent(1, {
+            focus(1, 170),
+            say(1, 3, false,
+                "The ground... Hey, does anyone feel that? I have a bad feeling about this..."
+            )
+        }, {})
     },
     ['result'] = {}
 }
@@ -423,11 +412,43 @@ s13['golem-battle-ally-turn-4'] = {
 s13['golem-battle-ally-turn-5'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9'},
     ['events'] = {
-        focus(2, 170),
         -- TODO: ground shakes
-        say(2, 2, false,
-            "Oh, for-"
-        ),
+        brPresent(2,
+        {
+            focus(2, 170),
+            say(2, 2, false,
+                "Oh, for-"
+            )
+        },
+        {
+            brState('elaine-stays', {
+                brPresent(3,
+                {
+                    focus(3, 170),
+                    say(3, 2, false,
+                        "What's happening?"
+                    )
+                },
+                {
+                    brPresent(4,
+                    {
+                        focus(4, 170),
+                        say(4, 2, false,
+                            "Hmm."
+                        )
+                    }, {})
+                })
+            },
+            {
+                brPresent(4,
+                {
+                    focus(4, 170),
+                    say(4, 2, false,
+                        "Hmm."
+                    )
+                }, {})
+            })
+        }),
         lookDir(5, RIGHT),
         teleport(5, 44.6875 + 8, 23.1875 + 1, 'monastery-entrance'),
         focus(5, 170),
@@ -464,10 +485,42 @@ s13['golem-battle-ally-turn-5'] = {
         waitForEvent('camera'),
         -- TODO: delete stone marker and do getup animation
         wait(0.5),
-        focus(1, 170),
-        say(2, 3, false,
-            "By Ignus, they're everywhere! We can't take them all! Let's cut a path out of here!"
-        ),
+        brPresent(2,
+        {
+            focus(2, 170),
+            say(2, 3, false,
+                "By Ignus, they're everywhere! We can't take them all! Let's cut a path out of here!"
+            ),
+        },
+        {
+            brState('elaine-stays', {
+                brPresent(3,
+                {
+                    focus(3, 170),
+                    say(3, 2, false,
+                        "Oh Goddess, more? We have to run! We're running away now... right?"
+                    )
+                },
+                {
+                    brPresent(4,
+                    {
+                        focus(4, 170),
+                        say(4, 3, false,
+                            "Right, time we left. We don't have a prayer of taking on this many of them..."
+                        )
+                    }, {})
+                })
+            },
+            {
+                brPresent(4,
+                {
+                    focus(4, 170),
+                    say(4, 3, false,
+                        "Right, time we left. We don't have a prayer of taking on this many of them..."
+                    )
+                }, {})
+            })
+        }),
     },
     ['result'] = {
         ['do'] = function(g)
@@ -485,7 +538,7 @@ s13['golem-battle-ally-turn-5'] = {
 s13['golem-battle-demonic-spell'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
-        insertEvents(subscene_demonic)
+        brPresent(2, { insertEvents(subscene_demonic) }, {})
     },
     ['result'] = {
         ['state'] = 'kath-saw-spell'
@@ -570,7 +623,7 @@ s13['golem-battle-elaine-escape'] = {
         lookDir(1, RIGHT),
         focus(1, 170),
         say(1, 3, false,
-            "Ok, just like Kath said. We meet up to the east, where we're out of danger. I hope everyone \z
+            "Ok, just like Sir Kath said. We meet up to the east, where we're out of danger. I hope everyone \z
              will be ok..."
         ),
         unlockCamera(),
@@ -584,17 +637,44 @@ s13['golem-battle-elaine-escape'] = {
 }
 
 s13["golem-battle-shanti's_pack"] = {
-    ['ids'] = {'shanti'},
+    ['ids'] = {'shanti', 'kath', 'elaine'},
     ['events'] = {
-        focus(1, 170),
-        say(1, 1, false,
-            "Thank Eruta! I would have been heartbroken to leave my notes and maps behind. \z
-             The mysteries of this valley are growing so many I can scarcely keep them all in my head."
-        ),
-        say(1, 1, false,
-            "And there's the ignea, of course. Never any shortage of monsters to blast away, \z
-             no, not in this company. I'll have to activate it before our next battle."
-        )
+        brPresent(1,
+        {
+            focus(1, 170),
+            say(1, 1, false,
+                "Thank Eruta! I would have been heartbroken to leave my notes and maps behind. \z
+                The mysteries of this valley are growing so many I can scarcely keep them all in my head."
+            ),
+            say(1, 1, false,
+                "And there's the ignea, of course. Never any shortage of monsters to blast away, \z
+                no, not in this company. I'll have to activate it before our next battle."
+            )
+        },
+        {
+            brPresent(2,
+            {
+                focus(2, 170),
+                say(2, 1, false,
+                    "Good, we managed to recover Shanti's satchel. No one lasts long in the valley without plenty of Ignea."
+                ),
+                say(2, 2, false,
+                    "Though knowing her, I expect she'll be more excited about her notes..."
+                )
+            },
+            {
+                br(function(g) return g.state['elaine-stays'] end, {
+                    brPresent(3,
+                    {
+                        focus(3, 170),
+                        say(3, 3, false,
+                            "That's what she wanted us to pick up, right? Does that mean we can run away from here now? \z
+                            My arrows can't do much to these stone... things."
+                        )
+                    }, {})
+                })
+            })
+        }),
     },
     ['result'] = {
         ['state'] = 'shanti-pack-recovered',
@@ -605,9 +685,36 @@ s13["golem-battle-shanti's_pack"] = {
 }
 
 s13['golem-battle-turnlimit-defeat'] = {
-    ['ids'] = {'abelon', 'kath'},
+    ['ids'] = {'abelon', 'kath', 'shanti', 'elaine'},
     ['events'] = {
-        insertEvents(subscene_turnlimit_defeat)
+        brPresent(2, {
+            focus(2, 170),
+            wait(0.5),
+            say(2, 2, false, 
+                "Huff... Huff... Damn, we... we aren't going to make it!"
+            )
+        },
+        {
+            brPresent(3, {
+                focus(3, 170),
+                wait(0.5),
+                say(3, 2, false,
+                    "They're nearly on top of us... It's hopeless. I shouldn't have been so worried for my satchel. Careless!"
+                )
+            },
+            {
+                br(function(g) return g.state['elaine-stays'] end, {
+                    brPresent(4, {
+                        focus(4, 170),
+                        wait(0.5),
+                        say(4, 2, false,
+                            "Wait... wait for me! Oh no, everyone's already... they left me behind, I... I don't think I can make it! \z
+                             Someone, please, help!"
+                        )
+                    })
+                })
+            })
+        })
     },
     ['result'] = {
 
@@ -625,9 +732,34 @@ s13['golem-battle-kath-defeat'] = {
 }
 
 s13['golem-battle-abelon-defeat'] = {
-    ['ids'] = {'abelon', 'kath'},
+    ['ids'] = {'abelon', 'kath', 'shanti', 'elaine'},
     ['events'] = {
-        insertEvents(subscene_abelon_defeat)
+        focus(1, 170),
+        wait(0.5),
+        brPresent(2, {
+            say(2, 2, false, 
+                "Abelon, no! NO!"
+            )
+        },
+        {
+            brPresent(3, {
+                say(3, 3, false,
+                    "Captain Abelon? Oh, he's..."
+                ),
+                say(3, 2, false,
+                    "...I don't believe it. Now, Ebonach is truly doomed..."
+                )
+            },
+            {
+                br(function(g) return g.state['elaine-stays'] end, {
+                    brPresent(4, {
+                        say(4, 2, false,
+                            "Sir Abelon? Sir Abelon, please, get up! I can't get out of this without you and Sir Kath! Don't die, please..."
+                        )
+                    })
+                })
+            })
+        })
     },
     ['result'] = {
 
@@ -637,15 +769,18 @@ s13['golem-battle-abelon-defeat'] = {
 s13['golem-battle-elaine-defeat'] = {
     ['ids'] = {'abelon', 'elaine', 'kath'},
     ['events'] = {
-        focus(3, 170),
+        focus(2, 170),
         wait(0.5),
-        lookAt(3, 2),
         say(2, 2, false,
             "Ahhh!"
         ),
-        say(3, 2, false,
-            "Elaine, no! Curses!"
-        )
+        brPresent(3,
+        {
+            lookAt(3, 2),
+            say(3, 2, false,
+                "Elaine, no! Curses!"
+            )
+        }, {})
     },
     ['result'] = {
 
@@ -657,13 +792,16 @@ s13['golem-battle-shanti-defeat'] = {
     ['events'] = {
         focus(3, 170),
         wait(0.5),
-        lookAt(2, 3),
         say(3, 3, false,
             "Tch..."
         ),
-        say(2, 2, false,
-            "Shanti? Hey, Shanti, answer me! Oh no..."
-        )
+        brPresent(3,
+        {
+            lookAt(2, 3),
+            say(2, 2, false,
+                "Shanti? Hey, Shanti, answer me! Oh no..."
+            )
+        }, {})
     },
     ['result'] = {
 
