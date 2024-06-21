@@ -11,8 +11,6 @@ Bullets that reference a github issue should close the issue when committed.
 ## Scene / Battle / Sprite work
 
 - Golem battle:
-    - Guard other in-battle scenes with the assertion that the sprite is in the battle. So if the sprite has escaped, a scene with them won't play (or will be something a little different). Turn limit defeat scene.
-    - Victory scene fades and teleports the team, despawns any remaining golems, sets a trigger to the north preventing you from going back, sets a trigger for the walk south to transition to 1-4, team says a few words.
     - 1-4 transition scene, evening
     - Stone markers, getups
     - Test and tweak

@@ -811,15 +811,36 @@ s13['golem-battle-shanti-defeat'] = {
 s13['golem-battle-victory'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'shanti'},
     ['events'] = {
+        unlockCamera(),
+        fade(-0.4),
+        wait(3),
         combatExit(1),
         combatExit(2),
         br(function(g) return g.state['elaine-stays'] end, {
             combatExit(3)
         }),
         combatExit(4),
-        wait(1)
+        teleport(1, 75, 50, 'monastery-entrance'),
+        lookDir(1, LEFT),
+        teleport(2, 74, 48, 'monastery-entrance'),
+        lookDir(2, RIGHT),
+        teleport(3, 72, 48, 'monastery-entrance'),
+        lookDir(3, RIGHT),
+        teleport(4, 77, 49, 'monastery-entrance'),
+        lookDir(4, LEFT),
+        focus(1, 10000),
+        wait(1),
+        fade(0.4),
+        wait(3),
+        focus(2, 170),
+        say(2, 1, false,
+            "Wow... we made it."
+        )
     },
-    ['result'] = {}
+    ['result'] = {
+        -- TODO: set trigger to prevent from going back north
+        -- TODO: set trigger on south exit to transition into 1-4
+    }
 }
 
 s13['shanti'] = {
