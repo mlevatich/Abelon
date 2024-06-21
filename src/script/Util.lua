@@ -277,6 +277,30 @@ function daytime()
     end
 end
 
+function evening()
+    return function(scene)
+        for k,v in pairs(scene.game.maps) do
+            if k == 'east-forest' or k == 'west-forest' 
+            or k == 'south-forest' or k == 'monastery-approach' or k == 'monastery-entrance' then
+                v.lit = 0.3
+                v.ambient = { 62, 24, 20 }
+            end
+        end
+    end
+end
+
+function nighttime()
+    return function(scene)
+        for k,v in pairs(scene.game.maps) do
+            if k == 'east-forest' or k == 'west-forest' 
+            or k == 'south-forest' or k == 'monastery-approach' or k == 'monastery-entrance' then
+                v.lit = 0.7
+                v.ambient = { 10, 10, 20 }
+            end
+        end
+    end
+end
+
 function blackout()
     return function(scene)
         scene.game.alpha = 0
