@@ -86,7 +86,7 @@ s11['victory'] = {
     ['ids'] = {'abelon'},
     ['events'] = {
         combatExit(1),
-        wait(1)
+        wait(1.5)
     },
     ['result'] = {
 
@@ -285,31 +285,32 @@ s11['shanti'] = {
 local subscene_sleep = {
     fade(-0.4),
     wait(3),
-    teleport(4, 52, 27, 'monastery-entrance'),
     lookDir(4, RIGHT),
     getUp(4),
-    teleport(4, 1, 1, 'waiting-room'),
+    teleport(3, 1, 1, 'waiting-room'),
     teleport(5, 1, 1, 'waiting-room'),
     teleport(6, 1, 1, 'waiting-room'),
     teleport(7, 1, 1, 'waiting-room'),
     teleport(1, 52, 6),
     lookDir(1, LEFT),
-    say(1, 0, false, 
+    say(1, 0, false,
         "What is...?"
     ),
-    say(1, 0, false, 
+    say(1, 0, false,
         "...Need... I can't..."
     ),
     fadeoutMusic(),
     putOut(8),
-    wait(2)
+    wait(2),
+    teleport(4, 52, 27, 'monastery-entrance')
+    -- Wait until end of scene to teleport shanti out, so she can finish her getup
 }
 
 s11['campbed-callback'] = {
     ['ids'] = {'abelon', 'campbed', 'lester', 'shanti', 'campbed-used1', 'campbed-used2', 'campbed-used3', 'campfire'},
     ['events'] = {
         lookAt(1 ,2),
-        say(2, 1, true, 
+        say(2, 1, true,
             "The camp bed is still open. It doesn't appear anyone else will be \z
              using it."
         ),

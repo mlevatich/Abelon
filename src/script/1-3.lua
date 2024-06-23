@@ -20,6 +20,7 @@ s13['entry'] = {
     ['result'] = {
         ['do'] = function(g)
             g:getMap():blockExit('west-forest')
+            g:endTutorial()
         end
     }
 }
@@ -263,7 +264,7 @@ s13['victory'] = {
         br(function(g) return g.state['elaine-stays'] end, {
             combatExit(3)
         }),
-        wait(1)
+        wait(1.5)
     },
     ['result'] = {
         ['do'] = function(g)
@@ -348,7 +349,9 @@ s13['golem-battle'] = {
         }),
         combatReady(1),
         combatReady(2),
-        combatReady(3),
+        br(function(g) return g.state['elaine-stays'] end, {
+            combatReady(3)
+        }),
         combatReady(4),
         wait(1.5)
     },

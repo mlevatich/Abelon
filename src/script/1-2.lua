@@ -1129,7 +1129,7 @@ s12['victory'] = {
         br(function(g) return g.state['carried-elaine'] end, {
             combatExit(3)
         }),
-        wait(1),
+        wait(1.5),
         focus(2, 170),
         waitForEvent('camera'),
         lookDir(2, RIGHT),

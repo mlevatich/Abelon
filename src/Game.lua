@@ -103,21 +103,34 @@ function Game:initialize(id, difficulty)
     self:loadFresh()
 end
 
+function Game:checkUpvalues()
+    for _,v in pairs(self.sprites) do
+        if v.current_behavior == 'seq' then
+            print("UPVAL WARNING: " .. v:getId() .. " had a seq behavior during game save!")
+            v.current_behavior = 'idle'
+        end
+    end
+end
+
 function Game:autosave()
+    self:checkUpvalues()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. AUTO_SAVE, self)
 end
 
 function Game:quicksave()
+    self:checkUpvalues()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. QUICK_SAVE, self)
     love.event.quit(0)
 end
 
 function Game:saveBattle()
+    self:checkUpvalues()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. BATTLE_SAVE, self)
     self:autosave()
 end
 
 function Game:saveChapter()
+    self:checkUpvalues()
     binser.writeFile('abelon/' .. SAVE_DIRECTORY .. CHAPTER_SAVE, self)
     self:autosave()
 end
@@ -369,8 +382,10 @@ function Game:startTutorial(n)
 end
 
 function Game:endTutorial()
-    self.player.old_tutorials[#self.player.old_tutorials+1] = self.current_tutorial
-    self.current_tutorial = nil
+    if self.current_tutorial then
+        self.player.old_tutorials[#self.player.old_tutorials+1] = self.current_tutorial
+        self.current_tutorial = nil
+    end
 end
 
 function Game:startMapMusic()
