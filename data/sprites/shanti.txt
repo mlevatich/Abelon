@@ -13,5 +13,5 @@ AttributesAdept:
 AttributesNormal:
 AttributesNovice:
 Skilltrees: Lanternfaire:knockback,shine,lasso,ignite_lantern,crushing_swing,flashbang,ignaeic_veins Sorceress:searing_light,hypnotize,detonate,bleed_vitality,berserk,gravity,bleed_ignea
-Skills: knockback,searing_light,shine,lasso,hypnotize,detonate,ignite_lantern,bleed_vitality,ignaeic_veins
+Skills: knockback,searing_light,shine,lasso,hypnotize,detonate,ignite_lantern,bleed_vitality
 Description: The scholar Shanti. EOS
