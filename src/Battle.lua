@@ -1414,6 +1414,12 @@ function Battle:kill(sp)
     self.grid[i][j].occupied = nil
     self.status[sp:getId()]['alive'] = false
     self.status[sp:getId()]['inbattle'] = false
+    for k=1, #self.enemy_order do
+        if self.enemy_order[k] == sp:getId() then
+            table.remove(self.enemy_order, k)
+            break
+        end
+    end
 end
 
 function Battle:pathToWalk(sp, path, next_sk, ghosting)

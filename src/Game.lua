@@ -427,6 +427,7 @@ end
 function Game:stallInputs(t, keys)
     self.input_stall = t
     self.input_stall_keys = keys
+    self.scene_inputs = {}
 end
 
 function Game:launchBattle(id)
