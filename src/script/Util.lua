@@ -282,7 +282,7 @@ function evening()
         for k,v in pairs(scene.game.maps) do
             if k == 'east-forest' or k == 'west-forest' 
             or k == 'south-forest' or k == 'monastery-approach' or k == 'monastery-entrance' then
-                v.lit = 0.3
+                v.lit = 0.2
                 v.ambient = { 62, 24, 20 }
             end
         end

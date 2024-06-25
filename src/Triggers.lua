@@ -76,6 +76,40 @@ scene_triggers = {
         ['1-3-golem-battle'] = mkAreaTrigger('1-3-golem-battle', 'monastery-entrance',
             function(x) return x > 42 and x < 65 end,
             function(y) return true end
+        ),
+        ['1-3-north-prevent'] = {
+            function(g)
+                local x, y = g.player:getPosition()
+                local id = g.current_map:getName()
+                if id == 'monastery-entrance' then
+                    local tile = g.current_map:tileAtExact(x, y)
+                    if tile['y'] < 43 and g.state['golem-battle-win'] then
+                        return '1-3-north-prevent'
+                    end
+                end
+                return nil
+            end,
+            true
+        },
+        ['1-3-south-transition'] = {
+            function(g)
+                local x, y = g.player:getPosition()
+                local id = g.current_map:getName()
+                if id == 'monastery-entrance' then
+                    local tile = g.current_map:tileAtExact(x, y)
+                    if tile['y'] > 53.3 and g.state['golem-battle-win'] then
+                        return '1-3-south-transition'
+                    end
+                end
+                return nil
+            end,
+            true
+        }
+    },
+    ['1-4'] = {
+        ['1-4-entry'] = mkAreaTrigger('1-4-entry', 'monastery-entrance',
+            function(x) return true end,
+            function(y) return true end
         )
     }
 }
@@ -95,18 +129,19 @@ function mkSimpleUseTrigger(id)
 end
 
 item_triggers = {
-    ['medallion'] = mkSimpleUseTrigger('medallion'),
-    ['journal'] = mkSimpleUseTrigger('journal'),
-    ['scroll'] = mkSimpleUseTrigger('scroll'),
-    ['igneashard1'] = mkSimpleUseTrigger('igneashard1'),
-    ['igneashard2'] = mkSimpleUseTrigger('igneashard2'),
-    ['igneashard3'] = mkSimpleUseTrigger('igneashard3'),
-    ['igneashard4'] = mkSimpleUseTrigger('igneashard4'),
-    ['igneashard5'] = mkSimpleUseTrigger('igneashard5'),
-    ['igneashard6'] = mkSimpleUseTrigger('igneashard6'),
-    ['igneashard7'] = mkSimpleUseTrigger('igneashard7'),
-    ['igneashard8'] = mkSimpleUseTrigger('igneashard8'),
-    ['igneashard9'] = mkSimpleUseTrigger('igneashard9')
+    ['medallion']    = mkSimpleUseTrigger('medallion'),
+    ['journal']      = mkSimpleUseTrigger('journal'),
+    ['scroll']       = mkSimpleUseTrigger('scroll'),
+    ['igneashard1']  = mkSimpleUseTrigger('igneashard1'),
+    ['igneashard2']  = mkSimpleUseTrigger('igneashard2'),
+    ['igneashard3']  = mkSimpleUseTrigger('igneashard3'),
+    ['igneashard4']  = mkSimpleUseTrigger('igneashard4'),
+    ['igneashard5']  = mkSimpleUseTrigger('igneashard5'),
+    ['igneashard6']  = mkSimpleUseTrigger('igneashard6'),
+    ['igneashard7']  = mkSimpleUseTrigger('igneashard7'),
+    ['igneashard8']  = mkSimpleUseTrigger('igneashard8'),
+    ['igneashard9']  = mkSimpleUseTrigger('igneashard9'),
+    ['igneashard10'] = mkSimpleUseTrigger('igneashard10')
 }
 
 function mkTurnTrigger(t, phase)
@@ -129,12 +164,12 @@ end
 
 battle_triggers = {
     ['1-1'] = {
-        [SELECT]     = {},
-        [ALLY]       = {
+        [SELECT] = {},
+        [ALLY] = {
             ['tutorial2'] = mkTurnTrigger(1, ALLY),
             ['tutorial3'] = mkTurnTrigger(2, ALLY)
         },
-        [ENEMY]      = {},
+        [ENEMY] = {},
         [END_ACTION] = {
             ['end-tutorial2'] = function(b)
                 if b.game.current_tutorial then

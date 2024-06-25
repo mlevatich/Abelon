@@ -2938,7 +2938,7 @@ s12['elaine'] = {
 }
 
 s12['north-transition'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'notice'},
+    ['ids'] = {'abelon', 'kath', 'elaine'},
     ['events'] = {
         say(1, 0, true,
             "Proceed north?"

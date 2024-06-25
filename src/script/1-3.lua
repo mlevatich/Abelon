@@ -845,9 +845,8 @@ s13['golem-battle-victory'] = {
                 local s = g.sprites['shanti']
                 s.ignea = math.min(s.ignea + 10, s.attributes['focus'])
             end
-        end
-        -- TODO: set trigger to prevent from going back north
-        -- TODO: set trigger on south exit to transition into 1-4
+        end,
+        ['state'] = 'golem-battle-win'
     }
 }
 
@@ -858,6 +857,93 @@ s13['shanti'] = {
         say(2, 1, false,
             "It's good to see you, Captain Abelon."
         )
+    },
+    ['result'] = {}
+}
+
+s13['north-prevent'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        lookAt(2, 1),
+        say(2, 1, false,
+            "Where do you think you're going, Abelon? The golems are back that way!"
+        ),
+        walk(false, 1, 75, 44, 'walk'),
+        waitForEvent('walk')
+    },
+    ['result'] = {}
+}
+
+s13['south-transition'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti'},
+    ['events'] = {
+        say(1, 0, true,
+            "Leave the area?"
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Yes",
+                ['events'] = {
+                    fade(-0.4),
+                    wait(3),
+                    fadeoutMusic(),
+                    wait(1),
+                    -- TODO: teleport kath, elaine, shanti down
+                    say(1, 0, false,
+                        "But how can I warn them?"
+                    ),
+                    say(1, 0, false,
+                        "The traitor, for one... Or perhaps I was wrong. It is no matter."
+                    ),
+                    say(1, 0, true,
+                        "Worse is the nightmarish creature. We will remain oblivious, unless..."
+                    ),
+                    choice({
+                        {
+                            ["guard"] = function(g) return true end,
+                            ["response"] = "You address Knight Captain Abelon. What voice is this?",
+                            ['events'] = {
+                                wait(1),
+                                say(1, 0, false,
+                                    "...A more absurd farce than I imagined."
+                                )
+                            },
+                            ['result'] = {
+                            }
+                        },
+                        {
+                            ["guard"] = function(g) return true end,
+                            ["response"] = "...",
+                            ['events'] = {
+                                wait(1),
+                                say(1, 0, false,
+                                    "I will break free. I must."
+                                )
+                            },
+                            ['result'] = {
+
+                            }
+                        }
+                    }),
+                    wait(2)
+                },
+                ['result'] = {
+                    ['do'] = function(g)
+                        g:nextChapter()
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "No",
+                ['events'] = {
+                    walk(false, 1, 76, 53, 'walk'),
+                    waitForEvent('walk')
+                },
+                ['result'] = {}
+            }
+        })
     },
     ['result'] = {}
 }
