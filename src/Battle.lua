@@ -1129,15 +1129,14 @@ end
 function Battle:getMovement(sp, i, j)
     local attrs, specials, _, _ = self:dryrunAttributes({ j, i }, sp)
     local pts = math.floor(attrs['agility'] / 4)
-    local bonus = pts - math.floor(sp.attributes['agility'] / 4)
     local spent = self:getSpent(i, j)
-    return math.max(0, pts - spent), bonus, specials
+    return math.max(0, pts - spent), specials
 end
 
 function Battle:validMoves(sp, i, j)
 
     -- Get sprite's base movement points
-    local move, bonus, specials = self:getMovement(sp, i, j)
+    local move, specials = self:getMovement(sp, i, j)
 
     -- Spoof a shallow copy of the grid dryrun-move tiles occupied
     local grid = self:dryrunGrid(false)
@@ -1150,8 +1149,7 @@ function Battle:validMoves(sp, i, j)
     for y = math.max(i - move, 1), math.min(i + move, #self.grid) do
         for x = math.max(j - move, 1), math.min(j + move, #self.grid[y]) do
             if dist[y][x] <= move and (not grid[y][x].occupied or grid[y][x].occupied == sp) then
-                local spend = math.max(0, dist[y][x] - bonus)
-                table.insert(moves, { ['to'] = { y, x }, ['spend'] = spend })
+                table.insert(moves, { ['to'] = { y, x }, ['spend'] = dist[y][x] })
             end
         end
     end
