@@ -2678,12 +2678,57 @@ function Battle:renderMovement(moves, full)
     end
 end
 
+function Battle:renderAttackable(sp, moves)
+    local sk = self.status[sp:getId()]['prepare']['sk']
+    local is_move = {}
+    for i=1, #moves do
+        local m = moves[i]['to']
+        if not is_move[m[1]] then is_move[m[1]] = {} end
+        is_move[m[1]][m[2]] = true
+    end
+    local added_attack = {}
+    local attackable = {}
+    for i=1, #moves do
+        local y = moves[i]['to'][1]
+        local x = moves[i]['to'][2]
+        local cursors_dirs = { { x, y, UP } }
+        if sk.aim['type'] == DIRECTIONAL then
+            cursors_dirs = {
+                { x, y - 1, UP },
+                { x, y + 1, DOWN },
+                { x - 1, y, LEFT },
+                { x + 1, y, RIGHT }
+            }
+        end
+        for j=1, #cursors_dirs do
+            local cd = cursors_dirs[j]
+            local atk_tiles = self:skillRange(sk, cd[3], { cd[1], cd[2] })
+            for k=1, #atk_tiles do
+                local t = atk_tiles[k]
+                if (not is_move[t[1]] or not is_move[t[1]][t[2]])
+                and (not added_attack[t[1]] or not added_attack[t[1]][t[2]]) then
+                    table.insert(attackable, t)
+                    if not added_attack[t[1]] then added_attack[t[1]] = {} end
+                    added_attack[t[1]][t[2]] = true
+                end
+            end
+        end
+    end
+    for i = 1, #attackable do
+        self:shadeSquare(attackable[i][1], attackable[i][2], {1, 0, 0}, 0.5)
+    end
+end
+
 function Battle:renderMovementHover()
     local c = self:getCursor()
     local sp = self.grid[c[2]][c[1]].occupied
     if sp and not self.status[sp:getId()]['acted'] then
         local i, j = self:findSprite(sp)
-        self:renderMovement(self:validMoves(sp, i, j), 0.5)
+        local moves = self:validMoves(sp, i, j)
+        self:renderMovement(moves, 0.5)
+        if not self:isAlly(sp) then
+            self:renderAttackable(sp, moves)
+        end
     end
 end
 
