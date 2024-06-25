@@ -984,7 +984,7 @@ skills = {
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire', nil, nil,
         "Inspire an ally with a courageous cry. They gain %s \z
-         Reaction, and %s Force and Affinity.",
+         Force, and %s Reaction and Affinity.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 1 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { F, F, F, T, F, F, F },
@@ -996,9 +996,9 @@ skills = {
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'reaction', Scaling:new(0, 'affinity', 0.5) },
             { 'force',    Scaling:new(0, 'affinity', 1.0) },
-            { 'affinity', Scaling:new(0, 'affinity', 1.0) }
+            { 'reaction', Scaling:new(0, 'affinity', 0.5) },
+            { 'affinity', Scaling:new(0, 'affinity', 0.5) }
         }, { EXP_TAG_ATTACK, EXP_TAG_RECV, EXP_TAG_ASSIST }
     ),
     ['confidence'] = Skill:new('confidence', 'Confidence', nil, nil,
