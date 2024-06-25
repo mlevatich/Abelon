@@ -1466,7 +1466,8 @@ function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
     local oy = self.origin_y
     local exp = {}
     local countering_sps = {}
-    return exp, countering_sps, function(d)
+    local any_response = { false }
+    return exp, countering_sps, any_response, function(d)
         if not attack then
             return sp:waitBehaviorGeneric(d, 'combat', 0.2)
         end
@@ -1486,6 +1487,7 @@ function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
             for i=1, #counters do table.insert(countering_sps, counters[i]) end
             local dont_hurt = { [sp:getId()] = true }
             for i = 1, #moved do
+                any_response[1] = true
                 local t = moved[i]['sp']
                 if not find(dead, t) then
                     local sp_size_x_offset = (-1 * (t.w - TILE_WIDTH) / 2 - 0.5) / TILE_WIDTH
@@ -1516,6 +1518,7 @@ function Battle:mkAttackBehavior(sp, attack, attack_dir, c_attack)
                 end
             end
             for i = 1, #dead do
+                any_response[1] = true
                 dead[i]:behaviorSequence({ function(d)
                     dead[i]:fireAnimation('death', function()
                         local did = dead[i]:getId()
@@ -1578,7 +1581,7 @@ function Battle:playAction()
 
     -- Attack
     self.exp_sources = {}
-    local atk_exp, countering_sps, attackBehavior = self:mkAttackBehavior(sp, attack, attack_dir, c_attack)
+    local atk_exp, countering_sps, any_response, attackBehavior = self:mkAttackBehavior(sp, attack, attack_dir, c_attack)
     table.insert(self.exp_sources, atk_exp)
     table.insert(seq, attackBehavior)
 
@@ -1645,12 +1648,20 @@ function Battle:playAction()
             -- If the sprite was damaged by a counterattack, this
             -- behavior will be overridden by a hurt/death sequence and the attacker's original
             -- sequence will be broken. Hence, the final counterattacker closes out the action.
+            -- If there were no counterattacks or none did damage, this behavior is added to the sequence.
             return sp:waitBehaviorGeneric(d, 'combat', 0)
         end)
     end
 
     -- Only allies get a second move and assist
     if self:isAlly(sp) then
+
+        -- If anyone was moved or killed, wait a moment for the animations to finish
+        table.insert(seq, function(d)
+            local ttw = 0
+            if any_response[1] then ttw = 1 end
+            return sp:waitBehaviorGeneric(d, 'combat', ttw)
+        end)
 
         -- Move 2 (with spoofed grid)
         local grid = self:dryrunGrid(false)
