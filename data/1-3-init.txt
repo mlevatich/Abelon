@@ -42,6 +42,7 @@
 ~golem1 52.6875 28.1875 L
 ~golem2 53.6875 31.1875 R
 ~golem3 47.6875 27.1875 R
+~golem10 60.6875 32.187 L
 ~shanti 52 27 R
 ~abelon 66 32 R P
 
@@ -61,7 +62,6 @@
 ~golem7 1 1 L
 ~golem8 1 1 L
 ~golem9 1 1 L
-~golem10 1 1 L
 ~lester 1 1 L
 ~terror1 1 1 L
 

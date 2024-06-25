@@ -2,12 +2,12 @@
 
 TileOrigin: 45,24
 Allies: abelon:11,6 kath:12,8 elaine:12,7 shanti:7,3
-Enemies: golem1:8,5,1 golem2:9,8,2 golem3:3,4,2
-Order: golem1,golem2,golem3
+Enemies: golem1:8,5,1 golem2:9,8,2 golem3:3,4,2 golem10:16,9,1
+Order: golem1,golem2,golem3,golem10
 Wincon: escape
 Losscon: death
 Turnlimits: 10,10,10,10
-Scenetiles: escape1:16,6 escape2:16,7 escape3:16,8 shanti's_pack:6,8
+Scenetiles: escape1:16,6 escape2:16,7 escape3:16,8 escape4:16,9 shanti's_pack:6,8
 Music: A-Single-Shard-Of-Ignea
 
 // Battle grid
@@ -21,7 +21,7 @@ TTTTTTTTTTTTTTTF
 FTTTTTTTTTTTTTTT
 FTTTTTTTTTTTTTTT
 FFFTTTTTTTTTTTTT
-FFFFFTTTTTTTTTTF
+FFFFFTTTTTTTTTTT
 FFFFFFTTTTTTTTTF
 FFFFFFFFFFTTTTTF
 FFFFFFFFFFFFTTTF

@@ -413,7 +413,7 @@ s13['golem-battle-ally-turn-3'] = {
 }
 
 s13['golem-battle-ally-turn-4'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9', 'golem10'},
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9'},
     ['events'] = {
         -- TODO: ground shakes
         brPresent(2,
@@ -488,12 +488,6 @@ s13['golem-battle-ally-turn-4'] = {
         waitForEvent('camera'),
         -- TODO: delete stone marker and do getup animation
         wait(0.5),
-        lookDir(11, LEFT),
-        teleport(11, 44.6875 + 16, 23.1875 + 9, 'monastery-entrance'),
-        focus(11, 170),
-        waitForEvent('camera'),
-        -- TODO: delete stone marker and do getup animation
-        wait(0.5),
         brPresent(2,
         {
             focus(2, 170),
@@ -539,7 +533,6 @@ s13['golem-battle-ally-turn-4'] = {
             g.battle:joinBattle(g.sprites['golem7'], ENEMY, 3, 8, 1)
             g.battle:joinBattle(g.sprites['golem8'], ENEMY, 10, 11, 2)
             g.battle:joinBattle(g.sprites['golem9'], ENEMY, 16, 5, 2)
-            g.battle:joinBattle(g.sprites['golem10'], ENEMY, 16, 9, 1)
         end
     }
 }
