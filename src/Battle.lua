@@ -473,7 +473,7 @@ function Battle:checkSceneTiles()
     local sp = self:getSprite()
     local end_y, end_x = self:findSprite(sp)
     for k, v in pairs(self.scene_tiles) do
-        if end_x == v[1] and end_y == v[2] and self.status[sp:getId()]['inbattle'] then
+        if end_x == v[1] and end_y == v[2] and self.status[sp:getId()]['inbattle'] and self:isAlly(sp) then
             local scene_id = k:gsub('%d','')
             if scene_id == 'escape' then
                 scene_id = sp:getId() .. '-escape'
