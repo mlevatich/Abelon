@@ -283,10 +283,9 @@ s13['kath'] = {
     ['ids'] = {'abelon', 'kath'},
     ['events'] = {
         face(1, 2),
-        say(2, 3, false,
-            "The further north we travel, the more maze-like this forest becomes... I'm \z
-             not the superstitious type, but I can't shake the feeling that the Red Mountain \z
-             Valley is trying to hide its secrets from us."
+        say(2, 2, false,
+            "It seems like not all of the stone markers rose up and became golems. But I still feel a \z
+             bit nervous every time we pass one... Let's be on our guard."
         )
     },
     ['result'] = {}
@@ -299,7 +298,7 @@ s13['elaine'] = {
         say(2, 2, false,
             "No more monsters, no more monsters, no more monsters..."
         ),
-        wait(1),
+        wait(0.5),
         lookAt(2, 1),
         say(2, 2, false,
             "Ah! Oh, Sir Abelon. Sorry, I was... lost in thought."
@@ -889,7 +888,12 @@ s13['south-transition'] = {
                     wait(3),
                     fadeoutMusic(),
                     wait(1),
-                    -- TODO: teleport kath, elaine, shanti down
+                    lookDir(2, LEFT),
+                    lookDir(3, RIGHT),
+                    lookDir(4, LEFT),
+                    teleport(2, 97, 6, 'monastery-approach'),
+                    teleport(3, 101, 7, 'monastery-approach'),
+                    teleport(4, 102, 7, 'monastery-approach'),
                     say(1, 0, false,
                         "But how can I warn them?"
                     ),

@@ -224,9 +224,17 @@ function Game:loadFresh()
                 end
             elseif fname == 'Day' then
                 for k,v in pairs(self.maps) do
-                    if k == 'east-forest' or k == 'west-forest' 
+                    if k == 'east-forest' or k == 'west-forest'
                     or k == 'south-forest' or k == 'monastery-approach' or k == 'monastery-entrance' then
                         v.lit = 0.0
+                    end
+                end
+            elseif fname == 'Evening' then
+                for k,v in pairs(self.maps) do
+                    if k == 'east-forest' or k == 'west-forest'
+                    or k == 'south-forest' or k == 'monastery-approach' or k == 'monastery-entrance' then
+                        v.lit = 0.2
+                        v.ambient = { 62, 24, 20 }
                     end
                 end
             elseif fname == 'Block' then
