@@ -679,7 +679,7 @@ s13["golem-battle-shanti's_pack"] = {
         }),
     },
     ['result'] = {
-        ['state'] = 'shanti-pack-recovered',
+        ['state'] = 'satchel-recovered',
         ['do'] = function(g)
             g:getMap():dropSprite('shanti-pack')
         end
@@ -840,6 +840,12 @@ s13['golem-battle-victory'] = {
         )
     },
     ['result'] = {
+        ['do'] = function(g)
+            if g.state['satchel-recovered'] then
+                local s = g.sprites['shanti']
+                s.ignea = math.min(s.ignea + 10, s.attributes['focus'])
+            end
+        end
         -- TODO: set trigger to prevent from going back north
         -- TODO: set trigger on south exit to transition into 1-4
     }
