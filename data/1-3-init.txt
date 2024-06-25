@@ -5,12 +5,12 @@
 ~torch3 26 49 L down
 ~torch4 26 52 L down
 ~bloodrite 26 49 R
-~marker 14 44.5 L
+~marker1 14 44.5 L
 
 ~~south-forest Canopied-Steps
 
-~marker 6.4 12.6 R
-~marker 15.4 23.6 L
+~marker1 6.4 12.6 R
+~marker1 15.4 23.6 L
 
 ~~west-forest Canopied-Steps
 
@@ -20,12 +20,12 @@
 ~campfire 54 7 R down
 ~campbed 50.7 6 L
 ~campclutter1 56 8 R
-~marker 33 15 R
-~marker 50.8 1.5 R
-~marker 47.2 1.5 L
-~marker 50.8 3 R
-~marker 47.2 3 L
-~marker 61 13 L
+~marker1 33 15 R
+~marker1 50.8 1.5 R
+~marker1 47.2 1.5 L
+~marker1 50.8 3 R
+~marker1 47.2 3 L
+~marker1 61 13 L
 
 ~~monastery-approach Canopied-Steps
 
@@ -45,6 +45,12 @@
 ~golem2 53.6875 31.1875 R
 ~golem3 47.6875 27.1875 R
 ~golem10 60.6875 32.187 L
+~marker4 53 24.7 R
+~marker5 48 26.7 R
+~marker6 46 29.7 R
+~marker7 48 31.7 R
+~marker8 55 34.7 R
+~marker9 61 28.7 L
 ~shanti 52 27 R
 ~abelon 66 32 R P
 
@@ -58,12 +64,12 @@
 ~wolf3 1 1 L
 ~wolf4 1 1 L
 ~shadow 1 1 L
-~golem4 1 1 L
-~golem5 1 1 L
-~golem6 1 1 L
-~golem7 1 1 L
-~golem8 1 1 L
-~golem9 1 1 L
+~golem4 1 1 L down
+~golem5 1 1 L down
+~golem6 1 1 L down
+~golem7 1 1 L down
+~golem8 1 1 L down
+~golem9 1 1 L down
 ~lester 1 1 L
 ~terror1 1 1 L
 

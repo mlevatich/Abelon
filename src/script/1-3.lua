@@ -412,7 +412,10 @@ s13['golem-battle-ally-turn-3'] = {
 }
 
 s13['golem-battle-ally-turn-4'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9'},
+    ['ids'] = {
+        'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9',
+        'marker4', 'marker5', 'marker6', 'marker7', 'marker8', 'marker9'
+    },
     ['events'] = {
         -- TODO: ground shakes
         brPresent(2,
@@ -453,39 +456,45 @@ s13['golem-battle-ally-turn-4'] = {
         }),
         lookDir(5, RIGHT),
         teleport(5, 44.6875 + 8, 23.1875 + 1, 'monastery-entrance'),
+        getUp(5),
+        teleport(11, 1, 1, 'waiting-room'),
         focus(5, 170),
         waitForEvent('camera'),
-        -- TODO: delete stone marker and do getup animation
         wait(0.5),
         lookDir(6, RIGHT),
         teleport(6, 44.6875 + 3, 23.1875 + 3, 'monastery-entrance'),
+        getUp(6),
+        teleport(12, 1, 1, 'waiting-room'),
         focus(6, 170),
         waitForEvent('camera'),
-        -- TODO: delete stone marker and do getup animation
         wait(0.5),
         lookDir(7, RIGHT),
         teleport(7, 44.6875 + 1, 23.1875 + 6, 'monastery-entrance'),
+        getUp(7),
+        teleport(13, 1, 1, 'waiting-room'),
         focus(7, 170),
         waitForEvent('camera'),
-        -- TODO: delete stone marker and do getup animation
         wait(0.5),
         lookDir(8, RIGHT),
         teleport(8, 44.6875 + 3, 23.1875 + 8, 'monastery-entrance'),
+        getUp(8),
+        teleport(14, 1, 1, 'waiting-room'),
         focus(8, 170),
         waitForEvent('camera'),
-        -- TODO: delete stone marker and do getup animation
         wait(0.5),
         lookDir(9, RIGHT),
         teleport(9, 44.6875 + 10, 23.1875 + 11, 'monastery-entrance'),
+        getUp(9),
+        teleport(15, 1, 1, 'waiting-room'),
         focus(9, 170),
         waitForEvent('camera'),
-        -- TODO: delete stone marker and do getup animation
         wait(0.5),
         lookDir(10, LEFT),
         teleport(10, 44.6875 + 16, 23.1875 + 5, 'monastery-entrance'),
+        getUp(10),
+        teleport(16, 1, 1, 'waiting-room'),
         focus(10, 170),
         waitForEvent('camera'),
-        -- TODO: delete stone marker and do getup animation
         wait(0.5),
         brPresent(2,
         {
