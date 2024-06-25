@@ -393,6 +393,62 @@ function mkIgneaShardPresentElaine(n)
     }
 end
 
+function mkIgneaShardPresentShanti(n)
+    local s = 'igneashard' .. tostring(n)
+    return {
+        face(1, 2),
+        say(2, 1, false,
+            "Captain Abelon. Did you need something?"
+        ),
+        say(2, 1, false,
+            "Ah, natural Ignea. The impurities give it away. Not to mention the size... \z
+             It's amusing, isn't it? The Kingdom's miners work day and night stripping the Red Mountain for \z
+             shards of spellstone,"
+        ),
+        say(2, 1, false,
+            "but travel far enough into the valley, and great slabs of it are poking out of the ground \z
+             like vegetables. To think, it must have formed naturally in just the 20 years since Lefellen burned \z
+             down..."
+        ),
+        say(2, 3, true,
+            "I digress. Seeing as you're still holding out that stone, I assume it's for my supply?"
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Yes",
+                ['events'] = {
+                    say(2, 1, false,
+                        "Much obliged, Captain Abelon. I don't relish these constant battles we find ourselves in, \z
+                         but being able to cast spells so freely... It does take the edge off. So to speak."
+                    )
+                },
+                ['result'] = {
+                    ['impressions'] = {0, 1},
+                    ['do'] = function(g)
+                        g.player:discard(s)
+                        local e = g:getSprite('shanti')
+                        e.ignea = math.min(e.ignea + 3, e.attributes['focus'])
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "No",
+                ['events'] = {
+                    say(2, 3, false,
+                        "Right... Carry on tempting me then, waving that shiny gem in front of my face. \z
+                         No favors for the preeminent spellcaster of this expedition, I understand."
+                    )
+                },
+                ['result'] = {
+
+                }
+            }
+        })
+    }
+end
+
 sitems['igneashard1-use'] = {
     ['ids'] = {'abelon', 'igneashard1'},
     ['events'] = mkIgneaShardUse(1),
@@ -436,6 +492,11 @@ sitems['igneashard8-use'] = {
 sitems['igneashard9-use'] = {
     ['ids'] = {'abelon', 'igneashard9'},
     ['events'] = mkIgneaShardUse(9),
+    ['result'] = {}
+}
+sitems['igneashard10-use'] = {
+    ['ids'] = {'abelon', 'igneashard10'},
+    ['events'] = mkIgneaShardUse(10),
     ['result'] = {}
 }
 
@@ -484,6 +545,11 @@ sitems['igneashard9-present-kath'] = {
     ['events'] = mkIgneaShardPresentKath(9),
     ['result'] = {}
 }
+sitems['igneashard10-present-kath'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = mkIgneaShardPresentKath(10),
+    ['result'] = {}
+}
 
 sitems['igneashard1-present-elaine'] = {
     ['ids'] = {'abelon', 'elaine'},
@@ -528,5 +594,61 @@ sitems['igneashard8-present-elaine'] = {
 sitems['igneashard9-present-elaine'] = {
     ['ids'] = {'abelon', 'elaine'},
     ['events'] = mkIgneaShardPresentElaine(9),
+    ['result'] = {}
+}
+sitems['igneashard10-present-elaine'] = {
+    ['ids'] = {'abelon', 'elaine'},
+    ['events'] = mkIgneaShardPresentElaine(10),
+    ['result'] = {}
+}
+
+sitems['igneashard1-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(1),
+    ['result'] = {}
+}
+sitems['igneashard2-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(2),
+    ['result'] = {}
+}
+sitems['igneashard3-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(3),
+    ['result'] = {}
+}
+sitems['igneashard4-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(4),
+    ['result'] = {}
+}
+sitems['igneashard5-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(5),
+    ['result'] = {}
+}
+sitems['igneashard6-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(6),
+    ['result'] = {}
+}
+sitems['igneashard7-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(7),
+    ['result'] = {}
+}
+sitems['igneashard8-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(8),
+    ['result'] = {}
+}
+sitems['igneashard9-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(9),
+    ['result'] = {}
+}
+sitems['igneashard10-present-shanti'] = {
+    ['ids'] = {'abelon', 'shanti'},
+    ['events'] = mkIgneaShardPresentShanti(10),
     ['result'] = {}
 }

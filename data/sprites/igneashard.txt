@@ -6,7 +6,7 @@ Shadow: no
 Interactive: yes
 Hitbox:
 Discard: yes
-Present: kath,elaine
+Present: kath,elaine,shanti,lester
 Level: 0
 Attributes:
 AttributesAdept:
