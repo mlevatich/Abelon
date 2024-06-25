@@ -399,7 +399,7 @@ s13['golem-battle-ally-turn-1'] = {
     }
 }
 
-s13['golem-battle-ally-turn-4'] = {
+s13['golem-battle-ally-turn-3'] = {
     ['ids'] = {'kath'},
     ['events'] = {
         brPresent(1, {
@@ -412,8 +412,8 @@ s13['golem-battle-ally-turn-4'] = {
     ['result'] = {}
 }
 
-s13['golem-battle-ally-turn-5'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9'},
+s13['golem-battle-ally-turn-4'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9', 'golem10'},
     ['events'] = {
         -- TODO: ground shakes
         brPresent(2,
@@ -488,6 +488,12 @@ s13['golem-battle-ally-turn-5'] = {
         waitForEvent('camera'),
         -- TODO: delete stone marker and do getup animation
         wait(0.5),
+        lookDir(11, LEFT),
+        teleport(11, 44.6875 + 16, 23.1875 + 9, 'monastery-entrance'),
+        focus(11, 170),
+        waitForEvent('camera'),
+        -- TODO: delete stone marker and do getup animation
+        wait(0.5),
         brPresent(2,
         {
             focus(2, 170),
@@ -527,13 +533,13 @@ s13['golem-battle-ally-turn-5'] = {
     },
     ['result'] = {
         ['do'] = function(g)
-            g.battle:addTiles({ {16,7}, {16,8}, {16,9} })
             g.battle:joinBattle(g.sprites['golem4'], ENEMY, 8, 1, 2)
             g.battle:joinBattle(g.sprites['golem5'], ENEMY, 3, 3, 1)
             g.battle:joinBattle(g.sprites['golem6'], ENEMY, 1, 6, 2)
             g.battle:joinBattle(g.sprites['golem7'], ENEMY, 3, 8, 1)
             g.battle:joinBattle(g.sprites['golem8'], ENEMY, 10, 11, 2)
             g.battle:joinBattle(g.sprites['golem9'], ENEMY, 16, 5, 2)
+            g.battle:joinBattle(g.sprites['golem10'], ENEMY, 16, 9, 1)
         end
     }
 }

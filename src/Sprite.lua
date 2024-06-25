@@ -33,8 +33,11 @@ function Sprite:initialize(id, game)
 
     -- Parse data file and helpers
     local file_id = self.id
-    if tonumber(self.id:sub(#self.id, #self.id)) then
-        file_id = self.id:sub(1, #self.id - 1)
+    for i=1, 3 do
+        if not tonumber(self.id:sub(#self.id - i + 1, #self.id)) then
+            file_id = self.id:sub(1, #self.id - i + 1)
+            break
+        end
     end
     local data_file = 'Abelon/data/sprites/' .. file_id .. '.txt'
     local data = { -- Defaults for unspecified fields
@@ -1714,7 +1717,7 @@ sprite_data = {
         ['w'] = 51,
         ['h'] = 57,
         ['animations'] = living,
-        ['n'] = 9
+        ['n'] = 10
     },
     {
         ['id'] = 'terror',
@@ -1762,7 +1765,7 @@ for i = 1, #sprite_data do
             local spd, idxs = frames[1], frames[2]
             local anim_sfx = nil
             if #frames > 2 then 
-                anim_sfx = sfx[id_w_num .. '-' .. frames[3]] 
+                anim_sfx = sfx[id_w_num .. '-' .. frames[3]]
             end
             g['animations'][name] = Animation:new(id .. '_' .. name,
                 getSpriteQuads(idxs, spritesheet, data['w'], data['h'], sheet_y),
