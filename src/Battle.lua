@@ -655,7 +655,7 @@ end
 function Battle:awardBonusExp()
     local bexp = 0
     if self.turnlimit then
-        bexp = bexp + (self.turnlimit - self.turn) * 15
+        bexp = bexp + (self.turnlimit - self.turn) * 10
         self.render_bexp = bexp
     end
 
@@ -2967,7 +2967,7 @@ end
 function Battle:renderBexp()
     local bexp = self.render_bexp
     local saved = self.turnlimit - self.turn
-    local msg1 = saved .. " turns saved * 15 exp"
+    local msg1 = saved .. " turns saved * 10 exp"
     local msg2 = bexp .. " bonus exp"
 
     local computeX = function(s)

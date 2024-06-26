@@ -849,7 +849,7 @@ skills = {
                { { 'pursuit', Scaling:new(0), BUFF }, 2, HIDDEN } }
     ),
     ['siphon'] = Skill:new('siphon', 'Siphon', nil, nil,
-        "Strike an evil, life draining blow. Deals \z
+        "Strike an evil, draining blow. Deals \z
          %s Weapon damage to an enemy and \z
          heals you for 100 %% of the damage.",
         'Demon', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
@@ -1061,7 +1061,7 @@ skills = {
          Reaction is higher than his foe's, they cannot act for 1 turn.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
-        { { T } }, DIRECTIONAL_AIM, 2,
+        { { T } }, DIRECTIONAL_AIM, 1,
         ENEMY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'stun', Scaling:new(0), DEBUFF }, 1 } }, nil,
         { ['br'] = function(a, a_a, b, b_a, st)
