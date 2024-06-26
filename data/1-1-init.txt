@@ -55,13 +55,13 @@
 ~golem1 52.6875 28.1875 L
 ~golem2 53.6875 31.1875 R
 ~golem3 47.6875 27.1875 R
-~golem10 60.6875 32.187 L
-~marker4 52 24 R
-~marker5 47 26 R
-~marker6 45 29 R
-~marker7 47 31 R
-~marker8 54 34 R
-~marker9 60 28 L
+~golem10 59.6875 30.187 R
+~marker4 54 25.7 L
+~marker5 51 25.7 R
+~marker6 61 31.7 L
+~marker7 48 31.7 R
+~marker8 55 34.7 R
+~marker9 61 28.7 L
 
 ~~waiting-room Canopied-Steps
 

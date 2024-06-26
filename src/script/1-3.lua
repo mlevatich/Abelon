@@ -315,18 +315,24 @@ s13['golem-battle'] = {
     ['events'] = {
         changeMusic('Threat-Revealed'),
         focus(1, 200),
-        walk(false, 1, 60, 31, 'walk'),
-        pan(-150, -60, 100),
-        wait(2),
+        walk(false, 1, 61, 30, 'walk'),
+        pan(-60, 0, 60),
+        waitForEvent('walk'),
+        walk(false, 1, 56, 30, 'walk'),
         teleport(2, 71, 32),
         br(function(g) return g.state['elaine-stays'] end, {
             teleport(3, 72, 30)
         }),
-        walk(false, 2, 60, 32, 'walk1'),
+        walk(false, 2, 60, 33, 'walk1'),
         br(function(g) return g.state['elaine-stays'] end, {
-            walk(false, 3, 60, 30, 'walk2')
+            walk(false, 3, 59, 30, 'walk2')
         }),
-        wait(3),
+        waitForEvent('walk1'),
+        walk(false, 2, 57, 32, 'walk1'),
+        br(function(g) return g.state['elaine-stays'] end, {
+            waitForEvent('walk2'),
+            walk(false, 3, 57, 31, 'walk2')
+        }),
         say(2, 1, false, 
             "Shanti!"
         ),
@@ -357,6 +363,7 @@ s13['golem-battle'] = {
     ['result'] = {
         ['do'] = function(g)
             local shanti = g.sprites['shanti']
+            shanti:gainExp(70)
             g.player:joinParty(shanti)
             g:launchBattle('golem-battle')
         end
@@ -454,22 +461,22 @@ s13['golem-battle-ally-turn-4'] = {
                 }, {})
             })
         }),
-        lookDir(5, RIGHT),
-        teleport(5, 44.6875 + 8, 23.1875 + 1, 'monastery-entrance'),
+        lookDir(5, LEFT),
+        teleport(5, 44.6875 + 9, 23.1875 + 2, 'monastery-entrance'),
         getUp(5),
         teleport(11, 1, 1, 'waiting-room'),
         focus(5, 170),
         waitForEvent('camera'),
         wait(0.5),
         lookDir(6, RIGHT),
-        teleport(6, 44.6875 + 3, 23.1875 + 3, 'monastery-entrance'),
+        teleport(6, 44.6875 + 6, 23.1875 + 2, 'monastery-entrance'),
         getUp(6),
         teleport(12, 1, 1, 'waiting-room'),
         focus(6, 170),
         waitForEvent('camera'),
         wait(0.5),
         lookDir(7, RIGHT),
-        teleport(7, 44.6875 + 1, 23.1875 + 6, 'monastery-entrance'),
+        teleport(7, 44.6875 + 16, 23.1875 + 8, 'monastery-entrance'),
         getUp(7),
         teleport(13, 1, 1, 'waiting-room'),
         focus(7, 170),
@@ -535,9 +542,9 @@ s13['golem-battle-ally-turn-4'] = {
     },
     ['result'] = {
         ['do'] = function(g)
-            g.battle:joinBattle(g.sprites['golem4'], ENEMY, 8, 1, 2)
-            g.battle:joinBattle(g.sprites['golem5'], ENEMY, 3, 3, 1)
-            g.battle:joinBattle(g.sprites['golem6'], ENEMY, 1, 6, 2)
+            g.battle:joinBattle(g.sprites['golem4'], ENEMY, 9, 2, 1)
+            g.battle:joinBattle(g.sprites['golem5'], ENEMY, 6, 2, 1)
+            g.battle:joinBattle(g.sprites['golem6'], ENEMY, 16, 8, 2)
             g.battle:joinBattle(g.sprites['golem7'], ENEMY, 3, 8, 1)
             g.battle:joinBattle(g.sprites['golem8'], ENEMY, 10, 11, 2)
             g.battle:joinBattle(g.sprites['golem9'], ENEMY, 16, 5, 2)

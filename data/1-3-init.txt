@@ -44,10 +44,10 @@
 ~golem1 52.6875 28.1875 L
 ~golem2 53.6875 31.1875 R
 ~golem3 47.6875 27.1875 R
-~golem10 60.6875 32.187 L
-~marker4 53 24.7 R
-~marker5 48 26.7 R
-~marker6 46 29.7 R
+~golem10 59.6875 30.187 R
+~marker4 54 25.7 L
+~marker5 51 25.7 R
+~marker6 61 31.7 L
 ~marker7 48 31.7 R
 ~marker8 55 34.7 R
 ~marker9 61 28.7 L
@@ -88,16 +88,7 @@
 +Exp 30
 ->abelon
 +Level 2
-+BonusAttrs force:1 agility:1
++BonusAttrs endurance:2
 ->kath
 +Level 1
 +BonusAttrs reaction:1
-
-->abelon
-+BonusAttrs agility:300
-->kath
-+BonusAttrs agility:300
-->elaine
-+BonusAttrs agility:300
-->shanti
-+BonusAttrs agility:300
