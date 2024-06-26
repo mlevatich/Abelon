@@ -1594,9 +1594,7 @@ function Battle:playAction()
             return sp:waitBehaviorGeneric(d, 'combat', ttw)
         end)
 
-        -- The next thing this sprite does is wait for an amount of time that will outlast the counters
         table.insert(seq, function(d)
-            local time_to_wait = 1
             local counter_behaviors = {}
 
             -- For each living sprite which is able to counter, register the counterattack behavior
@@ -1608,10 +1606,9 @@ function Battle:playAction()
                     atleast_one_counter = true
                     local counter_sk = mkCounterSkill[cnt_sk_id](dmg_received)
                     local cnt_c_y, cnt_c_x = self:findSprite(sp)
-                    local cnt_exp, _, counterBehavior = self:mkAttackBehavior(ally_sp, counter_sk, UP, { cnt_c_x, cnt_c_y })
+                    local cnt_exp, _, _, counterBehavior = self:mkAttackBehavior(ally_sp, counter_sk, UP, { cnt_c_x, cnt_c_y })
                     table.insert(self.exp_sources, cnt_exp)
                     table.insert(counter_behaviors, { ally_sp, counterBehavior })
-                    time_to_wait = time_to_wait + 3
                 end
             end
 
