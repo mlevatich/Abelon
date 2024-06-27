@@ -293,32 +293,41 @@ s14['lester-defeat'] = {
     }
 }
 
-s14['turnlimit-defeat'] = {
-    ['ids'] = {'abelon', 'kath'},
-    ['events'] = {
-        focus(2, 170),
-        wait(0.5),
-        lookAt(1, 2),
-        say(2, 2, false, 
-            "At this rate, Lester isn't going to make it..."
-        )
-    },
-    ['result'] = {
-
-    }
-}
-
 s14['victory'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester'},
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'wolf1', 'wolf2', 'wolf3', 'golem1', 'golem2'},
     ['events'] = {
         focus(1, 170),
+        walk(true, 6, 40, 1, 'walk'),
+        walk(true, 7, 41, 1, 'walk'),
+        walk(true, 8, 42, 1, 'walk'),
+        teleport(9, 1, 1, 'waiting-room'),
+        teleport(10, 1, 1, 'waiting-room'),
+        wait(2),
+        focus(2, 170),
+        say(2, 2, false,
+            "They're... what are they doing?"
+        ),
+        wait(1),
+        say(2, 2, false,
+            "Why did the wolves suddenly lose interest in us? I've never seen that before."
+        ),
+        say(2, 3, false,
+            "...Well I can't say I'm not grateful... I was about at my limit. Let's see to Lester."
+        ),
         combatExit(1),
         combatExit(2),
         br(function(g) return g.state['elaine-stays'] end, {
             combatExit(3)
         }),
         combatExit(4),
-        wait(1.5)
+        wait(1),
+        teleport(6, 1, 1, 'waiting-room'),
+        teleport(7, 1, 1, 'waiting-room'),
+        teleport(8, 1, 1, 'waiting-room'),
+        light(6),
+        light(7),
+        light(8),
+        wait(0.5)
     },
     ['result'] = {
 

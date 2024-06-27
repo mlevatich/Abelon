@@ -83,11 +83,11 @@ function Battle:initialize(player, game, id)
     self.enemy_action = nil
 
     -- Win conditions and loss conditions
-    local win_names = readArray(data[7])
-    self.win = mapf(function(s) return wincons[s] end, win_names)
-    self.lose = readArray(data[8], function(s) return losscons[s] end)
+    self.win_names = readArray(data[7])
+    self.loss_names = readArray(data[8])
+    self.win = mapf(function(s) return wincons[s] end, self.win_names)
+    self.lose = mapf(function(s) return losscons[s] end, self.loss_names)
     self.turnlimits = readArray(data[9], tonumber)
-    if next(self.turnlimits) then table.insert(self.lose, {}) end
     self.scene_tiles = readDict(data[10], ARR, nil, tonumber)
     self:adjustDifficulty()
 
@@ -226,9 +226,12 @@ function Battle:adjustDifficulty()
     -- Adjust turn limit, if there is one
     if next(self.turnlimits) then
         self.turnlimit = self.turnlimits[new + 1]
-        self.lose[#self.lose] = { self.turnlimit .. ' turns pass',
-            function(b) return ite(b.turn > b.turnlimit, 'turnlimit', false) end
-        }
+        turnlimitReached = function(b) return ite(b.turn > b.turnlimit, 'turnlimit', false) end
+        if find(self.win_names, 'turns') then
+            self.win[#self.win] = { 'Survive for ' .. self.turnlimit .. ' turns', turnlimitReached }
+        elseif find(self.loss_names, 'turns') then
+            self.lose[#self.lose] = { self.turnlimit .. ' turns pass', turnlimitReached }
+        end
 
         -- Stupid hack to refresh objectives box
         if self.stack then
@@ -655,7 +658,7 @@ end
 
 function Battle:awardBonusExp()
     local bexp = 0
-    if self.turnlimit then
+    if self.turnlimit and not find(self.win_names, 'turns') then
         bexp = bexp + (self.turnlimit - self.turn) * 10
         self.render_bexp = bexp
     end
@@ -754,8 +757,12 @@ function Battle:openEndTurnMenu()
     self.game:modMusicVolume(0.3, 2)
     self.game:stallInputs(1.5)
     sfx['enemy-phase']:play()
-    local e = { "   E N E M Y   P H A S E   " .. self.turn .. "   " }
-    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, RED, nil, true), {})
+    local t = self.turnlimit - self.turn
+    local msg = "   E N E M Y   P H A S E   " .. self.turn .. "   "
+    if t == 0 then msg = "   F I N A L   E N E M Y   P H A S E   " end
+    local e = { msg }
+    local clr = ite(t == 0, AUTO_COLOR['Focus'], RED)
+    self:openMenu(Menu:new(nil, m, CONFIRM_X, CONFIRM_Y(e), true, e, clr, nil, true), {})
 end
 
 function Battle:openBeginTurnMenu()
@@ -2966,17 +2973,19 @@ function Battle:renderBattleText()
 end
 
 function Battle:renderBexp()
-    local bexp = self.render_bexp
-    local saved = self.turnlimit - self.turn
-    local msg1 = saved .. " turns saved * 10 exp"
-    local msg2 = bexp .. " bonus exp"
+    if not find(self.win_names, 'turns') then
+        local bexp = self.render_bexp
+        local saved = self.turnlimit - self.turn
+        local msg1 = saved .. " turns saved * 10 exp"
+        local msg2 = bexp .. " bonus exp"
 
-    local computeX = function(s)
-        return VIRTUAL_WIDTH - BOX_MARGIN - #s * CHAR_WIDTH
+        local computeX = function(s)
+            return VIRTUAL_WIDTH - BOX_MARGIN - #s * CHAR_WIDTH
+        end
+        local base_y = BOX_MARGIN
+        renderString(msg1, computeX(msg1), base_y, DISABLE)
+        renderString(msg2, computeX(msg2), base_y + LINE_HEIGHT, HIGHLIGHT)
     end
-    local base_y = BOX_MARGIN
-    renderString(msg1, computeX(msg1), base_y, DISABLE)
-    renderString(msg2, computeX(msg2), base_y + LINE_HEIGHT, HIGHLIGHT)
 end
 
 function Battle:renderGrid()
@@ -3373,7 +3382,8 @@ wincons = {
             end
             return true
         end
-    }
+    },
+    ['turns'] = {} -- Filled in with turnlimit programmatically
 }
 
 losscons = {
@@ -3387,9 +3397,5 @@ losscons = {
             return false
         end
     },
-    ['defend'] = { "any enemy breaches the defended area",
-        function(b)
-             return false
-        end
-    }
+    ['turns'] = {} -- Filled in with turnlimit programmatically
 }

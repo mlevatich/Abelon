@@ -5,7 +5,7 @@ Allies: abelon:11,6 kath:12,8 elaine:12,7 shanti:7,3
 Enemies: golem1:8,5,2 golem2:9,8,1 golem3:3,4,2 golem10:15,7,1
 Order: golem1,golem2,golem3,golem10
 Wincon: escape
-Losscon: death
+Losscon: death,turns
 Turnlimits: 9,9,9,9
 Scenetiles: escape1:16,6 escape2:16,7 shanti's_pack:6,8
 Music: A-Single-Shard-Of-Ignea

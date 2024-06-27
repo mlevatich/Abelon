@@ -5,7 +5,7 @@ Allies: abelon:8,8 kath:9,7 elaine:10,8
 Enemies: wolf1:14,6,1 wolf2:3,8,1 alphawolf1:10,3,1 wolf3:9,3,1 alphawolf2:5,3,1
 Order: alphawolf1,alphawolf2,wolf1,wolf2,wolf3
 Wincon: rout
-Losscon: death
+Losscon: death,turns
 Turnlimits: 8,7,7,6
 Scenetiles:
 Music: A-Single-Shard-Of-Ignea

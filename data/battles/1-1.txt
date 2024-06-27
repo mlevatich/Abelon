@@ -5,7 +5,7 @@ Allies: abelon:5,2
 Enemies: wolf1:2,2,1
 Order: wolf1
 Wincon: rout
-Losscon: death
+Losscon: death,turns
 Turnlimits: 3,3,3,3
 Scenetiles:
 Music: A-Single-Shard-Of-Ignea
