@@ -93,5 +93,7 @@
 ~golem8 1 1 L down
 ~golem9 1 1 L down
 ~terror1 1 1 L
+~terror2 1 1 L
+~terror3 1 1 L
 
 ->Inventory journal

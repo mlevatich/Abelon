@@ -77,6 +77,8 @@
 ~golem10 1 1 L
 ~lester 1 1 L
 ~terror1 1 1 L
+~terror2 1 1 L
+~terror3 1 1 L
 
 ->Seen 1-4-entry
 ->State saw-camp,carried-elaine

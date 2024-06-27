@@ -977,3 +977,56 @@ s14['final-battle-turnlimit-defeat'] = {
 
     }
 }
+
+s14['final-battle-ally-turn-4'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror1'},
+    ['events'] = {
+        teleport(6, 35.625, 33.1875, 'monastery-entrance')
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:joinBattle(g.sprites['terror1'], ENEMY, 6, 15, 1)
+            g.battle:addTiles({{ 5, 15 }, { 7, 15 }})
+        end
+    }
+}
+
+s14['final-battle-ally-turn-7'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester'},
+    ['events'] = {
+        focus(4, 170),
+        say(4, 1, false,
+            "Done!"
+        ),
+        say(2, 3, false,
+            "Get to the basement!"
+        )
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:addTiles({
+                          { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 },
+                { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 9, 2 },
+                { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 }, { 9, 3 },
+                { 2, 4 }, { 3, 4 }, { 4, 4 }, { 5, 4 }, { 6, 4 }, { 7, 4 }, { 8, 4 }, { 9, 4 },
+                { 2, 5 }, { 3, 5 }, { 4, 5 }, { 5, 5 }, { 6, 5 }, { 7, 5 }, { 8, 5 }, { 9, 5 },
+                { 2, 6 }, { 3, 6 }, { 4, 6 }, { 5, 6 }, { 6, 6 }, { 7, 6 }, { 8, 6 }, { 9, 6 }
+            })
+        end
+    }
+}
+
+s14['final-battle-ally-turn-8'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror2', 'terror3'},
+    ['events'] = {
+        teleport(6, 33.625, 33.1875, 'monastery-entrance'),
+        teleport(7, 37.625, 33.1875, 'monastery-entrance')
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:joinBattle(g.sprites['terror2'], ENEMY, 4, 15, 1)
+            g.battle:joinBattle(g.sprites['terror3'], ENEMY, 8, 15, 1)
+            g.battle:addTiles({{ 1, 15 }, { 2, 15 }, { 3, 15 }, { 9, 15 }, { 10, 15 }})
+        end
+    }
+}

@@ -1725,7 +1725,7 @@ sprite_data = {
         ['w'] = 56,
         ['h'] = 57,
         ['animations'] = living,
-        ['n'] = 2
+        ['n'] = 3
     },
     {
         ['id'] = 'journal',

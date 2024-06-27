@@ -1916,7 +1916,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
         ALLY, nil,
-        nil, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
+        { { { 'agility', Scaling:new(-8) }, 1 } }, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
     ),
     ['the_claws'] = Skill:new('the_claws', 'The Claws', nil, nil,
         "The Terror rakes its claws through any enemies within its reach, dealing \z

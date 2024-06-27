@@ -6,13 +6,13 @@ Enemies: alphawolf1:4,14,1 alphawolf2:5,12,1 golem1:8,13,2 golem2:10,14,1 golem3
 Order: alphawolf1,alphawolf2,golem1,golem2,golem3,wolf1,wolf2
 Wincon: escape
 Losscon: death,turns
-Turnlimits: 10,10,10,10
+Turnlimits: 11,11,11,11
 Scenetiles: escape1:8,1
 Music: A-Single-Shard-Of-Ignea
 
 // Battle grid
 
-Dimensions: 10,16
+Dimensions: 10,15
 FFFFFFFFFF
 FFFFFFFFFF
 FFFFFFFFFF
@@ -27,5 +27,4 @@ TTTTTTTTTT
 TTTTTTTTTT
 TTTTTTTTTT
 TTTTTTTTTT
-FFFFFFFFFF
 FFFFFFFFFF

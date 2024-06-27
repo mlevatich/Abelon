@@ -313,7 +313,11 @@ battle_triggers = {
     },
     ['1-4-final-battle'] = {
         [SELECT] = {},
-        [ALLY] = {},
+        [ALLY] = {
+            ['ally-turn4'] = mkTurnTrigger(4, ALLY),
+            ['ally-turn7'] = mkTurnTrigger(7, ALLY),
+            ['ally-turn8'] = mkTurnTrigger(8, ALLY)
+        },
         [ENEMY] = {},
         [END_ACTION] = {
             ['demonic-spell'] = function(b)

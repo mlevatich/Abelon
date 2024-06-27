@@ -1,10 +1,10 @@
 // Sprite attributes
 
-Name: Forest Terror
+Name: Terror
 Ground: no
 Shadow: yes
 Interactive: no
-Hitbox: 11,30,28,26
+Hitbox: 14,30,28,26
 Discard: no
 Present:
 Level: 16
