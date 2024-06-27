@@ -1082,7 +1082,7 @@ skills = {
         nil, { { { 'riposte', Scaling:new(0), BUFF }, 1 } }
     ),
     ['shove'] = Skill:new('shove', 'Shove', nil, nil,
-        "Kath shoves an ally or enemy out of the way, moving them 2 tiles and raising \z
+        "Kath shoves an ally or enemy out of the way, moving them 1 tile and raising \z
          Kath's Reaction and Affinity by %s for 1 turn.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Defender', 3 }, { 'Hero', 3 }, { 'Cleric', 0 } },
@@ -1091,7 +1091,7 @@ skills = {
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ALL, nil,
         { { { 'reaction', Scaling:new(3) }, 1 }, { { 'affinity', Scaling:new(3) }, 1 } }, nil,
-        { UP, 2 }
+        { UP, 1 }
     ),
     ['javelin'] = Skill:new('javelin', 'Javelin', nil, nil,
         "Kath hurls a javelin at an enemy, dealing %s Weapon \z
@@ -1174,16 +1174,18 @@ skills = {
         ALLY, nil, nil,
         { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 }, { { 'caution', Scaling:new(0), BUFF }, 5, HIDDEN } }
     ),
-    ['sacrifice'] = Skill:new('sacrifice', 'Sacrifice', nil, nil,
-        "Kath transfers his vitality, restoring %s health \z
-         to nearby allies but losing %s Reaction for 1 turn",
+    ['rescue'] = Skill:new('rescue', 'Rescue', nil, nil,
+        "Kath pulls an ally to him, restoring %s health and granting them %s Reaction for 1 turn.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 3 } },
-        { { F, T, F },
-          { T, F, T },
-          { F, T, F } }, SELF_CAST_AIM, 1,
-        ALLY, Scaling:new(-10, 'force', -1.0),
-        { { { 'reaction', Scaling:new(-10) }, 1 } }, nil, nil
+        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 3 } },
+        { { F, F, T, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+        ALLY, Scaling:new(0, 'affinity', -1.0),
+        nil, { { { 'reaction', Scaling:new(0, 'affinity', 0.5) }, 1 } },
+        { DOWN, 2 }
     ),
     ['bond'] = Skill:new('bond', 'Bond', nil, nil,
         "Kath raises his and an ally's \z

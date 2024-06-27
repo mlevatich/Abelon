@@ -8,7 +8,7 @@ Hitbox: 4,21,23,11
 Discard: no
 Present:
 Level: 7
-Attributes: endurance:9 focus:4 force:5 affinity:9 reaction:9 agility:16
+Attributes: endurance:9 focus:4 force:5 affinity:9 reaction:9 agility:17
 AttributesAdept:
 AttributesNormal:
 AttributesNovice:
