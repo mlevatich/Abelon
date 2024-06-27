@@ -653,45 +653,88 @@ s13['golem-battle-elaine-escape'] = {
     }
 }
 
-s13["golem-battle-shanti's_pack"] = {
-    ['ids'] = {'shanti', 'kath', 'elaine'},
-    ['events'] = {
-        brPresent(1,
+subscene_shanti_pack = {
+    brPresent(1,
+    {
+        focus(1, 170),
+        say(1, 1, false,
+            "Thank Eruta! I would have been heartbroken to leave my notes and maps behind. \z
+            The mysteries of this valley are growing so many I can scarcely keep them all in my head."
+        ),
+        say(1, 1, false,
+            "And there's the ignea, of course. Never any shortage of monsters to blast away, \z
+            no, not in this company. I'll have to activate it before our next battle."
+        )
+    },
+    {
+        brPresent(2,
         {
-            focus(1, 170),
-            say(1, 1, false,
-                "Thank Eruta! I would have been heartbroken to leave my notes and maps behind. \z
-                The mysteries of this valley are growing so many I can scarcely keep them all in my head."
+            focus(2, 170),
+            say(2, 1, false,
+                "Good, we managed to recover Shanti's satchel. No one lasts long in the valley without plenty of Ignea."
             ),
-            say(1, 1, false,
-                "And there's the ignea, of course. Never any shortage of monsters to blast away, \z
-                no, not in this company. I'll have to activate it before our next battle."
+            say(2, 2, false,
+                "Though knowing her, I expect she'll be more excited about her notes..."
             )
         },
         {
-            brPresent(2,
-            {
-                focus(2, 170),
-                say(2, 1, false,
-                    "Good, we managed to recover Shanti's satchel. No one lasts long in the valley without plenty of Ignea."
-                ),
-                say(2, 2, false,
-                    "Though knowing her, I expect she'll be more excited about her notes..."
-                )
-            },
-            {
-                br(function(g) return g.state['elaine-stays'] end, {
-                    brPresent(3,
-                    {
-                        focus(3, 170),
-                        say(3, 3, false,
-                            "That's what she wanted us to pick up, right? Does that mean we can run away from here now? \z
-                            My arrows can't do much to these stone... things."
-                        )
-                    }, {})
-                })
+            br(function(g) return g.state['elaine-stays'] end, {
+                brPresent(3,
+                {
+                    focus(3, 170),
+                    say(3, 3, false,
+                        "That's what she wanted us to pick up, right? Does that mean we can run away from here now? \z
+                        My arrows can't do much to these stone... things."
+                    )
+                }, {})
             })
-        }),
+        })
+    }),
+}
+
+s13["golem-battle-shanti's_pack-kath"] = {
+    ['ids'] = {'shanti', 'kath', 'elaine'},
+    ['events'] = {
+        insertEvents(subscene_shanti_pack)
+    },
+    ['result'] = {
+        ['state'] = 'satchel-recovered',
+        ['do'] = function(g)
+            g:getMap():dropSprite('shanti-pack')
+        end
+    }
+}
+
+s13["golem-battle-shanti's_pack-shanti"] = {
+    ['ids'] = {'shanti', 'kath', 'elaine'},
+    ['events'] = {
+        insertEvents(subscene_shanti_pack)
+    },
+    ['result'] = {
+        ['state'] = 'satchel-recovered',
+        ['do'] = function(g)
+            g:getMap():dropSprite('shanti-pack')
+        end
+    }
+}
+
+s13["golem-battle-shanti's_pack-elaine"] = {
+    ['ids'] = {'shanti', 'kath', 'elaine'},
+    ['events'] = {
+        insertEvents(subscene_shanti_pack)
+    },
+    ['result'] = {
+        ['state'] = 'satchel-recovered',
+        ['do'] = function(g)
+            g:getMap():dropSprite('shanti-pack')
+        end
+    }
+}
+
+s13["golem-battle-shanti's_pack-abelon"] = {
+    ['ids'] = {'shanti', 'kath', 'elaine'},
+    ['events'] = {
+        insertEvents(subscene_shanti_pack)
     },
     ['result'] = {
         ['state'] = 'satchel-recovered',

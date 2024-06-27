@@ -60,6 +60,7 @@ s14['shanti'] = {
 s14['battle'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'wolf1', 'wolf2', 'wolf3', 'golem1', 'golem2'},
     ['events'] = {
+        changeMusic('Threat-Revealed'),
         teleport(5, 41, 1, 'monastery-approach'),
         lookDir(5, LEFT),
         focus(5, 340),
@@ -114,6 +115,7 @@ s14['battle'] = {
         say(2, 3, false,
             "Lester!"
         ),
+        introduce('lester'),
         say(5, 3, false,
             "Ah... About time."
         ),
@@ -138,12 +140,18 @@ s14['battle'] = {
         ['do'] = function(g)
             lester = g.sprites['lester']
             g.player:joinParty(lester)
-            g:launchBattle()
-            g.battle.status['lester']['effects'] = { Effect:new(Buff:new('unconscious', 0, DEBUFF), math.huge) }
+            g.current_scene = nil
+            g.battle = Battle:new(g.player, g)
+            g.battle.status['lester']['effects'] = {
+                Effect:new(Buff:new('unconscious', 0, DEBUFF), math.huge),
+                Effect:new(Buff:new('noheal', 0, DEBUFF), math.huge)
+            }
             g.sprites['golem1'].health = 10
             g.sprites['golem2'].health = 20
             lester.health = 1
             lester:changeBehavior('down')
+            g:saveBattle()
+            g.battle:openBattleStartMenu()
         end
     }
 }
@@ -290,6 +298,287 @@ s14['lester-defeat'] = {
     },
     ['result'] = {
 
+    }
+}
+
+s14['ally-turn-1'] = {
+    ['ids'] = {'kath', 'shanti'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 3, false,
+            "We need to get close enough to Lester to check his wounds. They could be fatal... I can heal him \z
+             with a spell, but not without knowing what his injuries are."
+        ),
+        focus(2, 170),
+        say(2, 3, false,
+            "Respectfully, Captain Kath, we may have our hands full just defending him."
+        ),
+        focus(1, 170),
+        say(1, 3, false,
+            "Maybe so, but there's no use defending a corpse. Abelon, give the order."
+        )
+    },
+    ['result'] = {}
+}
+
+subscene_kath_request = {
+    focus(2, 170),
+    say(2, 3, false,
+        "Everyone, if we buy enough space, I can heal him. We can't have him on death's door like this in the middle of \z
+         a melee."
+    ),
+    focus(4, 170),
+    say(4, 2, false,
+        "That's exactly what makes this difficult, Captain Kath. We need your lance to keep the monsters away from \z
+         Lester in the first place."
+    ),
+    say(4, 3, false,
+        "You said it yourself. He'll make it through the battle just fine. We can heal him once we're out of danger."
+    ),
+    focus(2, 170),
+    say(2, 2, false,
+        "Ach, I know, I just... If there's an opening. If you see an opening, Abelon, give me the order."
+    )
+}
+
+s14['check_Lester-kath'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti'},
+    ['events'] = {
+        focus(2, 170),
+        say(2, 3, false,
+            "Hang in there, Lester... Let's see... Burns all over, and a sliced up shoulder... Urgent, but not dire. \z
+             And well within my capabilities."
+        ),
+        say(2, 1, false,
+            "You're in quite the state, you damn fool, but you'll live. With my help, that is."
+        ),
+        insertEvents(subscene_kath_request)
+    },
+    ['result'] = {
+        ['state'] = 'lester-checked',
+        ['do'] = function(g)
+            local stat = g.battle.status['lester']
+            for i=1, #stat['effects'] do
+                if stat['effects'][i].buff.attr == 'noheal' then
+                    table.remove(stat['effects'], i)
+                    break
+                end
+            end
+        end
+    }
+}
+
+s14['check_Lester-abelon'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti'},
+    ['events'] = {
+        focus(2, 170),
+        say(2, 3, true,
+            "Well, Abelon?"
+        ),
+        focus(1, 170),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "His left shoulder is slashed",
+                ['events'] = {
+                },
+                ['result'] = {
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "His body is badly burnt",
+                ['events'] = {
+                },
+                ['result'] = {
+    
+                }
+            }
+        }),
+        focus(2, 170),
+        say(2, 1, false,
+            "Urgent, but not dire, then... I appreciate the help, Abelon. I know you'd rather swing a sword than \z
+             play nurse for Lester."
+        ),
+        insertEvents(subscene_kath_request)
+    },
+    ['result'] = {
+        ['state'] = 'lester-checked',
+        ['do'] = function(g)
+            local stat = g.battle.status['lester']
+            for i=1, #stat['effects'] do
+                if stat['effects'][i].buff.attr == 'noheal' then
+                    table.remove(stat['effects'], i)
+                    break
+                end
+            end
+        end
+    }
+}
+
+s14['check_Lester-shanti'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti'},
+    ['events'] = {
+        focus(2, 170),
+        say(2, 3, false,
+            "What does it look like, Shanti? Concisely."
+        ),
+        focus(4, 170),
+        say(4, 3, false,
+            "He's badly burned. From the ignaeic golems, I wager. They were summoning explosive shockwaves."
+        ),
+        say(4, 3, false,
+            "And he's bleeding out from... a very large open wound on his left shoulder. He's lucky to still have his arm."
+        ),
+        focus(2, 170),
+        say(2, 3, false,
+            "Urgent, but not dire, by the sound of it... Thank you, Shanti."
+        ),
+        insertEvents(subscene_kath_request)
+    },
+    ['result'] = {
+        ['state'] = 'lester-checked',
+        ['do'] = function(g)
+            local stat = g.battle.status['lester']
+            for i=1, #stat['effects'] do
+                if stat['effects'][i].buff.attr == 'noheal' then
+                    table.remove(stat['effects'], i)
+                    break
+                end
+            end
+        end
+    }
+}
+
+s14['check_Lester-elaine'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti'},
+    ['events'] = {
+        focus(2, 170),
+        say(2, 3, false,
+            "Well, Elaine? How is he faring? Can you tell me where he's wounded?"
+        ),
+        focus(3, 170),
+        say(3, 2, false,
+            "Um... His skin is covered in burns..."
+        ),
+        say(2, 3, false,
+            "From the explosions of those stone golems, no doubt. Nothing I can't handle."
+        ),
+        say(3, 2, false,
+            "His shoulder... Oh, goddess, that's a big one..."
+        ),
+        say(2, 3, false,
+            "A gash? Which shoulder? Shouldn't be too hard to stitch up."
+        ),
+        say(3, 3, false,
+            "The... The left. Also, he has a big scar on his face."
+        ),
+        say(2, 1, false,
+            "Oh, that's an old one. You can ask him about it sometime... Right. \z
+             Urgent injuries, but not dire, it seems. Thank you, Elaine."
+        ),
+        insertEvents(subscene_kath_request)
+    },
+    ['result'] = {
+        ['state'] = 'lester-checked',
+        ['do'] = function(g)
+            local stat = g.battle.status['lester']
+            for i=1, #stat['effects'] do
+                if stat['effects'][i].buff.attr == 'noheal' then
+                    table.remove(stat['effects'], i)
+                    break
+                end
+            end
+        end
+    }
+}
+
+s14['lester-healed'] = {
+    ['ids'] = {'kath', 'lester', 'shanti', 'abelon'},
+    ['events'] = {
+        focus(2, 170),
+        say(2, 2, false,
+            "Urghhh..."
+        ),
+        say(1, 1, false,
+            "Lester!"
+        ),
+        say(2, 3, false,
+            "Kath... Huh, I'm in a lot less pain than I expected. Thanks for the healing, as usual. \z
+             You already took care of the monsters?"
+        ),
+        say(1, 2, false,
+            "Work in progress, I'm afraid. But it's good to see you conscious."
+        ),
+        say(2, 3, false,
+            "What the hell are you doing healing me, then? Making sure I'm awake for the moment a wolf \z
+             bites my head off? You've always had your priorities all screwed up."
+        ),
+        say(1, 3, false,
+            "A lecture in priorities, from the knight who disobeyed his superiors and broke rank, not once, but \z
+             twice today I'm told! May wonders never cease."
+        ),
+        say(2, 3, false,
+            "Shut up. I found the damn monastery. I'd do it again, over sitting around listening to Shanti ramble \z
+             about Ignea..."
+        ),
+        say(3, 3, false,
+            "Hey!"
+        ),
+        say(1, 2, false,
+            "You would have died if we had not arrived to rescue you at this exact moment."
+        ),
+        say(2, 3, false,
+            "Yeah, probably. But you showed up. You always do."
+        ),
+        say(1, 1, false,
+            "Thank Abelon. He gave the order to heal you."
+        ),
+        say(2, 3, false,
+            "Yeah, good one."
+        ),
+        say(1, 1, false,
+            "He did."
+        ),
+        say(2, 3, false,
+            "Bullshit."
+        ),
+        say(1, 1, false,
+            "It's true."
+        ),
+        say(2, 3, false,
+            "What gives? The old bastard would sooner wait for the wolves to eat me... Unless he \z
+             wanted to get me up and fighting again."
+        ),
+        focus(4, 170),
+        say(2, 3, false,
+            "Sorry to disappoint you, old man, but I still can't feel my shoulder! \z
+             Can't swing a dagger, can't hardly stand up... I'm sitting this one out."
+        ),
+        focus(1, 170),
+        say(1, 1, false,
+            "Then sit back and watch. Maybe you'll learn a thing or two. Bladework, sorcery, discipline... \z
+             So many areas with room for improvement."
+        ),
+        say(2, 3, false,
+            "Fuck off."
+        ),
+        say(1, 1, false,
+            "Ha ha!"
+        )
+    },
+    ['result'] = {
+        ['state'] = 'lester-healed',
+        ['do'] = function(g)
+            local stat = g.battle.status['lester']
+            for i=1, #stat['effects'] do
+                if stat['effects'][i].buff.attr == 'unconscious' then
+                    stat['effects'][i] = Effect:new(Buff:new('stun', 0, DEBUFF), math.huge)
+                    break
+                end
+            end
+            g.sprites['lester']:gainExp(90)
+        end
     }
 }
 

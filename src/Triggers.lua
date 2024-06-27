@@ -279,7 +279,9 @@ battle_triggers = {
     },
     ['1-4'] = {
         [SELECT] = {},
-        [ALLY] = {},
+        [ALLY] = {
+            ['ally-turn1'] = mkTurnTrigger(1, ALLY)
+        },
         [ENEMY] = {},
         [END_ACTION] = {
             ['demonic-spell'] = function(b)
@@ -287,6 +289,14 @@ battle_triggers = {
                 local atk = b.status['abelon']['attack']
                 if unseen and atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
                     return 'demonic-spell'
+                end
+                return false
+            end,
+            ['lester-healed'] = function(b)
+                local atk = b.status['kath']['attack']
+                local lester_hp = b.status['lester']['sp'].health
+                if atk and (atk.id == 'healing_mist' or atk.id == 'sacrifice') and lester_hp > 1 then
+                    return 'lester-healed'
                 end
                 return false
             end

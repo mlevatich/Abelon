@@ -141,6 +141,7 @@ EFFECT_NAMES = {
     ['taunt']            = "Targeting Kath",
     ['stun']             = "Stunned",
     ['unconscious']      = "Unconscious",
+    ['noheal']           = "Can't Heal",
     ['observe']          = "Observing",
     ['hidden']           = "Hidden",
     ['ghosting']         = "Flight",

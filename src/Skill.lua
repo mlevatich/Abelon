@@ -219,6 +219,9 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                         local def = math.floor(t_tmp_attrs['reaction'])
                         dmg = math.max(0, atk - def)
                     end
+                    if t_specials['noheal'] and dmg < 0 then
+                        dmg = 0
+                    end
 
                     -- If this is a self hit or the target has guardian angel
                     -- they can't die

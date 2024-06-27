@@ -7,15 +7,15 @@ Order: golem1,golem2,wolf1,wolf2,wolf3
 Wincon: turns
 Losscon: death
 Turnlimits: 11,11,11,11
-Scenetiles:
+Scenetiles: check_Lester:7,7
 Music: A-Single-Shard-Of-Ignea
 
 // Battle grid
 
 Dimensions: 12,13
 FFFTTTTTTFFF
+FFFTTTTTTTTF
 FFTTTTTTTTTF
-FTTTTTTTTTTF
 FTTTTTTTTTTF
 FTTTTTTTTTTF
 FTTTTTTTTTTF

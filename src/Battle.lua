@@ -477,7 +477,7 @@ function Battle:checkSceneTiles()
     local end_y, end_x = self:findSprite(sp)
     for k, v in pairs(self.scene_tiles) do
         if end_x == v[1] and end_y == v[2] and self.status[sp:getId()]['inbattle'] and self:isAlly(sp) then
-            local scene_id = k:gsub('%d','')
+            local scene_id = k:gsub('%d','') .. '-' .. sp:getId()
             if scene_id == 'escape' then
                 scene_id = sp:getId() .. '-escape'
                 self:escape(sp)
@@ -657,11 +657,11 @@ function Battle:cleanupBattle()
 end
 
 function Battle:awardBonusExp()
-    local bexp = 0
+    local bexp = 10
     if self.turnlimit and not find(self.win_names, 'turns') then
         bexp = bexp + (self.turnlimit - self.turn) * 10
-        self.render_bexp = bexp
     end
+    self.render_bexp = bexp
 
     local affected = {}
     for i = 1, #self.participants do table.insert(affected, self.participants[i]) end
@@ -2043,15 +2043,16 @@ function Battle:update(keys, dt)
                 end
             end
             for sp_id, e in pairs(total_exp) do
-                local s = self.status[sp_id]['sp']
-                if self:isAlly(s) and e > 0 and self.status[sp_id]['inbattle'] then
+                local sp = self.status[sp_id]['sp']
+                local _, _, specials = self:getTmpAttributes(sp)
+                if self:isAlly(sp) and e > 0 and self.status[sp_id]['inbattle'] and not specials['unconscious'] then
 
                     -- Render experience gained
-                    local y, x = self:findSprite(s)
+                    local y, x = self:findSprite(sp)
                     table.insert(self.render_exp, { x, y, e, 2 })
 
                     -- Gain experience and queue levelups
-                    local lvls = s:gainExp(e)
+                    local lvls = sp:gainExp(e)
                     if lvls > 0 then self.levelup_queue[sp_id] = lvls end
                 end
             end
