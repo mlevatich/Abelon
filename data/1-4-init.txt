@@ -70,12 +70,18 @@
 ->Inventory journal,medallion,scroll
 
 ->elaine
-+Level 3
-+BonusAttrs affinity:3 force:2
-+Exp 30
++Level 4
++BonusAttrs affinity:4 force:3
++Exp 64
 ->abelon
 +Level 2
 +BonusAttrs force:1 agility:1
++Exp 150
 ->kath
 +Level 1
 +BonusAttrs reaction:1
++Exp 100
+->shanti
++Level 1
++BonusAttrs focus:1
++Exp 42

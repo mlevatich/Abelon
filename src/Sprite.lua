@@ -23,7 +23,7 @@ LEASH_DISTANCE = TILE_WIDTH * 1.5
 PORTRAIT_INDICES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
 -- EXP_NEXT[i] = how much experience is needed to level up at level i?
-EXP_NEXT = { 1, 5, 15, 30, 50, 75, 100, 130, 160, 200, 240, 290, 340, 400 }
+EXP_NEXT = { 1, 5, 15, 30, 50, 75, 100, 130, 160, 200, 250, 300, 400, 500, 700, 1000 }
 
 -- Initialize a new sprite
 function Sprite:initialize(id, game)
