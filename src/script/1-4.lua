@@ -139,7 +139,11 @@ s14['battle'] = {
             lester = g.sprites['lester']
             g.player:joinParty(lester)
             g:launchBattle()
-            -- TODO: lower health of golems and lester, incapacitate lester
+            g.battle.status['lester']['effects'] = { Effect:new(Buff:new('unconscious', 0, DEBUFF), math.huge) }
+            g.sprites['golem1'].health = 10
+            g.sprites['golem2'].health = 20
+            lester.health = 1
+            lester:changeBehavior('down')
         end
     }
 }

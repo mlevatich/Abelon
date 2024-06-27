@@ -577,7 +577,8 @@ function Battle:turnRefresh()
         local stat = self.status[self.participants[i]:getId()]
         if self:isAlly(self.participants[i]) then
             for j = 1, #stat['effects'] do
-                if stat['effects'][j].buff.attr == 'stun' then
+                local attr = stat['effects'][j].buff.attr
+                if attr == 'stun' or attr == 'unconscious' then
                     stat['acted'] = true
                 end
             end

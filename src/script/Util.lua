@@ -1,6 +1,7 @@
 require 'src.Util'
 require 'src.Constants'
 require 'src.Music'
+require 'src.Skill'
 
 function addEvents(scene, e, at)
     for i = 1, #e do

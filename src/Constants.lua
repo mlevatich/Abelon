@@ -140,6 +140,7 @@ EFFECT_NAMES = {
     ['forbearance']      = "Kath's Shield",
     ['taunt']            = "Targeting Kath",
     ['stun']             = "Stunned",
+    ['unconscious']      = "Unconscious",
     ['observe']          = "Observing",
     ['hidden']           = "Hidden",
     ['ghosting']         = "Flight",
