@@ -47,6 +47,21 @@
 ~wolf2 1 1 L
 ~wolf3 1 1 L
 ~wolf4 1 1 L
+~wolf5 1 1 L
+~wolf6 1 1 L
+~wolf7 1 1 L
+~wolf8 1 1 L
+~wolf9 1 1 L
+~wolf10 1 1 L
+~wolf11 1 1 L
+~wolf12 1 1 L
+~wolf13 1 1 L
+~wolf14 1 1 L
+~wolf15 1 1 L
+~wolf16 1 1 L
+~wolf17 1 1 L
+~wolf18 1 1 L
+~wolf19 1 1 L
 ~shadow 1 1 L
 ~golem1 1 1 L
 ~golem2 1 1 L
@@ -85,3 +100,14 @@
 +Level 1
 +BonusAttrs focus:1
 +Exp 42
+
+->abelon
++BonusAttrs agility:500 reaction:100
+->kath
++BonusAttrs agility:500 reaction:100
+->elaine
++BonusAttrs agility:500 reaction:100
+->shanti
++BonusAttrs agility:500 reaction:100
+->lester
++BonusAttrs reaction:100

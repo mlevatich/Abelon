@@ -280,7 +280,12 @@ battle_triggers = {
     ['1-4'] = {
         [SELECT] = {},
         [ALLY] = {
-            ['ally-turn1'] = mkTurnTrigger(1, ALLY)
+            ['ally-turn1'] = mkTurnTrigger(1, ALLY),
+            ['ally-turn2'] = mkTurnTrigger(2, ALLY),
+            ['ally-turn4'] = mkTurnTrigger(4, ALLY),
+            ['ally-turn6'] = mkTurnTrigger(6, ALLY),
+            ['ally-turn8'] = mkTurnTrigger(8, ALLY),
+            ['ally-turn9'] = mkTurnTrigger(9, ALLY)
         },
         [ENEMY] = {},
         [END_ACTION] = {

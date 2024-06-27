@@ -6,7 +6,7 @@ Enemies: wolf1:2,8,1 wolf2:7,9,1 wolf3:11,8,1 golem1:5,1,1 golem2:9,1,2
 Order: golem1,golem2,wolf1,wolf2,wolf3
 Wincon: turns
 Losscon: death
-Turnlimits: 11,11,11,11
+Turnlimits: 10,10,10,10
 Scenetiles: check_Lester:7,7
 Music: A-Single-Shard-Of-Ignea
 

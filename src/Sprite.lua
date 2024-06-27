@@ -1564,7 +1564,7 @@ sprite_data = {
         ['w'] = 31,
         ['h'] = 31,
         ['animations'] = living,
-        ['n'] = 4
+        ['n'] = 19
     },
     {
         ['id'] = 'empty',

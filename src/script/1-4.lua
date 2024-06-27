@@ -321,6 +321,172 @@ s14['ally-turn-1'] = {
     ['result'] = {}
 }
 
+s14['ally-turn-2'] = {
+    ['ids'] = {'kath', 'elaine'},
+    ['events'] = {
+        br(function(g) return g.state['elaine-stays'] end, {
+            focus(2, 170),
+            say(2, 3, false,
+                "Those stone monsters look like they're already hurt."
+            ),
+            say(1, 1, false,
+                "Yes. I imagine Lester must have given them quite a fight before deciding to run. His pride \z
+                 tends to get him into trouble..."
+            ),
+            say(2, 2, false,
+                "By himself? But those things... They..."
+            ),
+            say(1, 1, false,
+                "They're extremely powerful. But so is Lester. He's one of my knights, after all."
+            ),
+            say(1, 1, false,
+                "You could say the most obnoxious thing about him is that he isn't all talk... However much \z
+                 he loves to talk."
+            ),
+            say(2, 3, false,
+                "One knight can do that? That's incredible..."
+            )
+        })
+    },
+    ['result'] = {}
+}
+
+s14['ally-turn-4'] = {
+    ['ids'] = {'kath', 'wolf4', 'wolf5', 'wolf6', 'wolf7'},
+    ['events'] = {
+        lookDir(2, RIGHT),
+        lookDir(3, RIGHT),
+        lookDir(4, RIGHT),
+        lookDir(5, RIGHT),
+        teleport(2, 35, 6, 'monastery-approach'),
+        focus(2, 170),
+        wait(0.5),
+        teleport(3, 35, 7, 'monastery-approach'),
+        focus(3, 170),
+        wait(0.5),
+        teleport(4, 35, 8, 'monastery-approach'),
+        focus(4, 170),
+        wait(0.5),
+        teleport(5, 35, 9, 'monastery-approach'),
+        focus(5, 170),
+        wait(0.5),
+        focus(1, 170),
+        say(1, 2, false,
+            "Ach, even more wolves? I thought for sure we were clear of them..."
+        )
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:joinBattle(g.sprites['wolf4'], ENEMY, 1, 4, 1)
+            g.battle:joinBattle(g.sprites['wolf5'], ENEMY, 1, 5, 1)
+            g.battle:joinBattle(g.sprites['wolf6'], ENEMY, 1, 6, 1)
+            g.battle:joinBattle(g.sprites['wolf7'], ENEMY, 1, 7, 1)
+        end
+    }
+}
+
+s14['ally-turn-6'] = {
+    ['ids'] = {'kath', 'wolf8', 'wolf9', 'wolf10', 'wolf11'},
+    ['events'] = {
+        lookDir(2, RIGHT),
+        lookDir(3, RIGHT),
+        lookDir(4, LEFT),
+        lookDir(5, LEFT),
+        teleport(2, 39, 15, 'monastery-approach'),
+        focus(2, 170),
+        wait(0.5),
+        teleport(3, 40, 15, 'monastery-approach'),
+        focus(3, 170),
+        wait(0.5),
+        teleport(4, 41, 15, 'monastery-approach'),
+        focus(4, 170),
+        wait(0.5),
+        teleport(5, 42, 15, 'monastery-approach'),
+        focus(5, 170),
+        wait(0.5),
+        focus(1, 170),
+        say(1, 2, false,
+            "Even more? I've never known a wolf pack to grow this large. Something's not right..."
+        )
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:joinBattle(g.sprites['wolf8'], ENEMY, 5, 13, 1)
+            g.battle:joinBattle(g.sprites['wolf9'], ENEMY, 6, 13, 1)
+            g.battle:joinBattle(g.sprites['wolf10'], ENEMY, 7, 13, 1)
+            g.battle:joinBattle(g.sprites['wolf11'], ENEMY, 8, 13, 1)
+        end
+    }
+}
+
+s14['ally-turn-8'] = {
+    ['ids'] = {'kath', 'wolf12', 'wolf13', 'wolf14', 'wolf15'},
+    ['events'] = {
+        lookDir(2, LEFT),
+        lookDir(3, LEFT),
+        lookDir(4, LEFT),
+        lookDir(5, LEFT),
+        teleport(2, 46, 6, 'monastery-approach'),
+        focus(2, 170),
+        wait(0.5),
+        teleport(3, 46, 7, 'monastery-approach'),
+        focus(3, 170),
+        wait(0.5),
+        teleport(4, 46, 8, 'monastery-approach'),
+        focus(4, 170),
+        wait(0.5),
+        teleport(5, 46, 9, 'monastery-approach'),
+        focus(5, 170),
+        wait(0.5),
+        focus(1, 170),
+        say(1, 3, false,
+            "Wolf packs stay out of each others' territory. Normally. Something is gathering them here... \z
+             Could it be there is some force controlling the wolves?"
+        ),
+        say(1, 2, false,
+            "Whatever the reason, we'll be overrun soon. Is it bad luck? Are we caught in the middle of something?"
+        )
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:joinBattle(g.sprites['wolf12'], ENEMY, 12, 4, 1)
+            g.battle:joinBattle(g.sprites['wolf13'], ENEMY, 12, 5, 1)
+            g.battle:joinBattle(g.sprites['wolf14'], ENEMY, 12, 6, 1)
+            g.battle:joinBattle(g.sprites['wolf15'], ENEMY, 12, 7, 1)
+        end
+    }
+}
+
+s14['ally-turn-9'] = {
+    ['ids'] = {'kath', 'wolf16', 'wolf17', 'wolf18', 'wolf19'},
+    ['events'] = {
+        lookDir(2, RIGHT),
+        lookDir(3, RIGHT),
+        lookDir(4, LEFT),
+        lookDir(5, LEFT),
+        teleport(2, 37, 4, 'monastery-approach'),
+        focus(2, 170),
+        wait(0.5),
+        teleport(3, 36, 5, 'monastery-approach'),
+        focus(3, 170),
+        wait(0.5),
+        teleport(4, 46, 4, 'monastery-approach'),
+        focus(4, 170),
+        wait(0.5),
+        teleport(5, 46, 5, 'monastery-approach'),
+        focus(5, 170),
+        wait(0.5)
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.battle:joinBattle(g.sprites['wolf16'], ENEMY, 3, 2, 1)
+            g.battle:joinBattle(g.sprites['wolf17'], ENEMY, 2, 3, 1)
+            g.battle:joinBattle(g.sprites['wolf18'], ENEMY, 12, 2, 1)
+            g.battle:joinBattle(g.sprites['wolf19'], ENEMY, 12, 3, 1)
+        end
+    }
+}
+
 subscene_kath_request = {
     focus(2, 170),
     say(2, 3, false,
@@ -583,7 +749,11 @@ s14['lester-healed'] = {
 }
 
 s14['victory'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'wolf1', 'wolf2', 'wolf3', 'golem1', 'golem2'},
+    ['ids'] = {
+        'abelon', 'kath', 'elaine', 'shanti', 'lester', 'wolf1', 'wolf2', 'wolf3', 'golem1', 'golem2',
+        'wolf4', 'wolf5', 'wolf6', 'wolf7', 'wolf8', 'wolf9', 'wolf10', 'wolf11', 'wolf12', 'wolf13', 'wolf14',
+        'wolf15', 'wolf16', 'wolf17', 'wolf18', 'wolf19'
+    },
     ['events'] = {
         focus(1, 170),
         walk(true, 6, 40, 1, 'walk'),
@@ -591,8 +761,24 @@ s14['victory'] = {
         walk(true, 8, 42, 1, 'walk'),
         teleport(9, 1, 1, 'waiting-room'),
         teleport(10, 1, 1, 'waiting-room'),
+        walk(true, 11, 40, 1, 'walk'),
+        walk(true, 12, 41, 1, 'walk'),
+        walk(true, 13, 42, 1, 'walk'),
+        walk(true, 14, 40, 1, 'walk'),
+        walk(true, 15, 41, 1, 'walk'),
+        walk(true, 16, 42, 1, 'walk'),
+        walk(true, 17, 40, 1, 'walk'),
+        walk(true, 18, 41, 1, 'walk'),
+        walk(true, 19, 42, 1, 'walk'),
+        walk(true, 20, 40, 1, 'walk'),
+        walk(true, 21, 41, 1, 'walk'),
+        walk(true, 22, 42, 1, 'walk'),
+        walk(true, 23, 40, 1, 'walk'),
+        walk(true, 24, 41, 1, 'walk'),
+        walk(true, 25, 42, 1, 'walk'),
+        walk(true, 26, 40, 1, 'walk'),
         wait(2),
-        focus(2, 170),
+        focus(5, 170),
         say(2, 2, false,
             "They're... what are they doing?"
         ),
@@ -613,9 +799,41 @@ s14['victory'] = {
         teleport(6, 1, 1, 'waiting-room'),
         teleport(7, 1, 1, 'waiting-room'),
         teleport(8, 1, 1, 'waiting-room'),
+        teleport(11, 1, 1, 'waiting-room'),
+        teleport(12, 1, 1, 'waiting-room'),
+        teleport(13, 1, 1, 'waiting-room'),
+        teleport(14, 1, 1, 'waiting-room'),
+        teleport(15, 1, 1, 'waiting-room'),
+        teleport(16, 1, 1, 'waiting-room'),
+        teleport(17, 1, 1, 'waiting-room'),
+        teleport(18, 1, 1, 'waiting-room'),
+        teleport(19, 1, 1, 'waiting-room'),
+        teleport(20, 1, 1, 'waiting-room'),
+        teleport(21, 1, 1, 'waiting-room'),
+        teleport(22, 1, 1, 'waiting-room'),
+        teleport(23, 1, 1, 'waiting-room'),
+        teleport(24, 1, 1, 'waiting-room'),
+        teleport(25, 1, 1, 'waiting-room'),
+        teleport(26, 1, 1, 'waiting-room'),
         light(6),
         light(7),
         light(8),
+        light(11),
+        light(12),
+        light(13),
+        light(14),
+        light(15),
+        light(16),
+        light(17),
+        light(18),
+        light(19),
+        light(20),
+        light(21),
+        light(22),
+        light(23),
+        light(24),
+        light(25),
+        light(26),
         wait(0.5)
     },
     ['result'] = {

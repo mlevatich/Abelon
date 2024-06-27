@@ -2254,11 +2254,14 @@ function Battle:planAction(e, plan, other_plans)
 
         -- Assemble candidate moves
         -- If a target can be killed, they're the target
+        local y, x = self:findSprite(e)
         if max_percent_ind == 1 then
             tgt = ind_tgt
+            if tgt == nil then return { x, y }, nil, nil end
             candidate_moves = tgt['moves']
         else
             tgt = sum_tgt
+            if tgt == nil then return { x, y }, nil, nil end
             for j = 1, #tgt['moves'] do
                 local a = tgt['moves'][j]['attack']
                 local d = self:useAttack(e, plan['sk'], a['dir'], a['c'], true)
