@@ -17,7 +17,7 @@ s14['entry'] = {
     },
     ['result'] = {
         ['do'] = function(g)
-            g:getMap():blockExit('monastery-entrance') -- TODO: selectively block one side
+            g:getMap():blockExit('me3')
         end
     }
 }

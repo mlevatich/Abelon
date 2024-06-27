@@ -5,22 +5,22 @@ COLLIDING TILES
 3456BC
 
 TRANSITION DATA
-25 80 west-forest 48 2
-26 80 west-forest 48 2
-27 80 west-forest 49 2
-28 80 west-forest 49 2
-29 80 west-forest 49 2
-40 1 monastery-entrance 16 52.5
-41 1 monastery-entrance 17 52.5
-42 1 monastery-entrance 18 52.5
-43 1 monastery-entrance 18 52.5
-59 1 monastery-entrance 34 52.5
-60 1 monastery-entrance 35 52.5
-61 1 monastery-entrance 36 52.5
-62 1 monastery-entrance 36 52.5
-99 1 monastery-entrance 75 52.5
-100 1 monastery-entrance 76 52.5
-101 1 monastery-entrance 76 52.5
+25 80 west-forest 48 2 wf
+26 80 west-forest 48 2 wf
+27 80 west-forest 49 2 wf
+28 80 west-forest 49 2 wf
+29 80 west-forest 49 2 wf
+40 1 monastery-entrance 16 52.5 me1
+41 1 monastery-entrance 17 52.5 me1
+42 1 monastery-entrance 18 52.5 me1
+43 1 monastery-entrance 18 52.5 me1
+59 1 monastery-entrance 34 52.5 me2
+60 1 monastery-entrance 35 52.5 me2
+61 1 monastery-entrance 36 52.5 me2
+62 1 monastery-entrance 36 52.5 me2
+99 1 monastery-entrance 75 52.5 me3
+100 1 monastery-entrance 76 52.5 me3
+101 1 monastery-entrance 76 52.5 me3
 
 LIGHTING DATA
 0.7

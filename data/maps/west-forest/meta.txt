@@ -5,18 +5,18 @@ COLLIDING TILES
 3456BC
 
 TRANSITION DATA
-73 11 south-forest 3 8
-73 12 south-forest 3 9
-73 13 south-forest 3 10
-73 14 south-forest 3 11
-73 15 south-forest 3 12
-73 16 south-forest 3 13
-73 17 south-forest 3 14
-47 1 monastery-approach 25 77.5
-48 1 monastery-approach 26 77.5
-49 1 monastery-approach 27 77.5
-50 1 monastery-approach 28 77.5
-51 1 monastery-approach 29 77.5
+73 11 south-forest 3 8 sf
+73 12 south-forest 3 9 sf
+73 13 south-forest 3 10 sf
+73 14 south-forest 3 11 sf
+73 15 south-forest 3 12 sf
+73 16 south-forest 3 13 sf
+73 17 south-forest 3 14 sf
+47 1 monastery-approach 25 77.5 ma
+48 1 monastery-approach 26 77.5 ma
+49 1 monastery-approach 27 77.5 ma
+50 1 monastery-approach 28 77.5 ma
+51 1 monastery-approach 29 77.5 ma
 
 LIGHTING DATA
 0.7

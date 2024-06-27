@@ -81,7 +81,7 @@
 ->State elaine-stays
 ->Party kath,elaine,shanti
 ->Evening
-->Block west-forest,monastery-entrance
+->Block wf,me3
 ->Inventory journal,medallion,scroll
 
 ->elaine

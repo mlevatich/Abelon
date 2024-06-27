@@ -93,7 +93,7 @@
 ->State elaine-stays
 ->Party kath,elaine
 ->Day
-->Block west-forest
+->Block wf
 ->Inventory journal,medallion,scroll
 
 ->Seen 1-3-battle

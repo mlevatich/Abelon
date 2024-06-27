@@ -55,6 +55,7 @@ function Map:initialize(name, c)
             ['name'] = data[3],
             ['x'] = pixel_x,
             ['y'] = pixel_y,
+            ['label'] = data[6],
             ['enabled'] = true
         })
         idx = idx + 1
@@ -103,9 +104,9 @@ function Map:initialize(name, c)
     end
 end
 
-function Map:blockExit(other)
+function Map:blockExit(label)
     for _,t in pairs(self.transitions) do
-        if t['name'] == other then
+        if t['label'] == label then
             t['enabled'] = false
         end
     end

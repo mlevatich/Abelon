@@ -5,11 +5,11 @@ COLLIDING TILES
 3456BC
 
 TRANSITION DATA
-1 69 south-forest 52 20
-1 70 south-forest 52 21
-1 71 south-forest 52 22
-1 72 south-forest 52 23
-1 73 south-forest 52 23
+1 69 south-forest 52 20 sf
+1 70 south-forest 52 21 sf
+1 71 south-forest 52 22 sf
+1 72 south-forest 52 23 sf
+1 73 south-forest 52 23 sf
 
 LIGHTING DATA
 0.7

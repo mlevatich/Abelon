@@ -19,7 +19,7 @@ s13['entry'] = {
     },
     ['result'] = {
         ['do'] = function(g)
-            g:getMap():blockExit('west-forest')
+            g:getMap():blockExit('wf')
             g:endTutorial()
         end
     }

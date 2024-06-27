@@ -5,18 +5,18 @@ COLLIDING TILES
 3456BC
 
 TRANSITION DATA
-1 8 west-forest 71 11
-1 9 west-forest 71 11
-1 10 west-forest 71 11
-1 11 west-forest 71 12
-1 12 west-forest 71 13
-1 13 west-forest 71 14
-1 14 west-forest 71 15
-54 20 east-forest 3 69
-54 21 east-forest 3 70
-54 22 east-forest 3 71
-54 23 east-forest 3 71
-54 24 east-forest 3 71
+1 8 west-forest 71 11 wf
+1 9 west-forest 71 11 wf
+1 10 west-forest 71 11 wf
+1 11 west-forest 71 12 wf
+1 12 west-forest 71 13 wf
+1 13 west-forest 71 14 wf
+1 14 west-forest 71 15 wf
+54 20 east-forest 3 69 ef
+54 21 east-forest 3 70 ef
+54 22 east-forest 3 71 ef
+54 23 east-forest 3 71 ef
+54 24 east-forest 3 71 ef
 
 LIGHTING DATA
 0.7
