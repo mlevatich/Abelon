@@ -110,7 +110,11 @@ scene_triggers = {
         ['1-4-entry'] = mkAreaTrigger('1-4-entry', 'monastery-entrance',
             function(x) return true end,
             function(y) return true end
-        )
+        ),
+        ['1-4-battle'] = mkAreaTrigger('1-4-battle', 'monastery-approach',
+            function(x) return x > 34 and x < 48 end,
+            function(y) return y < 16 end
+        ),
     }
 }
 
@@ -268,6 +272,21 @@ battle_triggers = {
             ['end-tutorial1'] = function(b)
                 if b.game.current_tutorial == "Battle: Objectives" then
                     return 'close-tutorial-1'
+                end
+                return false
+            end
+        }
+    },
+    ['1-4'] = {
+        [SELECT] = {},
+        [ALLY] = {},
+        [ENEMY] = {},
+        [END_ACTION] = {
+            ['demonic-spell'] = function(b)
+                local unseen = not b.game.state['kath-saw-spell']
+                local atk = b.status['abelon']['attack']
+                if unseen and atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
+                    return 'demonic-spell'
                 end
                 return false
             end

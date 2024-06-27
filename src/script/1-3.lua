@@ -812,7 +812,7 @@ s13['golem-battle-shanti-defeat'] = {
         say(3, 3, false,
             "Tch..."
         ),
-        brPresent(3,
+        brPresent(2,
         {
             lookAt(2, 3),
             say(2, 2, false,

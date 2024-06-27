@@ -84,11 +84,11 @@
 ->Seen 1-3-battle
 ->elaine
 +Level 3
-+BonusAttrs affinity:3 force:2
++BonusAttrs reaction:5
 +Exp 30
 ->abelon
 +Level 2
-+BonusAttrs endurance:2
++BonusAttrs affinity:2
 ->kath
 +Level 1
-+BonusAttrs reaction:1
++BonusAttrs force:1
