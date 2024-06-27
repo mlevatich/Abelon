@@ -1,0 +1,31 @@
+// Battle stats
+
+TileOrigin: 30,19
+Allies: abelon:6,10 kath:5,9 elaine:7,9 shanti:6,7 lester:4,8
+Enemies: alphawolf1:4,14,1 alphawolf2:5,12,1 golem1:8,13,2 golem2:10,14,1 golem3:2,12,2 wolf1:1,10,1 wolf2:10,9,1
+Order: alphawolf1,alphawolf2,golem1,golem2,golem3,wolf1,wolf2
+Wincon: escape
+Losscon: death,turns
+Turnlimits: 10,10,10,10
+Scenetiles: escape1:8,1
+Music: A-Single-Shard-Of-Ignea
+
+// Battle grid
+
+Dimensions: 10,16
+FFFFFFFFFF
+FFFFFFFFFF
+FFFFFFFFFF
+FFFFFFFFFF
+FFFFFFFFFF
+FFFFFFFFFF
+FTTTTTTTTT
+FTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+FFFFFFFFFF
+FFFFFFFFFF

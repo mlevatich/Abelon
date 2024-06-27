@@ -115,6 +115,10 @@ scene_triggers = {
             function(x) return x > 34 and x < 48 end,
             function(y) return y < 16 end
         ),
+        ['1-4-final-battle'] = mkAreaTrigger('1-4-final-battle', 'monastery-entrance',
+            function(x) return x < 42 end,
+            function(y) return y < 42 end
+        )
     }
 }
 
@@ -302,6 +306,21 @@ battle_triggers = {
                 local lester_hp = b.status['lester']['sp'].health
                 if atk and (atk.id == 'healing_mist' or atk.id == 'sacrifice') and lester_hp > 1 then
                     return 'lester-healed'
+                end
+                return false
+            end
+        }
+    },
+    ['1-4-final-battle'] = {
+        [SELECT] = {},
+        [ALLY] = {},
+        [ENEMY] = {},
+        [END_ACTION] = {
+            ['demonic-spell'] = function(b)
+                local unseen = not b.game.state['kath-saw-spell']
+                local atk = b.status['abelon']['attack']
+                if unseen and atk and (atk.id == 'conflagration' or atk.id == 'crucible') then
+                    return 'demonic-spell'
                 end
                 return false
             end

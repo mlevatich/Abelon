@@ -851,3 +851,129 @@ s14['lester'] = {
     },
     ['result'] = {}
 }
+
+s14['final-battle'] = {
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'golem1', 'golem2', 'golem3'},
+    ['events'] = {
+        changeMusic('Threat-Revealed'),
+        -- TODO: party comes in, has a long discussion, chillin out while Shanti works.
+        teleport(2, 1, 1, 'monastery-entrance'),
+        br(function(g) return g.state['elaine-stays'] end, {
+            teleport(3, 1, 1, 'monastery-entrance'),
+            combatReady(3)
+        }),
+        teleport(4, 1, 1, 'monastery-entrance'),
+        teleport(5, 1, 1, 'monastery-entrance'),
+        combatReady(1),
+        combatReady(2),
+        combatReady(4),
+        combatReady(5),
+        wait(1.5)
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.current_scene = nil
+            g.battle = Battle:new(g.player, g, 'final-battle')
+            g.battle.status['shanti']['effects'] = {
+                Effect:new(Buff:new('busy', 0, DEBUFF), math.huge)
+            }
+            g:saveBattle()
+            g.battle:openBattleStartMenu()
+        end
+    }
+}
+
+s14['final-battle-demonic-spell'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        insertEvents(subscene_demonic)
+    },
+    ['result'] = {
+        ['state'] = 'kath-saw-spell'
+    }
+}
+
+s14['final-battle-kath-defeat'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        insertEvents(subscene_kath_defeat)
+    },
+    ['result'] = {
+
+    }
+}
+
+s14['final-battle-abelon-defeat'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        insertEvents(subscene_abelon_defeat)
+    },
+    ['result'] = {
+
+    }
+}
+
+s14['final-battle-elaine-defeat'] = {
+    ['ids'] = {'abelon', 'elaine', 'kath'},
+    ['events'] = {
+        focus(3, 170),
+        wait(0.5),
+        lookAt(3, 2),
+        say(2, 2, false,
+            "Ahhh!"
+        ),
+        say(3, 2, false,
+            "Elaine, no! Curses!"
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s14['final-battle-shanti-defeat'] = {
+    ['ids'] = {'abelon', 'kath', 'shanti'},
+    ['events'] = {
+        focus(3, 170),
+        wait(0.5),
+        say(3, 3, false,
+            "Tch..."
+        ),
+        lookAt(2, 3),
+        say(2, 2, false,
+            "Shanti? Hey, Shanti, answer me! Oh no..."
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s14['final-battle-lester-defeat'] = {
+    ['ids'] = {'abelon', 'kath', 'lester'},
+    ['events'] = {
+        focus(3, 170),
+        wait(0.5),
+        lookAt(2, 3),
+        say(2, 2, false,
+            "No, Lester! Not you!"
+        )
+    },
+    ['result'] = {
+
+    }
+}
+
+s14['final-battle-turnlimit-defeat'] = {
+    ['ids'] = {'abelon', 'kath'},
+    ['events'] = {
+        focus(2, 170),
+        wait(0.5),
+        say(2, 2, false,
+            "We aren't going to make it!"
+        )
+    },
+    ['result'] = {
+
+    }
+}

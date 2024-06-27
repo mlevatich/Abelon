@@ -31,12 +31,14 @@
 ~igneashard6 75 44 L
 ~igneashard7 109 20 R
 //~abelon 100 2 R P
-~abelon 40 18 R P
+//~abelon 40 18 R P
 ~kath 97 6 L
 ~elaine 101 7 R
 ~shanti 102 7 L
 
 ~~monastery-entrance Canopied-Steps
+
+~abelon 35 45 R P
 
 ~~waiting-room Canopied-Steps
 
@@ -81,7 +83,7 @@
 ->State elaine-stays
 ->Party kath,elaine,shanti
 ->Evening
-->Block wf,me3
+//->Block wf,me3
 ->Inventory journal,medallion,scroll
 
 ->elaine
@@ -101,13 +103,8 @@
 +BonusAttrs focus:1
 +Exp 42
 
-->abelon
-+BonusAttrs agility:500 reaction:100
-->kath
-+BonusAttrs agility:500 reaction:100
-->elaine
-+BonusAttrs agility:500 reaction:100
-->shanti
-+BonusAttrs agility:500 reaction:100
+->Seen 1-4-battle
+->Party lester
 ->lester
-+BonusAttrs reaction:100
++Level 1
++BonusAttrs agility:1
