@@ -3035,13 +3035,15 @@ end
 
 function Battle:mkAssistElements(assists, w)
     local eles = { mkEle('text', 'Assist', HALF_MARGIN, HALF_MARGIN) }
+    local render_idx = 1
     for i = 1, #assists do
         local str = assists[i]:toStr()
         if str then
             table.insert(eles, mkEle('text', str,
                 w - #str * CHAR_WIDTH - HALF_MARGIN,
-                HALF_MARGIN + LINE_HEIGHT * i
+                HALF_MARGIN + LINE_HEIGHT * render_idx
             ))
+            render_idx = render_idx + 1
         end
     end
     local h = LINE_HEIGHT * (#eles) + BOX_MARGIN
@@ -3094,22 +3096,21 @@ function Battle:boxElementsFromInfo(sp, hp, ign, statuses)
     -- Add sprite statuses
     local stat_eles = {}
     local y = HALF_MARGIN + LINE_HEIGHT * 3 + BOX_MARGIN
-    local n_hidden = 0
+    local render_idx = 1
     for i = 1, #statuses do
         if not statuses[i].hidden then
-            local cy = y + LINE_HEIGHT * (i - n_hidden - 1)
+            local cy = y + LINE_HEIGHT * (render_idx - 1)
             local b = statuses[i].buff
-            local d = statuses[i].duration
-            local dur = ite(d ~= math.huge, d .. 't', '')
-            table.insert(stat_eles, mkEle('text', dur,
-                w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
-            ))
             local str = b:toStr()
             if str then
+                local d = statuses[i].duration
+                local dur = ite(d ~= math.huge, d .. 't', '')
+                table.insert(stat_eles, mkEle('text', dur,
+                    w - #dur * CHAR_WIDTH - HALF_MARGIN, cy
+                ))
                 table.insert(stat_eles, mkEle('text', str, HALF_MARGIN, cy))
+                render_idx = render_idx + 1
             end
-        else
-            n_hidden = n_hidden + 1
         end
     end
 
