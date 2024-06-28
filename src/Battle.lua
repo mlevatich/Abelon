@@ -19,6 +19,30 @@ function GridSpace:initialize(sp)
         self.occupied = sp
     end
     self.assists = {}
+    self.assists_merged = {}
+    self.n_assists = 0
+end
+
+function GridSpace:addAssist(buffs)
+    self.n_assists = self.n_assists + 1
+    for i=1, #buffs do
+        table.insert(self.assists, buffs[i])
+        local a1 = buffs[i]:copy()
+        local merged = false
+        for j=1, #self.assists_merged do
+            local a2 = self.assists_merged[j]
+            if a1.attr == a2.attr then
+                a2.val = a2.val + a1.val
+                merged = true
+            end
+        end
+        if not merged then table.insert(self.assists_merged, a1) end
+    end
+end
+
+function GridSpace:clear()
+    self.assists = {}
+    self.assists_merged = {}
     self.n_assists = 0
 end
 
@@ -567,8 +591,7 @@ function Battle:turnRefresh()
     for i = 1, #self.grid do
         for j = 1, #self.grid[i] do
             if self.grid[i][j] then
-                self.grid[i][j].assists = {}
-                self.grid[i][j].n_assists = 0
+                self.grid[i][j]:clear()
             end
         end
     end
@@ -1258,9 +1281,10 @@ function Battle:gridCopy()
         for k = 1, self.grid_w do
             if self.grid[h][k] then
                 g[h][k] = GridSpace:new()
-                g[h][k].occupied  = self.grid[h][k].occupied
-                g[h][k].assists   = self.grid[h][k].assists
-                g[h][k].n_assists = self.grid[h][k].n_assists
+                g[h][k].occupied       = self.grid[h][k].occupied
+                g[h][k].assists        = self.grid[h][k].assists
+                g[h][k].assists_merged = self.grid[h][k].assists_merged
+                g[h][k].n_assists      = self.grid[h][k].n_assists
             else
                 g[h][k] = F
             end
@@ -1726,10 +1750,7 @@ function Battle:playAction()
                 local t = self:skillRange(assist, assist_dir, c_assist)
                 for i = 1, #t do
                     local g = self.grid[t[i][1]][t[i][2]]
-                    for j = 1, #buffs do
-                        table.insert(g.assists, buffs[j])
-                    end
-                    g.n_assists = g.n_assists + 1
+                    g:addAssist(buffs)
                 end
                 d()
             end, assist, assist_dir, c_assist[1] + ox, c_assist[2] + oy, ass_range)
@@ -3262,7 +3283,7 @@ function Battle:renderHoverBoxes()
     -- Get box elements for assists, only for ally sprite or empty space
     function mkOuterHoverBox(w)
         if ((not sp) or self:isAlly(sp)) and g.n_assists > 0 then
-            return self:mkAssistElements(g.assists, w)
+            return self:mkAssistElements(g.assists_merged, w)
         end
         return {}, 0
     end

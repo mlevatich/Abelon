@@ -17,13 +17,20 @@ end
 
 Buff = class('Buff')
 
-function Buff:initialize(attr, val, ty, owner, xp_tags, value_hidden)
+function Buff:initialize(attr, val, ty, owner, xp_tags, value_hidden, ty_fixed)
     self.attr     = attr
     self.val      = val
     self.type     = ty
     self.owner    = owner
+    self.ty_fixed = ite(ty_fixed, true, false)
     self.hide_val = ite(value_hidden, true, false)
     self.xp_tags  = ite(xp_tags ~= nil, xp_tags, {})
+end
+
+function Buff:copy()
+    return Buff:new(
+        self.attr, self.val, self.type, self.owner, self.xp_tags, self.hide_val, self.ty_fixed
+    )
 end
 
 function Buff:toStr()
@@ -42,6 +49,10 @@ function Effect:initialize(buff, dur, hidden)
     self.buff     = buff
     self.duration = dur
     self.hidden   = ite(hidden, true, false)
+end
+
+function Effect:copy()
+    return Effect:new(self.buff:copy(), self.duration, self.hidden)
 end
 
 Skill = class('Skill')
@@ -739,25 +750,50 @@ function mkBuff(attrs, template, specials, sp, exp_tag)
     end
     local val = attrs[attr] * s.mul
     val = s.base + ite(val < 0, math.ceil(val), math.floor(val))
-    return Buff:new(template[1], val, ty, sp, exp_tag, value_hidden)
+    return Buff:new(template[1], val, ty, sp, exp_tag, value_hidden, template[3])
 end
 
 function isSpecial(attr)
     return find({'endurance', 'focus', 'force', 'affinity', 'reaction', 'agility'}, attr) == nil
 end
 
--- Add effect to a sprite's status effects, maintaining rendering order
+-- Add effect to a sprite's status effects, maintaining rendering order and merging effects as needed
 function addStatus(stat, eff)
 
     local dur = function(e) return e.duration end
-    local f = false
+    for i = 1, #stat do
+        local st = stat[i]:copy()
+        if eff.buff.attr == st.buff.attr then
+            if isSpecial(eff) then
+                if eff.buff.val ~= 0 then
+                    st.buff.val = st.buff.val + eff.buff.val
+                    if not st.buff.ty_fixed then
+                        st.buff.ty = ite(st.buff.val > 0, BUFF, DEBUFF)
+                    end
+                elseif dur(st) < dur(eff) then
+                    st.duration = dur(eff)
+                end
+            else
+                st.buff.val = st.buff.val + eff.buff.val
+                if not st.buff.ty_fixed then
+                    st.buff.ty = ite(st.buff.val > 0, BUFF, DEBUFF)
+                end
+            end
+            stat[i] = st
+            return
+        end
+    end
     for i = 1, #stat do
         local st = stat[i]
-        if isSpecial(eff) and not isSpecial(st) then                              f = true
-        elseif isSpecial(eff) and isSpecial(st) and dur(eff) >= dur(st) then      f = true
-        elseif not (isSpecial(eff) or isSpecial(st)) and dur(eff) >= dur(st) then f = true
+        if isSpecial(eff) and not isSpecial(st) then
+            table.insert(stat, i, eff)
+            return
         end
-        if f then
+        if isSpecial(eff) and isSpecial(st) and dur(eff) >= dur(st) then
+            table.insert(stat, i, eff)
+            return
+        end
+        if not (isSpecial(eff) or isSpecial(st)) and dur(eff) >= dur(st) then
             table.insert(stat, i, eff)
             return
         end
@@ -1915,7 +1951,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
         ALLY, Scaling(5),
-        { { { 'agility', Scaling:new(-8) }, 1 } }, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
+        { { { 'agility', Scaling:new(-8) }, 2 } }, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
     ),
     ['the_claws'] = Skill:new('the_claws', 'The Claws', nil, nil,
         "The Terror rakes its claws wildly, dealing \z
@@ -1927,6 +1963,7 @@ skills = {
           { T, T, T, T, T },
           { T, T, F, T, T },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ALLY, Scaling:new(0, 'force', 1.5)
+        ALLY, Scaling:new(0, 'force', 1.5),
+        { { { 'reaction', Scaling:new(-15) }, 2 } }
     ),
 }
