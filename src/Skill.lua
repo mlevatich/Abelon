@@ -1024,7 +1024,7 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(0, 'affinity', 0.8) } }, { EXP_TAG_RECV }
+        { { 'reaction', Scaling:new(0, 'affinity', 0.7) } }, { EXP_TAG_RECV }
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire', nil, nil,
         "Inspire an ally with a courageous cry. They gain %s \z
@@ -1093,7 +1093,7 @@ skills = {
         "Slash in a wide arc. Deals %s Weapon damage to enemies in \z
          front of Kath, and grants %s Reaction for 1 turn.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { 'Hero', 0 }, { 'Defender', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
@@ -1104,7 +1104,7 @@ skills = {
         "A blunt lance blow. Deals %s Weapon damage. If Kath's \z
          Reaction is higher than his foe's, they cannot act for 1 turn.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 1 }, { 'Hero', 1 }, { 'Cleric', 0 } },
+        { { 'Hero', 1 }, { 'Defender', 1 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 1,
         ENEMY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'stun', Scaling:new(0), DEBUFF }, 1 } }, nil,
@@ -1117,7 +1117,7 @@ skills = {
          Weapon skills used on him, dealing Weapon damage equal to \z
          his Reaction.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 2 }, { 'Hero', 2 }, { 'Cleric', 1 } },
+        { { 'Hero', 2 }, { 'Defender', 2 }, { 'Cleric', 1 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
         nil, { { { 'riposte', Scaling:new(0), BUFF }, 1 } }
@@ -1126,7 +1126,7 @@ skills = {
         "Kath shoves an ally or enemy out of the way, moving them 1 tile and raising \z
          Kath's Reaction and Affinity by %s for 1 turn.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 3 }, { 'Hero', 3 }, { 'Cleric', 0 } },
+        { { 'Hero', 3 }, { 'Defender', 3 }, { 'Cleric', 0 } },
         { { F, F, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
@@ -1138,7 +1138,7 @@ skills = {
         "Kath hurls a javelin at an enemy, dealing %s Weapon \z
          damage.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 0 } },
+        { { 'Hero', 1 }, { 'Defender', 0 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
@@ -1148,7 +1148,7 @@ skills = {
         "Kath throws his body into a thrust, dealing %s Weapon \z
          damage to up to 2 enemies in a line.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 3 }, { 'Hero', 3 }, { 'Cleric', 0 } },
+        { { 'Hero', 3 }, { 'Defender', 3 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
@@ -1158,7 +1158,7 @@ skills = {
         "Taunt nearby enemies, so that their next \z
          actions will target Kath (whether or not they can reach him).",
         'Defender', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 3 }, { 'Hero', 2 }, { 'Cleric', 2 } },
+        { { 'Hero', 2 }, { 'Defender', 3 }, { 'Cleric', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
           { F, T, T, T, T, T, F },
@@ -1174,7 +1174,7 @@ skills = {
          %s health. Can target a square within 3 spaces of \z
          Kath.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { 'Hero', 0 }, { 'Defender', 0 }, { 'Cleric', 0 } },
         { { T, T, T },
           { T, T, T },
           { T, T, T } }, FREE_AIM(3), 1,
@@ -1183,7 +1183,7 @@ skills = {
     ['haste'] = Skill:new('haste', 'Haste', nil, nil,
         "Kath raises the Agility of allies around him by %s for 2 turns.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 2 } },
+        { { 'Hero', 0 }, { 'Defender', 0 }, { 'Cleric', 2 } },
         { { F, F, T, F, F },
           { F, F, T, F, F },
           { T, T, F, T, T },
@@ -1196,7 +1196,7 @@ skills = {
         "Kath launches a thrust powered by lightning, dealing %s \z
          Spell damage to up to 4 enemies in a line.",
         'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 0 }, { 'Hero', 4 }, { 'Cleric', 3 } },
+        { { 'Hero', 4 }, { 'Defender', 0 }, { 'Cleric', 3 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
@@ -1210,7 +1210,7 @@ skills = {
         "Kath enters a defensive stance, raising his Reaction by %s and \z
          lowering his Force by %s for 5 turns. Cannot stack.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 2 } },
+        { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 2 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil, nil,
         { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 }, { { 'caution', Scaling:new(0), BUFF }, 5, HIDDEN } }
@@ -1218,7 +1218,7 @@ skills = {
     ['rescue'] = Skill:new('rescue', 'Rescue', nil, nil,
         "Kath pulls an ally to him, restoring %s health and granting them %s Reaction for 1 turn.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 3 } },
+        { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 3 } },
         { { F, F, T, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F },
@@ -1233,7 +1233,7 @@ skills = {
          Affinity by %s for 3 turns. Can target any \z
          ally within 3 tiles. Cannot stack.",
         'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 0 }, { 'Hero', 3 }, { 'Cleric', 3 } },
+        { { 'Hero', 3 }, { 'Defender', 0 }, { 'Cleric', 3 } },
         { { T } }, FREE_AIM(3), 2,
         ALLY, nil,
         { { { 'affinity', Scaling:new(0, 'force', 0.5) }, 3 }, { { 'bond', Scaling:new(0), BUFF }, 3, HIDDEN } },
@@ -1244,7 +1244,7 @@ skills = {
         "Kath catapults an empowered javelin which deals %s \z
          Weapon Damage and pushes the enemy back 2 tiles.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 4 }, { 'Hero', 5 }, { 'Cleric', 0 } },
+        { { 'Hero', 5 }, { 'Defender', 4 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1258,7 +1258,7 @@ skills = {
         "Kath swings an ignaeic crescent which deals %s \z
          Weapon Damage and grants %s Reaction for 1 turn.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Defender', 5 }, { 'Hero', 4 }, { 'Cleric', 0 } },
+        { { 'Hero', 4 }, { 'Defender', 5 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
@@ -1273,7 +1273,7 @@ skills = {
     ['forbearance'] = Skill:new('forbearance', 'Forbearance', nil, nil,
         "Kath receives all attacks meant for an adjacent assisted ally.",
         'Defender', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 0 }, { 'Hero', 0 }, { 'Cleric', 0 } },
+        { { 'Hero', 0 }, { 'Defender', 0 }, { 'Cleric', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'forbearance', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
@@ -1282,7 +1282,7 @@ skills = {
         "Kath renews allies near him with a cantrip. Allies on the assist gain \z
          %s Force.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 0 }, { 'Hero', 1 }, { 'Cleric', 1 } },
+        { { 'Hero', 1 }, { 'Defender', 0 }, { 'Cleric', 1 } },
         { { T, F, T },
           { F, F, F },
           { T, F, T } }, SELF_CAST_AIM, 2,
@@ -1293,7 +1293,7 @@ skills = {
         "Kath forms a wall with his allies, raising the Reaction of assisted \z
          allies by %s.",
         'Hero', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 2 }, { 'Hero', 2 }, { 'Cleric', 0 } },
+        { { 'Hero', 2 }, { 'Defender', 2 }, { 'Cleric', 0 } },
         mkLine(10), DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'reaction', Scaling:new(0, 'reaction', 0.5) } }, { EXP_TAG_RECV }
@@ -1302,7 +1302,7 @@ skills = {
         "Kath casts a powerful protective ward. Allies on the assist cannot \z
          drop below 1 health.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 4 } },
+        { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 4 } },
         { { F, F, T, T, T, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1317,7 +1317,7 @@ skills = {
         "Kath helps allies fortify their positions. Allies on the assist \z
          lose all Agility but gain %s Reaction.",
         'Defender', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 4 }, { 'Hero', 3 }, { 'Cleric', 2 } },
+        { { 'Hero', 3 }, { 'Defender', 4 }, { 'Cleric', 2 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
@@ -1334,7 +1334,7 @@ skills = {
     ['peace'] = Skill:new('peace', 'Peace', nil, nil,
         "Kath casts a calming spell. Allies on the assist lose all Force but gain %s Affinity.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Defender', 3 }, { 'Hero', 0 }, { 'Cleric', 2 } },
+        { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 2 } },
         { { F, T, F },
           { T, F, T },
           { F, T, F } }, SELF_CAST_AIM, 1,
@@ -1482,7 +1482,7 @@ skills = {
         "Elaine conjures a concussive gust of wind to blow an enemy back \z
          3 tiles.",
         'Apprentice', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Huntress', 1 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
+        { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 1,
