@@ -1890,8 +1890,8 @@ skills = {
         nil, { { { 'agility', Scaling:new(-4) }, 2 } }
     ),
     ['the_howl'] = Skill:new('the_howl', 'The Howl', nil, nil,
-        "The Terror looses an ear-splitting howl, dealing %s Spell damage and \z
-         lowering targets' Force by %s for 1 turn.",
+        "The Terror looses a blood-curdling howl, dealing %s Spell damage and \z
+         lowering victims' Force by %s for 1 turn.",
         'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, F, T, F, F, F },
@@ -1905,8 +1905,8 @@ skills = {
         nil, { { { 'force', Scaling:new(-5) }, 2 } }
     ),
     ['the_eye'] = Skill:new('the_eye', 'The Eye', nil, nil,
-        "The Terror levels its paralyzing gaze. \z
-         Victims are unable to act for 1 turn, but the Terror loses 8 Agility for 1 turn.",
+        "The Terror lowers its own Agility by 8 to level a haunting gaze. \z
+         Deals %s Spell damage and stuns victims for 1 turn.",
         'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, F, F, F },
@@ -1914,12 +1914,12 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
-        ALLY, nil,
+        ALLY, Scaling(5),
         { { { 'agility', Scaling:new(-8) }, 1 } }, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
     ),
     ['the_claws'] = Skill:new('the_claws', 'The Claws', nil, nil,
-        "The Terror rakes its claws through any enemies within its reach, dealing \z
-         %s Weapon damage.",
+        "The Terror rakes its claws wildly, dealing \z
+         %s Weapon damage but lowering its own Reaction by 15 for 1 turn.",
         'Enemy', WEAPON, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, F, F, F },

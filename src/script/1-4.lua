@@ -1096,6 +1096,7 @@ s14['final-battle-ally-turn-7'] = {
                 { 2, 6 }, { 3, 6 }, { 4, 6 }, { 5, 6 }, { 6, 6 }, { 7, 6 }, { 8, 6 }, { 9, 6 }
             })
             local stat = g.battle.status['shanti']
+            stat['acted'] = false
             for i=1, #stat['effects'] do
                 if stat['effects'][i].buff.attr == 'busy' then
                     table.remove(stat['effects'], i)
