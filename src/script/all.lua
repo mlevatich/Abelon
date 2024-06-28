@@ -255,3 +255,8 @@ sall['igneashard9'] = {
     ['events'] = mkIgneaShardDialogue(9),
     ['result'] = {}
 }
+sall['igneashard10'] = {
+    ['ids'] = {'abelon', 'igneashard10'},
+    ['events'] = mkIgneaShardDialogue(10),
+    ['result'] = {}
+}
