@@ -49,6 +49,13 @@ local t = 0
 local lastframe = 0
 local was_long_frame = false
 
+function wipeSaves()
+    os.remove('abelon/' .. SAVE_DIRECTORY .. 'save.dat')
+    os.remove('abelon/' .. SAVE_DIRECTORY .. 'battle_save.dat')
+    os.remove('abelon/' .. SAVE_DIRECTORY .. 'chapter_save.dat')
+    os.remove('abelon/' .. SAVE_DIRECTORY .. 'quicksave.dat')
+end
+
 -- Initialize window and start game
 function love.load(args)
 
@@ -70,12 +77,7 @@ function love.load(args)
     debug = (args[1] == '-debug')
 
     -- In debug mode, delete existing saves
-    if debug then
-        os.remove('abelon/' .. SAVE_DIRECTORY .. 'save.dat')
-        os.remove('abelon/' .. SAVE_DIRECTORY .. 'battle_save.dat')
-        os.remove('abelon/' .. SAVE_DIRECTORY .. 'chapter_save.dat')
-        os.remove('abelon/' .. SAVE_DIRECTORY .. 'quicksave.dat')
-    end
+    if debug then wipeSaves() end
 
     -- Start from title screen (or load from a chapter file in debug mode)
     if debug and args[2] then
@@ -142,6 +144,12 @@ function love.update(dt)
             game = game:loadSave(BATTLE_SAVE)
         elseif signal == RELOAD_CHAPTER then
             game = game:loadSave(CHAPTER_SAVE)
+        elseif signal == END_GAME then
+            game = nil
+            wipeSaves()
+            title = Title:new()
+            t = 0
+            lastframe = 0
         end
 
     -- Update title screen, possibly launching game

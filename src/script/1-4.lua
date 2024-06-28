@@ -978,6 +978,89 @@ s14['final-battle-turnlimit-defeat'] = {
     }
 }
 
+s14['final-battle-abelon-escape'] = {
+    ['ids'] = {'abelon'},
+    ['events'] = {
+        focus(1, 170),
+        lookDir(1, LEFT),
+        wait(0.5),
+        unlockCamera(),
+        teleport(1, 1, 1, 'monastery-entrance')
+    },
+    ['result'] = {}
+}
+
+s14['final-battle-kath-escape'] = {
+    ['ids'] = {'kath'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 2, false,
+            "By Ignus, the creature earns its name. Those eyes..."
+        ),
+        say(1, 3, false,
+            "...We'll have to lay low underground for some time. Goddess grant the ritual site is somewhere \z
+             inside."
+        ),
+        wait(0.5),
+        unlockCamera(),
+        teleport(1, 1, 1, 'waiting-room')
+    },
+    ['result'] = {}
+}
+
+s14['final-battle-elaine-escape'] = {
+    ['ids'] = {'elaine'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 2, false,
+            "Oh Goddess, I made it! I'm alive! I'm alive..."
+        ),
+        wait(0.5),
+        unlockCamera(),
+        teleport(1, 1, 1, 'waiting-room')
+    },
+    ['result'] = {}
+}
+
+s14['final-battle-shanti-escape'] = {
+    ['ids'] = {'shanti'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 3, false,
+            "The magical golems, the ignaeic wards shielding the monastery... It's all so... Deliberate."
+        ),
+        say(1, 3, false,
+            "Who are you? The ghost of some phenomenal sorcerer, desperate to bury your secrets?"
+        ),
+        say(1, 1, false,
+            "Well, I'm as desperate to unearth them. Let us see if we're evenly matched."
+        ),
+        wait(0.5),
+        unlockCamera(),
+        teleport(1, 1, 1, 'waiting-room')
+    },
+    ['result'] = {}
+}
+
+s14['final-battle-lester-escape'] = {
+    ['ids'] = {'lester'},
+    ['events'] = {
+        focus(1, 170),
+        say(1, 3, false,
+            "Kath, you bastard, why did you have to pick me for this expedition? We're all going to die \z
+             in this valley..."
+        ),
+        say(1, 3, false,
+            "But if it comes to that, I won't live my last moments taking orders from Sinclair's dog. \z
+             I'll take him down with me, if I have to. The old man has it coming..."
+        ),
+        wait(0.5),
+        unlockCamera(),
+        teleport(1, 1, 1, 'waiting-room')
+    },
+    ['result'] = {}
+}
+
 s14['final-battle-ally-turn-4'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror1'},
     ['events'] = {
@@ -1012,6 +1095,13 @@ s14['final-battle-ally-turn-7'] = {
                 { 2, 5 }, { 3, 5 }, { 4, 5 }, { 5, 5 }, { 6, 5 }, { 7, 5 }, { 8, 5 }, { 9, 5 },
                 { 2, 6 }, { 3, 6 }, { 4, 6 }, { 5, 6 }, { 6, 6 }, { 7, 6 }, { 8, 6 }, { 9, 6 }
             })
+            local stat = g.battle.status['shanti']
+            for i=1, #stat['effects'] do
+                if stat['effects'][i].buff.attr == 'busy' then
+                    table.remove(stat['effects'], i)
+                    break
+                end
+            end
         end
     }
 }
@@ -1027,6 +1117,53 @@ s14['final-battle-ally-turn-8'] = {
             g.battle:joinBattle(g.sprites['terror2'], ENEMY, 4, 15, 1)
             g.battle:joinBattle(g.sprites['terror3'], ENEMY, 8, 15, 1)
             g.battle:addTiles({{ 1, 15 }, { 2, 15 }, { 3, 15 }, { 9, 15 }, { 10, 15 }})
+        end
+    }
+}
+
+s14['final-battle-victory'] = {
+    ['ids'] = {'abelon'},
+    ['events'] = {
+        unlockCamera(),
+        fade(-0.4),
+        wait(3),
+        fadeoutMusic(),
+        wait(1),
+        say(1, 0, false,
+            "In spite of and because of your ignorance, this doomed expedition limps forward."
+        ),
+        wait(2),
+        say(1, 0, false,
+            "The monastery contains nothing of value, a truth you yourself must know."
+        ),
+        say(1, 0, false,
+            "What is your aim, then? What is it you intend to show me?"
+        ),
+        wait(2),
+        say(1, 0, false,
+            "I was wrong about the girl. Astonishingly, she's nothing more than a lost idiot. \z
+             It is a lucky stroke that she fights capably. Some idiots are useful."
+        ),
+        say(1, 0, false,
+            "But I would not forsake the safety of my kingdom for a hundred such idiots. \z
+             You seem to feel differently."
+        ),
+        wait(2),
+        say(1, 0, false,
+            "Yet it is irrelevant. Your hold weakens by the hour. Shortly, I will end this expedition."
+        ),
+        say(1, 0, false,
+            "Though I have suffered you this insult, I will make one thing clear."
+        ),
+        wait(2),
+        say(1, 0, false,
+            "You are not Abelon."
+        ),
+        wait(2)
+    },
+    ['result'] = {
+        ['do'] = function(g)
+            g.signal = END_GAME
         end
     }
 }

@@ -477,11 +477,12 @@ function Battle:checkSceneTiles()
     local end_y, end_x = self:findSprite(sp)
     for k, v in pairs(self.scene_tiles) do
         if end_x == v[1] and end_y == v[2] and self.status[sp:getId()]['inbattle'] and self:isAlly(sp) then
-            local scene_id = k:gsub('%d','') .. '-' .. sp:getId()
+            local scene_id = k:gsub('%d','')
             if scene_id == 'escape' then
                 scene_id = sp:getId() .. '-escape'
                 self:escape(sp)
             else
+                scene_id = scene_id .. '-' .. sp:getId()
                 self.scene_tiles[k] = nil
             end
             self:suspend(self.id .. '-' .. scene_id)
@@ -581,7 +582,7 @@ function Battle:turnRefresh()
         if self:isAlly(self.participants[i]) then
             for j = 1, #stat['effects'] do
                 local attr = stat['effects'][j].buff.attr
-                if attr == 'stun' or attr == 'unconscious' or attr == 'busy' then
+                if attr == 'stun' or attr == 'unconscious' or attr == 'busy' or attr == 'injured' then
                     stat['acted'] = true
                 end
             end

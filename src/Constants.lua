@@ -32,7 +32,7 @@ BATTLE_SAVE    = 'battle_save.dat'
 CHAPTER_SAVE   = 'chapter_save.dat'
 RELOAD_BATTLE  = 0
 RELOAD_CHAPTER = 1
-END_CHAPTER    = 2
+END_GAME       = 2
 
 -- Font variables
 FONT            = 'VT323-Regular'
@@ -141,6 +141,7 @@ EFFECT_NAMES = {
     ['taunt']            = "Targeting Kath",
     ['stun']             = "Stunned",
     ['unconscious']      = "Unconscious",
+    ['injured']          = "Injured",
     ['busy']             = "Busy",
     ['noheal']           = "Can't Heal",
     ['observe']          = "Observing",
