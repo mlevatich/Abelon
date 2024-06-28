@@ -760,29 +760,33 @@ end
 -- Add effect to a sprite's status effects, maintaining rendering order and merging effects as needed
 function addStatus(stat, eff)
 
+    -- First merge the effect with an existing one if possible
     local dur = function(e) return e.duration end
     for i = 1, #stat do
         local st = stat[i]:copy()
         if eff.buff.attr == st.buff.attr then
-            if isSpecial(eff) then
-                if eff.buff.val ~= 0 then
-                    st.buff.val = st.buff.val + eff.buff.val
-                    if not st.buff.ty_fixed then
-                        st.buff.ty = ite(st.buff.val > 0, BUFF, DEBUFF)
-                    end
-                elseif dur(st) < dur(eff) then
-                    st.duration = dur(eff)
-                end
-            else
+
+            -- Effects with the same name, same duration, and a value, are merged by summing the values
+            if dur(st) == dur(eff) and eff.buff.val ~= 0 then
                 st.buff.val = st.buff.val + eff.buff.val
                 if not st.buff.ty_fixed then
                     st.buff.ty = ite(st.buff.val > 0, BUFF, DEBUFF)
                 end
+                stat[i] = st
+                return
+
+            -- Special effects with the same name and no value are merged by taking the longer duration
+            elseif isSpecial(eff) and eff.buff.val == 0 then
+                if dur(st) < dur(eff) then
+                    st.duration = dur(eff)
+                end
+                stat[i] = st
+                return
             end
-            stat[i] = st
-            return
         end
     end
+
+    -- If no merge, add the effect to the list, while maintaining rendering order
     for i = 1, #stat do
         local st = stat[i]
         if isSpecial(eff) and not isSpecial(st) then
@@ -1920,7 +1924,7 @@ skills = {
         nil, { { { 'agility', Scaling:new(-4) }, 2 } }
     ),
     ['the_howl'] = Skill:new('the_howl', 'The Howl', nil, nil,
-        "The Terror looses a blood-curdling howl, dealing %s Spell damage and \z
+        "The Terror looses a blood- curdling howl, dealing %s Spell damage and \z
          lowering victims' Force by %s for 1 turn.",
         'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
