@@ -22,6 +22,10 @@ function Scene:initialize(scene_id, player, game, returnToBattle)
     self.game = game
     self.returnToBattle = returnToBattle
 
+    if self.script == nil then
+        print("No scene with id: " .. scene_id)
+    end
+
     -- Retrieve scene participants from the map
     local getSp = function(sp) return self.game:getSprite(sp) end
     self.player = player
