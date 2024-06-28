@@ -1564,7 +1564,7 @@ skills = {
           { T, F, F, F, T },
           { T, T, T, T, T } }, SELF_CAST_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(2, 'affinity', 0.5) } }, { EXP_TAG_RECV }
+        { { 'reaction', Scaling:new(0, 'affinity', 0.7) } }, { EXP_TAG_RECV }
     ),
     ['cover_fire'] = Skill:new('cover_fire', 'Cover Fire', nil, nil,
         "Elaine lays down a hail of arrows around an ally position, granting \z
@@ -1716,13 +1716,7 @@ skills = {
         "Shanti empowers the assisted ally's Weapon attacks to heal them for %s %% of the damage dealt.",
         'Sorceress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 2 }, { 'Sorceress', 3 } },
-        { { F, F, F, T, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+        { { T } }, FREE_AIM(3), 2,
         nil, nil, nil, nil, nil, nil,
         { { 'lifesteal', Scaling:new(40, 'affinity', 10.0), BUFF } }, { EXP_TAG_ATTACK }
     ),
@@ -1737,7 +1731,7 @@ skills = {
           { T, T, F, F, F, T, T },
           { F, F, F, F, F, F, F },
           { F, T, F, T, F, T, F },
-          { T, F, F, T, F, F, T } }, SELF_CAST_AIM, 1,
+          { T, F, F, T, F, F, T } }, SELF_CAST_AIM, 2,
         nil, nil, nil, nil, nil, nil,
         { { 'ignea_efficiency', Scaling:new(-1, 'affinity', -0.2), BUFF } }, { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
     ),
@@ -1751,7 +1745,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 6,
         nil, nil, nil, nil, nil, nil,
         { { 'igneadrain', Scaling:new(0, 'affinity', 4.0), BUFF } }, { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
     ),
