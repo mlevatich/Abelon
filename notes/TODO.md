@@ -4,47 +4,17 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 ## Scene / Battle work
 
-- Stats after golem battle v1 (escaped turn 8, 2 turns bexp saved, pre-weapon xp nerf):
-    - Abelon: Lv.11, 52/240
-    - Kath: Lv.10, 11/200
-    - Elaine: Lv.7, 23/100
-    - Shanti: Lv.8, 128/130
-    - Ignea: collected all shards, Shanti/Kath/Abelon are down 2 but 2 shards in reserve.
+- Test/balance both 1-4 battles.
+    - Try fighting the terror with various different builds and strategies. Adjust him and beginning of fight as needed.
+    - Final battle needs more reinforcements from the sides on the final escape
+    
+- Points of interest and items to pick up in monastery approach. A key to open a door, a skill point scroll?
 
-- Abelon is pulling away from the pack in exp because he does so much damage. Lower the exp ratio from dealing damage a little bit.
-- Inspire should grant only 0.5 affinity. It is absurdly strong with Trust.
-- Add another ignea shard by the one accessible after the lester fight.
-- Shanti present ignea scene.
-- Allies move too quickly after attacking; if they are moving through a dead unit, the enemy does not have time to die and despawn before the ally runs into them
-- Agility effects and assists seem to apply twice: once for the first move, once for the second move. Including from the same assist. This doesn't really make sense. Come up with how it should work.
-- Given the enemy's next skill and their movement points, when hovering them display the union of their potential attack locations, except when they intersect their own movement squares.
-- Golem battle: When the reinforcements arrive, add a second golem at the finish to really up the pressure. There's an unused open tile to put it in.
-- Golem battle: Move Shanti's start tile down by one? Try it out. If you do, also move the satchel the same amount.
-- Golem battle: Move Shanti's satchel 2 tiles closer to the escape, but have the reinforcements spawn one turn earlier. Keeps the momentum and makes the battle still challenging if not aiming for the side objective.
-- Victory scene recovers 10 of Shanti's ignea if the pack was acquired.
-- 1-4 transition scene and prevent going north, evening. Allies TP to monastery appraoch with same talk dialogue. Logs also move at this point.
-- Place stone marker sprites, and golem getups
-
-- Lester battle
-    - Wolves + golems
-    - Lester unavailable (at least at first).
-- Implement win condition: Survive N turns (or just make it a rout map?)
-- Implement side objective: Heal Lester
-- Balance and polish
-
-- Final battle
-    - Battle opens with an absolute ton of wolves, arriving in waves. The terrors don't show up until right before its escape time
-    - “waves” of enemies with one or two turns of downtime, to reward slow-paced, setup playstyles
-    - Shanti is unavailable until she disables the ward, at which point the terrors appear and the escape objective opens up.
-- Final scene transition and return to title screen
-- Balance and polish
-
-- Points of interest and items to pick up in monastery approach
-- Re-script and choreograph dealing with elaine, all 1-3, 1-4 scenes. Wander behavior after scene ends.
+- (After script todos) Choreograph dealing with elaine, all 1-3, 1-4 scenes. Wander behavior after scene ends.
 
 ## Engine work
 
-- Currently, input stalls are imperfect because they only clear keyboard inputs at the beginning of the frame, but the keyboard state may be updated asynchronously in the middle of a frame. Should be a guard.
+- Currently, input stalls are imperfect because they only clear keyboard inputs at the beginning of the frame, but the keyboard state may be updated asynchronously in the middle of a frame. Should be a guard. Perhaps on the love keypress response function, don't do anything if there is an input stall?
 
 - Fix stuttering/flickering when walking around
     - Idea: measure the distance the camera moves on each frame, and as a function of time passed. Should be very consistent! If it is consistent, maybe things just arent always rendering in the same place?
@@ -93,7 +63,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
     - Medallion gets a use
     - Terror just out of sight
     - Elaine confusion at moved logs
-        - While she looks for tracks, chat with Shanti and Kath.
+        - While she looks for tracks, chat with Shanti and Kath. Shanti says, you don't think she tailed us here?
     - Talk options after Elaine confusion
     - POI4 (revealed by logs, no allies show up)
     - Crossroads re-group 2
