@@ -2437,6 +2437,7 @@ function Battle:planNextEnemyAction()
         local y, x = self:findSprite(e)
         local move = { ['cursor'] = { x, y }, ['sp'] = e }
         self.enemy_action = { self:stackBase(), move, {}, {}, move, {}, {} }
+        self:prepareSkill(e, nil, false, 0)
         return
     end
 
