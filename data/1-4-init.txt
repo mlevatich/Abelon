@@ -27,6 +27,7 @@
 
 ~~monastery-approach Canopied-Steps
 
+~igneashard5 67 3 R
 ~igneashard10 68 3.3 L
 ~igneashard6 75 44 L
 ~igneashard7 109 20 R
@@ -90,11 +91,11 @@
 
 ->elaine
 +Level 4
-+BonusAttrs affinity:4 force:3
++BonusAttrs force:7
 +Exp 64
 ->abelon
 +Level 2
-+BonusAttrs force:1 agility:1
++BonusAttrs affinity:2
 +Exp 150
 ->kath
 +Level 1
@@ -110,3 +111,14 @@
 ->lester
 +Level 1
 +BonusAttrs agility:1
+
+//->abelon
+//+BonusAttrs agility:500
+//->kath
+//+BonusAttrs agility:500
+//->elaine
+//+BonusAttrs agility:500
+//->shanti
+//+BonusAttrs agility:500
+//->lester
+//+BonusAttrs agility:500

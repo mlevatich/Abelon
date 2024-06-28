@@ -1075,11 +1075,23 @@ s14['final-battle-ally-turn-4'] = {
 }
 
 s14['final-battle-ally-turn-8'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror2', 'terror3'},
+    ['ids'] = {
+        'abelon', 'kath', 'elaine', 'shanti', 'lester',
+        'terror2', 'terror3', 'golem4', 'golem5', 'golem6', 'golem7'
+    },
     ['events'] = {
         teleport(6, 33.625, 33.1875, 'monastery-entrance'),
+        lookDir(6, RIGHT),
         teleport(7, 37.625, 33.1875, 'monastery-entrance'),
-        -- TODO: more reinforcements. 4 golems for shanti to blast away.
+        lookDir(7, LEFT),
+        teleport(8, 29.6875 + 2, 18.1875 + 6, 'monastery-entrance'),
+        teleport(9, 29.6875 + 2, 18.1875 + 3, 'monastery-entrance'),
+        lookDir(8, RIGHT),
+        lookDir(9, RIGHT),
+        teleport(10, 29.6875 + 9, 18.1875 + 6, 'monastery-entrance'),
+        teleport(11, 29.6875 + 9, 18.1875 + 3, 'monastery-entrance'),
+        lookDir(10, LEFT),
+        lookDir(11, LEFT),
         focus(4, 170),
         say(4, 1, false,
             "Done!"
@@ -1092,7 +1104,10 @@ s14['final-battle-ally-turn-8'] = {
         ['do'] = function(g)
             g.battle:joinBattle(g.sprites['terror2'], ENEMY, 4, 15, 1)
             g.battle:joinBattle(g.sprites['terror3'], ENEMY, 8, 15, 1)
-            -- TODO: more reinforcements. 4 golems for shanti to blast away.
+            g.battle:joinBattle(g.sprites['golem4'], ENEMY, 2, 6, 1)
+            g.battle:joinBattle(g.sprites['golem5'], ENEMY, 2, 3, 2)
+            g.battle:joinBattle(g.sprites['golem6'], ENEMY, 9, 6, 1)
+            g.battle:joinBattle(g.sprites['golem7'], ENEMY, 9, 3, 2)
             g.battle:addTiles({{ 1, 15 }, { 2, 15 }, { 3, 15 }, { 9, 15 }, { 10, 15 }})
             g.battle:addTiles({
                 { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 },
