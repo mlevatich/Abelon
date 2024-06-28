@@ -9,9 +9,9 @@ Discard: no
 Present:
 Level: 16
 Attributes: endurance:100 focus:10 force:30 affinity:0 reaction:20 agility:16
-AttributesAdept: endurance:75 focus:10 force:25 affinity:0 reaction:15 agility:15
-AttributesNormal: endurance:50 focus:10 force:20 affinity:0 reaction:10 agility:14
-AttributesNovice: endurance:30 focus:10 force:15 affinity:0 reaction:6 agility:12
+AttributesAdept: endurance:75 focus:10 force:25 affinity:0 reaction:16 agility:16
+AttributesNormal: endurance:50 focus:10 force:20 affinity:0 reaction:12 agility:14
+AttributesNovice: endurance:30 focus:10 force:15 affinity:0 reaction:8 agility:12
 Skilltrees:
 Skills: the_howl,the_eye,the_claws
 Description: An awful eldritch beast of the forest.
