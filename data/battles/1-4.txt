@@ -1,7 +1,7 @@
 // Battle stats
 
 TileOrigin: 34,2
-Allies: abelon:5,12 kath:6,10 elaine:7,12 shanti:8,11 lester:7,6
+Allies: abelon:5,11 kath:6,10 elaine:7,12 shanti:8,11 lester:7,6
 Enemies: wolf1:2,8,1 wolf2:7,9,1 wolf3:11,8,1 golem1:5,1,1 golem2:9,1,2
 Order: golem1,golem2,wolf1,wolf2,wolf3
 Wincon: turns
