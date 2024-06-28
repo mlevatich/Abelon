@@ -449,6 +449,47 @@ function mkIgneaShardPresentShanti(n)
     }
 end
 
+function mkIgneaShardPresentLester(n)
+    local s = 'igneashard' .. tostring(n)
+    return {
+        face(1, 2),
+        say(2, 3, false,
+            "Is that mine?"
+        ),
+        choice({
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "Yes",
+                ['events'] = {
+                    say(2, 3, false,
+                        "Thanks."
+                    )
+                },
+                ['result'] = {
+                    ['impressions'] = {0, 1},
+                    ['do'] = function(g)
+                        g.player:discard(s)
+                        local e = g:getSprite('lester')
+                        e.ignea = math.min(e.ignea + 3, e.attributes['focus'])
+                    end
+                }
+            },
+            {
+                ["guard"] = function(g) return true end,
+                ["response"] = "No",
+                ['events'] = {
+                    say(2, 3, false,
+                        "Figures."
+                    )
+                },
+                ['result'] = {
+
+                }
+            }
+        })
+    }
+end
+
 sitems['igneashard1-use'] = {
     ['ids'] = {'abelon', 'igneashard1'},
     ['events'] = mkIgneaShardUse(1),
@@ -650,5 +691,56 @@ sitems['igneashard9-present-shanti'] = {
 sitems['igneashard10-present-shanti'] = {
     ['ids'] = {'abelon', 'shanti'},
     ['events'] = mkIgneaShardPresentShanti(10),
+    ['result'] = {}
+}
+
+sitems['igneashard1-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(1),
+    ['result'] = {}
+}
+sitems['igneashard2-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(2),
+    ['result'] = {}
+}
+sitems['igneashard3-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(3),
+    ['result'] = {}
+}
+sitems['igneashard4-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(4),
+    ['result'] = {}
+}
+sitems['igneashard5-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(5),
+    ['result'] = {}
+}
+sitems['igneashard6-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(6),
+    ['result'] = {}
+}
+sitems['igneashard7-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(7),
+    ['result'] = {}
+}
+sitems['igneashard8-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(8),
+    ['result'] = {}
+}
+sitems['igneashard9-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(9),
+    ['result'] = {}
+}
+sitems['igneashard10-present-lester'] = {
+    ['ids'] = {'abelon', 'lester'},
+    ['events'] = mkIgneaShardPresentLester(10),
     ['result'] = {}
 }
