@@ -386,7 +386,7 @@ s14['ally-turn-4'] = {
 }
 
 s14['ally-turn-6'] = {
-    ['ids'] = {'kath', 'wolf8', 'wolf9', 'wolf10', 'wolf11'},
+    ['ids'] = {'kath', 'wolf8', 'alphawolf1', 'wolf10', 'wolf11'},
     ['events'] = {
         lookDir(2, RIGHT),
         lookDir(3, RIGHT),
@@ -411,8 +411,8 @@ s14['ally-turn-6'] = {
     },
     ['result'] = {
         ['do'] = function(g)
+            g.battle:joinBattle(g.sprites['alphawolf1'], ENEMY, 6, 13, 1)
             g.battle:joinBattle(g.sprites['wolf8'], ENEMY, 5, 13, 1)
-            g.battle:joinBattle(g.sprites['wolf9'], ENEMY, 6, 13, 1)
             g.battle:joinBattle(g.sprites['wolf10'], ENEMY, 7, 13, 1)
             g.battle:joinBattle(g.sprites['wolf11'], ENEMY, 8, 13, 1)
         end
@@ -420,7 +420,7 @@ s14['ally-turn-6'] = {
 }
 
 s14['ally-turn-8'] = {
-    ['ids'] = {'kath', 'wolf12', 'wolf13', 'wolf14', 'wolf15'},
+    ['ids'] = {'kath', 'wolf12', 'wolf13', 'wolf14', 'alphawolf2'},
     ['events'] = {
         lookDir(2, LEFT),
         lookDir(3, LEFT),
@@ -449,10 +449,10 @@ s14['ally-turn-8'] = {
     },
     ['result'] = {
         ['do'] = function(g)
-            g.battle:joinBattle(g.sprites['wolf12'], ENEMY, 12, 4, 1)
-            g.battle:joinBattle(g.sprites['wolf13'], ENEMY, 12, 5, 1)
+            g.battle:joinBattle(g.sprites['alphawolf2'], ENEMY, 12, 7, 1)
             g.battle:joinBattle(g.sprites['wolf14'], ENEMY, 12, 6, 1)
-            g.battle:joinBattle(g.sprites['wolf15'], ENEMY, 12, 7, 1)
+            g.battle:joinBattle(g.sprites['wolf13'], ENEMY, 12, 5, 1)
+            g.battle:joinBattle(g.sprites['wolf12'], ENEMY, 12, 4, 1)
         end
     }
 }
@@ -751,8 +751,8 @@ s14['lester-healed'] = {
 s14['victory'] = {
     ['ids'] = {
         'abelon', 'kath', 'elaine', 'shanti', 'lester', 'wolf1', 'wolf2', 'wolf3', 'golem1', 'golem2',
-        'wolf4', 'wolf5', 'wolf6', 'wolf7', 'wolf8', 'wolf9', 'wolf10', 'wolf11', 'wolf12', 'wolf13', 'wolf14',
-        'wolf15', 'wolf16', 'wolf17', 'wolf18', 'wolf19'
+        'wolf4', 'wolf5', 'wolf6', 'wolf7', 'wolf8', 'alphawolf1', 'wolf10', 'wolf11', 'wolf12', 'wolf13', 'wolf14',
+        'alphawolf2', 'wolf16', 'wolf17', 'wolf18', 'wolf19'
     },
     ['events'] = {
         focus(1, 170),
