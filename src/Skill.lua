@@ -1905,8 +1905,8 @@ skills = {
         nil, { { { 'force', Scaling:new(-5) }, 2 } }
     ),
     ['the_eye'] = Skill:new('the_eye', 'The Eye', nil, nil,
-        "The Terror levels its grotesque gaze at its enemies, paralyzing them with fear. \z
-         They are unable to act for 1 turn.",
+        "The Terror levels its paralyzing gaze. \z
+         Victims are unable to act for 1 turn, but the Terror loses 8 Agility for 1 turn.",
         'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
         { { F, F, F, F, F },
