@@ -320,7 +320,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 if sp_specials['flanking'] then
                     table.insert(ts_effects, { { 'reaction', Scaling:new(-8) }, 1 })
                 end
-                if sp_specials['poison_coat'] then
+                if sp_specials['poison_coat'] and dmg_type == WEAPON then
                     table.insert(ts_effects, { { 'force', Scaling:new(sp_specials['poison_coat']) }, 2 })
                 end
                 for j = 1, #ts_effects do
@@ -1344,8 +1344,8 @@ skills = {
 
     -- ELAINE
     ['hunting_shot'] = Skill:new('hunting_shot', 'Hunting Shot', nil, nil,
-        "Elaine shoots from close range as though hunting, \z
-         dealing %s Weapon damage.",
+        "Elaine shoots from close range, \z
+         dealing %s Weapon damage. Can target any enemy within 2 tiles.",
         'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { T } }, FREE_AIM(2), 0,
@@ -1847,7 +1847,7 @@ skills = {
         { { 'reaction', Scaling:new(0, 'affinity', 1.0) } }, { EXP_TAG_RECV }
     ),
     ['poison_coating'] = Skill:new('poison_coating', 'Poison Coating', nil, nil,
-        "Lester shares a deadly poison with nearby allies. Their attacks will \z
+        "Lester shares a deadly poison with allies. Their Weapon attacks will \z
          reduce enemy Force by %s for 2 turns.",
         'Naturalist', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Assassin', 2 }, { 'Naturalist', 2 } },
@@ -1855,7 +1855,7 @@ skills = {
           { T, F, T },
           { F, T, F } }, SELF_CAST_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'poison_coat', Scaling:new(0, 'affinity', -0.5), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
+        { { 'poison_coat', Scaling:new(0, 'affinity', -0.7), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
     ['escape'] = Skill:new('escape', 'Escape', nil, nil,
         "Lester identifies an escape route with Ignea-enhanced perception. Assisted allies \z
@@ -1931,7 +1931,7 @@ skills = {
           { F, T, T, T, T, T, F },
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 2,
-        ALLY, Scaling:new(10),
+        ALLY, Scaling:new(0, 'force', 0.5),
         nil, { { { 'force', Scaling:new(-5) }, 2 } }
     ),
     ['the_eye'] = Skill:new('the_eye', 'The Eye', nil, nil,
