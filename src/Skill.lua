@@ -1248,7 +1248,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
-        ENEMY, Scaling:new(0, 'force', 2.0), nil, nil, { UP, 2 }
+        ENEMY, Scaling:new(0, 'force', 1.5), nil, nil, { UP, 2 }
     ),
     ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep', nil, nil,
         "Kath swings an ignaeic crescent which deals %s \z
@@ -1424,7 +1424,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.5), nil, nil, { UP, 1 }
+        ENEMY, Scaling:new(0, 'force', 1.2), nil, nil, { UP, 1 }
     ),
     ['observe'] = Skill:new('observe', 'Observe', nil, nil,
         "Once per battle, Elaine chooses an ally to learn from, permanently \z
