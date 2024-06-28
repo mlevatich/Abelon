@@ -331,7 +331,8 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
                 -- Compute x/y displacement tile based on direction and grid state
                 -- Only record if displacement is non-zero
-                if #ts_displace > 0 then
+                local nomove = t_specials['busy'] or t_specials['unconscious'] or t_specials['injured']
+                if #ts_displace > 0 and not nomove then
                     
                     -- Compute actual direction
                     local dirs = { UP, RIGHT, DOWN, LEFT }
@@ -386,7 +387,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 end
 
                 -- Target turns to face the caster
-                if not dryrun then
+                if not dryrun and not nomove then
                     if abs(t.x - sp.x) > TILE_WIDTH / 2 then
                         t.dir = ite(t.x > sp.x, LEFT, RIGHT)
                     end
