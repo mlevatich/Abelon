@@ -1312,10 +1312,8 @@ skills = {
          dealing %s Weapon damage.",
         'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
-        { { F, F, F },
-          { T, F, F },
-          { F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(12, 'force', 0.5)
+        { { T } }, FREE_AIM(2), 0,
+        ENEMY, Scaling:new(10, 'force', 0.5)
     ),
     ['lay_traps'] = Skill:new('lay_traps', 'Lay Traps', nil, nil,
         "Elaine anticipates foes in her path and sets traps to reduce their \z
