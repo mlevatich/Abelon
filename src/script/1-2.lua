@@ -371,6 +371,7 @@ s12['battle'] = {
         ['do'] = function(g)
             local kath = g.sprites['kath']
             g.player:joinParty(kath)
+            kath:gainExp(50)
             g:launchBattle()
         end
     }
