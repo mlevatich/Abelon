@@ -166,10 +166,10 @@ function Player:mkTutorialBox(n, w, chars)
             local sd, sp = "Master", "no Ignea"
             if self:getGame().difficulty == ADEPT then
                 sd = "Adept"
-                sp = "25% of each ally's maximum Ignea"
+                sp = "10% of each ally's maximum Ignea"
             elseif self:getGame().difficulty == NORMAL then
                 sd = "Normal"
-                sp = "50% of each ally's maximum Ignea"
+                sp = "25% of each ally's maximum Ignea"
             elseif self:getGame().difficulty == NOVICE then
                 sd = "Novice"
                 sp = "50% of each ally's maximum Ignea"

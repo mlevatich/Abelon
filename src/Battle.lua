@@ -661,8 +661,12 @@ end
 function Battle:cleanupBattle()
 
     -- Restore ignea, health, and stats to all participants
-    -- Ignea is restored by 0% on master, 25% on adept, 50% on normal/novice
-    local ign_mul = 0.75 - (math.max(NORMAL, self.game.difficulty) * 0.25)
+    -- Ignea is restored by 0% on master, 10% on adept, 25% on normal, 50% on novice
+    local ign_mul = 0
+    local ign_min = ite(self.game.difficulty == MASTER, 0, 1)
+    if self.game.difficulty == ADEPT  then ign_mul = 0.10 end
+    if self.game.difficulty == NORMAL then ign_mul = 0.25 end
+    if self.game.difficulty == NOVICE then ign_mul = 0.50 end
     local affected = {}
     for i = 1, #self.participants do table.insert(affected, self.participants[i]) end
     for i = 1, #self.escaped do table.insert(affected, self.escaped[i]) end
@@ -670,7 +674,7 @@ function Battle:cleanupBattle()
         local sp = affected[i]
         if self:isAlly(sp) then
             local max_ign = sp.attributes['focus']
-            sp.ignea = math.min(sp.ignea + math.floor(max_ign * ign_mul), max_ign)
+            sp.ignea = math.min(sp.ignea + math.max(ign_min, math.floor(max_ign * ign_mul)), max_ign)
         else
             sp.attributes = sp.attrs_on[MASTER]
             sp.ignea = sp.attributes['focus']
