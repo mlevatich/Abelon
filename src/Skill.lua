@@ -319,6 +319,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 ts_effects = copy(ts_effects)
                 if sp_specials['flanking'] then
                     table.insert(ts_effects, { { 'reaction', Scaling:new(-8) }, 1 })
+                    table.insert(ts_effects, { { 'agility', Scaling:new(-4) }, 1 })
                 end
                 if sp_specials['poison_coat'] and dmg_type == WEAPON then
                     table.insert(ts_effects, { { 'force', Scaling:new(sp_specials['poison_coat']) }, 2 })
@@ -1064,8 +1065,8 @@ skills = {
         }, { EXP_TAG_ATTACK }
     ),
     ['flank'] = Skill:new('flank', 'Flank', nil, nil,
-        "Prepare to surround and overwhelm an enemy. Ally \z
-         attacks will reduce enemy Reaction by 8 for 1 turn.",
+        "Surround and overwhelm an enemy. Ally \z
+         attacks will reduce enemy Reaction by 8 and Agility by 4 for 1 turn.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 0 }, { 'Veteran', 4 }, { 'Executioner', 2 } },
         { { F, T, F },
