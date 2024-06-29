@@ -254,6 +254,12 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     dryrun_res[z]['flat'] = dealt
                     dryrun_res[z]['percent'] = dealt / pre_hp
 
+                    -- Band-aid for demo: Terror should de-prioritize Shanti when using Eldritch Gaze.
+                    -- (unless it can kill her)
+                    if self.id == 'the_eye' and t_specials['busy'] and dryrun_res[z]['percent'] ~= 1 then
+                        dryrun_res[z]['percent'] = 0
+                    end
+
                     -- Allies gain exp for damage dealt to enemies
                     -- and half exp for healing dealt to allies
                     if sp_team == ALLY and t_team == ENEMY and dealt > 0 then
