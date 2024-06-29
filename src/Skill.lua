@@ -1940,7 +1940,7 @@ skills = {
         nil, { { { 'force', Scaling:new(-5) }, 2 } }
     ),
     ['the_eye'] = Skill:new('the_eye', 'Eldritch Gaze', nil, nil,
-        "The Terror lowers its own Agility by 8 to level a haunting gaze. \z
+        "The Terror lowers its own Agility by 12 to level a haunting gaze. \z
          Deals %s Spell damage and stuns victims for 1 turn.",
         'Enemy', SPELL, KILL, SKILL_ANIM_NONE, -- RELATIVE
         {},
@@ -1950,7 +1950,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
         ALLY, Scaling(5),
-        { { { 'agility', Scaling:new(-8) }, 2 } }, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
+        { { { 'agility', Scaling:new(-12) }, 2 } }, { { { 'stun', Scaling:new(0), DEBUFF }, 2 } }
     ),
     ['the_claws'] = Skill:new('the_claws', 'Rake', nil, nil,
         "The Terror slashes wildly with its claws, dealing \z
