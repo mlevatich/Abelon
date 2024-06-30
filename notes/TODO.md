@@ -2,13 +2,11 @@
 
 An ordered list of programming, writing, and artistic objectives to be completed before shipping a closed alpha test of the first quarter of the game. Commit often!
 
-## Imminent
+## Battle gameplay
 
-- Camera goes to battle site for the battle start menu of the 1-4 final battle.
+- Test a full playthrough with different builds, and on different difficulties
 
-- Currently, input stalls are imperfect because they only clear keyboard inputs at the beginning of the frame, but the keyboard state may be updated asynchronously in the middle of a frame. Should be a guard. Perhaps on the love keypress response function, don't do anything if there is an input stall?
-
-- Implement performance improvements: https://www.dragonflydb.io/faq/love2d-performance-optimization
+## Out-of-battle gameplay / scenes
 
 - New items/usage/presentation:
     - Journal:
@@ -78,9 +76,13 @@ An ordered list of programming, writing, and artistic objectives to be completed
     - full attack with assist, deal no damage
     - enemy phase, attack deals no damage
 
-- Test a full playthrough with different builds, and on different difficulties
+- Triggers and placeholder scenes for the items in the script below
 
-## Script / Scene work
+- Choreograph entire demo based on complete script
+    - Including a pass over already-choreographed scenes
+    - Decide wander or idle behavior after scenes end.
+
+## Script
 
 - 1-3 script
     - Elaine pester (Elaine guidance 1)
@@ -142,10 +144,6 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 - Start making use of everyone’s impressions!
 
-- Choreograph entire demo based on complete script
-    - Including a pass over already-choreographed scenes
-    - Decide wander or idle behavior after scenes end.
-
 ## Audio
 
 - Text sfx for Shanti
@@ -161,7 +159,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 - All skill animation sfx
 
-## Art / Animation
+## Art and animation
 
 - Redo placeholder sprites on spritesheet
 - Redo placeholder portraits
