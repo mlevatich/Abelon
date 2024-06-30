@@ -855,6 +855,8 @@ s14['lester'] = {
 s14['final-battle'] = {
     ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'golem1', 'golem2', 'golem3'},
     ['events'] = {
+        focus(1, 170),
+        pan(0, -400, 340),
         changeMusic('Threat-Revealed'),
         -- TODO: party comes in, has a long discussion, chillin out while Shanti works.
         teleport(2, 1, 1, 'monastery-entrance'),
