@@ -100,6 +100,13 @@ end
 
 -- Record a keypress on this frame
 function love.keypressed(key)
+    if game and game.input_stall > 0 then
+        if game.input_stall_keys then
+            if find(game.input_stall_keys, key) then return end
+        else
+            return
+        end
+    end
     love.keyboard.keysPressed[key] = true
 end
 
