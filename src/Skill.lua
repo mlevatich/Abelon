@@ -234,6 +234,11 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                         dmg = 0
                     end
 
+                    -- If the target is warded, they take no spell damage (but can still be healed)
+                    if t_specials['ward'] and dmg_type == SPELL then
+                        dmg = math.min(dmg, 0)
+                    end
+
                     -- If this is a self hit or the target has guardian angel
                     -- they can't die
                     local min = 0
@@ -1307,7 +1312,7 @@ skills = {
         { { 'reaction', Scaling:new(0, 'reaction', 0.5) } }, { EXP_TAG_RECV }
     ),
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel', nil, nil,
-        "Kath casts a powerful protective ward. Allies on the assist cannot \z
+        "Kath consecrates the ground. Allies on the assist cannot \z
          drop below 1 health.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 4 } },
@@ -1334,9 +1339,21 @@ skills = {
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { 
-            { 'reaction', Scaling:new(0, 'affinity', 1.0) }
-        }, { EXP_TAG_RECV }
+        { { 'reaction', Scaling:new(0, 'affinity', 1.0) } }, { EXP_TAG_RECV }
+    ),
+    ['ward'] = Skill:new('ward', 'Spell Ward', nil, nil,
+        "Kath casts a protective ward, rendering assisted allies immune to all Spell damage.",
+        'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Hero', 0 }, { 'Defender', 4 }, { 'Cleric', 2 } },
+        { { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, T, F, F, F },
+          { F, F, T, F, T, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+        nil, nil, nil, nil, nil, nil,
+        { { 'ward', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
     ),
     ['peace'] = Skill:new('peace', 'Peace', nil, nil,
         "Kath casts a calming spell. Allies on the assist lose all Force but gain %s Affinity.",
