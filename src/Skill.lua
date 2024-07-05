@@ -324,7 +324,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                 end
                 ts_effects = copy(ts_effects)
                 if sp_specials['flanking'] then
-                    table.insert(ts_effects, { { 'reaction', Scaling:new(-8) }, 1 })
+                    table.insert(ts_effects, { { 'reaction', Scaling:new(sp_specials['flanking']) }, 1 })
                     table.insert(ts_effects, { { 'agility', Scaling:new(-4) }, 1 })
                 end
                 if sp_specials['poison_coat'] and dmg_type == WEAPON then
@@ -1072,14 +1072,14 @@ skills = {
     ),
     ['flank'] = Skill:new('flank', 'Flank', nil, nil,
         "Surround and overwhelm an enemy. Ally \z
-         attacks will reduce enemy Reaction by 8 and Agility by 4 for 1 turn.",
+         attacks will reduce enemy Reaction by %s and Agility by 4 for 1 turn.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 0 }, { 'Veteran', 4 }, { 'Executioner', 2 } },
         { { F, T, F },
           { T, F, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'flanking', Scaling:new(0), BUFF } }, { EXP_TAG_ATTACK }
+        { { 'flanking', Scaling:new(0, 'affinity', -0.5), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
     ["deaths_blessing"] = Skill:new('deaths_blessing', "Death's Blessing", nil, nil,
         "Cast a grim enchantment. Assisted allies who kill an enemy \z
@@ -1866,7 +1866,7 @@ skills = {
           { T, F, T },
           { F, T, F } }, SELF_CAST_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'poison_coat', Scaling:new(0, 'affinity', -0.7), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
+        { { 'poison_coat', Scaling:new(0, 'affinity', -0.6), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
     ['escape'] = Skill:new('escape', 'Escape', nil, nil,
         "Lester identifies an escape route with Ignea-enhanced perception. Assisted allies \z
