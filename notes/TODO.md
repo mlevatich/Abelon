@@ -4,27 +4,33 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 ## Fixes
 
-- Inversion -> 1 ignea
-- Trust -> Confidence feels too strong. Maybe confidence gives just 0.8 Force? Or it costs 1 ignea? Or both.
-- An extra golem on each side at the end of the final battle
-- Another alpha wolf or two in lester battle.
-- Poison coat can last just one turn
 - Lester is down for a moment (mid getup) at the beginning of his introduction scene
 - Shove shouldn't work when Lester is downed
 - Lester should remain in the down animation even when attacked
 - Add the cobblestone path in the monastery approach!
 - If kath has left the battlefield, forbearance should have no effect
-- "we will remain oblivious" -> "they will remain oblivious"
+
+- "We will remain oblivious" -> "They will remain oblivious"
 
 ## Battle gameplay
 
-- Test a full playthrough with different builds, and on different difficulties
-    - Tested: Abelon Force, Elaine Focus, Kath Reaction
+- Test: Master difficulty, Abelon Force/Executioner, Elaine Focus/Apprentice, Kath Reaction/Defender, Shanti Affinity/Lanternfaire
+    - Notes:
+        - First successful full demo playthrough with no crashes! Yay!
+        - The game is a bit too easy still on Master.
+        - "Smart" play didn't really involve using my new fancy skills too much. Pursuit, punish, judgement, inversion went mostly untouched. Also other fancy skills, like bleed vitality. Using situational abilities to gain an advantage, rather than the basic general purpose stuff, should feel rewarding!
+        - Conclusion: Slightly nerf some of the basic skills and lower some ignea costs of fancy skills to make fancy strategy more appealing/necessary. Particularly fancy skills that aren't just massive damage abilities.
+    - Changes:
+        - Give confidence an Ignea cost and lower its scaling.
+        - Minor buffs to fun skills.
+        - More golems in the final battle escape phase.
+        - Two wolves with the first terror, but terror has -5 reaction.
 
-- Results of first test:
-    - "Smart" play didn't really involve using my new fancy skills too much. Pursuit, punish, judgement, inversion went mostly untouched. Also other fancy skills, like bleed vitality. Using situational abilities to gain an advantage, rather than the basic general purpose stuff, should feel rewarding!
-    - The game is a bit too easy still on Master.
-    - Conclusion: Slightly nerf some of the basic skills and lower some ignea costs of fancy skills to make fancy strategy more appealing/necessary. Particularly fancy skills that aren't just massive damage abilities.
+- Test: Master difficulty, Abelon Focus/Demon, Elaine Reaction/Agility/Huntress, Kath Force/Hero, Shanti Focus/Sorceress
+    - Notes:
+
+- Test: Master difficulty, Abelon Affinity/Veteran, Elaine Force/Sniper, Kath Affinity/Cleric, Shanti Reaction/Lanternfaire
+    - Notes:
 
 ## Out-of-battle gameplay / scenes
 
