@@ -905,7 +905,7 @@ skills = {
          heals you for 100 %% of the damage.",
         'Demon', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
-        { { T } }, DIRECTIONAL_AIM, 2,
+        { { T } }, DIRECTIONAL_AIM, 1,
         ENEMY, Scaling:new(0, 'force', 1.0),
         nil, nil, nil,
         { ['lifesteal'] = 100 }
@@ -1152,15 +1152,15 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 1.2)
     ),
     ['thrust'] = Skill:new('thrust', 'Thrust', nil, nil,
-        "Kath throws his body into a thrust, dealing %s Weapon \z
-         damage in a line and raising his Force by 5 for 2 turns.",
+        "Kath deals %s Weapon \z
+         damage in a line and raises his Force by %s for 2 turns.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Hero', 3 }, { 'Defender', 3 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.0),
-        { { { 'force', Scaling:new(5) }, 2 } }, nil
+        { { { 'force', Scaling:new(0, 'force', 0.4) }, 2 } }, nil
     ),
     ['taunt'] = Skill:new('taunt', 'Taunt', nil, nil,
         "Taunt nearby enemies, so that their next \z
@@ -1323,7 +1323,7 @@ skills = {
     ),
     ['steadfast'] = Skill:new('steadfast', 'Steadfast', nil, nil,
         "Kath helps allies fortify their positions. Allies on the assist \z
-         lose all Agility but gain %s Reaction.",
+         gain %s Reaction.",
         'Defender', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Hero', 3 }, { 'Defender', 4 }, { 'Cleric', 2 } },
         { { F, F, F, F, F, F, F },
@@ -1335,8 +1335,7 @@ skills = {
           { F, F, F, T, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
         { 
-            { 'reaction', Scaling:new(0, 'affinity', 1.0) },
-            { 'agility', Scaling:new(-99) }
+            { 'reaction', Scaling:new(0, 'affinity', 1.0) }
         }, { EXP_TAG_RECV }
     ),
     ['peace'] = Skill:new('peace', 'Peace', nil, nil,
@@ -1348,7 +1347,7 @@ skills = {
           { F, T, F } }, SELF_CAST_AIM, 1,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'affinity', Scaling:new(0, 'affinity', 1.0) },
+            { 'affinity', Scaling:new(0, 'affinity', 1.3) },
             { 'force', Scaling:new(-99) }
         }, { EXP_TAG_ASSIST }
     ),
@@ -1400,7 +1399,7 @@ skills = {
         "Elaine rapidly fires arrows across the field to stagger foes, \z
          dealing %s Weapon damage to each target.",
         'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 2 } },
+        { { 'Huntress', 2 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, F, T, F, F },
           { F, T, F, F, F, T, F },
@@ -1468,14 +1467,14 @@ skills = {
     ),
     ['snare'] = Skill:new('snare', 'Snare', nil, nil,
         "Elaine swiftly lays a magical hunting snare, reducing a nearby foe's \z
-         Agility by %s for 1 turn.",
+         Agility by %s for 2 turns.",
         'Huntress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 3 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, F, F },
           { T, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'agility', Scaling:new(-4, 'agility', -0.5) }, 1 } }
+        nil, { { { 'agility', Scaling:new(0, 'agility', -0.5) }, 1 } }
     ),
     ['ignea_arrowheads'] = Skill:new('ignea_arrowheads', 'Ignea Arrowheads', nil, nil,
         "Elaine fashions activated Ignea arrowheads, \z
