@@ -216,6 +216,7 @@ function Battle:joinBattle(sp, team, t_x, t_y, prep_id)
         ['effects']  = {},
         ['alive']    = true,
         ['acted']    = false,
+        ['inbattle'] = true,
         ['attack']   = nil,
         ['assist']   = nil,
         ['prepare']  = nil
@@ -2059,8 +2060,8 @@ function Battle:update(keys, dt)
 
             -- Everyone gains experience
             local total_exp = {}
-            for i=1, #self.exp_sources do
-                for sp_id, e in pairs(self.exp_sources[i]) do
+            for j=1, #self.exp_sources do
+                for sp_id, e in pairs(self.exp_sources[j]) do
                     if total_exp[sp_id] ~= nil then
                         total_exp[sp_id] = total_exp[sp_id] + e
                     else

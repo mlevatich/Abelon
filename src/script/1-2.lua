@@ -373,6 +373,7 @@ s12['battle'] = {
             g.player:joinParty(kath)
             kath:gainExp(50)
             g:launchBattle()
+            g:getMap():enableExit('ma')
         end
     }
 }

@@ -8,7 +8,7 @@ s11['entry'] = {
         blackout(),
         wait(1),
         chaptercard(),
-        say(1, 0, false, 
+        say(1, 0, false,
             "..."
         ),
         say(1, 0, false, 
@@ -204,7 +204,10 @@ s11['see-camp'] = {
         focus(1, 100)
     },
     ['result'] = {
-        ['state'] = 'saw-camp'
+        ['state'] = 'saw-camp',
+        ['do'] = function(g)
+            g:getMap():blockExit('ma')
+        end
     }
 }
 

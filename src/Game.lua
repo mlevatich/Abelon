@@ -436,6 +436,7 @@ function Game:stallInputs(t, keys)
     self.input_stall = t
     self.input_stall_keys = keys
     self.scene_inputs = {}
+    love.keyboard.keysPressed = {}
 end
 
 function Game:launchBattle(id)

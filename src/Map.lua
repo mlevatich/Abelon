@@ -112,6 +112,14 @@ function Map:blockExit(label)
     end
 end
 
+function Map:enableExit(label)
+    for _,t in pairs(self.transitions) do
+        if t['label'] == label then
+            t['enabled'] = true
+        end
+    end
+end
+
 -- Retrieve sprites tied to this map
 function Map:getSprites()
     return self.sprites
