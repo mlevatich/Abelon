@@ -993,7 +993,7 @@ skills = {
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
          %s Spell damage (cannot kill you).",
         'Demon', SPELL, MANUAL, SKILL_ANIM_GRID,
-        { { 'Demon', 4 }, { 'Veteran', 0 }, { 'Executioner', 4 } },
+        { { 'Demon', 4 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
           { F, T, T, T, T, T, F },
@@ -1079,7 +1079,7 @@ skills = {
           { T, F, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'flanking', Scaling:new(0, 'affinity', -0.5), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
+        { { 'flanking', Scaling:new(0, 'affinity', -1), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
     ["deaths_blessing"] = Skill:new('deaths_blessing', "Death's Blessing", nil, nil,
         "Cast a grim enchantment. Assisted allies who kill an enemy \z
@@ -1153,13 +1153,14 @@ skills = {
     ),
     ['thrust'] = Skill:new('thrust', 'Thrust', nil, nil,
         "Kath throws his body into a thrust, dealing %s Weapon \z
-         damage to up to 2 enemies in a line.",
+         damage in a line and raising his Force by 5 for 2 turns.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Hero', 3 }, { 'Defender', 3 }, { 'Cleric', 0 } },
         { { F, T, F },
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.0)
+        ENEMY, Scaling:new(0, 'force', 1.0),
+        { { { 'force', Scaling:new(5) }, 2 } }, nil
     ),
     ['taunt'] = Skill:new('taunt', 'Taunt', nil, nil,
         "Taunt nearby enemies, so that their next \z
@@ -1203,7 +1204,7 @@ skills = {
         "Kath launches a thrust powered by lightning, dealing %s \z
          Spell damage to up to 4 enemies in a line.",
         'Hero', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Hero', 4 }, { 'Defender', 0 }, { 'Cleric', 3 } },
+        { { 'Hero', 4 }, { 'Defender', 0 }, { 'Cleric', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
@@ -1367,13 +1368,13 @@ skills = {
          Reaction by %s for 2 turns.",
         'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 0 } },
-        { { F, T, T, T, F },
+        { { F, F, F, F, F },
           { F, T, T, T, F },
           { F, T, T, T, F },
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, nil,
-        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.2) }, 2 } }
+        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.0) }, 2 } }
     ),
     ['butcher'] = Skill:new('butcher', 'Butcher', nil, nil,
         "Elaine expertly carves up an adjacent enemy with her hunting knife, \z
@@ -1381,7 +1382,7 @@ skills = {
         'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 4 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(30)
+        ENEMY, Scaling:new(35)
     ),
     ['precise_shot'] = Skill:new('precise_shot', 'Precise Shot', nil, nil,
         "Elaine takes careful aim to hit a faraway target with an arrow, \z
@@ -1579,7 +1580,7 @@ skills = {
     ),
     ['cover_fire'] = Skill:new('cover_fire', 'Cover Fire', nil, nil,
         "Elaine lays down a hail of arrows around an ally position, granting \z
-         them the advantage and %s Reaction and Force.",
+         them %s Force.",
         'Sniper', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
         { { F, F, F, T, F, F, F },
@@ -1590,10 +1591,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        {
-            { 'reaction', Scaling:new(0, 'affinity', 0.5) },
-            { 'force', Scaling:new(0, 'affinity', 0.5) },
-        }, { EXP_TAG_ATTACK, EXP_TAG_RECV }
+        { { 'force', Scaling:new(0, 'affinity', 0.5) } }, { EXP_TAG_ATTACK }
     ),
 
 
