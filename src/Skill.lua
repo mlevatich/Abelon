@@ -328,7 +328,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
                     table.insert(ts_effects, { { 'agility', Scaling:new(-4) }, 1 })
                 end
                 if sp_specials['poison_coat'] and dmg_type == WEAPON then
-                    table.insert(ts_effects, { { 'force', Scaling:new(sp_specials['poison_coat']) }, 2 })
+                    table.insert(ts_effects, { { 'force', Scaling:new(sp_specials['poison_coat']) }, 1 })
                 end
                 for j = 1, #ts_effects do
                     local b = mkBuff(sp_tmp_attrs, ts_effects[j][1], sp_specials)
@@ -1062,10 +1062,10 @@ skills = {
           { T, T, T, T, T },
           { T, T, F, T, T },
           { T, T, T, T, T },
-          { T, T, T, T, T } }, SELF_CAST_AIM, 0,
+          { T, T, T, T, T } }, SELF_CAST_AIM, 1,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'force',    Scaling:new(0,  'affinity', 1.0) },
+            { 'force',    Scaling:new(0,  'affinity', 0.8) },
             { 'reaction', Scaling:new(-6, 'affinity',   0) },
             { 'affinity', Scaling:new(-6, 'affinity',   0) }
         }, { EXP_TAG_ATTACK }
@@ -1268,9 +1268,9 @@ skills = {
         { { 'Hero', 4 }, { 'Defender', 5 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, T, F, F, F },
+          { F, F, T, T, T, F, F },
           { F, T, T, T, T, T, F },
-          { T, T, T, F, T, T, T },
+          { F, T, T, F, T, T, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         ENEMY, Scaling:new(0, 'force', 1.0),
@@ -1329,7 +1329,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F },
-          { F, F, F, F, F, F, F },
+          { F, F, T, F, T, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, T, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
@@ -1545,7 +1545,7 @@ skills = {
           { F, F, F, F, F },
           { T, F, F, F, T },
           { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
         { { 'inversion', Scaling:new(0), BUFF } },
         { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
@@ -1557,7 +1557,7 @@ skills = {
         { { 'Huntress', 2 }, { 'Apprentice', 4 }, { 'Sniper', 0 } },
         { { F, T, F },
           { T, F, T },
-          { F, T, F } }, SELF_CAST_AIM, 4,
+          { F, T, F } }, SELF_CAST_AIM, 3,
         nil, nil, nil, nil, nil, nil,
         {
             { 'agility', Scaling:new(0, 'affinity', 1.0) },
@@ -1659,14 +1659,14 @@ skills = {
         { { F, F, F },
           { F, F, T },
           { F, F, F } }, DIRECTIONAL_AIM, 3,
-        ENEMY, Scaling:new(10, 'focus', 1.0)
+        ENEMY, Scaling:new(3, 'focus', 1.5)
     ),
     ['berserk'] = Skill:new('berserk', 'Berserk', nil, nil,
         "Shanti enchants an enemy into a rage, \z
          raising its Force by %s and lowering its Reaction by %s for 2 turns.",
         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 2 }, { 'Sorceress', 4 } },
-        { { T } }, FREE_AIM(4), 2,
+        { { T } }, FREE_AIM(4), 1,
         ENEMY, nil,
         nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'force', -0.8) }, 2 } }
     ),
@@ -1692,7 +1692,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
         ENEMY, Scaling:new(0, 'force', 1.0),
         nil, { { { 'reaction', Scaling:new(0, 'focus', -0.5) }, 1 } },
         { DOWN, 3 }
@@ -1727,7 +1727,7 @@ skills = {
         "Shanti empowers the assisted ally's Weapon attacks to heal them for %s %% of the damage dealt.",
         'Sorceress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 2 }, { 'Sorceress', 3 } },
-        { { T } }, FREE_AIM(3), 2,
+        { { T } }, FREE_AIM(3), 1,
         nil, nil, nil, nil, nil, nil,
         { { 'lifesteal', Scaling:new(40, 'affinity', 10.0), BUFF } }, { EXP_TAG_ATTACK }
     ),
@@ -1859,7 +1859,7 @@ skills = {
     ),
     ['poison_coating'] = Skill:new('poison_coating', 'Poison Coating', nil, nil,
         "Lester shares a deadly poison with allies. Their Weapon attacks will \z
-         reduce enemy Force by %s for 2 turns.",
+         reduce enemy Force by %s for 1 turn.",
         'Naturalist', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Assassin', 2 }, { 'Naturalist', 2 } },
         { { F, T, F },

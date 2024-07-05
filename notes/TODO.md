@@ -7,6 +7,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
 - Inversion -> 1 ignea
 - Trust -> Confidence feels too strong. Maybe confidence gives just 0.8 Force? Or it costs 1 ignea? Or both.
 - An extra golem on each side at the end of the final battle
+- Another alpha wolf or two in lester battle.
 - Poison coat can last just one turn
 - Lester is down for a moment (mid getup) at the beginning of his introduction scene
 - Shove shouldn't work when Lester is downed
