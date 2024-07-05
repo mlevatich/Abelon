@@ -146,8 +146,8 @@ s14['battle'] = {
                 Effect:new(Buff:new('unconscious', 0, DEBUFF), math.huge),
                 Effect:new(Buff:new('noheal', 0, DEBUFF), math.huge)
             }
-            g.sprites['golem1'].health = 10
-            g.sprites['golem2'].health = 20
+            g.sprites['golem1'].health = 15
+            g.sprites['golem2'].health = 25
             lester.health = 1
             lester:changeBehavior('down')
             g:saveBattle()
@@ -1064,14 +1064,19 @@ s14['final-battle-lester-escape'] = {
 }
 
 s14['final-battle-ally-turn-4'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror1'},
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror1', 'wolf3', 'wolf4'},
     ['events'] = {
-        teleport(6, 35.625, 33.1875, 'monastery-entrance')
+        teleport(6, 35.625, 33.1875, 'monastery-entrance'),
+        teleport(7, 35, 34, 'monastery-entrance'),
+        lookDir(7, RIGHT),
+        teleport(8, 37, 34, 'monastery-entrance'),
+        lookDir(8, LEFT)
     },
     ['result'] = {
         ['do'] = function(g)
             g.battle:joinBattle(g.sprites['terror1'], ENEMY, 6, 15, 1)
-            g.battle:addTiles({{ 5, 15 }, { 7, 15 }})
+            g.battle:joinBattle(g.sprites['wolf3'], ENEMY, 5, 15, 1)
+            g.battle:joinBattle(g.sprites['wolf4'], ENEMY, 7, 15, 1)
         end
     }
 }
@@ -1079,7 +1084,7 @@ s14['final-battle-ally-turn-4'] = {
 s14['final-battle-ally-turn-8'] = {
     ['ids'] = {
         'abelon', 'kath', 'elaine', 'shanti', 'lester',
-        'terror2', 'terror3', 'golem4', 'golem5', 'golem6', 'golem7'
+        'terror2', 'terror3', 'golem4', 'golem5', 'golem6', 'golem7', 'golem8', 'golem9'
     },
     ['events'] = {
         teleport(6, 33.625, 33.1875, 'monastery-entrance'),
@@ -1087,13 +1092,17 @@ s14['final-battle-ally-turn-8'] = {
         teleport(7, 37.625, 33.1875, 'monastery-entrance'),
         lookDir(7, LEFT),
         teleport(8, 29.6875 + 2, 18.1875 + 6, 'monastery-entrance'),
-        teleport(9, 29.6875 + 2, 18.1875 + 3, 'monastery-entrance'),
+        teleport(9, 29.6875 + 2, 18.1875 + 4, 'monastery-entrance'),
         lookDir(8, RIGHT),
         lookDir(9, RIGHT),
         teleport(10, 29.6875 + 9, 18.1875 + 6, 'monastery-entrance'),
-        teleport(11, 29.6875 + 9, 18.1875 + 3, 'monastery-entrance'),
+        teleport(11, 29.6875 + 9, 18.1875 + 4, 'monastery-entrance'),
         lookDir(10, LEFT),
         lookDir(11, LEFT),
+        teleport(12, 29.6875 + 3, 18.1875 + 2, 'monastery-entrance'),
+        teleport(13, 29.6875 + 8, 18.1875 + 2, 'monastery-entrance'),
+        lookDir(12, RIGHT),
+        lookDir(13, LEFT),
         focus(4, 170),
         say(4, 1, false,
             "Done!"
@@ -1107,9 +1116,11 @@ s14['final-battle-ally-turn-8'] = {
             g.battle:joinBattle(g.sprites['terror2'], ENEMY, 4, 15, 1)
             g.battle:joinBattle(g.sprites['terror3'], ENEMY, 8, 15, 1)
             g.battle:joinBattle(g.sprites['golem4'], ENEMY, 2, 6, 1)
-            g.battle:joinBattle(g.sprites['golem5'], ENEMY, 2, 3, 2)
+            g.battle:joinBattle(g.sprites['golem5'], ENEMY, 2, 4, 2)
             g.battle:joinBattle(g.sprites['golem6'], ENEMY, 9, 6, 1)
-            g.battle:joinBattle(g.sprites['golem7'], ENEMY, 9, 3, 2)
+            g.battle:joinBattle(g.sprites['golem7'], ENEMY, 9, 4, 2)
+            g.battle:joinBattle(g.sprites['golem8'], ENEMY, 3, 2, 1)
+            g.battle:joinBattle(g.sprites['golem9'], ENEMY, 8, 2, 1)
             g.battle:addTiles({{ 1, 15 }, { 2, 15 }, { 3, 15 }, { 9, 15 }, { 10, 15 }})
             g.battle:addTiles({
                 { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 },
