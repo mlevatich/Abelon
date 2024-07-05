@@ -137,6 +137,7 @@ str_to_icon = {
 
 EFFECT_NAMES = {
     ['guardian_angel']   = "Resist Death",
+    ['ward']             = "Spell Immune",
     ['forbearance']      = "Kath's Shield",
     ['taunt']            = "Targeting Kath",
     ['stun']             = "Stunned",
