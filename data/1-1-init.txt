@@ -67,6 +67,7 @@
 
 ~alphawolf1 1 1 L
 ~alphawolf2 1 1 L
+~alphawolf3 1 1 L
 ~wolf2 1 1 L
 ~wolf3 1 1 L
 ~wolf4 1 1 L

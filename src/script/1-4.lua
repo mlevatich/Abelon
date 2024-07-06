@@ -147,7 +147,7 @@ s14['battle'] = {
                 Effect:new(Buff:new('noheal', 0, DEBUFF), math.huge)
             }
             g.sprites['golem1'].health = 15
-            g.sprites['golem2'].health = 25
+            g.sprites['golem2'].health = 40
             lester.health = 1
             lester:changeBehavior('down')
             g:saveBattle()
@@ -420,7 +420,7 @@ s14['ally-turn-6'] = {
 }
 
 s14['ally-turn-8'] = {
-    ['ids'] = {'kath', 'wolf12', 'wolf13', 'wolf14', 'alphawolf2'},
+    ['ids'] = {'kath', 'wolf12', 'alphawolf3', 'wolf14', 'alphawolf2'},
     ['events'] = {
         lookDir(2, LEFT),
         lookDir(3, LEFT),
@@ -451,7 +451,7 @@ s14['ally-turn-8'] = {
         ['do'] = function(g)
             g.battle:joinBattle(g.sprites['alphawolf2'], ENEMY, 12, 7, 1)
             g.battle:joinBattle(g.sprites['wolf14'], ENEMY, 12, 6, 1)
-            g.battle:joinBattle(g.sprites['wolf13'], ENEMY, 12, 5, 1)
+            g.battle:joinBattle(g.sprites['alphawolf3'], ENEMY, 12, 5, 1)
             g.battle:joinBattle(g.sprites['wolf12'], ENEMY, 12, 4, 1)
         end
     }
@@ -751,7 +751,7 @@ s14['lester-healed'] = {
 s14['victory'] = {
     ['ids'] = {
         'abelon', 'kath', 'elaine', 'shanti', 'lester', 'wolf1', 'wolf2', 'wolf3', 'golem1', 'golem2',
-        'wolf4', 'wolf5', 'wolf6', 'wolf7', 'wolf8', 'alphawolf1', 'wolf10', 'wolf11', 'wolf12', 'wolf13', 'wolf14',
+        'wolf4', 'wolf5', 'wolf6', 'wolf7', 'wolf8', 'alphawolf1', 'wolf10', 'wolf11', 'wolf12', 'alphawolf3', 'wolf14',
         'alphawolf2', 'wolf16', 'wolf17', 'wolf18', 'wolf19'
     },
     ['events'] = {

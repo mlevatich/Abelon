@@ -46,6 +46,7 @@
 ~campclutter2 1 1 L
 ~alphawolf1 1 1 L
 ~alphawolf2 1 1 L
+~alphawolf3 1 1 L
 ~wolf1 1 1 L
 ~wolf2 1 1 L
 ~wolf3 1 1 L
