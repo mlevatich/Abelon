@@ -1064,19 +1064,17 @@ s14['final-battle-lester-escape'] = {
 }
 
 s14['final-battle-ally-turn-4'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror1', 'wolf3', 'wolf4'},
+    ['ids'] = {'abelon', 'kath', 'elaine', 'shanti', 'lester', 'terror1', 'wolf3'},
     ['events'] = {
         teleport(6, 35.625, 33.1875, 'monastery-entrance'),
         teleport(7, 35, 34, 'monastery-entrance'),
-        lookDir(7, RIGHT),
-        teleport(8, 37, 34, 'monastery-entrance'),
-        lookDir(8, LEFT)
+        lookDir(7, RIGHT)
     },
     ['result'] = {
         ['do'] = function(g)
             g.battle:joinBattle(g.sprites['terror1'], ENEMY, 6, 15, 1)
-            g.battle:joinBattle(g.sprites['wolf3'], ENEMY, 5, 15, 1)
-            g.battle:joinBattle(g.sprites['wolf4'], ENEMY, 7, 15, 1)
+            g.battle:joinBattle(g.sprites['wolf3'], ENEMY, 7, 15, 1)
+            g.battle:addTiles({{5, 15}})
         end
     }
 }

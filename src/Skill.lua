@@ -1294,10 +1294,9 @@ skills = {
           { F, T, T, T, T, T, F },
           { F, T, T, F, T, T, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
         ENEMY, Scaling:new(0, 'force', 1.0),
         { { { 'reaction', Scaling:new(5) }, 1 } }, nil
-
     ),
     ['forbearance'] = Skill:new('forbearance', 'Forbearance', nil, nil,
         "Kath receives all attacks meant for an adjacent assisted ally.",
