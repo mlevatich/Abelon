@@ -1432,7 +1432,7 @@ skills = {
         "Elaine rapidly fires arrows across the field to stagger foes, \z
          dealing %s Weapon damage to each target.",
         'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Huntress', 2 }, { 'Apprentice', 0 }, { 'Sniper', 1 } },
+        { { 'Huntress', 1 }, { 'Apprentice', 0 }, { 'Sniper', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, F, T, F, F },
           { F, T, F, F, F, T, F },
