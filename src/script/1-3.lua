@@ -960,7 +960,7 @@ s13['south-transition'] = {
                         "The traitor, for one... Or perhaps I was wrong. It is no matter."
                     ),
                     say(1, 0, true,
-                        "Worse is the nightmarish creature. We will remain oblivious, unless..."
+                        "Worse is the nightmarish creature. They will remain oblivious, unless..."
                     ),
                     choice({
                         {
