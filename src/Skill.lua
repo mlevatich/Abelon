@@ -189,10 +189,12 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
         and sp_team == ENEMY then
             local s_kath = status['kath']
             local loc = s_kath['location']
-            t = s_kath['sp']
-            t_stat = s_kath['effects']
-            t_ass = grid[loc[2]][loc[1]].assists
-            t_tmp_attrs, t_helpers, t_specials = mkTmpAttrs(t.attributes, t_stat, t_ass)
+            if s_kath['inbattle'] then
+                t = s_kath['sp']
+                t_stat = s_kath['effects']
+                t_ass = grid[loc[2]][loc[1]].assists
+                t_tmp_attrs, t_helpers, t_specials = mkTmpAttrs(t.attributes, t_stat, t_ass)
+            end
         end
 
         -- Only hit targets passing the team filter
