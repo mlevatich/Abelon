@@ -1094,7 +1094,7 @@ skills = {
         { { 'Demon', 3 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
         { { F, F, F },
           { F, F, T },
-          { F, F, F } }, DIRECTIONAL_AIM, 1,
+          { F, F, F } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'death_blessing', Scaling:new(0, 'affinity', 1.0), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
@@ -1349,11 +1349,11 @@ skills = {
         { { 'Hero', 3 }, { 'Defender', 4 }, { 'Cleric', 2 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, T, F, F, F },
-          { F, F, F, T, F, F, F },
           { F, F, T, F, T, F, F },
-          { F, F, F, T, F, F, F },
-          { F, F, F, T, F, F, F } }, DIRECTIONAL_AIM, 1,
+          { F, F, T, F, T, F, F },
+          { F, F, F, F, F, F, F },
+          { F, F, T, F, T, F, F },
+          { F, F, T, F, T, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
         { { 'reaction', Scaling:new(0, 'affinity', 1.0) } }, { EXP_TAG_RECV }
     ),
@@ -1460,7 +1460,7 @@ skills = {
         "Elaine aims an impossible shot after a heavy draw, \z
          dealing %s Weapon damage and pushing the target 1 tile.",
         'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Huntress', 0 }, { 'Apprentice', 0 }, { 'Sniper', 4 } },
+        { { 'Huntress', 2 }, { 'Apprentice', 0 }, { 'Sniper', 5 } },
         { { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1547,7 +1547,7 @@ skills = {
         "Elaine enchants an arrow to hunt down a target, firing at any foe \z
          within 8 tiles to deal %s Spell damage.",
         'Sniper', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 3 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 3 }, { 'Sniper', 3 } },
         { { T } }, FREE_AIM(8), 3,
         ENEMY, Scaling:new(20, 'force', 0.5)
     ),
@@ -1848,7 +1848,7 @@ skills = {
          won't be directly targeted on the next enemy phase.",
         'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Assassin', 4 }, { 'Naturalist', 3 } },
-        { { T } }, SELF_CAST_AIM, 1,
+        { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
         nil, { { { 'agility', Scaling:new(8) }, 2 }, { { 'hidden', Scaling:new(0), BUFF }, 1 } }
     ),
