@@ -1126,7 +1126,7 @@ skills = {
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 0.8),
-        { { { 'reaction', Scaling:new(2) }, 1 } }, nil
+        { { { 'reaction', Scaling:new(3) }, 1 } }, nil
     ),
     ['stun'] = Skill:new('stun', 'Stun', nil, nil,
         "A blunt lance blow. Deals %s Weapon damage. If Kath's \z
@@ -1247,7 +1247,7 @@ skills = {
     ['rescue'] = Skill:new('rescue', 'Rescue', nil, nil,
         "Kath pulls an ally to him, restoring %s health and granting them %s Reaction for 1 turn.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 3 } },
+        { { 'Hero', 3 }, { 'Defender', 0 }, { 'Cleric', 3 } },
         { { F, F, T, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F },
@@ -1533,14 +1533,14 @@ skills = {
         "Elaine primes a chunk of Ignea to explode and ties it to an arrow, \z
          dealing %s Spell damage to all foes hit.",
         'Apprentice', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 2 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 3 }, { 'Sniper', 3 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
         ENEMY, Scaling:new(0, 'force', 1.2)
     ),
     ['seeking_arrow'] = Skill:new('seeking_arrow', 'Seeking Arrow', nil, nil,
@@ -1586,7 +1586,7 @@ skills = {
         "Elaine creates a field of emotional distortion. \z
          Allies on the assist swap their Force and Affinity when using skills.",
         'Apprentice', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Huntress', 0 }, { 'Apprentice', 3 }, { 'Sniper', 0 } },
+        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, F, T, F, F },
           { F, F, F, F, F },
           { T, F, F, F, T },
