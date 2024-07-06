@@ -739,7 +739,7 @@ s14['lester-healed'] = {
             local stat = g.battle.status['lester']
             for i=1, #stat['effects'] do
                 if stat['effects'][i].buff.attr == 'unconscious' then
-                    stat['effects'][i] = Effect:new(Buff:new('stun', 0, DEBUFF), math.huge)
+                    stat['effects'][i] = Effect:new(Buff:new('injured', 0, DEBUFF), math.huge)
                     break
                 end
             end
