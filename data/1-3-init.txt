@@ -30,14 +30,15 @@
 ~~monastery-approach Canopied-Steps
 
 //~abelon 16 50 R P
-~igneashard3 9 71 R
-~igneashard4 52 76 L
+//~igneashard3 9 71 R
+//~igneashard4 52 76 L
 ~igneashard5 67 3 R
 ~igneashard10 68 3.3 L
 ~igneashard6 75 44 L
 ~igneashard7 109 20 R
 ~igneashard8 107 29 L
 ~igneashard9 104 53 R
+~abelon 17 50 R P
 
 ~~monastery-entrance Canopied-Steps
 
@@ -52,7 +53,7 @@
 ~marker8 55 34.7 R
 ~marker9 61 28.7 L
 ~shanti 52 27 R
-~abelon 66 32 R P
+//~abelon 66 32 R P
 
 ~~waiting-room Canopied-Steps
 
@@ -97,25 +98,17 @@
 ->Party kath,elaine
 ->Day
 ->Block wf
-->Inventory journal,medallion,scroll
+->Inventory journal,medallion,scroll,igneashard1,igneashard2,igneashard3,igneashard4
 
-->Seen 1-3-battle
 ->elaine
-+Level 3
-+BonusAttrs reaction:5
-+Exp 30
-->abelon
 +Level 2
-+BonusAttrs affinity:2
-->kath
++BonusAttrs focus:2 force:1
++Exp 31
+->abelon
 +Level 1
 +BonusAttrs force:1
-
-->abelon
-+BonusAttrs agility:500
++Exp 57
 ->kath
-+BonusAttrs agility:500
-->elaine
-+BonusAttrs agility:500
-->shanti
-+BonusAttrs agility:500
++Level 1
++BonusAttrs reaction:1
++Exp 8

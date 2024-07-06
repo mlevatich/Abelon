@@ -5,31 +5,39 @@ An ordered list of programming, writing, and artistic objectives to be completed
 ## Fixes
 
 - Lester is down for a moment (mid getup) at the beginning of his introduction scene
-- Shove shouldn't work when Lester is downed
 - Lester should remain in the down animation even when attacked
 - Add the cobblestone path in the monastery approach!
-- If kath has left the battlefield, forbearance should have no effect
-
-- "We will remain oblivious" -> "They will remain oblivious"
 
 ## Battle gameplay
 
+- Use 1-3-init for testing.
+
 - Test: Master difficulty, Abelon Force/Executioner, Elaine Focus/Apprentice, Kath Reaction/Defender, Shanti Affinity/Lanternfaire
     - Notes:
-        - First successful full demo playthrough with no crashes! Yay!
-        - The game is a bit too easy still on Master.
-        - "Smart" play didn't really involve using my new fancy skills too much. Pursuit, punish, judgement, inversion went mostly untouched. Also other fancy skills, like bleed vitality. Using situational abilities to gain an advantage, rather than the basic general purpose stuff, should feel rewarding!
-        - Conclusion: Slightly nerf some of the basic skills and lower some ignea costs of fancy skills to make fancy strategy more appealing/necessary. Particularly fancy skills that aren't just massive damage abilities.
-    - Changes:
-        - Give confidence an Ignea cost and lower its scaling.
-        - Minor buffs to fun skills.
-        - More golems in the final battle escape phase.
-        - Two wolves with the first terror, but terror has -5 reaction.
+        - Game is beatable with good strategy and running everyone out of ignea. Difficulty is good, however strategy relied heavily on abuse of exploding shot. Other fun skills went unused, e.g. Death's Blessing, Pursuit, Steadfast, Piercing arrow, inversion.
+        - Defender Kath felt not that useful outside of invigorate, because with exploding shot just killing everything, not a lot of tanking to do. Caution, Riposte, Stun, and Taunt do have their uses though. Without a proper tank test, reaction assists suffer. Final battle is too much of a DPS check for defensive turns to be useful (e.g. get stunned by eldritch gaze and then buff everyone up to tank claws).
+        - Changes:
+            - Raised cost of exploding shot, buffed steadfast, death's blessing.
+            - Shuffled skill trees around to make capstone skills achievable for Abelon and Kath in 3 levels.
+            - Other minor skill balancing
+            - Delete one of the wolves accompanying the terror in the final battle.
 
-- Test: Master difficulty, Abelon Focus/Demon, Elaine Reaction/Agility/Huntress, Kath Force/Hero, Shanti Focus/Sorceress
+- Test: Master difficulty, Abelon Affinity/Veteran, Elaine Reaction/Agility/Huntress, Kath Force/Hero, Shanti Focus/Sorceress
     - Notes:
 
-- Test: Master difficulty, Abelon Affinity/Veteran, Elaine Force/Sniper, Kath Affinity/Cleric, Shanti Reaction/Lanternfaire
+- Test: Master difficulty, Abelon Focus/Demon, Elaine Force/Sniper, Kath Affinity/Cleric, Shanti Reaction/Lanternfaire
+    - Notes:
+
+- Test: Master difficulty, Abelon Endurance/Demon/Veteran, Elaine Affinity/Sniper/Apprentice, Kath Focus/Defender, Shanti Force/Lanternfaire
+    - Notes:
+
+- Test: Master difficulty, All Force
+    - Notes:
+
+- Test: Master difficulty, All Affinity
+    - Notes:
+
+- Test: Final battle, Master difficulty, Worst Capstones (Butcher, Gambit, Great Sweep)
     - Notes:
 
 ## Out-of-battle gameplay / scenes
@@ -48,9 +56,9 @@ An ordered list of programming, writing, and artistic objectives to be completed
     - Ornate dagger
         - Basic description on use
         - Present to Lester (gain skill point)
-    - Old buckler
+    - Spent ignea
         - Basic description on use
-        - Present to Kath (gain skill point)
+        - Present to Shanti (gain skill point)
     - Ritual slab
         - Basic description on use
         - Present to Shanti (lore and favor)
