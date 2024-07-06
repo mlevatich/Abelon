@@ -12,6 +12,6 @@ Attributes: endurance:6 focus:0 force:8 affinity:9 reaction:0 agility:10
 AttributesAdept:
 AttributesNormal:
 AttributesNovice:
-Skilltrees: Huntress:terrain_survey,hunting_shot,lay_traps,camouflage,snare,butcher Apprentice:observe,ignea_arrowheads,wind_blast,exploding_shot,inversion,flight Sniper:precise_shot,cover_fire,farsight,volley,seeking_arrow,piercing_arrow,deadeye
+Skilltrees: Huntress:terrain_survey,hunting_shot,lay_traps,camouflage,weak_point,snare,butcher Apprentice:observe,ignea_arrowheads,wind_blast,exploding_shot,inversion,flight Sniper:precise_shot,cover_fire,farsight,volley,seeking_arrow,piercing_arrow,deadeye
 Skills: observe,precise_shot,terrain_survey
 Description: The huntress Elaine. EOS

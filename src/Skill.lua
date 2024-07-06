@@ -1040,7 +1040,7 @@ skills = {
     ),
     ['inspire'] = Skill:new('inspire', 'Inspire', nil, nil,
         "Inspire an ally with a courageous cry. They gain %s \z
-         Force, and %s Reaction and Affinity.",
+         Force, and %s Reaction.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 1 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { F, F, F, T, F, F, F },
@@ -1053,8 +1053,7 @@ skills = {
         nil, nil, nil, nil, nil, nil,
         {
             { 'force',    Scaling:new(0, 'affinity', 1.0) },
-            { 'reaction', Scaling:new(0, 'affinity', 0.5) },
-            { 'affinity', Scaling:new(0, 'affinity', 0.5) }
+            { 'reaction', Scaling:new(0, 'affinity', 0.5) }
         }, { EXP_TAG_ATTACK, EXP_TAG_RECV, EXP_TAG_ASSIST }
     ),
     ['confidence'] = Skill:new('confidence', 'Confidence', nil, nil,
@@ -1096,6 +1095,21 @@ skills = {
           { F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
         { { 'death_blessing', Scaling:new(0, 'affinity', 1.0), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
+    ),
+    ['leadership'] = Skill:new('leadership', 'Leadership', nil, nil,
+        "Take command and lead your knights. Assisted allies gain %s Force and Affinity.",
+        'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Demon', 3 }, { 'Veteran', 5 }, { 'Executioner', 3 } },
+        { { F, T, T, T, F },
+          { T, T, T, T, T },
+          { T, T, F, T, T },
+          { T, T, T, T, T },
+          { F, T, T, T, F } }, SELF_CAST_AIM, 5,
+        nil, nil, nil, nil, nil, nil,
+        {
+            { 'affinity', Scaling:new(0, 'affinity', 1.0) },
+            { 'force',    Scaling:new(0, 'affinity', 1.0) }
+        }, { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
     ),
 
 
@@ -1543,6 +1557,19 @@ skills = {
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         { { 'agility', Scaling:new(0, 'affinity', 0.5) } }, { EXP_TAG_MOVE }
+    ),
+    ['weak_point'] = Skill:new('weak_point', 'Weak Point', nil, nil,
+        "Elaine reveals the enemy's weaknesses with a spell. Allies on the assist \z
+         gain %s Force.",
+        'Huntress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Huntress', 3 }, { 'Apprentice', 1 }, { 'Sniper', 2 } },
+        { { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, T, F, F, F },
+          { F, F, F, F, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+        nil, nil, nil, nil, nil, nil,
+        { { 'force', Scaling:new(0, 'affinity', 1) } }, { EXP_TAG_MOVE }
     ),
     ['camouflage'] = Skill:new('camouflage', 'Camouflage', nil, nil,
         "Elaine builds a makeshift camouflaged shelter. The assisted ally \z
