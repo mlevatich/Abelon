@@ -1587,11 +1587,7 @@ skills = {
          Allies on the assist swap their Force and Affinity when using skills.",
         'Apprentice', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
-        { { F, F, T, F, F },
-          { F, F, F, F, F },
-          { T, F, F, F, T },
-          { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
+        { { T } }, FREE_AIM(3), 1,
         nil, nil, nil, nil, nil, nil,
         { { 'inversion', Scaling:new(0), BUFF } },
         { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
