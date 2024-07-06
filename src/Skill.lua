@@ -921,7 +921,7 @@ skills = {
         "Attack relentlessly. Deals %s Weapon damage to an adjacent enemy, \z
          but lowers your Affinity and Agility to 0 for 1 turn.",
         'Veteran', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Demon', 3 }, { 'Veteran', 5 }, { 'Executioner', 3 } },
+        { { 'Demon', 3 }, { 'Veteran', 5 }, { 'Executioner', 2 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(40),
         { { { 'affinity', Scaling:new(-99) }, 1 }, 
@@ -1000,7 +1000,7 @@ skills = {
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
          %s Spell damage (cannot kill you).",
         'Demon', SPELL, MANUAL, SKILL_ANIM_GRID,
-        { { 'Demon', 4 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
+        { { 'Demon', 4 }, { 'Veteran', 0 }, { 'Executioner', 2 } },
         { { F, F, F, T, F, F, F },
           { F, F, T, T, T, F, F },
           { F, T, T, T, T, T, F },
@@ -1101,7 +1101,7 @@ skills = {
     ['leadership'] = Skill:new('leadership', 'Leadership', nil, nil,
         "Take command and lead your knights. Assisted allies gain %s Force and Affinity.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Demon', 3 }, { 'Veteran', 5 }, { 'Executioner', 3 } },
+        { { 'Demon', 0 }, { 'Veteran', 5 }, { 'Executioner', 3 } },
         { { F, T, T, T, F },
           { T, T, T, T, T },
           { T, T, F, T, T },
@@ -1273,7 +1273,7 @@ skills = {
         "Kath catapults an empowered javelin which deals %s \z
          Weapon Damage and pushes the enemy back 2 tiles.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Hero', 5 }, { 'Defender', 4 }, { 'Cleric', 0 } },
+        { { 'Hero', 5 }, { 'Defender', 3 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, T, F, F, F },
           { F, F, F, F, F, F, F },
@@ -1287,7 +1287,7 @@ skills = {
         "Kath swings an ignaeic crescent which deals %s \z
          Weapon Damage and grants %s Reaction for 1 turn.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Hero', 4 }, { 'Defender', 5 }, { 'Cleric', 0 } },
+        { { 'Hero', 3 }, { 'Defender', 5 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, T, T, T, F, F },
