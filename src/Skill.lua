@@ -1811,7 +1811,7 @@ skills = {
         'Assassin', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Assassin', 0 }, { 'Naturalist', 0 } },
         { { T } }, FREE_AIM(2), 0,
-        ENEMY, Scaling:new(10, 'force', 1.0)
+        ENEMY, Scaling:new(7, 'force', 1.0)
     ),
     ['assassinate'] = Skill:new('assassinate', 'Assassinate', nil, nil,
         "Lester goes all out for an enemy's vitals. Deals %s Weapon damage to an \z
@@ -1829,9 +1829,9 @@ skills = {
         { { F, F, F, F, F },
           { F, T, T, T, F },
           { F, T, T, T, F },
-          { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'agility', 1.0)
+          { F, T, F, T, F },
+          { F, T, T, T, F } }, DIRECTIONAL_AIM, 0,
+        ENEMY, Scaling:new(0, 'agility', 1.2)
     ),
     ['first_aid'] = Skill:new('first_aid', 'First Aid', nil, nil,
         "Lester quickly patches up an adjacent ally with his medicinal kit, restoring \z
@@ -1867,7 +1867,7 @@ skills = {
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 1,
-        ENEMY, Scaling:new(10, 'force', 1.0),
+        ENEMY, Scaling:new(7, 'force', 1.0),
         nil, nil, { UP, 1 }
     ),
     ['quake'] = Skill:new('quake', 'Quake', nil, nil,
