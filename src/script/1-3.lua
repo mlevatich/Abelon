@@ -328,7 +328,7 @@ s13['golem-battle'] = {
             walk(false, 3, 59, 30, 'walk2')
         }),
         waitForEvent('walk1'),
-        walk(false, 2, 57, 32, 'walk1'),
+        walk(false, 2, 56, 32, 'walk1'),
         br(function(g) return g.state['elaine-stays'] end, {
             waitForEvent('walk2'),
             walk(false, 3, 57, 31, 'walk2')
