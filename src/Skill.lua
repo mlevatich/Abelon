@@ -1106,7 +1106,7 @@ skills = {
           { T, T, T, T, T },
           { T, T, F, T, T },
           { T, T, T, T, T },
-          { F, T, T, T, F } }, SELF_CAST_AIM, 5,
+          { F, T, T, T, F } }, SELF_CAST_AIM, 6,
         nil, nil, nil, nil, nil, nil,
         {
             { 'affinity', Scaling:new(0, 'affinity', 1.0) },
@@ -1280,7 +1280,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
         ENEMY, Scaling:new(0, 'force', 1.5), nil, nil, { UP, 2 }
     ),
     ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep', nil, nil,
@@ -1408,11 +1408,11 @@ skills = {
         nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.0) }, 2 } }
     ),
     ['butcher'] = Skill:new('butcher', 'Butcher', nil, nil,
-        "Elaine expertly carves up an adjacent enemy with her hunting knife, \z
+        "Elaine enchants her hunting knife and carves up an adjacent enemy, \z
          dealing %s Weapon damage.",
         'Huntress', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 4 }, { 'Apprentice', 0 }, { 'Sniper', 0 } },
-        { { T } }, DIRECTIONAL_AIM, 0,
+        { { T } }, DIRECTIONAL_AIM, 1,
         ENEMY, Scaling:new(35)
     ),
     ['precise_shot'] = Skill:new('precise_shot', 'Precise Shot', nil, nil,
