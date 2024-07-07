@@ -33,7 +33,6 @@
 //~igneashard3 9 71 R
 //~igneashard4 52 76 L
 ~igneashard5 67 3 R
-~igneashard10 68 3.3 L
 ~igneashard6 75 44 L
 ~igneashard7 109 20 R
 ~igneashard8 107 29 L
@@ -102,13 +101,13 @@
 
 ->elaine
 +Level 2
-+BonusAttrs focus:2 force:1
++BonusAttrs force:3
 +Exp 31
 ->abelon
 +Level 1
-+BonusAttrs force:1
++BonusAttrs focus:1
 +Exp 57
 ->kath
 +Level 1
-+BonusAttrs reaction:1
++BonusAttrs affinity:1
 +Exp 8

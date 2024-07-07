@@ -2,45 +2,12 @@
 
 An ordered list of programming, writing, and artistic objectives to be completed before shipping a closed alpha test of the first quarter of the game. Commit often!
 
-## Fixes
+## Out-of-battle gameplay / scenes
 
 - Lester is down for a moment (mid getup) at the beginning of his introduction scene
 - Lester should remain in the down animation even when attacked
+
 - Add the cobblestone path in the monastery approach!
-
-## Battle gameplay
-
-- Use 1-3-init for testing.
-
-- Test: Master difficulty, Abelon Force/Executioner, Elaine Focus/Apprentice, Kath Reaction/Defender, Shanti Affinity/Lanternfaire
-    - Notes:
-        - Game is beatable with good strategy and running everyone out of ignea. Difficulty is good, however strategy relied heavily on abuse of exploding shot. Other fun skills went unused, e.g. Death's Blessing, Pursuit, Steadfast, Piercing arrow, inversion.
-        - Defender Kath felt not that useful outside of invigorate, because with exploding shot just killing everything, not a lot of tanking to do. Caution, Riposte, Stun, and Taunt do have their uses though. Without a proper tank test, reaction assists suffer. Final battle is too much of a DPS check for defensive turns to be useful (e.g. get stunned by eldritch gaze and then buff everyone up to tank claws).
-        - Changes:
-            - Raised cost of exploding shot, buffed steadfast, death's blessing.
-            - Shuffled skill trees around to make capstone skills achievable for Abelon and Kath in 3 levels.
-            - Other minor skill balancing
-            - Delete one of the wolves accompanying the terror in the final battle.
-
-- Test: Master difficulty, Abelon Affinity/Veteran, Elaine Reaction/Agility/Huntress, Kath Force/Hero, Shanti Focus/Sorceress
-    - Notes:
-
-- Test: Master difficulty, Abelon Focus/Demon, Elaine Force/Sniper, Kath Affinity/Cleric, Shanti Reaction/Lanternfaire
-    - Notes:
-
-- Test: Master difficulty, Abelon Endurance/Demon/Veteran, Elaine Affinity/Sniper/Apprentice, Kath Focus/Defender, Shanti Force/Lanternfaire
-    - Notes:
-
-- Test: Master difficulty, All Force
-    - Notes:
-
-- Test: Master difficulty, All Affinity
-    - Notes:
-
-- Test: Final battle, Master difficulty, Worst Capstones (Butcher, Gambit, Great Sweep)
-    - Notes:
-
-## Out-of-battle gameplay / scenes
 
 - New items/usage/presentation:
     - Journal:

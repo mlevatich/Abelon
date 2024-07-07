@@ -1,3 +1,8 @@
+# General notes
+
+- Use 1-3-init for testing.
+- For the demo I consider that EXP requirements for levelups are roughly half of what they would be in the main game (with a steeper curve so you can still get a couple of levelups early). The level of power in the final battle of the demo is roughly what I would expect when the player is 3/4ths through the game.
+
 # Golem battle (557be638)
 
 - Test 1 (Get satchel, Abelon Endurance, Elaine Affinity, Kath Reaction):

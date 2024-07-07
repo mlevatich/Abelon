@@ -994,7 +994,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
-        nil, { { { 'force', Scaling:new(0, 'focus', -0.5) }, 2 } }
+        nil, { { { 'force', Scaling:new(0, 'focus', -0.7) }, 2 } }
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible', 'conflagration', 'conflagration',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
@@ -1040,7 +1040,7 @@ skills = {
         nil, nil, nil, nil, nil, nil,
         { { 'reaction', Scaling:new(0, 'affinity', 0.7) } }, { EXP_TAG_RECV }
     ),
-    ['inspire'] = Skill:new('inspire', 'Inspire', nil, nil,
+    ['inspire'] = Skill:new('inspire', 'Courage', nil, nil,
         "Inspire an ally with a courageous cry. They gain %s \z
          Force, and %s Reaction.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
@@ -1173,8 +1173,8 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 1.2)
     ),
     ['thrust'] = Skill:new('thrust', 'Thrust', nil, nil,
-        "Kath deals %s Weapon \z
-         damage in a line and raises his Force by %s for 2 turns.",
+        "Kath thrusts, dealing %s Weapon \z
+         damage in a line and raising his Force by %s for 2 turns.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Hero', 3 }, { 'Defender', 3 }, { 'Cleric', 0 } },
         { { F, T, F },
@@ -1219,7 +1219,7 @@ skills = {
           { F, F, T, F, F },
           { F, F, T, F, F } }, SELF_CAST_AIM, 1,
         ALLY, nil,
-        nil, { { { 'agility', Scaling:new(4) }, 2 } }
+        nil, { { { 'agility', Scaling:new(0, 'affinity', 0.4) }, 2 } }
     ),
     ['storm_thrust'] = Skill:new('storm_thrust', 'Storm Thrust', nil, nil,
         "Kath launches a thrust powered by lightning, dealing %s \z
@@ -1252,7 +1252,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F },
           { F, F, F, F, F },
-          { F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ALLY, Scaling:new(0, 'affinity', -1.0),
         nil, { { { 'reaction', Scaling:new(0, 'affinity', 0.5) }, 1 } },
         { DOWN, 2 }
@@ -1331,13 +1331,13 @@ skills = {
          drop below 1 health.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 4 } },
-        { { F, F, T, T, T, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
+        { { F, F, F, T, F, F, F },
+          { F, F, T, T, T, F, F },
+          { F, T, F, T, F, T, F },
+          { T, T, T, F, T, T, T },
+          { F, T, F, T, F, T, F },
+          { F, F, T, T, T, F, F },
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 5,
         nil, nil, nil, nil, nil, nil,
         { { 'guardian_angel', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
     ),
@@ -1442,7 +1442,7 @@ skills = {
         ENEMY, Scaling:new(0, 'force', 0.8)
     ),
     ['piercing_arrow'] = Skill:new('piercing_arrow', 'Piercing Arrow', nil, nil,
-        "Elaine shoots with such strength as to pierce through enemies, \z
+        "Elaine shoots with such strength as to pierce enemies, \z
          dealing %s Weapon damage to all targets.",
         'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 0 }, { 'Apprentice', 1 }, { 'Sniper', 3 } },
@@ -1453,7 +1453,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
-        ENEMY, Scaling:new(0, 'force', 1)
+        ENEMY, Scaling:new(5, 'force', 1)
     ),
     ['deadeye'] = Skill:new('deadeye', 'Deadeye', nil, nil,
         "Elaine aims an impossible shot after a heavy draw, \z
@@ -1467,7 +1467,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.2), nil, nil, { UP, 1 }
+        ENEMY, Scaling:new(0, 'force', 1.3), nil, nil, { UP, 1 }
     ),
     ['observe'] = Skill:new('observe', 'Observe', nil, nil,
         "Once per battle, Elaine chooses an ally to learn from, permanently \z
@@ -1593,7 +1593,7 @@ skills = {
     ),
     ['flight'] = Skill:new('flight', 'Flight', nil, nil,
         "Elaine whips the wind into currents, letting allies fly. They gain \z
-         %s Agility and can move through foes.",
+         %s Agility and can move through other units.",
         'Apprentice', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 2 }, { 'Apprentice', 4 }, { 'Sniper', 0 } },
         { { F, T, F },
@@ -1609,7 +1609,7 @@ skills = {
         "Elaine extends her superior perception to those nearby, granting \z
          assisted allies %s Reaction.",
         'Sniper', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 1 } },
+        { { 'Huntress', 2 }, { 'Apprentice', 1 }, { 'Sniper', 1 } },
         { { T, T, T, T, T },
           { T, F, F, F, T },
           { T, F, F, F, T },
@@ -1757,7 +1757,7 @@ skills = {
         "Shanti hypnotizes an assisted ally into a frenzied state, raising their Force by %s.",
         'Sorceress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 1 }, { 'Sorceress', 1 } },
-        { { T } }, DIRECTIONAL_AIM, 3,
+        { { T } }, DIRECTIONAL_AIM, 2,
         nil, nil, nil, nil, nil, nil,
         { { 'force', Scaling:new(15, 'affinity', 0.3) } }, { EXP_TAG_ATTACK }
     ),
