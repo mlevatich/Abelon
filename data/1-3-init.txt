@@ -105,7 +105,7 @@
 +Exp 31
 ->abelon
 +Level 1
-+BonusAttrs focus:1
++BonusAttrs endurance:1
 +Exp 57
 ->kath
 +Level 1

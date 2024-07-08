@@ -31,7 +31,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
         - Present to Shanti (lore and favor)
     - Pristine Whetstone
         - On use, option to gain +2 force
-        - Unique present dialogue for each ally, give them +2 force
+        - Unique present dialogue for each ally, give them +2 force (shanti just gives it back)
     - Spade
         - Didn't find anything on use normally
         - Special use in tutorial to dig up ignea, or to dig up casket in suspicious ground, or to dig up old buckler

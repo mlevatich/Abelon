@@ -90,35 +90,24 @@
 ->Inventory journal,medallion,scroll
 
 ->elaine
-+Level 4
-+BonusAttrs force:7
-+Exp 64
++Level 6
++BonusAttrs force:10
++Exp 50
 ->abelon
-+Level 2
-+BonusAttrs affinity:2
-+Exp 150
++Level 3
++BonusAttrs force:3
++Exp 100
 ->kath
-+Level 1
-+BonusAttrs reaction:1
++Level 3
++BonusAttrs force:3
 +Exp 100
 ->shanti
-+Level 1
-+BonusAttrs focus:1
-+Exp 42
++Level 2
++BonusAttrs force:2
++Exp 50
 
 ->Seen 1-4-battle
 ->Party lester
 ->lester
 +Level 1
-+BonusAttrs agility:1
-
-//->abelon
-//+BonusAttrs agility:500
-//->kath
-//+BonusAttrs agility:500
-//->elaine
-//+BonusAttrs agility:500
-//->shanti
-//+BonusAttrs agility:500
-//->lester
-//+BonusAttrs agility:500
++BonusAttrs force:1
