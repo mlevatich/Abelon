@@ -26,7 +26,7 @@ s13['entry'] = {
 }
 
 s13['battle'] = {
-    ['ids'] = {'abelon', 'kath', 'elaine', 'wolf1', 'wolf2', 'wolf3', 'alphawolf1', 'alphawolf2'},
+    ['ids'] = {'abelon', 'kath', 'elaine', 'alphawolf1', 'wolf2', 'wolf3', 'wolf1', 'alphawolf2'},
     ['events'] = {
         fadeoutMusic(),
         focus(1, 200),
