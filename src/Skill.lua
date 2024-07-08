@@ -142,7 +142,6 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
 
     -- Bring upvalues into scope
     local dmg_type = self.dmg_type
-    local affects = self.affects
     local scaling = self.scaling
     local sp_effects = self.sp_effects
     local ts_effects = self.ts_effects
@@ -217,16 +216,20 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
             or modifiers['br'](sp, sp_tmp_attrs, t, t_tmp_attrs, status) then
 
                 -- If there's no scaling, the attack does no damage
-                if scaling then
+                if scaling or modifiers['dmg'] then
 
                     -- Compute damage or healing (MUST be a SPELL to heal)
-                    local attr = scaling.attr
-                    if sp_specials['inversion'] then
-                        if attr == 'force' then attr = 'affinity' elseif attr == 'affinity' then attr = 'force' end
+                    local atk = 0
+                    if scaling then
+                        local attr = scaling.attr
+                        if sp_specials['inversion'] then
+                            if attr == 'force' then attr = 'affinity' elseif attr == 'affinity' then attr = 'force' end
+                        end
+                        atk = atk + scaling.base + math.floor(sp_tmp_attrs[attr] * scaling.mul)
                     end
-                    local atk = scaling.base
-                            + math.floor(sp_tmp_attrs[attr]
-                            * scaling.mul)
+                    if modifiers['dmg'] then
+                        atk = atk + modifiers['dmg'](sp, sp_tmp_attrs, t, t_tmp_attrs, status)
+                    end
                     local dmg = atk
                     if dmg_type == WEAPON then
                         local def = math.floor(t_tmp_attrs['reaction'])
@@ -453,9 +456,18 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     end
 
     sp_effects = copy(sp_effects)
-    if #dead > 0 and sp_specials['death_blessing'] then
-        table.insert(sp_effects, { { 'affinity', Scaling:new(sp_specials['death_blessing']) }, 1 })
-        table.insert(sp_effects, { { 'agility', Scaling:new(sp_specials['death_blessing']) }, 1 })
+    if #dead > 0 then
+        if sp_specials['spelltheft'] then
+            local recovered = math.min(sp.attributes['focus'] - sp.ignea, 3)
+            dryrun_res['caster']['flat_ignea'] = -recovered
+            if not dryrun then
+                sp.ignea = sp.ignea + recovered
+            end
+        end
+        if sp_specials['overrun'] then
+            table.insert(sp_effects, { { 'affinity', Scaling:new(sp_specials['overrun']) }, 1 })
+            table.insert(sp_effects, { { 'agility', Scaling:new(sp_specials['overrun']) }, 1 })
+        end
     end
 
     for j = 1, #sp_effects do
@@ -881,7 +893,7 @@ skills = {
         { { 'Demon', 0 }, { 'Veteran', 1 }, { 'Executioner', 0 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
-        nil, { { { 'affinity', Scaling:new(8) }, 1 } }
+        nil, { { { 'affinity', Scaling:new(0, 'affinity', 0.5) }, 1 } }
     ),
     ['punish'] = Skill:new('punish', 'Punish', nil, nil,
         "Exploit a brief weakness with a precise stab. Deals %s \z
@@ -899,7 +911,7 @@ skills = {
         "Give chase. Gain %s Force and %s Agility \z
          for 2 turns. Cannot stack.",
         'Executioner', WEAPON, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 2 } },
+        { { 'Demon', 0 }, { 'Veteran', 3 }, { 'Executioner', 2 } },
         { { T } }, SELF_CAST_AIM, 0,
         ALLY, nil,
         nil, { { { 'force', Scaling:new(0, 'agility', 0.5) }, 2 },
@@ -907,15 +919,31 @@ skills = {
                { { 'pursuit', Scaling:new(0), BUFF }, 2, HIDDEN } }
     ),
     ['siphon'] = Skill:new('siphon', 'Siphon', nil, nil,
-        "Strike an evil, draining blow. Deals \z
-         %s Weapon damage to an enemy and \z
-         heals you for 100 %% of the damage.",
-        'Demon', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
-        { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
-        { { T } }, DIRECTIONAL_AIM, 1,
-        ENEMY, Scaling:new(0, 'force', 1.0),
+        "Cut a siphoning swath. Deals \z
+         %s Weapon damage to enemies in front of you and \z
+         heals you for 100 %% of total damage.",
+        'Executioner', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Demon', 1 }, { 'Veteran', 2 }, { 'Executioner', 3 } },
+        { { F, F, F },
+          { T, T, T },
+          { F, F, F } }, DIRECTIONAL_AIM, 3,
+        ENEMY, Scaling:new(0, 'force', 1.2),
         nil, nil, nil,
         { ['lifesteal'] = 100 }
+    ),
+    ['deaths_door'] = Skill:new('deaths_door', "Death's Door", nil, nil,
+        "Summon the last of your strength. Deals 100 %% of your missing health as Weapon damage \z
+         to an adjacent enemy.",
+        'Demon', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
+        { { T } }, DIRECTIONAL_AIM, 0,
+        ENEMY, nil,
+        nil, nil, nil,
+        { ['dmg'] =
+            function(a, a_a, b, b_a, st, dry, dry_res)
+                return a.attributes['endurance'] * 2 - a.health
+            end
+        }
     ),
     ['gambit'] = Skill:new('gambit', 'Gambit', nil, nil,
         "Attack relentlessly. Deals %s Weapon damage to an adjacent enemy, \z
@@ -924,7 +952,7 @@ skills = {
         { { 'Demon', 3 }, { 'Veteran', 5 }, { 'Executioner', 2 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(40),
-        { { { 'affinity', Scaling:new(-99) }, 1 }, 
+        { { { 'affinity', Scaling:new(-99) }, 1 },
           { { 'agility',  Scaling:new(-99) }, 1 } }, nil
     ),
     ['execute'] = Skill:new('execute', 'Execute', nil, nil,
@@ -995,6 +1023,19 @@ skills = {
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ENEMY, nil,
         nil, { { { 'force', Scaling:new(0, 'focus', -0.7) }, 2 } }
+    ),
+    ['wrath'] = Skill:new('wrath', 'Wrath', nil, nil,
+        "Channel your rage into an Ignea stone until it overflows, causing a blast dealing \z
+         %s Spell damage.",
+        'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
+        { { 'Demon', 3 }, { 'Veteran', 0 }, { 'Executioner', 0 } },
+        { { F, F, F, F, F },
+          { F, T, F, T, F },
+          { F, F, T, F, F },
+          { F, T, F, T, F },
+          { F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+        ENEMY, Scaling:new(0, 'focus', 1.5),
+        nil, nil
     ),
     ['crucible'] = Skill:new('crucible', 'Crucible', 'conflagration', 'conflagration',
         "Unleash a scorching ignaeic miasma. You and nearby enemies suffer \z
@@ -1076,27 +1117,40 @@ skills = {
             { 'affinity', Scaling:new(-6, 'affinity',   0) }
         }, { EXP_TAG_ATTACK }
     ),
-    ['flank'] = Skill:new('flank', 'Flank', nil, nil,
+    ['flank'] = Skill:new('flank', 'Flank', nil, nil, -- TODO: Rework effect to be powerful, worth 2 ignea
         "Surround and overwhelm an enemy. Ally \z
-         attacks will reduce enemy Reaction by %s and Agility by 4 for 1 turn.",
+         attacks will reduce enemy Force, Reaction, and Agility by %s for 2 turns.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 0 }, { 'Veteran', 4 }, { 'Executioner', 2 } },
         { { F, T, F },
           { T, F, T },
-          { F, F, F } }, DIRECTIONAL_AIM, 0,
+          { F, T, F } }, FREE_AIM(3), 2,
         nil, nil, nil, nil, nil, nil,
-        { { 'flanking', Scaling:new(0, 'affinity', -1), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
+        { { 'flanking', Scaling:new(0, 'affinity', -1.0), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
-    ["deaths_blessing"] = Skill:new('deaths_blessing', "Death's Blessing", nil, nil,
-        "Cast a grim enchantment. Assisted allies who kill an enemy \z
-         gain %s Agility and Affinity for the rest of the turn.",
+    ["spelltheft"] = Skill:new('spelltheft', "Spelltheft", nil, nil,
+        "Cast a grim enchantment to drain magic from fallen foes. \z 
+         Assisted allies who kill an enemy recover 3 ignea.",
         'Executioner', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Demon', 3 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
+        { { 'Demon', 2 }, { 'Veteran', 1 }, { 'Executioner', 3 } },
         { { F, F, F },
           { F, F, T },
-          { F, F, F } }, DIRECTIONAL_AIM, 0,
+          { F, F, F } }, DIRECTIONAL_AIM, 2,
         nil, nil, nil, nil, nil, nil,
-        { { 'death_blessing', Scaling:new(0, 'affinity', 1.0), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
+        { { 'spelltheft', Scaling:new(0), BUFF } }, { EXP_TAG_ATTACK }
+    ),
+    ["overrun"] = Skill:new('overrun', "Overrun", nil, nil,
+        "Keep momentum. Assisted allies who kill an enemy \z
+         gain %s Agility and Affinity for the rest of the turn.",
+        'Executioner', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Demon', 2 }, { 'Veteran', 1 }, { 'Executioner', 3 } },
+        { { F, F, F, F, F },
+          { F, F, F, F, F },
+          { F, F, T, F, F },
+          { F, F, F, F, F },
+          { F, F, T, F, F } }, DIRECTIONAL_AIM, 2,
+        nil, nil, nil, nil, nil, nil,
+        { { 'overrun', Scaling:new(0, 'affinity', -1.5), BUFF } }, { EXP_TAG_ATTACK }
     ),
     ['leadership'] = Skill:new('leadership', 'Leadership', nil, nil,
         "Take command and lead your knights. Assisted allies gain %s Force and Affinity.",
@@ -1212,12 +1266,12 @@ skills = {
     ['haste'] = Skill:new('haste', 'Haste', nil, nil,
         "Kath raises the Agility of allies around him by %s for 2 turns.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Hero', 0 }, { 'Defender', 0 }, { 'Cleric', 2 } },
+        { { 'Hero', 1 }, { 'Defender', 0 }, { 'Cleric', 2 } },
         { { F, F, T, F, F },
           { F, F, T, F, F },
           { T, T, F, T, T },
           { F, F, T, F, F },
-          { F, F, T, F, F } }, SELF_CAST_AIM, 1,
+          { F, F, T, F, F } }, SELF_CAST_AIM, 0,
         ALLY, nil,
         nil, { { { 'agility', Scaling:new(0, 'affinity', 0.4) }, 2 } }
     ),
@@ -1245,7 +1299,7 @@ skills = {
         { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 }, { { 'caution', Scaling:new(0), BUFF }, 5, HIDDEN } }
     ),
     ['rescue'] = Skill:new('rescue', 'Rescue', nil, nil,
-        "Kath pulls an ally to him, restoring %s health and granting them %s Reaction for 1 turn.",
+        "Kath pulls an ally 2 tiles. Heals them %s health and grants %s Reaction and Force for 1 turn.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Hero', 3 }, { 'Defender', 0 }, { 'Cleric', 3 } },
         { { F, F, T, F, F },
@@ -1254,7 +1308,10 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         ALLY, Scaling:new(0, 'affinity', -1.0),
-        nil, { { { 'reaction', Scaling:new(0, 'affinity', 0.5) }, 1 } },
+        nil, {
+            { { 'reaction', Scaling:new(0, 'affinity', 0.5) }, 1 },
+            { { 'force', Scaling:new(0, 'affinity', 0.5) }, 1 }
+        },
         { DOWN, 2 }
     ),
     ['bond'] = Skill:new('bond', 'Bond', nil, nil,
@@ -1280,7 +1337,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 3,
         ENEMY, Scaling:new(0, 'force', 1.5), nil, nil, { UP, 2 }
     ),
     ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep', nil, nil,
@@ -1337,7 +1394,7 @@ skills = {
           { T, T, T, F, T, T, T },
           { F, T, F, T, F, T, F },
           { F, F, T, T, T, F, F },
-          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 5,
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 4,
         nil, nil, nil, nil, nil, nil,
         { { 'guardian_angel', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
     ),
@@ -1357,7 +1414,8 @@ skills = {
         { { 'reaction', Scaling:new(0, 'affinity', 1.0) } }, { EXP_TAG_RECV }
     ),
     ['ward'] = Skill:new('ward', 'Spell Ward', nil, nil,
-        "Kath casts a protective ward, rendering assisted allies immune to all Spell damage.",
+        "Kath casts a protective ward, rendering assisted allies immune to Spell damage \z
+         and granting %s Force.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Hero', 0 }, { 'Defender', 4 }, { 'Cleric', 2 } },
         { { F, F, F, F, F, F, F },
@@ -1368,18 +1426,19 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'ward', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
+        { { 'ward', Scaling:new(0), BUFF }, { 'force', Scaling:new(0, 'affinity', 0.5) } },
+        { EXP_TAG_RECV, EXP_TAG_ATTACK }
     ),
     ['peace'] = Skill:new('peace', 'Peace', nil, nil,
-        "Kath casts a calming spell. Allies on the assist lose all Force but gain %s Affinity.",
+        "Kath performs a calming meditation. Allies on the assist lose all Force but gain %s Affinity.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 2 } },
         { { F, T, F },
           { T, F, T },
-          { F, T, F } }, SELF_CAST_AIM, 1,
+          { F, T, F } }, SELF_CAST_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         {
-            { 'affinity', Scaling:new(0, 'affinity', 1.3) },
+            { 'affinity', Scaling:new(0, 'affinity', 1.0) },
             { 'force', Scaling:new(-99) }
         }, { EXP_TAG_ASSIST }
     ),
@@ -1456,7 +1515,7 @@ skills = {
         ENEMY, Scaling:new(5, 'force', 1)
     ),
     ['deadeye'] = Skill:new('deadeye', 'Deadeye', nil, nil,
-        "Elaine aims an impossible shot after a heavy draw, \z
+        "Elaine aims an impossible shot from an empowered draw, \z
          dealing %s Weapon damage and pushing the target 1 tile.",
         'Sniper', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 2 }, { 'Apprentice', 0 }, { 'Sniper', 5 } },
@@ -1466,8 +1525,8 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
-        ENEMY, Scaling:new(0, 'force', 1.3), nil, nil, { UP, 1 }
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 2,
+        ENEMY, Scaling:new(0, 'force', 1.5), nil, nil, { UP, 1 }
     ),
     ['observe'] = Skill:new('observe', 'Observe', nil, nil,
         "Once per battle, Elaine chooses an ally to learn from, permanently \z
@@ -1539,7 +1598,7 @@ skills = {
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
           { F, F, F, F, F, F, F },
-          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 5,
+          { F, F, F, F, F, F, F } }, DIRECTIONAL_AIM, 4,
         ENEMY, Scaling:new(0, 'force', 1.2)
     ),
     ['seeking_arrow'] = Skill:new('seeking_arrow', 'Seeking Arrow', nil, nil,
