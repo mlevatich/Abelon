@@ -933,10 +933,12 @@ skills = {
     ),
     ['deaths_door'] = Skill:new('deaths_door', "Death's Door", nil, nil,
         "Summon the last of your strength. Deals 100 %% of your missing health as Weapon damage \z
-         to an adjacent enemy.",
+         to all adjacent enemies.",
         'Demon', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Demon', 2 }, { 'Veteran', 0 }, { 'Executioner', 3 } },
-        { { T } }, DIRECTIONAL_AIM, 0,
+        { { F, T, F },
+          { T, F, T },
+          { F, T, F } }, SELF_CAST_AIM, 0,
         ENEMY, nil,
         nil, nil, nil,
         { ['dmg'] =
@@ -1235,7 +1237,7 @@ skills = {
           { F, T, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 1.0),
-        { { { 'force', Scaling:new(0, 'force', 0.4) }, 2 } }, nil
+        { { { 'force', Scaling:new(0, 'force', 0.3) }, 2 } }, nil
     ),
     ['taunt'] = Skill:new('taunt', 'Taunt', nil, nil,
         "Taunt nearby enemies, so that their next \z
@@ -1273,7 +1275,7 @@ skills = {
           { F, F, T, F, F },
           { F, F, T, F, F } }, SELF_CAST_AIM, 0,
         ALLY, nil,
-        nil, { { { 'agility', Scaling:new(0, 'affinity', 0.4) }, 2 } }
+        nil, { { { 'agility', Scaling:new(0, 'affinity', 0.3) }, 2 } }
     ),
     ['storm_thrust'] = Skill:new('storm_thrust', 'Storm Thrust', nil, nil,
         "Kath launches a thrust powered by lightning, dealing %s \z
@@ -1299,7 +1301,7 @@ skills = {
         { { { 'reaction', Scaling:new(4) }, 5 }, { { 'force', Scaling:new(-2) }, 5 }, { { 'caution', Scaling:new(0), BUFF }, 5, HIDDEN } }
     ),
     ['rescue'] = Skill:new('rescue', 'Rescue', nil, nil,
-        "Kath pulls an ally 2 tiles. Heals them %s health and grants %s Reaction and Force for 1 turn.",
+        "Kath pulls an ally 2 tiles, heals them %s health, and grants %s Reaction and Force for 1 turn.",
         'Cleric', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Hero', 3 }, { 'Defender', 0 }, { 'Cleric', 3 } },
         { { F, F, T, F, F },
@@ -1385,16 +1387,16 @@ skills = {
     ),
     ['guardian_angel'] = Skill:new('guardian_angel', 'Guardian Angel', nil, nil,
         "Kath consecrates the ground. Allies on the assist cannot \z
-         drop below 1 health.",
+         drop below 1 health. Kath also receives the assist.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 4 } },
         { { F, F, F, T, F, F, F },
-          { F, F, T, T, T, F, F },
+          { F, T, T, T, T, T, F },
           { F, T, F, T, F, T, F },
-          { T, T, T, F, T, T, T },
+          { T, T, T, T, T, T, T },
           { F, T, F, T, F, T, F },
-          { F, F, T, T, T, F, F },
-          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 4,
+          { F, T, T, T, T, T, F },
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 3,
         nil, nil, nil, nil, nil, nil,
         { { 'guardian_angel', Scaling:new(0), BUFF } }, { EXP_TAG_RECV }
     ),
@@ -1433,9 +1435,9 @@ skills = {
         "Kath performs a calming meditation. Allies on the assist lose all Force but gain %s Affinity.",
         'Cleric', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Hero', 0 }, { 'Defender', 3 }, { 'Cleric', 2 } },
-        { { F, T, F },
+        { { T, T, T },
           { T, F, T },
-          { F, T, F } }, SELF_CAST_AIM, 0,
+          { T, T, T } }, SELF_CAST_AIM, 0,
         nil, nil, nil, nil, nil, nil,
         {
             { 'affinity', Scaling:new(0, 'affinity', 1.0) },
