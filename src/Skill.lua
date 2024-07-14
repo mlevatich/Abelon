@@ -927,7 +927,7 @@ skills = {
         { { F, F, F },
           { T, T, T },
           { F, F, F } }, DIRECTIONAL_AIM, 3,
-        ENEMY, Scaling:new(0, 'force', 1.2),
+        ENEMY, Scaling:new(0, 'force', 1.3),
         nil, nil, nil,
         { ['lifesteal'] = 100 }
     ),
@@ -1559,14 +1559,14 @@ skills = {
         }
     ),
     ['snare'] = Skill:new('snare', 'Snare', nil, nil,
-        "Elaine swiftly lays a magical hunting snare, reducing a nearby foe's \z
+        "Elaine lays a magical hunting snare, dealing %s Spell damage and reducing a nearby foe's \z
          Agility by %s for 2 turns.",
         'Huntress', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Huntress', 3 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { F, F, F },
           { T, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 1,
-        ENEMY, nil,
+        ENEMY, Scaling:new(10),
         nil, { { { 'agility', Scaling:new(0, 'agility', -0.5) }, 1 } }
     ),
     ['ignea_arrowheads'] = Skill:new('ignea_arrowheads', 'Ignea Arrowheads', nil, nil,
@@ -1760,14 +1760,13 @@ skills = {
           { F, F, F } }, DIRECTIONAL_AIM, 3,
         ENEMY, Scaling:new(3, 'focus', 1.5)
     ),
-    ['berserk'] = Skill:new('berserk', 'Berserk', nil, nil,
-        "Shanti enchants an enemy into a rage, \z
-         raising its Force by %s and lowering its Reaction by %s for 2 turns.",
+    ['smite'] = Skill:new('smite', 'Smite', nil, nil,
+        "Shanti calls down a bolt of Ignaeic energy, dealing %s Spell damage to an enemy within 6 tiles.",
         'Sorceress', SPELL, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Lanternfaire', 2 }, { 'Sorceress', 4 } },
-        { { T } }, FREE_AIM(4), 1,
-        ENEMY, nil,
-        nil, { { { 'force', Scaling:new(10) }, 2 }, { { 'reaction', Scaling:new(0, 'force', -0.8) }, 2 } }
+        { { T } }, FREE_AIM(6), 2,
+        ENEMY, Scaling:new(0, 'focus', 1.0),
+        nil, nil
     ),
     ['flashbang'] = Skill:new('flashbang', 'Flashbang', nil, nil,
         "Shanti blinds nearby enemies, dealing %s Spell damage \z
