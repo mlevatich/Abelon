@@ -982,7 +982,7 @@ skills = {
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches', nil, nil,
         "Pull an enemy in, dealing %s Spell damage and \z
-         reducing the enemy's Reaction by %s for 2 turns",
+         reducing the enemy's Reaction by %s for 2 turns.",
         'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, T, F, F },
@@ -1144,8 +1144,8 @@ skills = {
     ["overrun"] = Skill:new('overrun', "Overrun", nil, nil,
         "Keep momentum. Assisted allies who kill an enemy \z
          gain %s Agility and Affinity for the rest of the turn.",
-        'Executioner', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
-        { { 'Demon', 2 }, { 'Veteran', 1 }, { 'Executioner', 3 } },
+        'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
+        { { 'Demon', 2 }, { 'Veteran', 3 }, { 'Executioner', 2 } },
         { { F, F, F, F, F },
           { F, F, F, F, F },
           { F, F, T, F, F },
