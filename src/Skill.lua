@@ -1085,7 +1085,7 @@ skills = {
     ),
     ['inspire'] = Skill:new('inspire', 'Courage', nil, nil,
         "Inspire an ally with a courageous cry. They gain %s \z
-         Force, and %s Reaction.",
+         Force and %s Reaction.",
         'Veteran', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Demon', 1 }, { 'Veteran', 2 }, { 'Executioner', 0 } },
         { { F, F, F, T, F, F, F },
@@ -1330,7 +1330,7 @@ skills = {
     ),
     ['great_javelin'] = Skill:new('great_javelin', 'Great Javelin', nil, nil,
         "Kath catapults an empowered javelin which deals %s \z
-         Weapon Damage and pushes the enemy back 2 tiles.",
+         Weapon damage and pushes the enemy back 2 tiles.",
         'Hero', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Hero', 5 }, { 'Defender', 3 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },
@@ -1344,7 +1344,7 @@ skills = {
     ),
     ['great_sweep'] = Skill:new('great_sweep', 'Great Sweep', nil, nil,
         "Kath swings an ignaeic crescent which deals %s \z
-         Weapon Damage and grants %s Reaction for 1 turn.",
+         Weapon damage and grants %s Reaction for 1 turn.",
         'Defender', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Hero', 3 }, { 'Defender', 5 }, { 'Cleric', 0 } },
         { { F, F, F, F, F, F, F },

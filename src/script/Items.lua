@@ -139,7 +139,7 @@ sitems['medallion-present-kath'] = {
         ),
         say(2, 1, false, 
             "It looks a lot like a piece one of my younger knights was fiddling with! \z
-             I think he was borrowing time at the blacksmith's forge to work on it."
+             I think he was borrowing time at old Veliad's smithy to work on it."
         ),
         say(2, 1, false, 
             "For a little encouragement, I told him to show it to me when he was \z
