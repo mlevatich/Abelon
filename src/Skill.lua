@@ -1153,7 +1153,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, T, F, F } }, DIRECTIONAL_AIM, 2,
         nil, nil, nil, nil, nil, nil,
-        { { 'overrun', Scaling:new(0, 'affinity', -1.5), BUFF } }, { EXP_TAG_ATTACK }
+        { { 'overrun', Scaling:new(0, 'affinity', 1.5), BUFF, VALUE_HIDDEN } }, { EXP_TAG_ATTACK }
     ),
     ['leadership'] = Skill:new('leadership', 'Leadership', nil, nil,
         "Take command and lead your knights. Assisted allies gain %s Force and Affinity.",
@@ -1181,7 +1181,7 @@ skills = {
         { { 'Hero', 0 }, { 'Defender', 0 }, { 'Cleric', 0 } },
         { { F, F, F },
           { T, T, T },
-          { F, F, F } }, DIRECTIONAL_AIM, 0,
+          { T, F, T } }, DIRECTIONAL_AIM, 0,
         ENEMY, Scaling:new(0, 'force', 0.8),
         { { { 'reaction', Scaling:new(3) }, 1 } }, nil
     ),
