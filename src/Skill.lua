@@ -459,6 +459,7 @@ function Skill:attack(sp, sp_assists, ts, ts_assists, atk_dir, status, grid, dry
     if #dead > 0 then
         if sp_specials['spelltheft'] then
             local recovered = math.min(sp.attributes['focus'] - sp.ignea, 3)
+            -- TODO: dryrun_res['caster'] doesn't exist here. Need to merge logic with line 499 so multiple flat_ignea values don't overwrite each other
             dryrun_res['caster']['flat_ignea'] = -recovered
             if not dryrun then
                 sp.ignea = sp.ignea + recovered
@@ -1250,7 +1251,7 @@ skills = {
           { T, T, T, F, T, T, T },
           { F, T, T, T, T, T, F },
           { F, F, T, T, T, F, F },
-          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 1,
+          { F, F, F, T, F, F, F } }, SELF_CAST_AIM, 0,
         ENEMY, nil,
         nil, { { { 'taunt', Scaling:new(0), DEBUFF }, 1 } }
     ),
@@ -1466,7 +1467,7 @@ skills = {
           { F, F, F, F, F },
           { F, F, F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, nil,
-        nil, { { { 'reaction', Scaling:new(0, 'reaction', -1.0) }, 2 } }
+        nil, { { { 'reaction', Scaling:new(0, 'reaction', -0.8) }, 2 } }
     ),
     ['butcher'] = Skill:new('butcher', 'Butcher', nil, nil,
         "Elaine enchants her hunting knife and carves up an adjacent enemy, \z
