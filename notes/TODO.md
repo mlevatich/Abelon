@@ -4,9 +4,18 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 ## Out-of-battle gameplay / scenes
 
+- BUG: Prepping Assassinate while on a Spelltheft assist crashed game: Skill.lua:462: attempt to index field 'caster' (a nil value)
+    - Spelltheft tries to access dryrun_res['caster'] before it gets created. Needs to be merged with igneadrain logic.
+- BUG: After Elaine said she wasnt sure if she wanted to join us, and I relented and said she comes with, when the conversation finished it jumped back to Elaine saying she wanted to join us. The br() on lines 2165, 2203, and 2368 need to be mutually exclusive, to account for the possibility that elaine's impression changes again DURING the resulting scenes of 1-2.lua
+    - Scripttool needs to support this feature?
 - "Press 'R' to close tutorial" or something.
 - Lester is down for a moment (mid getup) at the beginning of his introduction scene
 - Lester should remain in the down animation even when attacked
+- Force builds still seem quite powerful.
+    - Tested Elaine Reaction/Affinity/Huntress, Kath Reaction/Defender, Abelon Force/Executioner, and it was fairly straightforward to buff Abelon and Lester with Elaine and Kath, then steamroll. Kath trivialized the Terror by stunning it repeatedly.
+    - First test a build with Abelon Focus/Demon, Kath Force/Hero, Elaine Force/Sniper, Lester Force/Assassin, Shanti Focus/Sorceress
+    - Then test Abelon Affinity/Veteran, Kath Affinity/Cleric, Elaine Focus/Apprentice, Lester Affinity/Naturalist, Shanti Affinity/Lanternfaire
+    - These builds should be roughly equivalent in difficulty to execute.
 
 - Add the cobblestone path in the monastery approach!
 
@@ -88,13 +97,11 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 - 1-3 script
     - Elaine pester (Elaine guidance 1): What are we doing and how can I help?
-        - Conversation happens in bursts, where the player can briefly move forward before Elaine bothers them again. Treating Elaine warmly will cause her to relax. Treating her coldly will make her withdraw and not offer any tracking help.
-        - Kath explained about the monastery and everything. But when she asked him how she could contribute, he told her to go talk to Abelon. Was this Kath just trying to break the ice between them? Or deferring to Abelon's leadership? Player can comment.
-        - Player can shut her down (just don't get in our way), or offer something ("not unless you can guide us to the monastery"). Elaine concedes she doesn't know where the monastery is. But later, she asks, "Don't you need to find your other two knights first?".
-        - "Yes, regrettably", "Yes, and if you can't help, don't distract me", "Just one knight, Lester - Shanti is a researcher".
         - Elaine says she can at least tell someone came this way. Can respond "Obviously." or "How do you know that?". If you say the former, we're done (or if you were mean to her in the previous three interactions she won't even speak this part). If the latter, she explains her talents and offers to guide you in the right direction. First points north in the clearing. Can praise her for this, at which point she'll relax.
         - Either way, if she explains her talents you gain a couple more scenes where she helps navigate. (She is really just tailing shanti, since lester takes better care to conceal his footsteps. So she doesn’t see evidence that the log pile was crossed. But she may bring up that she is only seeing evidence of one person, which Kath can answer for. This comes up later).
-    - Talk options after pester
+    - Scene arriving in first clearing, and playing out the blockade and spade tutorial.
+        - TK
+    - Talk options in first clearing
         - If Elaine is helping navigate, she reminds you of the direction the tracks go, but says that of course you could explore other paths if there might be clues about the monastery. She is more confident, in her element.
         - If Elaine is not helping navigate, she is nervous, asks if you need something. Can tell her you don't trust her and not to try anything (upsets Elaine but points for Abelon), or remind her to stay safe (small points for Elaine), some lore detail about the valley.
     - Wolf den pre-battle
@@ -156,15 +163,17 @@ An ordered list of programming, writing, and artistic objectives to be completed
         - Amount of wolves is abnormal. Something is forcing them into the party. The terror!
     - Lester post-battle
         - After the battle, looks like reinforcements are exhausted. Kath heals Lester while party discusses plans. Start limping over to the second ward so Shanti can begin to disable it. Abelon remains behind.
+        - Features a bit of Kath and Lester being goobers. First they yell at each other, then laugh. Clearly old friends and used to verbal sparring. But Kath's grievance with Lester is still very real, underneath the camaraderie.
+        - Funny moment after lester wakes up where elaine says something and lester turns and stares at her and says, “Kath, who’s this kid?”
     - Talk options after lester battle
         - Elaine is curious about what it takes to be a knight exactly. How are they trained. Would her talents as an archer be useful?
             - Kath gives a little overview of battle tactics and why there aren't many archers among the knights anymore. The southwall has been an ongoing project for decades, as just protecting the farmers has become a full time job due to the unviability of hunting and fishing requiring more fields. To additionally defend a wall under construction by tradesmen is a tall order. The wall is makeshift in many places and monsters get through.
+            - Digression on careers in the city.
             - She trained from her grandfather, so his past is called into question - only Abelon knows that he was previously a soldier, as he didn't tell Elaine this.
-        - Lester and Shanti are having a chat. A little info on King Sinclair.
+        - Lester and Shanti are having a chat. A little info on King Sinclair. Lester shuts up when he notices Abelon is listening in.
     - Terror pre-battle
         - At the ward, the monastery entrance is now visible, Shanti works to disable.
-        - Funny moment after lester wakes up where elaine says something and lester turns and stares at her and says, “Kath, who’s this kid?”
-        - After healing lester, (in the clearing before the monastery) he claims the log blockage wasn’t there. Prompts a terrible realization: a terror.
+        - Lester claims the log blockage wasn’t there. Prompts a terrible realization: a terror.
     - Terror battle callouts
         - Fear, panic.
         - This is it! Use everything you have!
