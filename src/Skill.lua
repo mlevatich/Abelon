@@ -1712,15 +1712,15 @@ skills = {
         { UP, 1 }
     ),
     ['lasso'] = Skill:new('lasso', 'Lasso', nil, nil,
-        "Shanti equips a long chain and flings her lantern, ensnaring an enemy \z
-         and lowering its Agility by %s for 1 turn.",
+        "Shanti lassos an enemy with her lantern chain, \z
+        lowering its Agility and Reaction by %s for 1 turn.",
         'Lanternfaire', WEAPON, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Lanternfaire', 2 }, { 'Sorceress', 0 } },
         { { F, T, F },
           { F, F, F },
           { F, F, F } }, DIRECTIONAL_AIM, 0,
         ENEMY, nil,
-        nil, { { { 'agility', Scaling:new(0, 'reaction', -1.0) }, 1 } }
+        nil, { { { 'agility', Scaling:new(0, 'endurance', -0.5) }, 1 }, { { 'reaction', Scaling:new(0, 'endurance', -0.5) }, 1 } }
     ),
     ['crushing_swing'] = Skill:new('crushing_swing', 'Crushing Swing', nil, nil,
         "Shanti brings her lantern down hard on an adjacent enemy, \z
