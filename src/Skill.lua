@@ -1678,7 +1678,7 @@ skills = {
           { T, F, F, F, T },
           { T, T, T, T, T } }, SELF_CAST_AIM, 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'reaction', Scaling:new(0, 'affinity', 0.7) } }, { EXP_TAG_RECV }
+        { { 'reaction', Scaling:new(0, 'affinity', 0.8) } }, { EXP_TAG_RECV }
     ),
     ['cover_fire'] = Skill:new('cover_fire', 'Cover Fire', nil, nil,
         "Elaine lays down a hail of arrows around an ally position, granting \z
