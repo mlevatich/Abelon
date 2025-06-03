@@ -1635,13 +1635,13 @@ skills = {
         { { 'force', Scaling:new(0, 'affinity', 1) } }, { EXP_TAG_MOVE }
     ),
     ['camouflage'] = Skill:new('camouflage', 'Camouflage', nil, nil,
-        "Elaine builds a makeshift camouflaged shelter. The assisted ally \z
-         will not be directly targeted by enemies.",
+        "Elaine builds a camouflaged shelter. The assisted ally \z
+         will not be targeted by enemies and has their ignea costs reduced by %s.",
         'Huntress', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 2 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { T } }, DIRECTIONAL_AIM, 0,
         nil, nil, nil, nil, nil, nil,
-        { { 'hidden', Scaling:new(0), BUFF } }, {}
+        { { 'ignea_efficiency', Scaling:new(-1), BUFF }, { 'hidden', Scaling:new(0), BUFF } }, {}
     ),
     ['inversion'] = Skill:new('inversion', 'Inversion', nil, nil,
         "Elaine creates a field of emotional distortion. \z
