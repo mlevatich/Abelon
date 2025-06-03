@@ -1345,7 +1345,7 @@ function Battle:dryrunAttributes(standing, other)
     local hp = sp.health
     local ign = sp.ignea
     if atk then
-        atk_loc = self.stack[2]['cursor']
+        local atk_loc = self.stack[2]['cursor']
         local _, _, specials_before = self:getTmpAttributes(sp, nil, { atk_loc[2], atk_loc[1] })
         ign = ign - atk:getCost(specials_before)
         local dry = self:dryrunAttack()
@@ -3131,9 +3131,10 @@ function Battle:boxElementsFromDryrun(sp, sk, result)
     local hp = sp.health - result['flat']
     local ign = sp.ignea - result['flat_ignea']
     if sp == self:getSprite() then
-        local move1 = self:getCursor(2)
-        local _, _, specials = self:getTmpAttributes(sp, nil, { move1[2], move1[1] })
-        ign = ign - sk:getCost(specials)
+
+        local atk_loc = self.stack[2]['cursor']
+        local _, _, specials_before = self:getTmpAttributes(sp, nil, { atk_loc[2], atk_loc[1] })
+        ign = ign - sk:getCost(specials_before)
     end
     return self:boxElementsFromInfo(sp, hp, ign, result['new_stat'])
 end
@@ -3181,12 +3182,8 @@ function Battle:renderAttackHoverBoxes(sk)
 
     -- Dryrun and render all boxes
     local dry = self:dryrunAttack()
-    local room = true
     for i = 1, #dry do
-        if renderBoxIfRoom(dry[i]['sp'], dry[i]) then
-            room = false
-            break
-        end
+        if renderBoxIfRoom(dry[i]['sp'], dry[i]) then break end
     end
 end
 
