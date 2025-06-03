@@ -13,89 +13,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 ## Combat and balance
 
-- Camouflage could probably use a buff. Reduces ignea costs by 1.
-- Inversion is still too situational. Should grant +5 (flat) Force and Affinity on top of its effect.
-- Lasso needs a rework.
-
-## Out-of-battle gameplay / scenes
-
-- "Press 'Q' to close tutorial" or something.
-- Text uses "unit" vs "character", "space" vs "tile" in some places, standardize. "Enemy" vs "Foe" etc.
-- Add the cobblestone path in the monastery approach!
-
-- New items/usage/presentation:
-    - Journal:
-        - Usage message updates once in 1-4.
-    - Scroll
-        - Present to Shanti for lore
-    - Unidentified metal
-        - Basic description on use
-        - Present to kath (tutorial)
-    - Brass key
-        - Basic description on use
-        - Special use when near the casket sprite (gain pristine whetstone)
-    - Ornate dagger
-        - Basic description on use
-        - Present to Lester (gain skill point)
-    - Spent ignea
-        - Basic description on use
-        - Present to Shanti (gain skill point)
-    - Ritual slab
-        - Basic description on use
-        - Present to Shanti (lore and favor)
-    - Pristine Whetstone
-        - On use, option to gain +2 force
-        - Unique present dialogue for each ally, give them +2 force (shanti just gives it back)
-    - Spade
-        - Didn't find anything on use normally
-        - Special use in tutorial to dig up ignea, or to dig up casket in suspicious ground, or to dig up old buckler
-    - Compass
-        - Tells what direction you're facing on use
-        - Present to Kath to get information about world orientation
-    - Waterskin
-        - Drink some water on use. After 5 drinks, it runs out, makes a little joke.
-        - On present to Elaine, she says Kath gave her one
-
-- New sprites (placeholder art):
-    - Casket
-    - Buried ignea
-    - Tree pile
-    - Giant boulder
-    - Scuffed ground
-    - Ignaeic site
-    - Wolf den
-    - Metal scraps
-    - Monastery entrance
-
-- Place tree piles / giant boulders / scuffed ground around monastery approach and move them in the entry to 1-4
-
-- Add ignaeic site, wolf den, monastery approach
-
-- Place buried ignea, ornate dagger, old buckler, ritual slab
-
-- Populate monastery approach with stone markers, metal scraps, logs.
-
-- Tutorial scene: Use spade to dig up ignea, key, pauldron along the main path while allies block the way. Then present pauldron to kath (initially unidentified metal, present it and kath says its a pauldron). Get commentary on an old battle that mustve been fought here. Happens in the first clearing of 1-3 when Kath catches up.
-
-- Usage and presentation scenes for the above
-
-- Implement placeholder animations (use a word) to test timing on playing actions under a variety of circumstances
-    - No counter enemy phase
-    - Single counter enemy phase
-    - Death from enemy
-    - Kill on enemy
-    - Multi counter
-    - Death by counter
-    - No damage taken (no hurt) from counter
-    - full attack with assist, deal damage
-    - full attack with assist, deal no damage
-    - enemy phase, attack deals no damage
-
-- Triggers and placeholder scenes for the items in the script below
-
-- Choreograph entire demo based on complete script
-    - Including a pass over already-choreographed scenes
-    - Decide wander or idle behavior after scenes end.
+- Nothing to change for now, things seem pretty balanced!
 
 ## Script
 
@@ -103,7 +21,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
     - Elaine pester (Elaine guidance 1): What are we doing and how can I help?
         - Elaine says she can at least tell someone came this way. Can respond "Obviously." or "How do you know that?". If you say the former, we're done (or if you were mean to her in the previous three interactions she won't even speak this part). If the latter, she explains her talents and offers to guide you in the right direction. First points north in the clearing. Can praise her for this, at which point she'll relax.
         - Either way, if she explains her talents you gain a couple more scenes where she helps navigate. (She is really just tailing shanti, since lester takes better care to conceal his footsteps. So she doesn’t see evidence that the log pile was crossed. But she may bring up that she is only seeing evidence of one person, which Kath can answer for. This comes up later).
-    - Scene arriving in first clearing, and playing out the blockade and spade tutorial.
+    - Scene arriving in first clearing, and playing out the blockage and spade tutorial.
         - TK
     - Talk options in first clearing
         - If Elaine is helping navigate, she reminds you of the direction the tracks go, but says that of course you could explore other paths if there might be clues about the monastery. She is more confident, in her element.
@@ -187,6 +105,86 @@ An ordered list of programming, writing, and artistic objectives to be completed
         - Abelon is confused. Reflects on all that happened, addressed the player directly but still as ???. Saving Elaine affected him. He is mad about it, wouldn't have done that. But, he concedes... she is useful. Still angry, fighting for control, doesn't feel confident to take it.
 
 - Start making use of everyone's impressions!
+
+## Out-of-battle gameplay / scenes
+
+- "Press 'Q' to close tutorial" or something.
+- Text uses "unit" vs "character", "space" vs "tile" in some places, standardize. "Enemy" vs "Foe" etc.
+- Add the cobblestone path in the monastery approach!
+
+- New items/usage/presentation:
+    - Journal:
+        - Usage message updates once in 1-4.
+    - Scroll
+        - Present to Shanti for lore
+    - Unidentified metal
+        - Basic description on use
+        - Present to kath (tutorial)
+    - Brass key
+        - Basic description on use
+        - Special use when near the casket sprite (gain pristine whetstone)
+    - Ornate dagger
+        - Basic description on use
+        - Present to Lester (gain skill point)
+    - Spent ignea
+        - Basic description on use
+        - Present to Shanti (gain skill point)
+    - Ritual slab
+        - Basic description on use
+        - Present to Shanti (lore and favor)
+    - Pristine Whetstone
+        - On use, option to gain +2 force
+        - Unique present dialogue for each ally, give them +2 force (shanti just gives it back)
+    - Spade
+        - Didn't find anything on use normally
+        - Special use in tutorial to dig up ignea, or to dig up casket in suspicious ground, or to dig up old buckler
+    - Compass
+        - Tells what direction you're facing on use
+        - Present to Kath to get information about world orientation
+    - Waterskin
+        - Drink some water on use. After 5 drinks, it runs out, makes a little joke.
+        - On present to Elaine, she says Kath gave her one
+
+- New sprites (placeholder art):
+    - Casket
+    - Buried ignea
+    - Tree pile
+    - Giant boulder
+    - Scuffed ground
+    - Ignaeic site
+    - Wolf den
+    - Metal scraps
+    - Monastery entrance
+
+- Place tree piles / giant boulders / scuffed ground around monastery approach and move them in the entry to 1-4
+
+- Add ignaeic site, wolf den, monastery approach
+
+- Place buried ignea, ornate dagger, old buckler, ritual slab
+
+- Populate monastery approach with stone markers, metal scraps, logs.
+
+- Tutorial scene: Use spade to dig up ignea, key, pauldron along the main path while allies block the way. Then present pauldron to kath (initially unidentified metal, present it and kath says its a pauldron). Get commentary on an old battle that mustve been fought here. Happens in the first clearing of 1-3 when Kath catches up.
+
+- Usage and presentation scenes for the above
+
+- Implement placeholder animations (use a word) to test timing on playing actions under a variety of circumstances
+    - No counter enemy phase
+    - Single counter enemy phase
+    - Death from enemy
+    - Kill on enemy
+    - Multi counter
+    - Death by counter
+    - No damage taken (no hurt) from counter
+    - full attack with assist, deal damage
+    - full attack with assist, deal no damage
+    - enemy phase, attack deals no damage
+
+- Triggers and placeholder scenes for the items in the script
+
+- Choreograph entire demo based on complete script
+    - Including a pass over already-choreographed scenes
+    - Decide wander or idle behavior after scenes end.
 
 ## Audio
 
