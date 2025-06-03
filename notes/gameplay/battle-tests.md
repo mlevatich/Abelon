@@ -76,4 +76,5 @@
     - Notes:
         - This build struggles until the synergy of Peace -> Trust -> Courage can be used effectively, or Exploding Shot comes online. So it is a difficult build for the golem battle, but afterwards it works quite well, even being easier than my previous two builds. Satisfied overall.
         - Peace is strong, but so is Haste, so it's fair. Rest of Cleric should also be worth picking up, to avoid dipping being the best strategy. Guardian Angel is very strong so I think we're good here.
-        - Didn't make it to the final battle because I got bored, but I'm confident the build will work there. Yet to test Leadership, Spell Ward.
+        - Leadership is extremely effective, well worth its price. Allows truly insane Force stacking for Lester to genuinely one-shot the Terror through its Reaction.
+        - Rescue is very effective for allowing Kath to double-force buff someone (rescue -> invigorate).

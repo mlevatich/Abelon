@@ -2,20 +2,25 @@
 
 An ordered list of programming, writing, and artistic objectives to be completed before shipping a closed alpha test of the first quarter of the game. Commit often!
 
-## Out-of-battle gameplay / scenes
+## Bugs
 
-- Finish battle test 3
-- Camouflage could probably use a buff. Have it affect Elaine too? Or is that too strong. Could have it cost 1 ignea.
-- Lasso needs a rework.
 - BUG: Prepping Assassinate while on a Spelltheft assist crashed game: Skill.lua:462: attempt to index field 'caster' (a nil value)
     - Spelltheft tries to access dryrun_res['caster'] before it gets created. Needs to be merged with igneadrain logic.
 - BUG: After Elaine said she wasnt sure if she wanted to join us, and I relented and said she comes with, when the conversation finished it jumped back to Elaine saying she wanted to join us. The br() on lines 2165, 2203, and 2368 need to be mutually exclusive, to account for the possibility that elaine's impression changes again DURING the resulting scenes of 1-2.lua
     - Scripttool needs to support this feature?
-- "Press 'R' to close tutorial" or something.
-- Lester is down for a moment (mid getup) at the beginning of his introduction scene
-- Lester should remain in the down animation even when attacked
-- Text uses "unit" vs "character", "space" vs "tile" in some places, standardize.
+- BUG: Lester is down for a moment (mid getup) at the beginning of his introduction scene
+- BUG: Lester should remain in the down animation even when attacked
 
+## Combat and balance
+
+- Camouflage could probably use a buff. Reduces ignea costs by 1.
+- Inversion is still too situational. Should grant +5 (flat) Force and Affinity on top of its effect.
+- Lasso needs a rework.
+
+## Out-of-battle gameplay / scenes
+
+- "Press 'Q' to close tutorial" or something.
+- Text uses "unit" vs "character", "space" vs "tile" in some places, standardize. "Enemy" vs "Foe" etc.
 - Add the cobblestone path in the monastery approach!
 
 - New items/usage/presentation:
