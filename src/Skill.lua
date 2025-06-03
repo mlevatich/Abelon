@@ -983,7 +983,7 @@ skills = {
     ),
     ['clutches'] = Skill:new('clutches', 'Clutches', nil, nil,
         "Pull an enemy in, dealing %s Spell damage and \z
-         reducing the enemy's Reaction by %s for 2 turns.",
+         reducing Reaction by %s for 2 turns.",
         'Demon', SPELL, MANUAL, SKILL_ANIM_NONE, -- RELATIVE
         { { 'Demon', 1 }, { 'Veteran', 0 }, { 'Executioner', 1 } },
         { { F, F, T, F, F },
@@ -1645,12 +1645,12 @@ skills = {
     ),
     ['inversion'] = Skill:new('inversion', 'Inversion', nil, nil,
         "Elaine creates a field of emotional distortion. \z
-         Allies on the assist swap their Force and Affinity when using skills.",
+         Allies on the assist gain %s Force and Affinity, but swap them when using skills.",
         'Apprentice', ASSIST, MANUAL, SKILL_ANIM_NONE, -- GRID
         { { 'Huntress', 0 }, { 'Apprentice', 2 }, { 'Sniper', 0 } },
         { { T } }, FREE_AIM(3), 1,
         nil, nil, nil, nil, nil, nil,
-        { { 'inversion', Scaling:new(0), BUFF } },
+        { { 'force', Scaling:new(5) }, { 'affinity', Scaling:new(5) }, { 'inversion', Scaling:new(0), BUFF } },
         { EXP_TAG_ATTACK, EXP_TAG_ASSIST }
     ),
     ['flight'] = Skill:new('flight', 'Flight', nil, nil,
