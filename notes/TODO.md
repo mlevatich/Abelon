@@ -4,6 +4,9 @@ An ordered list of programming, writing, and artistic objectives to be completed
 
 ## Out-of-battle gameplay / scenes
 
+- Finish battle test 3
+- Camouflage could probably use a buff. Have it affect Elaine too? Or is that too strong. Could have it cost 1 ignea.
+- Lasso needs a rework.
 - BUG: Prepping Assassinate while on a Spelltheft assist crashed game: Skill.lua:462: attempt to index field 'caster' (a nil value)
     - Spelltheft tries to access dryrun_res['caster'] before it gets created. Needs to be merged with igneadrain logic.
 - BUG: After Elaine said she wasnt sure if she wanted to join us, and I relented and said she comes with, when the conversation finished it jumped back to Elaine saying she wanted to join us. The br() on lines 2165, 2203, and 2368 need to be mutually exclusive, to account for the possibility that elaine's impression changes again DURING the resulting scenes of 1-2.lua
@@ -11,11 +14,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
 - "Press 'R' to close tutorial" or something.
 - Lester is down for a moment (mid getup) at the beginning of his introduction scene
 - Lester should remain in the down animation even when attacked
-- Force builds still seem quite powerful.
-    - Tested Elaine Reaction/Affinity/Huntress, Kath Reaction/Defender, Abelon Force/Executioner, and it was fairly straightforward to buff Abelon and Lester with Elaine and Kath, then steamroll. Kath trivialized the Terror by stunning it repeatedly.
-    - First test a build with Abelon Focus/Demon, Kath Force/Hero, Elaine Force/Sniper, Lester Force/Assassin, Shanti Focus/Sorceress
-    - Then test Abelon Affinity/Veteran, Kath Affinity/Cleric, Elaine Focus/Apprentice, Lester Affinity/Naturalist, Shanti Affinity/Lanternfaire
-    - These builds should be roughly equivalent in difficulty to execute.
+- Text uses "unit" vs "character", "space" vs "tile" in some places, standardize.
 
 - Add the cobblestone path in the monastery approach!
 

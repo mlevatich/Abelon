@@ -101,11 +101,11 @@
 
 ->elaine
 +Level 2
-+BonusAttrs force:3
++BonusAttrs focus:2 force:1
 +Exp 31
 ->abelon
 +Level 1
-+BonusAttrs endurance:1
++BonusAttrs affinity:1
 +Exp 57
 ->kath
 +Level 1
