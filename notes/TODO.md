@@ -14,6 +14,7 @@ An ordered list of programming, writing, and artistic objectives to be completed
 ## Combat and balance
 
 - Nothing to change for now, things seem pretty balanced!
+- Just had a cool idea for a defensive skill: like riposte, but if your reaction is really high (or some other stat?) all attacking enemies are stunned for their NEXT turn.
 
 ## Script
 
